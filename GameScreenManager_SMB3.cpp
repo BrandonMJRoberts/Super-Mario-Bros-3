@@ -51,9 +51,6 @@ void GameScreenManager_SMB3::Render()
 
 void GameScreenManager_SMB3::Update(const float deltaTime, SDL_Event e)
 {
-	// Just make the screen scroll slowly to the right - testing purposes
-	//GameManager_SMB3::GetInstance()->SetRenderReferencePoint(Vector2D(GameManager_SMB3::GetInstance()->GetRenderReferencePoint().x + (32 * deltaTime), GameManager_SMB3::GetInstance()->GetRenderReferencePoint().y));
-
 	if (mCurrentScreen)
 		mReturnDataPlaceHolder = mCurrentScreen->Update(deltaTime, e);
 
@@ -66,6 +63,7 @@ void GameScreenManager_SMB3::Update(const float deltaTime, SDL_Event e)
 
 void GameScreenManager_SMB3::ChangeScreen(SCREENS_SMB3 newScreen, std::string filePath)
 {
+	// If the screen currently exists then delete it
 	if (mCurrentScreen)
 	{
 		delete mCurrentScreen;

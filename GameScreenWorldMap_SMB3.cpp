@@ -12,9 +12,10 @@
 
 GameScreen_WorldMap_SMB3::GameScreen_WorldMap_SMB3(SDL_Renderer* renderer)
 {
+	// First setup the internal conversion system this program uses
 	SetupConversionTable();
 
-	// First construct the file path for the current world
+	// Then construct the file path for the current world
 	std::string filePath = "SDL_Mario_Project/Worlds/World_" + std::to_string(GameManager_SMB3::GetInstance()->GetCurrentWorldIndex());
 
 	// Needs to load in the background file 
@@ -83,14 +84,14 @@ ReturnDataFromGameScreen GameScreen_WorldMap_SMB3::Update(const float deltaTime,
 	if (mPlayer)
 		mPlayer->Update(deltaTime);
 	
-	//switch (e.type)
-	//{
-	//case SDL_KEYDOWN:
-	//	return ReturnDataFromGameScreen(SCREENS_SMB3::LEVEL, mNodeMap->GetLevelFilePath('0'));
-	//break; 
-	//}
+	// If the player presses a key then they load into the first level - debug testing
+	switch (e.type)
+	{
+		case SDL_KEYDOWN:
+			return ReturnDataFromGameScreen(SCREENS_SMB3::LEVEL, mNodeMap->GetLevelFilePath('0'));
+		break; 
+	}
 	
-
 	return ReturnDataFromGameScreen();
 }
 
