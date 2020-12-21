@@ -17,8 +17,6 @@ GameScreenManager_SMB3::GameScreenManager_SMB3()
 
 // ------------------------------------------------------------------------ //
 
-// Changes for this branch
-
 GameScreenManager_SMB3::GameScreenManager_SMB3(SDL_Renderer* renderer)
 {
 	mRenderer      = renderer;
