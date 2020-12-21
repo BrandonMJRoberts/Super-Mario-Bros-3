@@ -1,0 +1,5 @@
+# Object layer
+
+# SPAWN_POINT - Position - ID to go to
+SPAWN_POINT
+1 1 0

@@ -1,0 +1,46 @@
+# Object Layer
+
+# ----------------------------------------------------------------------------- #
+
+# COIN - Position
+COIN
+6 1
+6 2
+6 3
+6 4
+6 5
+
+7 1
+7 2
+7 3
+7 4
+7 5
+
+8 1
+8 2
+8 3
+8 4
+8 5
+
+9 1
+9 2
+9 3
+9 4
+9 5
+
+# ----------------------------------------------------------------------------- #
+
+#PIPE - Left of mouth position (vec2) - Width (uint) - Height (uint) - Pipe type (uint) - Pipe Facing Direction (0 = Up, 1 = Right, 2 = Down, 3 = Left) - directory for loading in level (string) - stage entrance ID (0 is for the start point in the overworld) - Enemy contained within pipe - Double Ended (Bool)
+PIPE
+1 2 2 2 0 1 "Levels/World 1/Level 2/Overworld" 1 NONE F
+
+7 21 2 2 0 2 NONE -1 NONE F
+
+# ----------------------------------------------------------------------------- #
+
+# SPAWN_POINT - Position - ID to go to
+7 20 0
+
+# ----------------------------------------------------------------------------- #
+
+END

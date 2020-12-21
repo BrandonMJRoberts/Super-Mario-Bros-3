@@ -1,0 +1,149 @@
+# Object Layer
+
+# -------------------------------------------------------------------------------------------------- #
+
+# GOOMBA - Position - Start facing direction
+GOOMBA
+14 1 L
+33 1 L
+52 2 L
+55 2 L
+
+# -------------------------------------------------------------------------------------------------- #
+
+# PARA_GOOMBA - Position - Start facing direction - Start in air
+PARA_GOOMBA
+59 2 L F
+
+# -------------------------------------------------------------------------------------------------- #
+
+# KOOPA_TROOPER_RED - Position - Start facing direction
+KOOPA_TROOPER_RED
+36 3 L
+131 3 L
+
+# -------------------------------------------------------------------------------------------------- #
+
+# KOOPER_TROOPER_GREEN - Position - Start facing direction
+KOOPER_TROOPER_GREEN
+92 1 L
+
+# -------------------------------------------------------------------------------------------------- #
+
+# PARA_KOOPER_TROOPER_GREEN - Position - Start facing direction - Start in air
+PARA_KOOPER_TROOPER_GREEN
+83 7 L F
+86 7 L F
+89 7 L F
+
+# -------------------------------------------------------------------------------------------------- #
+
+# COIN - Position
+COIN
+66 6
+68 8
+70 10
+72 12
+74 14
+
+83 20
+84 20
+85 20
+
+92 18
+93 18
+
+96 17
+97 17
+98 17
+99 17
+
+101 18
+102 18
+103 18
+104 18
+
+106 16
+
+108 18
+
+110 17
+
+113 19
+
+115 17
+
+# -------------------------------------------------------------------------------------------------- #
+
+#PIPE - Left of mouth position (vec2) - Width (uint) - Height (uint) - Pipe type (uint) - Pipe Facing Direction (0 = Up, 1 = Right, 2 = Down, 3 = Left) - directory for loading in level (string) - stage entrance ID (0 is for the start point in the overworld) - Enemy contained within pipe - Double Ended (Bool)
+PIPE
+22 3 2 3 1 F NONE -1 FIRE_PIRHANNA_RED F
+112 2 2 2 1 F NONE -1 PIRHANNA_GREEN F
+116 3 2 3 1 F NONE -1 FIRE_PIHRANNA_GREEN F
+140 19 2 12 F "Levels/World 1/Level 1/Pipe" 0 NONE F
+144 2 2 2 F NONE -1 NONE F
+
+# -------------------------------------------------------------------------------------------------- #
+
+# SPAWN_POINT - Position - Entrance ID (0 is for the starting spawn)
+SPAWN_POINT
+1 1 0
+144 3 1
+
+# -------------------------------------------------------------------------------------------------- #
+
+# QUESTIONMARK_BLOCK - Position - Item to drop - Quantity - Scalable - Scales to
+QUESTIONMARK_BLOCK
+11 4 COIN 1 F NONE
+12 4 COIN 1 F NONE
+
+14 7 COIN 1 F NONE
+15 7 MUSHROOM 1 T LEAF
+
+26 6 COIN 1 F NONE
+
+43 4 COIN 1 F NONE
+
+92 3 MUSHROOM 1 T LEAF
+
+# -------------------------------------------------------------------------------------------------- #
+
+# BRICK_BLOCK - Position - Turns to coin on P-Switch - item contained
+BRICK_BLOCK
+122 1 T NONE
+
+123 1 T NONE
+123 2 T NONE
+
+124 1 T NONE
+124 2 T NONE
+124 3 T NONE
+
+125 1 T NONE
+125 2 T NONE
+125 3 T NONE
+
+126 1 T NONE
+126 2 T NONE
+126 3 T NONE
+
+127 1 T NONE
+127 2 T NONE
+127 3 F P-SWITCH
+
+128 1 T NONE
+
+131 1 T NONE
+131 2 T NONE
+
+132 1 T NONE
+
+# -------------------------------------------------------------------------------------------------- #
+
+# INVISIBLE_BLOCK - Position - Item to drop - Quantity
+INVISIBLE_BLOCK
+90 17 LIFE 1
+
+# -------------------------------------------------------------------------------------------------- #
+
+END

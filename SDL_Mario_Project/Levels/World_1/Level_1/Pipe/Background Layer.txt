@@ -1,0 +1,31 @@
+# Background Layer
+# Width
+32
+# Height
+12
+# Ending type
+-2
+# Amount of sprites on sprite sheet width
+2
+# Amount of sprites on sprite sheet height
+1
+
+# As this is an example I will state what each value represents
+# 0 = Black background
+# 1 = Brick block 
+# - Is a place holder to represent the space where a collidable object would go
+
+1111111------------------1111111
+1111111---000000000000---1111111
+1111111-0000000000000000-1111111
+1111111-0000000000000000-1111111
+1111111-0000000000000---11111111
+1111111-000000000000--1111111111
+1111111-00000000000--11111111111
+1111111-0000000000--111111111111
+1111111-000000000--1111111111111
+1111111-00000000--11111111111111
+1111111----------111111111111111
+11111111111111111111111111111111
+
+END

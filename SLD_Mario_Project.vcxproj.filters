@@ -1,0 +1,297 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Mario Bros 1">
+      <UniqueIdentifier>{4739d261-50dc-4986-bcf6-ba5efa701acc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Mario Bros 1\Game Screens Mario 1">
+      <UniqueIdentifier>{6db328f9-0ee0-43e5-a91c-80eeca210058}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mario Bros 1">
+      <UniqueIdentifier>{9ba98b72-8b2d-4e3d-b3ec-7d3c6d27ff73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mario Bros 1\Game Screens Mario 1">
+      <UniqueIdentifier>{370ce83e-cbf1-4be6-8ab6-b969b8738074}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mario Bros 3">
+      <UniqueIdentifier>{20f31bb6-4e09-4b0a-929c-a9c359911282}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mario Bros 3\Game Screens Mario 3">
+      <UniqueIdentifier>{0fffa7aa-9292-4482-adae-c840bddec608}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mario Bros 1\Characters">
+      <UniqueIdentifier>{7ba6fe21-5e0e-4bd2-93ed-1c43e78e6746}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Mario Bros 1\Characters">
+      <UniqueIdentifier>{f5fc1030-529c-4274-af25-ce42a67f59d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Mario Bros 3">
+      <UniqueIdentifier>{8ee21860-ab30-45e4-a3c6-cf8c25c6a7bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Mario Bros 3\Game Screens Mario 3">
+      <UniqueIdentifier>{32bbe70a-8916-4f30-b162-fb5e65f33b5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Mario Bros 3\Characters">
+      <UniqueIdentifier>{19b4cd48-fa6a-47d9-8ca4-bbfb520c0466}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Mario Bros 3\Enemies">
+      <UniqueIdentifier>{87460081-436f-4264-952b-216b4166bc48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Mario Bros 3\Power Ups">
+      <UniqueIdentifier>{55743f54-7d28-4790-ac4b-ede0aa519292}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Mario Bros 3\Fireworks">
+      <UniqueIdentifier>{0fca24ac-3d99-4a27-bbde-5fa69b25f8dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Mario Bros 3\HUD">
+      <UniqueIdentifier>{3bfd2459-6d89-40ee-8bf0-5836d1016d04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Mario Bros 3\Objects">
+      <UniqueIdentifier>{9cd9bf8d-168b-4cd7-88da-38b89c05f3cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Mario Bros 3\Audio">
+      <UniqueIdentifier>{68b8d7fa-0a25-47ff-939c-526b84543b7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mario Bros 3\Audio">
+      <UniqueIdentifier>{f81eb1bc-3e47-4829-adf3-dfd74a14e215}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mario Bros 3\Characters">
+      <UniqueIdentifier>{cdb25098-08b3-45db-b4c2-f020430ada20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mario Bros 3\Enemies">
+      <UniqueIdentifier>{cebdba22-946b-421b-8771-7c48d024a209}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mario Bros 3\Fireworks">
+      <UniqueIdentifier>{8ff4c910-5d79-47a5-9793-9ea6b89bf83d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mario Bros 3\HUD">
+      <UniqueIdentifier>{384a79de-41e1-4e7c-b3ea-98f3f7670cee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mario Bros 3\Objects">
+      <UniqueIdentifier>{52d59cc2-fdf3-41a7-b2c9-199b75f800cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mario Bros 3\Power Ups">
+      <UniqueIdentifier>{113d8dc6-b6ce-4601-a120-b3c3d2f9dcb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Mario Bros 3\Game Screens Mario 3\Level Data">
+      <UniqueIdentifier>{c2105403-6a94-405e-a869-1b986ae3291a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mario Bros 3\Game Screens Mario 3\Level Data">
+      <UniqueIdentifier>{1abcb15c-b52e-4336-8e69-d70760ba6c32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mario Bros 3\Game Screens Mario 3\World Map Data">
+      <UniqueIdentifier>{dff828de-2cb4-45f5-a16d-2e2484b5a60c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Mario Bros 3\Game Screens Mario 3\World Map Data">
+      <UniqueIdentifier>{08c4198b-ff5d-46ae-b59f-ae09fa0d1675}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture2D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScreen.cpp">
+      <Filter>Source Files\Mario Bros 1\Game Screens Mario 1</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScreenLevel1.cpp">
+      <Filter>Source Files\Mario Bros 1\Game Screens Mario 1</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScreenManager.cpp">
+      <Filter>Source Files\Mario Bros 1\Game Screens Mario 1</Filter>
+    </ClCompile>
+    <ClCompile Include="Character.cpp">
+      <Filter>Source Files\Mario Bros 1\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterMario.cpp">
+      <Filter>Source Files\Mario Bros 1\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterLuigi.cpp">
+      <Filter>Source Files\Mario Bros 1\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="Collisions.cpp">
+      <Filter>Source Files\Mario Bros 1</Filter>
+    </ClCompile>
+    <ClCompile Include="Power_Up.cpp">
+      <Filter>Source Files\Mario Bros 3\Power Ups</Filter>
+    </ClCompile>
+    <ClCompile Include="GameManager_SMB3.cpp">
+      <Filter>Source Files\Mario Bros 3</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScreenManager_SMB3.cpp">
+      <Filter>Source Files\Mario Bros 3\Game Screens Mario 3</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScreen_SMB3.cpp">
+      <Filter>Source Files\Mario Bros 3\Game Screens Mario 3</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScreenMainMenu_SMB3.cpp">
+      <Filter>Source Files\Mario Bros 3\Game Screens Mario 3</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseObject_SMB3.cpp">
+      <Filter>Source Files\Mario Bros 3\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScreenLevel_SMB3.cpp">
+      <Filter>Source Files\Mario Bros 3\Game Screens Mario 3\Level Data</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectLayer.cpp">
+      <Filter>Source Files\Mario Bros 3\Game Screens Mario 3\Level Data</Filter>
+    </ClCompile>
+    <ClCompile Include="InteractionLayer.cpp">
+      <Filter>Source Files\Mario Bros 3\Game Screens Mario 3\Level Data</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelArea.cpp">
+      <Filter>Source Files\Mario Bros 3\Game Screens Mario 3\Level Data</Filter>
+    </ClCompile>
+    <ClCompile Include="BackgroundLayer.cpp">
+      <Filter>Source Files\Mario Bros 3\Game Screens Mario 3\Level Data</Filter>
+    </ClCompile>
+    <ClCompile Include="Commons_SMB3.cpp">
+      <Filter>Source Files\Mario Bros 3</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScreenWorldMap_SMB3.cpp">
+      <Filter>Source Files\Mario Bros 3\Game Screens Mario 3\World Map Data</Filter>
+    </ClCompile>
+    <ClCompile Include="BackgroundLayer_WorldMap.cpp">
+      <Filter>Source Files\Mario Bros 3\Game Screens Mario 3\World Map Data</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeMap_WorldMap.cpp">
+      <Filter>Source Files\Mario Bros 3\Game Screens Mario 3\World Map Data</Filter>
+    </ClCompile>
+    <ClCompile Include="BorderWorldMap.cpp">
+      <Filter>Source Files\Mario Bros 3\Game Screens Mario 3\World Map Data</Filter>
+    </ClCompile>
+    <ClCompile Include="StatsHUD.cpp">
+      <Filter>Source Files\Mario Bros 3\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldMapMario.cpp">
+      <Filter>Source Files\Mario Bros 3\Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseWorldMapCharacter.cpp">
+      <Filter>Source Files\Mario Bros 3\Characters</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="SDL2\SDL2.lib" />
+    <Library Include="SDL2\SDL2_image.lib" />
+    <Library Include="SDL2\SDL2_mixer.lib" />
+    <Library Include="SDL2\SDL2main.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Texture2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScreenLevel1.h">
+      <Filter>Header Files\Mario Bros 1\Game Screens Mario 1</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScreen.h">
+      <Filter>Header Files\Mario Bros 1\Game Screens Mario 1</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScreenManager.h">
+      <Filter>Header Files\Mario Bros 1\Game Screens Mario 1</Filter>
+    </ClInclude>
+    <ClInclude Include="Commons.h">
+      <Filter>Header Files\Mario Bros 1</Filter>
+    </ClInclude>
+    <ClInclude Include="Constants.h">
+      <Filter>Header Files\Mario Bros 1</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterMario.h">
+      <Filter>Header Files\Mario Bros 1\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Character.h">
+      <Filter>Header Files\Mario Bros 1\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterLuigi.h">
+      <Filter>Header Files\Mario Bros 1\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Commons_SMB3.h">
+      <Filter>Header Files\Mario Bros 3</Filter>
+    </ClInclude>
+    <ClInclude Include="Constants_SMB3.h">
+      <Filter>Header Files\Mario Bros 3</Filter>
+    </ClInclude>
+    <ClInclude Include="Collisions.h">
+      <Filter>Header Files\Mario Bros 1</Filter>
+    </ClInclude>
+    <ClInclude Include="Power_Up.h">
+      <Filter>Header Files\Mario Bros 3\Power Ups</Filter>
+    </ClInclude>
+    <ClInclude Include="GameManager_SMB3.h">
+      <Filter>Header Files\Mario Bros 3</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScreenManager_SMB3.h">
+      <Filter>Header Files\Mario Bros 3\Game Screens Mario 3</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScreen_SMB3.h">
+      <Filter>Header Files\Mario Bros 3\Game Screens Mario 3</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScreenMainMenu_SMB3.h">
+      <Filter>Header Files\Mario Bros 3\Game Screens Mario 3</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseCharacter.h">
+      <Filter>Header Files\Mario Bros 3\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Luigi.h">
+      <Filter>Header Files\Mario Bros 3\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="Mario.h">
+      <Filter>Header Files\Mario Bros 3\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseObject_SMB3.h">
+      <Filter>Header Files\Mario Bros 3\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScreenLevel_SMB3.h">
+      <Filter>Header Files\Mario Bros 3\Game Screens Mario 3\Level Data</Filter>
+    </ClInclude>
+    <ClInclude Include="BackgroundLayer.h">
+      <Filter>Header Files\Mario Bros 3\Game Screens Mario 3\Level Data</Filter>
+    </ClInclude>
+    <ClInclude Include="InteractionLayer.h">
+      <Filter>Header Files\Mario Bros 3\Game Screens Mario 3\Level Data</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectLayer.h">
+      <Filter>Header Files\Mario Bros 3\Game Screens Mario 3\Level Data</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelArea.h">
+      <Filter>Header Files\Mario Bros 3\Game Screens Mario 3\Level Data</Filter>
+    </ClInclude>
+    <ClInclude Include="Game_Maths.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScreenWorldMap_SMB3.h">
+      <Filter>Header Files\Mario Bros 3\Game Screens Mario 3\World Map Data</Filter>
+    </ClInclude>
+    <ClInclude Include="BackgroundLayer_WorldMap.h">
+      <Filter>Header Files\Mario Bros 3\Game Screens Mario 3\World Map Data</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeMap_WorldMap.h">
+      <Filter>Header Files\Mario Bros 3\Game Screens Mario 3\World Map Data</Filter>
+    </ClInclude>
+    <ClInclude Include="BorderWorldMap.h">
+      <Filter>Header Files\Mario Bros 3\Game Screens Mario 3\World Map Data</Filter>
+    </ClInclude>
+    <ClInclude Include="StatsHUD.h">
+      <Filter>Header Files\Mario Bros 3\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldMapMario.h">
+      <Filter>Header Files\Mario Bros 3\Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseWorldMapCharacter.h">
+      <Filter>Header Files\Mario Bros 3\Characters</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

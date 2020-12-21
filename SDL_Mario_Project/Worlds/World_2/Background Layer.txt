@@ -1,0 +1,9 @@
+# Width
+14
+# Height
+10
+# Amount of sprites on sprite sheet width
+8
+# Amount of sprites on sprite sheet height
+2
+# Data for rendering

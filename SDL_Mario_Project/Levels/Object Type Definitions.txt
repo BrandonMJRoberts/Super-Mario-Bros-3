@@ -1,0 +1,97 @@
+# The standard of object file definitions, if the definition does not match here a problem may occur
+
+# An object is something that affects the player and the player can affect it as well. Such as a goomba or a noteblock
+
+# Blocks #
+	
+	# LARGE_QUESTION_MARK_BLOCK - Bottom left position - Item to drop - Quantity - Pre-hit
+	
+	# QUESTION_MARK_BLOCK - Position - Item to drop - Quantity - Scalable - Scales to - Pre-hit
+
+	# BRICK_BLOCK - Position - Turns to coin on P-Switch - item contained
+
+	# LARGE_BRICK_BLOCK - Bottom left position - item contained
+
+	# INVISIBLE_BLOCK - Position - Item to drop - Quantity
+
+	# NOTE_BLOCK - Position - Item to drop
+
+	# INVISIBLE_NOTE_BLOCK - Position - item to drop
+
+	# WATER - Bottom Left position - Top right position
+
+	# LAVA - Bottom Left position - Top right position	
+
+# Enemies #
+
+	# GOOMBA - Position - Start facing direction
+
+	# PARA_GOOMBA - Position - Start facing direction - Start in air
+
+	# RED_PARA_GOOMBA - Position - Start facing direction - Start in air
+
+	# KOOPA_TROOPER_RED - Position - Start facing direction
+
+	# KOOPER_TROOPER_GREEN - Position - Start facing direction
+	
+	# PARA_KOOPER_TROOPER_GREEN - Position - Start facing direction - Start in air
+
+	# PARA_KOOPER_TROOPER_RED - Position - Start facing direction - Start in air
+
+	# HAMMER_BRO - Position - Start facing direction
+
+	# PODOBOO - Spawn point - Jump height
+
+	# ROTODISC - Centre Point - Radius
+
+	# BOOM_BOOM - Position
+
+	# LARRY_KOOPA - Position
+
+	# BUZZY_BEETLE - Position - Start facing direction
+
+	# CANNON_BALL_CANNON - position - Start facing  - Rotating (bool)
+
+	# BULLET_BILL_CANNON - Top position - Height
+
+	# BRICK_GOOMBA - position
+
+	# FIRE_SNAKE - Position
+
+	# CHEEP_CHEEP - Position - Facing direction
+
+	# FIRE_PIHRANNA_GREEN - Position of head - Height
+
+	# FIRE_PIHRANNA_RED - Position of head - Height
+
+	# BOO - Position
+
+	# THWOMP - Top Left position
+
+# Items #
+
+	# COIN - Position
+
+	# BLUE_COIN - Position
+
+	# MAGIC_BALL - Position
+
+	# DRY_BONES - Position
+
+
+# Other #
+
+	# PIPE - Left of mouth position (vec2) - Width (uint) - Height (uint) - Pipe type (uint) - Pipe Facing Direction (0 = Up, 1 = Right, 2 = Down, 3 = 	Left) - directory for loading in level (string) - stage entrance ID (0 is for the 		start point in the overworld) - Enemy contained 	within pipe - Double Ended (Bool)
+		# PIPE ID's
+		ID 0 = Black and white pipe
+		ID 1 = Green
+		ID 2 = Red
+		ID 3 = Orange
+		ID 4 = Grey
+		ID 5 = Black and blue 
+
+	# DOOR - Position of door top - This door ID - Directory Of level going to - ID of door going to 
+
+	# SPAWN_POINT - Position - Entrance ID (0 for starting spawn)
+
+	# MOVING_PLATFORM - Position of top left starting position - Number of positional nodes to go to - Positions for nodes - Movement speeds (one per node segment)
