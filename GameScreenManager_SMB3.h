@@ -18,7 +18,7 @@ public:
 	void Render();
 	void Update(const float deltaTime, SDL_Event e);
 
-	void ChangeScreen(SCREENS_SMB3 newScreen, std::string filePath);
+	void ChangeScreen(SCREENS_SMB3 newScreen, std::string filePath = "");
 
 private:
 	SDL_Renderer*            mRenderer;      // SDL renderer
