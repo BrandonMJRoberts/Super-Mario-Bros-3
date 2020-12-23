@@ -20,3 +20,18 @@ WorldMapMario::~WorldMapMario()
 }
 
 // ------------------------------------------------------------------------------------------- //
+
+void WorldMapMario::Render()
+{
+	BaseWorldMapCharacter::Render();
+}
+
+// ------------------------------------------------------------------------------------------- //
+
+void WorldMapMario::Update(const float deltaTime)
+{
+	// First just do the generic world map character stuff
+	BaseWorldMapCharacter::Update(deltaTime);
+}
+
+// ------------------------------------------------------------------------------------------- //

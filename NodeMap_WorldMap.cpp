@@ -13,6 +13,7 @@ NodeMap_WorldMap::NodeMap_WorldMap(std::string filePath)
 	mWidth  = 0;
 	mHeight = 0;
 
+	// Load in the node data stored in the file
 	LoadInDataFromFile(filePath);
 }
 
@@ -30,7 +31,6 @@ NodeMap_WorldMap::~NodeMap_WorldMap()
 	mLevelLoadingFilePaths.clear();
 }
 
-
 // ----------------------------------------------------------------- //
 
 void NodeMap_WorldMap::LoadInDataFromFile(std::string filePath)
@@ -43,27 +43,31 @@ void NodeMap_WorldMap::LoadInDataFromFile(std::string filePath)
 		return;
 	}
 
-	char*             cLine = new char[100];
 	std::string       sLine;
 	std::stringstream ssLine;
 
 	unsigned int      failsafeCounter = 0;
 	unsigned int      amountOfLevels = 0;
-
 	unsigned int      currentRow = 0;
 
-	while (file.getline(cLine, 100))
+	while (getline(file, sLine))
 	{
 		if (failsafeCounter++ >= FAILSAFE_MAX_COUNT_FILE_LOADING_LOOPS)
 		{
 			std::cout << "Error with the file being loaded in: node map for the world map." << std::endl;
+			file.close();
 			return;
 		}
 
-		sLine = std::string(cLine);
-
-		if (sLine == "" || sLine == "END" || sLine[0] == '#')
+		if (sLine == "" || sLine[0] == '#')
 			continue;
+		
+		// If we hit the end of the file close it and return from the function
+		if (sLine == "END")
+		{
+			file.close();
+			return;
+		}
 
 		ssLine = std::stringstream(sLine);
 

@@ -24,7 +24,7 @@ GameScreen_WorldMap_SMB3::GameScreen_WorldMap_SMB3(SDL_Renderer* renderer)
 		                                       mConversionTable);
 
 	// The level also needs a border around the world maps, so create on of those of the correct width and height of the background
-	mBorder     = new WorldMapBorder(mBackground->GetWidth() + 2, 
+	mBorder     = new WorldMapBorder(mBackground->GetWidth()  + 2, 
 		                             mBackground->GetHeight() + 2, 
 		                             renderer);
 
@@ -33,10 +33,10 @@ GameScreen_WorldMap_SMB3::GameScreen_WorldMap_SMB3(SDL_Renderer* renderer)
 
 	// Now we need to setup the player character for the world map - default this to being mario
 	mPlayer     = new WorldMapMario("SDL_Mario_Project/Characters/Mario/World Map Mario/World Map Mario Sprite Sheet.png", 
-		                                                      renderer, 
-		                                                     ((mNodeMap->GetSpawnPoint() + GameManager_SMB3::GetInstance()->GetWorldMapRenderOffset()) * RESOLUTION_OF_SPRITES),
-		                                                      5, 
-		                                                      4);
+		                             renderer, 
+		                             mNodeMap->GetSpawnPoint() * RESOLUTION_OF_SPRITES,
+		                             5, 
+		                             4);
 }
 
 // ----------------------------------------------------------------------------- //

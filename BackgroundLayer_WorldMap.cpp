@@ -30,8 +30,7 @@ BackgroundLayer_WorldMap::BackgroundLayer_WorldMap(const std::string filePath, S
 	// Now we need to load in the data from the file associated with this world
 	LoadInDataFromFile(filePath + "/Background Layer.txt", conversionTable);
 
-	// Store the render offset from the top left of the screen
-	mRenderOffset     = GameManager_SMB3::GetInstance()->GetWorldMapRenderOffset();
+	// The offset into the index store, for scrolling of the background without moving the actual render positions
 	mMapPortionOffset = Vector2D(0, 0);
 }
 
@@ -58,10 +57,14 @@ void BackgroundLayer_WorldMap::Render()
 {
 	if (mSpriteSheet)
 	{
+		// First get the physical render offset from the top left
+		Vector2D renderOffset = Commons_SMB3::ConvertFromGridPositionToRealPositionReturn(GameManager_SMB3::GetInstance()->GetWorldMapRenderOffset(), RESOLUTION_OF_SPRITES);
+
 		// Setup default values like this as SDL_Rect doesnt have a useful constructor
 		SDL_Rect portionOfSpriteSheet { 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES };
-		SDL_Rect destRect             { int(mRenderOffset.x * RESOLUTION_OF_SPRITES), 
-			                            int(mRenderOffset.y * RESOLUTION_OF_SPRITES), 
+
+		SDL_Rect destRect             { int(renderOffset.x),
+			                            int(renderOffset.y),
 			                            RESOLUTION_OF_SPRITES, 
 			                            RESOLUTION_OF_SPRITES };
 
@@ -101,7 +104,7 @@ void BackgroundLayer_WorldMap::Render()
 			}
 
 			destRect.y += RESOLUTION_OF_SPRITES;
-			destRect.x = int(mRenderOffset.x * RESOLUTION_OF_SPRITES);
+			destRect.x = int(renderOffset.x);
 		}
 	}
 	else
@@ -152,6 +155,7 @@ void BackgroundLayer_WorldMap::LoadInDataFromFile(std::string filePath, std::map
 		if (failSafeCount > FAILSAFE_MAX_COUNT_FILE_LOADING_LOOPS)
 		{
 			std::cout << "Error loading in the data file for the background of the current world" << std::endl;
+			file.close();
 			return;
 		}
 

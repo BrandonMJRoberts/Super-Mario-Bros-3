@@ -35,8 +35,11 @@ void WorldMapBorder::Render()
 {
 	if (mSpriteSheet)
 	{
+		// The physical render offset from the top left of the screen - but adjusted to account for this being the border
+		Vector2D renderOffset = Commons_SMB3::ConvertFromGridPositionToRealPositionReturn(GameManager_SMB3::GetInstance()->GetWorldMapRenderOffset() - Vector2D(1, 1), RESOLUTION_OF_SPRITES);
+
 		SDL_Rect portionOfSpriteSheet{ 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES };
-		SDL_Rect destRect            { 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES };
+		SDL_Rect destRect            { (int)renderOffset.x, (int)renderOffset.y, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES };
 
 		// Loop through the area that we want to render
 		for (int row = 0; row < int(mHeight); row++)
@@ -102,13 +105,13 @@ void WorldMapBorder::Render()
 				portionOfSpriteSheet.x = RESOLUTION_OF_SPRITES;
 				portionOfSpriteSheet.y = RESOLUTION_OF_SPRITES;
 
-				destRect.x = (mWidth - 1) * RESOLUTION_OF_SPRITES;
+				destRect.x = ((mWidth - 1) * RESOLUTION_OF_SPRITES) + (int)renderOffset.x;
 
 				mSpriteSheet->Render(portionOfSpriteSheet, destRect);
 			}
 
 			destRect.y += RESOLUTION_OF_SPRITES;
-			destRect.x = 0;
+			destRect.x = (int)renderOffset.x;
 		}
 	}
 	else

@@ -17,6 +17,8 @@ public:
 	BaseWorldMapCharacter(SDL_Renderer* renderer, std::string filePathToSpriteSheet, Vector2D startPosition, unsigned int spritesOnWidth, unsigned int spritesOnHeight, const float timePerAnimationFrame);
 	virtual ~BaseWorldMapCharacter();
 
+	void      ChangePowerUpState(CHARACTER_MAP_POWER_UP_STATE newState);
+
 	virtual void Render();
 	virtual void Update(const float deltaTime);
 

@@ -65,7 +65,6 @@ private:
 	unsigned int   mSpritesOnSpriteSheetHeight;
 	std::vector<SpriteThatAnimatesData> mAnimatingSpriteData;
 
-	Vector2D       mRenderOffset;
 	Vector2D       mMapPortionOffset;
 };
 

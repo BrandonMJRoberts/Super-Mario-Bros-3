@@ -17,8 +17,8 @@ public:
 	WorldMapMario(std::string filePathToSpriteSheet, SDL_Renderer* renderer, Vector2D startPos, unsigned int spritesOnWidth, unsigned int spritesOnHeight);
 	~WorldMapMario() override;
 
-	//void Render() override;
-	//void Update(const float deltaTime) override;
+	void Render()                      override;
+	void Update(const float deltaTime) override;
 };
 
 
