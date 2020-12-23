@@ -27,7 +27,7 @@ GameScreen_WorldMap_SMB3::GameScreen_WorldMap_SMB3(SDL_Renderer* renderer)
 	mBorder     = new WorldMapBorder(mBackground->GetWidth() + 2, 
 		                             mBackground->GetHeight() + 2, 
 		                             renderer, 
-		                             GameManager_SMB3::GetInstance()->GetWorldMapRenderOffset() - Vector2D(1, 1));
+		                             Vector2D(0, 0));
 
 	// Need to load in the node Map
 	mNodeMap    = new NodeMap_WorldMap(filePath + "/Node Map Layer.txt");

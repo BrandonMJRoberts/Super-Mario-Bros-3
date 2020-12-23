@@ -23,8 +23,8 @@ GameManager_SMB3::GameManager_SMB3()
 	mRenderReferencePoint = Vector2D();
 	mWorldMapOffsetPoint  = Vector2D(1, 1);
 
-	mScrollingRight = false;
-	mScrollingLeft  = false;
+	mScrollingRight       = false;
+	mScrollingLeft        = false;
 	mScrollingSpeedMultiplier = 5.0f;
 
 	mHitRightBoundary  = false;
