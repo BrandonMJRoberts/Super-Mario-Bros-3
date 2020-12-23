@@ -26,8 +26,7 @@ GameScreen_WorldMap_SMB3::GameScreen_WorldMap_SMB3(SDL_Renderer* renderer)
 	// The level also needs a border around the world maps, so create on of those of the correct width and height of the background
 	mBorder     = new WorldMapBorder(mBackground->GetWidth() + 2, 
 		                             mBackground->GetHeight() + 2, 
-		                             renderer, 
-		                             Vector2D(0, 0));
+		                             renderer);
 
 	// Need to load in the node Map
 	mNodeMap    = new NodeMap_WorldMap(filePath + "/Node Map Layer.txt");

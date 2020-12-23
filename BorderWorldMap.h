@@ -10,7 +10,7 @@ class WorldMapBorder final
 {
 public:
 	WorldMapBorder() = delete;
-	WorldMapBorder(unsigned int width, unsigned int height, SDL_Renderer* renderer, Vector2D offset);
+	WorldMapBorder(unsigned int width, unsigned int height, SDL_Renderer* renderer);
 	~WorldMapBorder();
 
 	void Render();

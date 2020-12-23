@@ -68,13 +68,13 @@ void BackgroundLayer_WorldMap::Render()
 		unsigned int indexToRender = 0;
 
 		// Loop through all of the indexes that we want to render
-		for (int row = mMapPortionOffset.y; row < mHeight + mMapPortionOffset.y; row++)
+		for (int row = (int)mMapPortionOffset.y; row < mHeight + mMapPortionOffset.y; row++)
 		{
 			// Now loop through the columns
-			for (int col = mMapPortionOffset.x; col < mWidth + mMapPortionOffset.x; col++)
+			for (int col = (int)mMapPortionOffset.x; col < mWidth + mMapPortionOffset.x; col++)
 			{
 				// Get what index we want to render
-				if (row < mHeight && row > -1 && col > -1 && col < mWidth)
+				if (row < (int)mHeight && row > -1 && col > -1 && col < (int)mWidth)
 					indexToRender = mBackgroundIndexStore[row][col];
 				else
 					continue;
