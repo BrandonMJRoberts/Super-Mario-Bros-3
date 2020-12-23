@@ -12,6 +12,7 @@
 
 BackgroundLayer_WorldMap::BackgroundLayer_WorldMap(const std::string filePath, SDL_Renderer* renderer, std::map<char, unsigned int> conversionTable)
 {
+	// Default the variable values
 	mWidth						= 0;
 	mHeight					    = 0;
 	mSpritesOnSpriteSheetWidth  = 0;
@@ -59,34 +60,29 @@ void BackgroundLayer_WorldMap::Render()
 	{
 		unsigned int indexToRender;
 
-		// First convert the actual position into a grid position
+		// First convert the actual reference position into a grid position
 		Vector2D gridReferencePoint = Commons_SMB3::ConvertFromRealPositionToGridPositionReturn(GameManager_SMB3::GetInstance()->GetRenderReferencePoint(), RESOLUTION_OF_SPRITES);
 
 		// Quick outs so we dont process anything we dont need to
 		if (gridReferencePoint.x > mOffsetFromTopLeft.x + mWidth + BACKGROUND_SPRITE_RENDER_WIDTH || // To the far right of the section
-			gridReferencePoint.x < mOffsetFromTopLeft.x - BACKGROUND_SPRITE_RENDER_WIDTH          || // To the far left of the section
-			gridReferencePoint.y > mOffsetFromTopLeft.y + BACKGROUND_SPRITE_RENDER_HEIGHT         || // Below the section
+			gridReferencePoint.x < mOffsetFromTopLeft.x - BACKGROUND_SPRITE_RENDER_WIDTH || // To the far left of the section
+			gridReferencePoint.y > mOffsetFromTopLeft.y + BACKGROUND_SPRITE_RENDER_HEIGHT || // Below the section
 			gridReferencePoint.y < mOffsetFromTopLeft.y - mHeight - BACKGROUND_SPRITE_RENDER_HEIGHT) // Above the section
 		{
+			// Break out of the loop if we are beyond the bounds
 			return;
 		}
 		else
 		{
 			// Now get the distance from this position to the next one, so that we can scroll smoothly
-			Vector2D interGridPositionOffset = Vector2D(((int(gridReferencePoint.x) - gridReferencePoint.x) * RESOLUTION_OF_SPRITES), ((int(gridReferencePoint.y) - gridReferencePoint.y) * RESOLUTION_OF_SPRITES));
-
-			SDL_Rect portionOfSpriteSheet, destRect;
+			Vector2D interGridPositionOffset = Vector2D(((gridReferencePoint.x - gridReferencePoint.x) * RESOLUTION_OF_SPRITES), ((gridReferencePoint.y - gridReferencePoint.y) * RESOLUTION_OF_SPRITES));
 
 			// Setup default values like this as SDL_Rect doesnt have a useful constructor
-			portionOfSpriteSheet.x = 0;
-			portionOfSpriteSheet.y = 0;
-			portionOfSpriteSheet.w = RESOLUTION_OF_SPRITES;
-			portionOfSpriteSheet.h = RESOLUTION_OF_SPRITES;
-
-			destRect.x			   = (int)interGridPositionOffset.x + ((int)mOffsetFromTopLeft.x * RESOLUTION_OF_SPRITES);
-			destRect.y			   = (int)interGridPositionOffset.y + ((int)mOffsetFromTopLeft.y * RESOLUTION_OF_SPRITES);
-			destRect.w			   = RESOLUTION_OF_SPRITES;
-			destRect.h		       = RESOLUTION_OF_SPRITES;
+			SDL_Rect portionOfSpriteSheet {0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES};
+			SDL_Rect destRect { (int)( interGridPositionOffset.x + (double((int)mOffsetFromTopLeft.x) * RESOLUTION_OF_SPRITES)), 
+				                (int)(interGridPositionOffset.y + (double((int)mOffsetFromTopLeft.y) * RESOLUTION_OF_SPRITES)),
+								RESOLUTION_OF_SPRITES,
+								RESOLUTION_OF_SPRITES };
 
 			// Loop through the internal store of sprite indexes and render the correct ones in the correct positions
 			// Must be a signed int to allow for negative values, and negative scrolling
@@ -96,7 +92,7 @@ void BackgroundLayer_WorldMap::Render()
 				if (row >= (int)mHeight || row < 0)
 					continue;
 
-				for (int col = (int)gridReferencePoint.x - (int)mOffsetFromTopLeft.x; col < ((int)gridReferencePoint.x + BACKGROUND_SPRITE_RENDER_WIDTH) - (int)mOffsetFromTopLeft.x; col++)
+				for (int col = (int)gridReferencePoint.x - (int)mOffsetFromTopLeft.x; col < (gridReferencePoint.x + BACKGROUND_SPRITE_RENDER_WIDTH) - mOffsetFromTopLeft.x; col++)
 				{
 					if (col >= (int)mWidth || col < 0)
 					{
@@ -120,19 +116,26 @@ void BackgroundLayer_WorldMap::Render()
 
 					// Now we are correctly looping through the correct area of the grid to be rendered
 					// Now we just need to render the correct sprite in the correct position
-					portionOfSpriteSheet.x =	   (indexToRender % mSpritesOnSpriteSheetWidth) * RESOLUTION_OF_SPRITES;
+					portionOfSpriteSheet.x =       (indexToRender % mSpritesOnSpriteSheetWidth)  * RESOLUTION_OF_SPRITES;
 					portionOfSpriteSheet.y = ((int)(indexToRender / mSpritesOnSpriteSheetWidth)) * RESOLUTION_OF_SPRITES;
 
+					// Now render the sprite correctly
 					mSpriteSheet->Render(portionOfSpriteSheet, destRect);
 
+					// Move the render position along the X axis
 					destRect.x += RESOLUTION_OF_SPRITES;
 				}
 
+				// Move the render position along the Y axis
 				destRect.y += RESOLUTION_OF_SPRITES;
-				destRect.x = (int)interGridPositionOffset.x + ((int)mOffsetFromTopLeft.x * RESOLUTION_OF_SPRITES);
+
+				// Reset the X axis position
+				destRect.x = int(interGridPositionOffset.x + (double((int)mOffsetFromTopLeft.x) * RESOLUTION_OF_SPRITES));
 			}
 		}
 	}
+	else
+		std::cout << "Sprite sheet is a null value!" << std::endl;
 }
 
 // ----------------------------------------------------------------- //
@@ -159,20 +162,18 @@ void BackgroundLayer_WorldMap::LoadInDataFromFile(std::string filePath, std::map
 	}
 
 	// Now we know the file is open we can read in the data
-	char*             cLine = new char[100];
 	std::string       sLine;
 	std::stringstream ssLine;
 
-	unsigned int      currentRow = 0;
-
+	unsigned int      currentRow    = 0;
 	unsigned int      failSafeCount = 0;
 
-	int               spritesWithAnimation = -1;
-	char              nameOfSprite;
 	unsigned int      lengthOfAnimationFrames;
+	int               spritesWithAnimation = -1;
 	float             timePerAnim;
+	char              nameOfSprite;
 
-	while (file.getline(cLine, 100))
+	while (getline(file, sLine))
 	{
 		failSafeCount++;
 
@@ -182,14 +183,22 @@ void BackgroundLayer_WorldMap::LoadInDataFromFile(std::string filePath, std::map
 			return;
 		}
 
-		// First convert the char array to a string, and the string to a string stream
-		sLine = cLine;
-	
-		if (sLine == "END" || sLine[0] == '#' || sLine == "")
+		// Check if we should discount this line first, this should happen if it is empty or is a comment
+		if (sLine[0] == '#' || sLine == "")
 			continue;
+
+		// If this is the final line then we want to close the final and return back to where we came from
+		if (sLine == "END")
+		{
+			file.close();
+			return;
+		}
 		
+		// Convert the string into an easier to use data type
 		ssLine = std::stringstream(sLine);
 
+		// Get the data from the file in the correct order required from the file
+		// This order is stated in each file themselves
 		if (mWidth == 0)
 		{
 			ssLine >> mWidth;
@@ -221,7 +230,7 @@ void BackgroundLayer_WorldMap::LoadInDataFromFile(std::string filePath, std::map
 			continue;
 		}
 
-		// Now load in the correct amount of data 
+		// Now load in the correct amount of data for the amount of animating sprites of the background
 		if (mAnimatingSpriteData.size() != spritesWithAnimation)
 		{
 			// Load in the data
@@ -230,9 +239,10 @@ void BackgroundLayer_WorldMap::LoadInDataFromFile(std::string filePath, std::map
 			continue;
 		}
 
+		// If the background data store has not been created before then do it now
 		if (!mBackgroundIndexStore)
 		{
-			// Memory allocation
+			// Allocate the correct amount of memory for this task
 			mBackgroundIndexStore = new unsigned int* [mHeight];
 			for (unsigned int i = 0; i < mHeight; i++)
 			{
@@ -243,9 +253,10 @@ void BackgroundLayer_WorldMap::LoadInDataFromFile(std::string filePath, std::map
 		// Now we need to load in and allocate the data from the file
 		for (unsigned int charID = 0; charID < sLine.size(); charID++)
 		{
-			mBackgroundIndexStore[currentRow][charID] = conversionTable[sLine[charID]];
+			mBackgroundIndexStore[currentRow][charID] = conversionTable[(char)sLine[charID]];
 		}
 
+		// Increment the current row being written to
 		currentRow++;
 	}
 }
@@ -292,6 +303,7 @@ void BackgroundLayer_WorldMap::ReplaceDataPoint(unsigned int row, unsigned int c
 
 unsigned int BackgroundLayer_WorldMap::GetSpecificDataPoint(unsigned int row, unsigned int col)
 {
+	// Bounds check
 	if (row >= mHeight || col >= mWidth || row < 0 || col < 0)
 		return 300;
 

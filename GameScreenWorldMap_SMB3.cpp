@@ -18,7 +18,7 @@ GameScreen_WorldMap_SMB3::GameScreen_WorldMap_SMB3(SDL_Renderer* renderer)
 	// Then construct the file path for the current world
 	std::string filePath = "SDL_Mario_Project/Worlds/World_" + std::to_string(GameManager_SMB3::GetInstance()->GetCurrentWorldIndex());
 
-	// Needs to load in the background file 
+	// Needs to load in the background data file 
 	mBackground = new BackgroundLayer_WorldMap(filePath, 
 		                                       renderer, 
 		                                       mConversionTable);
@@ -32,12 +32,12 @@ GameScreen_WorldMap_SMB3::GameScreen_WorldMap_SMB3(SDL_Renderer* renderer)
 	// Need to load in the node Map
 	mNodeMap    = new NodeMap_WorldMap(filePath + "/Node Map Layer.txt");
 
-	// Now we need to setup the player character for the world map
-	mPlayer     = (BaseWorldMapCharacter*)(new WorldMapMario("SDL_Mario_Project/Characters/Mario/World Map Mario/World Map Mario Sprite Sheet.png", 
+	// Now we need to setup the player character for the world map - default this to being mario
+	mPlayer     = new WorldMapMario("SDL_Mario_Project/Characters/Mario/World Map Mario/World Map Mario Sprite Sheet.png", 
 		                                                      renderer, 
 		                                                     ((mNodeMap->GetSpawnPoint() + GameManager_SMB3::GetInstance()->GetWorldMapRenderOffset()) * RESOLUTION_OF_SPRITES),
 		                                                      5, 
-		                                                      4));
+		                                                      4);
 }
 
 // ----------------------------------------------------------------------------- //
