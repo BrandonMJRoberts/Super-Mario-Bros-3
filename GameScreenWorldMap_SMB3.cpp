@@ -36,7 +36,8 @@ GameScreen_WorldMap_SMB3::GameScreen_WorldMap_SMB3(SDL_Renderer* renderer)
 		                             renderer, 
 		                             mNodeMap->GetSpawnPoint() * RESOLUTION_OF_SPRITES,
 		                             5, 
-		                             4);
+		                             4,
+									 0.25f);
 }
 
 // ----------------------------------------------------------------------------- //

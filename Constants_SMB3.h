@@ -16,6 +16,8 @@
 // Pixel definition of sprites
 #define RESOLUTION_OF_SPRITES 48
 
+#define DOUBLE_RESOLUTION_OF_SPRITES (RESOLUTION_OF_SPRITES * 2)
+
 // Capping size of levels
 #define MAX_LEVEL_WIDTH 255
 #define MAX_LEVEL_HEIGHT 63

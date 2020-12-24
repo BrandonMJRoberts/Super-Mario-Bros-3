@@ -14,7 +14,7 @@ class BaseWorldMapCharacter abstract
 {
 public:
 	BaseWorldMapCharacter() = delete;
-	BaseWorldMapCharacter(SDL_Renderer* renderer, std::string filePathToSpriteSheet, Vector2D startPosition, unsigned int spritesOnWidth, unsigned int spritesOnHeight, const float timePerAnimationFrame);
+	BaseWorldMapCharacter(SDL_Renderer* renderer, const std::string filePathToSpriteSheet, const Vector2D startPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, const float timePerAnimationFrame);
 	virtual ~BaseWorldMapCharacter();
 
 	void      ChangePowerUpState(CHARACTER_MAP_POWER_UP_STATE newState);

@@ -7,7 +7,7 @@
 
 // ------------------------------------------------------------------------------------------- //
 
-WorldMapMario::WorldMapMario(std::string filePathToSpriteSheet, SDL_Renderer* renderer, Vector2D startPos, unsigned int spritesOnWidth, unsigned int spritesOnHeight) : BaseWorldMapCharacter(renderer, filePathToSpriteSheet, startPos, spritesOnWidth, spritesOnHeight, 0.5f)
+WorldMapMario::WorldMapMario(const std::string filePathToSpriteSheet, SDL_Renderer* renderer, Vector2D startPos, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, const float timePerAnimationFrame) : BaseWorldMapCharacter(renderer, filePathToSpriteSheet, startPos, spritesOnWidth, spritesOnHeight, timePerAnimationFrame)
 {
 	mCurrentPowerUpState = GameManager_SMB3::GetInstance()->GetMarioCurrentPowerUpState();
 }

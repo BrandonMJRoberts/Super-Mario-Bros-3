@@ -7,7 +7,7 @@
 
 // ------------------------------------------------------------------------------------------------------------------------------- //
 
-BaseWorldMapCharacter::BaseWorldMapCharacter(SDL_Renderer* renderer, std::string filePathToSpriteSheet, Vector2D startPosition, unsigned int spritesOnWidth, unsigned int spritesOnHeight, const float timePerAnimationFrame) : mTimePerAnimationFrame(timePerAnimationFrame)
+BaseWorldMapCharacter::BaseWorldMapCharacter(SDL_Renderer* renderer, const std::string filePathToSpriteSheet, const Vector2D startPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, const float timePerAnimationFrame) : mTimePerAnimationFrame(timePerAnimationFrame)
 {
 	// Set the default values for the variables
 	mPosition                     = startPosition;
@@ -25,8 +25,12 @@ BaseWorldMapCharacter::BaseWorldMapCharacter(SDL_Renderer* renderer, std::string
 		return;
 	}
 
-	mCurrentPowerUpState = CHARACTER_MAP_POWER_UP_STATE::SMALL;
-	ChangePowerUpState(CHARACTER_MAP_POWER_UP_STATE::FIRE);
+	// Now calculate the default sprite width and height
+	mSingleSpriteWidth  = mSpriteSheet->GetWidth() / mAmountOfSpritesOnWidth;
+	mSingleSpriteHeight = mSpriteSheet->GetHeight() / mAmountOfSpritesOnHeight;
+
+	mCurrentPowerUpState = CHARACTER_MAP_POWER_UP_STATE::FROG;
+	ChangePowerUpState(CHARACTER_MAP_POWER_UP_STATE::LEAF);
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------- //
@@ -48,8 +52,8 @@ void BaseWorldMapCharacter::Render()
 		SDL_Rect portionOfSpriteSheet, destRect;
 
 		// Get the correct position on the sprite sheet
-		portionOfSpriteSheet.x =      (mCurrentFrame % mAmountOfSpritesOnWidth) * RESOLUTION_OF_SPRITES;
-		portionOfSpriteSheet.y = (int)(mCurrentFrame / mAmountOfSpritesOnWidth) * RESOLUTION_OF_SPRITES;
+		portionOfSpriteSheet.x = (mCurrentFrame % mAmountOfSpritesOnWidth) * RESOLUTION_OF_SPRITES;
+		portionOfSpriteSheet.y = (mCurrentFrame / mAmountOfSpritesOnWidth) * DOUBLE_RESOLUTION_OF_SPRITES;
 		portionOfSpriteSheet.w = mSingleSpriteWidth;
 		portionOfSpriteSheet.h = mSingleSpriteHeight;
 
@@ -70,8 +74,20 @@ void BaseWorldMapCharacter::Render()
 
 void BaseWorldMapCharacter::Update(const float deltaTime)
 {
-	// Just handle input for moving around the map
+	// Add the time that has progressed onto the animation timer, so that the character animates
+	mTimeRemainingTillFrameChange -= deltaTime;
 
+	if (mTimeRemainingTillFrameChange <= 0.0f)
+	{
+		mTimeRemainingTillFrameChange = mTimePerAnimationFrame;
+
+		mCurrentFrame++;
+
+		if (mCurrentFrame > mEndFrame)
+			mCurrentFrame = mStartFrame;
+	}
+
+	// Now handle input for moving around the map
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------- //
@@ -82,13 +98,6 @@ void BaseWorldMapCharacter::ChangePowerUpState(CHARACTER_MAP_POWER_UP_STATE newS
 	{
 		// Set the new state
 		mCurrentPowerUpState = newState;
-
-		// Now calculate the default sprite width and height
-		if (mSpriteSheet)
-		{
-			mSingleSpriteWidth  = mSpriteSheet->GetWidth() / mAmountOfSpritesOnWidth;
-			mSingleSpriteHeight = mSpriteSheet->GetHeight() / mAmountOfSpritesOnHeight;
-		}
 
 		// Making sure that the correct animation data is set based on the current power up state
 		switch (newState)

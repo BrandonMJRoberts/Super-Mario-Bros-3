@@ -14,7 +14,7 @@ class WorldMapMario final : public BaseWorldMapCharacter
 {
 public:
 	WorldMapMario() = delete;
-	WorldMapMario(std::string filePathToSpriteSheet, SDL_Renderer* renderer, Vector2D startPos, unsigned int spritesOnWidth, unsigned int spritesOnHeight);
+	WorldMapMario(const std::string filePathToSpriteSheet, SDL_Renderer* renderer, Vector2D startPos, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, const float timePerAnimationFrame);
 	~WorldMapMario() override;
 
 	void Render()                      override;
