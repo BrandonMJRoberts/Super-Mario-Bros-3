@@ -25,4 +25,6 @@
 // So that when files load in they dont go infinitally
 #define FAILSAFE_MAX_COUNT_FILE_LOADING_LOOPS 300
 
+#define MOVEMENT_DELAY_WORLD_MAP 0.05f
+
 #endif

@@ -220,6 +220,38 @@ bool BackgroundLayer::LoadInDataFromFile(std::string filePath, std::map<char, un
 
 void BackgroundLayer::Render()
 {
+	// First check if the sprite sheet has been loaded correctly
+	if (mSpriteSheet)
+	{
+		// Setup the render rects
+		SDL_Rect portionOfSpriteSheet{ 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES };
+		SDL_Rect destRect{ 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES };
+
+		// Now we need to loop through the level - rendering what is needed to be seen
+		for (unsigned int row = 0; row < mLevelHeight; row++)
+		{
+			// Now loop through all of the columns that need to be rendered
+			for (unsigned int col = 0; col < mLevelWidth; col++)
+			{
+				// Now find the correct portion of the sprite sheet that needs rendering
+				portionOfSpriteSheet.x =     (mBackgroundSpriteIndexStore[row][col] % mAountOfSpritesOnSpriteSheetWidth) * RESOLUTION_OF_SPRITES;
+				portionOfSpriteSheet.y = (int(mBackgroundSpriteIndexStore[row][col] / mAountOfSpritesOnSpriteSheetWidth)) * RESOLUTION_OF_SPRITES;
+
+				// Now render the correct sprite in the correct position
+				mSpriteSheet->Render(portionOfSpriteSheet, destRect);
+
+				destRect.x += RESOLUTION_OF_SPRITES;
+			}
+
+			destRect.x = 0;
+			destRect.y += RESOLUTION_OF_SPRITES;
+		}
+	}
+	else
+		std::cout << "No sprite sheet loaded for the level background!" << std::endl;
+
+
+/*
 	// If there is a sprite sheet then we can render
 	if (mSpriteSheet)
 	{
@@ -285,6 +317,8 @@ void BackgroundLayer::Render()
 			}
 		}
 	}
+
+	*/
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //

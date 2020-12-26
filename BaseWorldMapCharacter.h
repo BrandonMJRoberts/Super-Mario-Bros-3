@@ -56,8 +56,11 @@ protected:
 
 	float                        mTimeRemainingTillFrameChange;
 	const float                  mTimePerAnimationFrame;
+	float                        mTimeTillNextMove;
 
 	CHARACTER_MAP_POWER_UP_STATE mCurrentPowerUpState;
+
+	bool                         mButtonIsPressed;
 };
 
 #endif // !_BASE_WORLD_MAP_CHARACTER_H_

@@ -20,6 +20,8 @@ BaseWorldMapCharacter::BaseWorldMapCharacter(SDL_Renderer* renderer, const std::
 	mSingleSpriteHeight           = 0;
 	mMovementDirection            = MOVEMENT_DIRECTION::NONE;
 	mRequestedMovementDirection   = MOVEMENT_DIRECTION::NONE;
+	mTimeTillNextMove             = MOVEMENT_DELAY_WORLD_MAP;
+	mButtonIsPressed              = false;
 
 	// Load in the sprite sheet
 	mSpriteSheet = new Texture2D(renderer);
@@ -115,8 +117,22 @@ void BaseWorldMapCharacter::Update(const float deltaTime, NodeMap_WorldMap& node
 	}
 	else // The player can only start moving if they are not currently moving
 	{
+		// If the movement button is held down the add a short delay to movement like the origionl does 
+		if (mButtonIsPressed)
+		{
+			// Now take time off of the delay
+			mTimeTillNextMove -= deltaTime;
+
+			if (mTimeTillNextMove <= 0.0f)
+			{
+				mButtonIsPressed = false;
+				mTimeTillNextMove = MOVEMENT_DELAY_WORLD_MAP;
+			}
+		}
+
 		// Check if the player has selected to move
-		CheckForMovementInput(e);
+		if(!mButtonIsPressed)
+			CheckForMovementInput(e);
 
 		// Now check if we can turn to this direction
 		if (CanTurnToDirection(mRequestedMovementDirection, nodeMapRef))
@@ -229,18 +245,22 @@ void BaseWorldMapCharacter::CheckForMovementInput(SDL_Event e)
 		{
 		case SDLK_d:
 			mRequestedMovementDirection = MOVEMENT_DIRECTION::RIGHT;
+			mButtonIsPressed = true;
 		break;
 
 		case SDLK_w:
 			mRequestedMovementDirection = MOVEMENT_DIRECTION::UP;
+			mButtonIsPressed = true;
 		break;
 
 		case SDLK_s:
 			mRequestedMovementDirection = MOVEMENT_DIRECTION::DOWN;
+			mButtonIsPressed = true;
 		break;
 
 		case SDLK_a:
 			mRequestedMovementDirection = MOVEMENT_DIRECTION::LEFT;
+			mButtonIsPressed = true;
 		break;
 		}
 	break;
