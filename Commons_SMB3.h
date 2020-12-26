@@ -42,6 +42,17 @@ enum class CHARACTER_MAP_POWER_UP_STATE : char
 	LEAF      = 0x40
 };
 
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+
+enum class MOVEMENT_DIRECTION : char
+{
+	NONE = 0,
+	LEFT,
+	RIGHT,
+	UP,
+	DOWN
+};
+
 // ------------------------------------------------ //
 
 // For the common functions they need to be encapsulated in a namespace to avoid re-definition errors

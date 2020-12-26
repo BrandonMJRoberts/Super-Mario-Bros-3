@@ -28,10 +28,10 @@ void WorldMapMario::Render()
 
 // ------------------------------------------------------------------------------------------- //
 
-void WorldMapMario::Update(const float deltaTime)
+void WorldMapMario::Update(const float deltaTime, NodeMap_WorldMap& nodeMapRef, SDL_Event e)
 {
 	// First just do the generic world map character stuff
-	BaseWorldMapCharacter::Update(deltaTime);
+	BaseWorldMapCharacter::Update(deltaTime, nodeMapRef, e);
 }
 
 // ------------------------------------------------------------------------------------------- //

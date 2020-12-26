@@ -8,7 +8,7 @@
 
 // ----------------------------------------------------------------- //
 
-NodeMap_WorldMap::NodeMap_WorldMap(std::string filePath)
+NodeMap_WorldMap::NodeMap_WorldMap(const std::string filePath)
 {
 	mWidth  = 0;
 	mHeight = 0;
@@ -33,7 +33,7 @@ NodeMap_WorldMap::~NodeMap_WorldMap()
 
 // ----------------------------------------------------------------- //
 
-void NodeMap_WorldMap::LoadInDataFromFile(std::string filePath)
+void NodeMap_WorldMap::LoadInDataFromFile(const std::string filePath)
 {
 	// First open the data files
 	std::ifstream file(filePath);
@@ -125,7 +125,7 @@ void NodeMap_WorldMap::LoadInDataFromFile(std::string filePath)
 
 // ----------------------------------------------------------------- //
 
-void NodeMap_WorldMap::ReplaceDataPoint(unsigned int row, unsigned int col, char newVal)
+void NodeMap_WorldMap::ReplaceDataPoint(const unsigned int row, const unsigned int col, const char newVal)
 {
 	if (mNodeMapData)
 	{
@@ -140,12 +140,23 @@ void NodeMap_WorldMap::ReplaceDataPoint(unsigned int row, unsigned int col, char
 
 // ----------------------------------------------------------------- //
 
-char NodeMap_WorldMap::GetSpecificDataPoint(unsigned int row, unsigned int col)
+char NodeMap_WorldMap::GetSpecificDataPoint(const unsigned int row, const unsigned int col)
 {
 	if (!mNodeMapData || col >= mWidth || row >= mHeight || col < 0 || row < 0)
 		return '-';
 
 	return mNodeMapData[row][col];
+}
+
+// ----------------------------------------------------------------- //
+
+// position.x is column, and position.y is row
+char NodeMap_WorldMap::GetSpecificDataPoint(const Vector2D position)
+{
+	if (!mNodeMapData || position.x >= mWidth || position.y >= mHeight || position.x < 0 || position.y < 0)
+		return '-';
+
+	return mNodeMapData[(unsigned int)position.y][(unsigned int)position.x];
 }
 
 // ----------------------------------------------------------------- //
@@ -162,6 +173,35 @@ Vector2D NodeMap_WorldMap::GetSpawnPoint()
 	}
 
 	return Vector2D();
+}
+
+// ----------------------------------------------------------------- //
+
+bool NodeMap_WorldMap::GetValueIsLevel(const char value)
+{
+	// First check if the value is a walkable space
+	if (value == '.' || value == 'X' || value == '-' || value == 'S' || value == 'D')
+		return false;
+
+	// Otherwise return true
+	return true;
+}
+
+// ----------------------------------------------------------------- //
+
+bool NodeMap_WorldMap::GetPositionIsWalkable(const Vector2D position)
+{
+	if ((unsigned int)position.y < mHeight && (unsigned int)position.x < mWidth)
+	{
+		const char value = mNodeMapData[(unsigned int)position.y][(unsigned int)position.x];
+
+		if (value == '.' || value == 'X' || value == 'S' || GetValueIsLevel(value))
+			return true;
+
+		return false;
+	}
+	else
+		return false;
 }
 
 // ----------------------------------------------------------------- //

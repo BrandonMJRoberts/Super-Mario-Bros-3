@@ -34,7 +34,7 @@ GameScreen_WorldMap_SMB3::GameScreen_WorldMap_SMB3(SDL_Renderer* renderer)
 	// Now we need to setup the player character for the world map - default this to being mario
 	mPlayer     = new WorldMapMario("SDL_Mario_Project/Characters/Mario/World Map Mario/World Map Mario Sprite Sheet.png", 
 		                             renderer, 
-		                             mNodeMap->GetSpawnPoint() * RESOLUTION_OF_SPRITES,
+		                             mNodeMap->GetSpawnPoint(),
 		                             5, 
 		                             4,
 									 0.25f);
@@ -77,18 +77,32 @@ void GameScreen_WorldMap_SMB3::Render()
 ReturnDataFromGameScreen GameScreen_WorldMap_SMB3::Update(const float deltaTime, SDL_Event e)
 {
 	// Need to update the background layer for animations
-	if(mBackground)
+	if (mBackground)
 		mBackground->Update(deltaTime, e);
 
-	// Now we need to update the player
+	// Now we need to update the player for animations and movement decisions
 	if (mPlayer)
-		mPlayer->Update(deltaTime);
-	
-	// If the player presses a key then they load into the first level - debug testing
+	{
+		mPlayer->Update(deltaTime, *mNodeMap, e);
+	}
+
+	// If the player presses enter and is on a level then we want to enter the level
 	switch (e.type)
 	{
 		case SDL_KEYDOWN:
-			return ReturnDataFromGameScreen(SCREENS_SMB3::LEVEL, mNodeMap->GetLevelFilePath('0'));
+			switch (e.key.keysym.sym)
+			{
+			case SDLK_RETURN:
+				// Now we need to get if the player is on a level space, and if it is enter the level requested
+				char nodeMapValue = mNodeMap->GetSpecificDataPoint(mPlayer->GetGridPosition());
+
+				if (mNodeMap->GetValueIsLevel(nodeMapValue))
+				{
+					// Then return that we want to return into a level
+					return ReturnDataFromGameScreen(SCREENS_SMB3::LEVEL, mNodeMap->GetLevelFilePath(nodeMapValue));
+				}
+			break;
+			}
 		break; 
 	}
 	

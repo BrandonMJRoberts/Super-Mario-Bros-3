@@ -18,7 +18,7 @@ public:
 	~WorldMapMario() override;
 
 	void Render()                      override;
-	void Update(const float deltaTime) override;
+	void Update(const float deltaTime, NodeMap_WorldMap& nodeMapRef, SDL_Event e) override;
 };
 
 

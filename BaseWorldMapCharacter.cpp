@@ -2,6 +2,7 @@
 #include "GameManager_SMB3.h"
 
 #include "Constants_SMB3.h"
+#include "NodeMap_WorldMap.h"
 
 #include <SDL.h>
 
@@ -11,11 +12,14 @@ BaseWorldMapCharacter::BaseWorldMapCharacter(SDL_Renderer* renderer, const std::
 {
 	// Set the default values for the variables
 	mPosition                     = startPosition;
+	mMoveToPosition               = mPosition;
 	mAmountOfSpritesOnHeight      = spritesOnHeight;
 	mAmountOfSpritesOnWidth       = spritesOnWidth;
 	mTimeRemainingTillFrameChange = mTimePerAnimationFrame;
 	mSingleSpriteWidth            = 0;
 	mSingleSpriteHeight           = 0;
+	mMovementDirection            = MOVEMENT_DIRECTION::NONE;
+	mRequestedMovementDirection   = MOVEMENT_DIRECTION::NONE;
 
 	// Load in the sprite sheet
 	mSpriteSheet = new Texture2D(renderer);
@@ -52,17 +56,17 @@ void BaseWorldMapCharacter::Render()
 		SDL_Rect portionOfSpriteSheet, destRect;
 
 		// Get the correct position on the sprite sheet
-		portionOfSpriteSheet.x = (mCurrentFrame % mAmountOfSpritesOnWidth) * RESOLUTION_OF_SPRITES;
-		portionOfSpriteSheet.y = (mCurrentFrame / mAmountOfSpritesOnWidth) * DOUBLE_RESOLUTION_OF_SPRITES;
+		portionOfSpriteSheet.x = (mCurrentFrame % mAmountOfSpritesOnWidth) * mSingleSpriteWidth;
+		portionOfSpriteSheet.y = (mCurrentFrame / mAmountOfSpritesOnWidth) * mSingleSpriteHeight;
 		portionOfSpriteSheet.w = mSingleSpriteWidth;
 		portionOfSpriteSheet.h = mSingleSpriteHeight;
 
 		// First convert the actual position into a grid position
-		Vector2D renderOffset            = Commons_SMB3::ConvertFromGridPositionToRealPositionReturn(GameManager_SMB3::GetInstance()->GetWorldMapRenderOffset(), RESOLUTION_OF_SPRITES);
+		Vector2D gridRenderOffset            = GameManager_SMB3::GetInstance()->GetWorldMapRenderOffset();
 
 		// Calculate where we need to draw the character
-		destRect.x = (int)(mPosition.x + renderOffset.x);
-		destRect.y = (int)(mPosition.y + renderOffset.y - (mSingleSpriteHeight / 2));
+		destRect.x = int((mPosition.x + gridRenderOffset.x) * RESOLUTION_OF_SPRITES);
+		destRect.y = int((mPosition.y + gridRenderOffset.y) * RESOLUTION_OF_SPRITES) - (mSingleSpriteHeight / 2);
 		destRect.w = mSingleSpriteWidth;
 		destRect.h = mSingleSpriteHeight;
 
@@ -72,7 +76,7 @@ void BaseWorldMapCharacter::Render()
 
 // ------------------------------------------------------------------------------------------------------------------------------- //
 
-void BaseWorldMapCharacter::Update(const float deltaTime)
+void BaseWorldMapCharacter::Update(const float deltaTime, NodeMap_WorldMap& nodeMapRef, SDL_Event e)
 {
 	// Add the time that has progressed onto the animation timer, so that the character animates
 	mTimeRemainingTillFrameChange -= deltaTime;
@@ -87,7 +91,66 @@ void BaseWorldMapCharacter::Update(const float deltaTime)
 			mCurrentFrame = mStartFrame;
 	}
 
-	// Now handle input for moving around the map
+	// If the player is moving then move them in the direction they have requested - if they can go that way
+	if (GetIsMoving())
+	{
+		// Now move towards the taget position
+		Vector2D movementDir = (mMoveToPosition - mPosition);
+
+		double accuaracy = 0.05f;
+
+		if (movementDir.length() < accuaracy)
+		{
+			mPosition                   = mMoveToPosition;
+			mMovementDirection          = MOVEMENT_DIRECTION::NONE;
+			mRequestedMovementDirection = MOVEMENT_DIRECTION::NONE;
+			return;
+		}
+
+		// Now normalise the direction
+		movementDir.normalise();
+
+		// Now move in this direction
+		mPosition = mPosition + (movementDir * deltaTime * WORLD_MAP_PLAYER_MOVEMENT_SPEED);
+	}
+	else // The player can only start moving if they are not currently moving
+	{
+		// Check if the player has selected to move
+		CheckForMovementInput(e);
+
+		// Now check if we can turn to this direction
+		if (CanTurnToDirection(mRequestedMovementDirection, nodeMapRef))
+		{
+			mMovementDirection          = mRequestedMovementDirection;
+			mRequestedMovementDirection = MOVEMENT_DIRECTION::NONE;
+
+			// Set the move to position
+			switch (mMovementDirection)
+			{
+			case MOVEMENT_DIRECTION::RIGHT:
+				mMoveToPosition = Vector2D(double(int(mPosition.x)) + 1, int(mPosition.y));
+				mPosition.y     = (int)mPosition.y;
+			break;
+
+			case MOVEMENT_DIRECTION::LEFT:
+				mMoveToPosition = Vector2D(double(int(mPosition.x)) - 1, int(mPosition.y));
+				mPosition.y     = (int)mPosition.y;
+			break;
+
+			case MOVEMENT_DIRECTION::UP:
+				mMoveToPosition = Vector2D(int(mPosition.x), double(int(mPosition.y)) - 1);
+				mPosition.x     = (int)mPosition.x;
+			break;
+
+			case MOVEMENT_DIRECTION::DOWN:
+				mMoveToPosition = Vector2D(int(mPosition.x), double(int(mPosition.y)) + 1);
+				mPosition.x     = (int)mPosition.x;
+			break;
+			}
+		}
+		else
+			mRequestedMovementDirection = MOVEMENT_DIRECTION::NONE;
+	}
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------- //
@@ -153,3 +216,76 @@ void BaseWorldMapCharacter::ChangePowerUpState(CHARACTER_MAP_POWER_UP_STATE newS
 		}
 	}
 }
+
+// ------------------------------------------------------------------------------------------------------------------------------- //
+
+void BaseWorldMapCharacter::CheckForMovementInput(SDL_Event e)
+{
+	// Now handle input for moving around the map
+	switch (e.type)
+	{
+	case SDL_KEYDOWN:
+		switch (e.key.keysym.sym)
+		{
+		case SDLK_d:
+			mRequestedMovementDirection = MOVEMENT_DIRECTION::RIGHT;
+		break;
+
+		case SDLK_w:
+			mRequestedMovementDirection = MOVEMENT_DIRECTION::UP;
+		break;
+
+		case SDLK_s:
+			mRequestedMovementDirection = MOVEMENT_DIRECTION::DOWN;
+		break;
+
+		case SDLK_a:
+			mRequestedMovementDirection = MOVEMENT_DIRECTION::LEFT;
+		break;
+		}
+	break;
+
+	default:
+	break;
+	}
+}
+
+// ------------------------------------------------------------------------------------------------------------------------------- //
+
+bool BaseWorldMapCharacter::CanTurnToDirection(MOVEMENT_DIRECTION newDir, NodeMap_WorldMap& nodeMapRef)
+{
+	switch (newDir)
+	{
+	case MOVEMENT_DIRECTION::RIGHT:
+		if (nodeMapRef.GetPositionIsWalkable(Vector2D(int(mPosition.x + 1), int(mPosition.y))))
+		{
+			return true;
+		}
+	break;
+
+	case MOVEMENT_DIRECTION::LEFT:
+		if (nodeMapRef.GetPositionIsWalkable(Vector2D(int(mPosition.x - 1), int(mPosition.y))))
+		{
+			return true;
+		}
+	break;
+
+	case MOVEMENT_DIRECTION::UP:
+		if (nodeMapRef.GetPositionIsWalkable(Vector2D(int(mPosition.x), double(int(mPosition.y)) - 1)))
+		{
+			return true;
+		}
+	break;
+
+	case MOVEMENT_DIRECTION::DOWN:
+		if (nodeMapRef.GetPositionIsWalkable(Vector2D(int(mPosition.x), double(int(mPosition.y)) + 1)))
+		{
+			return true;
+		}
+	break;
+	}
+
+	return false;
+}
+
+// ------------------------------------------------------------------------------------------------------------------------------- //
