@@ -11,11 +11,12 @@
 
 // --------------------------------------------------------------------------------------------------------------------------- //
 
-GameScreenLevel_SMB3::GameScreenLevel_SMB3(SDL_Renderer* renderer, const char* levelFilePath, const bool playingAsMario) : GameScreen_SMB3(renderer)
+GameScreenLevel_SMB3::GameScreenLevel_SMB3(SDL_Renderer* renderer
+	, const char* levelFilePath 
+	, const bool  playingAsMario) 
+	: GameScreen_SMB3(renderer)
+	, mCurrentLevelAreaID(0)    // Default the level area to being zero in case there is not one named 'Overworld'
 {
-	// Default the level area to being zero in case there is not one named 'Overworld'
-	mCurrentLevelAreaID = 0;
-
 	// Setup the lookup table
 	InitialiseLookUpTable();
 

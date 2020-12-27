@@ -8,11 +8,13 @@
 
 // --------------------------------------------------------------------------------- //
 
-WorldMapBorder::WorldMapBorder(unsigned int width, unsigned int height, SDL_Renderer* renderer)
+WorldMapBorder::WorldMapBorder(unsigned int width
+, unsigned int  height
+, SDL_Renderer* renderer)
+: mWidth(width)
+, mHeight(height)
 {
-	mWidth  = width;
-	mHeight = height;
-
+	// Create the sprite sheet
 	mSpriteSheet = new Texture2D(renderer);
 	if (!mSpriteSheet->LoadFromFile("SDL_Mario_Project/Worlds/BorderSprites.png"))
 	{

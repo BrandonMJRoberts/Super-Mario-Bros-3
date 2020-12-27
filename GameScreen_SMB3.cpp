@@ -4,16 +4,16 @@
 
 // --------------------------------------------------------------------------- //
 
-GameScreen_SMB3::GameScreen_SMB3()
+GameScreen_SMB3::GameScreen_SMB3() : mRenderer(nullptr)
 {
-	mRenderer = nullptr;
+	
 }
 
 // --------------------------------------------------------------------------- //
 
-GameScreen_SMB3::GameScreen_SMB3(const SDL_Renderer* renderer)
+GameScreen_SMB3::GameScreen_SMB3(const SDL_Renderer* renderer) : mRenderer(renderer)
 {
-	mRenderer = renderer;
+
 }
 
 // --------------------------------------------------------------------------- //

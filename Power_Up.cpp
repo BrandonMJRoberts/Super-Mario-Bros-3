@@ -3,50 +3,48 @@
 
 // --------------------------------------------------------------------------------------------------------- //
 
-PowerUp::PowerUp()
+PowerUp::PowerUp() 
+: mVelocity(0, 0)
+, mPosition(0, 0)
+, mRenderer(nullptr)
+, mSprite(nullptr)
+, mPowerUpType(POWER_UP_TYPE::NONE)
+, mIsFacingRight(true)
+, mIsUsingGravity(false)
+, mCurrentSpriteIndex(0)
+, mFinalAnimationSpriteIndex(0)
+, mStartAnimationSpriteIndex(0)
+, mHeight(0)
+, mWidth(0)
 {
-	// Setting the default starting values
-	mVelocity		           = Vector2D();
-	mVelocity		           = Vector2D();
 
-	mRenderer		           = nullptr;
-	mSprite			           = nullptr;
-
-	mPowerUpType               = POWER_UP_TYPE::NONE;
-
-	mIsFacingRight             = true;
-	mIsUsingGravity			   = false;
-
-	mCurrentSpriteIndex		   = 0;
-	mFinalAnimationSpriteIndex = 0;
-	mStartAnimationSpriteIndex = 0;
-
-	mHeight = 0;
-	mWidth  = 0;
 }
 
 // --------------------------------------------------------------------------------------------------------- //
 
 PowerUp::PowerUp(SDL_Renderer* renderer, const Vector2D startPosition, const POWER_UP_TYPE startPowerUpType, const Vector2D startVelocity)
+: mVelocity(startVelocity)
+, mPosition(startPosition)
+, mRenderer(renderer)
+, mSprite(nullptr)
+, mPowerUpType(startPowerUpType)
+, mIsFacingRight(true)
+, mIsUsingGravity(false)
+, mCurrentSpriteIndex(0)
+, mFinalAnimationSpriteIndex(0)
+, mStartAnimationSpriteIndex(0)
+, mHeight(32)
+, mWidth(32)
 {
-	// Setting the starting values
-	mVelocity      = startVelocity;
-	mPosition      = startPosition;
-	mRenderer	   = renderer;
-	mPowerUpType   = startPowerUpType;
-	mIsFacingRight = true;
-	mWidth         = 32; // May need to change in the future
-	mHeight        = 32; // May need to change in the future
-
 	// Setting this power up's specific data
 	switch (startPowerUpType)
 	{
 	case POWER_UP_TYPE::NONE:
-		mCurrentSpriteIndex = 0;
+		mCurrentSpriteIndex        = 0;
 		mFinalAnimationSpriteIndex = 0;
 		mStartAnimationSpriteIndex = 0;
 
-		mIsUsingGravity = false;
+		mIsUsingGravity            = false;
 	break;
 
 	case POWER_UP_TYPE::FIRE_FLOWER:

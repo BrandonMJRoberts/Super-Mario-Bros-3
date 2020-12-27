@@ -8,13 +8,15 @@
 
 // -------------------------------------------------------------------------------------------------------------------------- //
 
-ObjectLayer::ObjectLayer(std::string filePathToDataFile, SDL_Renderer* renderer)
+ObjectLayer::ObjectLayer(std::string filePathToDataFile, 
+	                     SDL_Renderer* renderer)
+: mRenderer(renderer)
 {
-	mRenderer = renderer;
-
+	// Load in the data from the file
 	if (!LoadInDataFromFile(filePathToDataFile))
 	{
 		std::cout << "Failed to load in the objects for this level area: " << filePathToDataFile << std::endl;
+		return;
 	}
 }
 

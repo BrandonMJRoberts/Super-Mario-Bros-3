@@ -9,10 +9,9 @@
 // ----------------------------------------------------------------- //
 
 NodeMap_WorldMap::NodeMap_WorldMap(const std::string filePath)
+: mWidth(0)
+, mHeight(0)
 {
-	mWidth  = 0;
-	mHeight = 0;
-
 	// Load in the node data stored in the file
 	LoadInDataFromFile(filePath);
 }

@@ -12,17 +12,20 @@
 
 // --------------------------------------------------------------------------------------------------------------------------- //
 
-BackgroundLayer::BackgroundLayer(std::string filePathToDataFile, std::string filePathToSpriteSheet, std::map<char, unsigned int> lookupConversion, SDL_Renderer* renderer, Vector2D offsetFromTopLeft)
+BackgroundLayer::BackgroundLayer(std::string filePathToDataFile 
+	, std::string                  filePathToSpriteSheet 
+	, std::map<char, unsigned int> lookupConversion 
+	, SDL_Renderer*                renderer
+	, Vector2D                     offsetFromTopLeft) 
+	: mLevelHeight(0)
+	, mLevelWidth(0)
+	, mLevelEndType(-1)
+	, mAmountOfSpritesOnSpriteSheetWidth(0)
+	, mAmountOfSpritesOnSpriteSheetHeight(0)
+	, mFilePathToSpriteSheet(filePathToSpriteSheet.c_str())
+	, mBackgroundSpriteIndexStore(nullptr)
 {
-	mLevelHeight					   =  0;
-	mLevelWidth						   =  0;
-	mLevelEndType					   = -1;
-	mAountOfSpritesOnSpriteSheetWidth  =  0;
-	mAountOfSpritesOnSpriteSheetHeight =  0;
-
-	mFilePathToSpriteSheet             = filePathToSpriteSheet.c_str();
-	mBackgroundSpriteIndexStore        = nullptr;
-
+	// Load in the sprite sheet
 	mSpriteSheet = new Texture2D(renderer);
 	if (!mSpriteSheet->LoadFromFile(mFilePathToSpriteSheet))
 	{
@@ -30,18 +33,14 @@ BackgroundLayer::BackgroundLayer(std::string filePathToDataFile, std::string fil
 		return;
 	}
 
+	// Load in the data from the file
 	if (!LoadInDataFromFile(filePathToDataFile, lookupConversion))
 	{
 		std::cout << "Failed to load in the background data from the file, check the formatting and that the file exists." << std::endl;
 	}
 
-	// This offset is pixels into the window, not the rendering offset of blocks
+	// This offset is grid distance across the infinate virtual screen - eg. The ending of a level will have a large offset (about 150) whereas the main level has an offset of 0
 	mOffsetFromTopLeft                = offsetFromTopLeft;
-
-	//if (mOffsetFromTopLeft.y != 0)
-	//{
-	//	mOffsetFromTopLeft.y -= mLevelHeight;
-	//}
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //
@@ -154,17 +153,17 @@ bool BackgroundLayer::LoadInDataFromFile(std::string filePath, std::map<char, un
 			continue;
 		}
 
-		if (mAountOfSpritesOnSpriteSheetWidth == 0)
+		if (mAmountOfSpritesOnSpriteSheetWidth == 0)
 		{
 			ssLine = std::stringstream(line);
-			ssLine >> mAountOfSpritesOnSpriteSheetWidth;
+			ssLine >> mAmountOfSpritesOnSpriteSheetWidth;
 			continue;
 		}
 
-		if (mAountOfSpritesOnSpriteSheetHeight == 0)
+		if (mAmountOfSpritesOnSpriteSheetHeight == 0)
 		{
 			ssLine = std::stringstream(line);
-			ssLine >> mAountOfSpritesOnSpriteSheetHeight;
+			ssLine >> mAmountOfSpritesOnSpriteSheetHeight;
 			continue;
 		}
 
@@ -255,8 +254,8 @@ void BackgroundLayer::Render()
 
 				// Now we are correctly looping through the correct area of the grid to be rendered
 				// Now we just need to render the correct sprite in the correct position
-				portionOfSpriteSheet.x =     (mBackgroundSpriteIndexStore[row][col] % mAountOfSpritesOnSpriteSheetWidth)  * RESOLUTION_OF_SPRITES;
-				portionOfSpriteSheet.y = (int(mBackgroundSpriteIndexStore[row][col] / mAountOfSpritesOnSpriteSheetWidth)) * RESOLUTION_OF_SPRITES;
+				portionOfSpriteSheet.x =     (mBackgroundSpriteIndexStore[row][col] % mAmountOfSpritesOnSpriteSheetWidth)  * RESOLUTION_OF_SPRITES;
+				portionOfSpriteSheet.y = (int(mBackgroundSpriteIndexStore[row][col] / mAmountOfSpritesOnSpriteSheetWidth)) * RESOLUTION_OF_SPRITES;
 
 				// Render the sprite in the correct position
 				mSpriteSheet->Render(portionOfSpriteSheet, destRect);

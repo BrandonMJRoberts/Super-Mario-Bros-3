@@ -5,18 +5,16 @@
 // ------------------------------------------------------------------------ //
 
 BaseObject_SMB3::BaseObject_SMB3(const SDL_Renderer* renderer)
+: mCurrentAnimationIndex(0)
+, mFirstAnimationIndex(0)
+, mLastAnimationIndex(0)
+, mAmountOfSpritesHeight(0)
+, mAmountOfSpritesWidth(0)
+, mRenderer(nullptr)
+, mSpriteSheet(nullptr)
+, mIsCurrentlySpawnedInLevel(false)
 {
-	// Set the default values
-	mCurrentAnimationIndex    = 0;
-	mFirstAnimationIndex      = 0;
-	mLastAnimationIndex       = 0;
-	mAmountOfSpritesWidth     = 0;
-	mAmountOfSpritesHeight    = 0;
 
-	mRenderer                 = nullptr;
-	mSpriteSheet              = nullptr;
-
-	mIsCurrentlySpawnedInLevel = false;
 }
 
 // ------------------------------------------------------------------------ //

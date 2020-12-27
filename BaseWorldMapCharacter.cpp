@@ -8,21 +8,29 @@
 
 // ------------------------------------------------------------------------------------------------------------------------------- //
 
-BaseWorldMapCharacter::BaseWorldMapCharacter(SDL_Renderer* renderer, const std::string filePathToSpriteSheet, const Vector2D startPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, const float timePerAnimationFrame) : mTimePerAnimationFrame(timePerAnimationFrame)
+BaseWorldMapCharacter::BaseWorldMapCharacter(SDL_Renderer* renderer
+	, const std::string  filePathToSpriteSheet
+	, const Vector2D     startPosition
+	, const unsigned int spritesOnWidth
+	, const unsigned int spritesOnHeight
+	, const float        timePerAnimationFrame)
+	: mTimePerAnimationFrame(timePerAnimationFrame)
+	, mPosition(startPosition)
+	, mMoveToPosition(mPosition)
+	, mAmountOfSpritesOnWidth(spritesOnWidth)
+	, mAmountOfSpritesOnHeight(spritesOnHeight)
+	, mTimeRemainingTillFrameChange(timePerAnimationFrame)
+	, mSingleSpriteWidth(0)
+	, mSingleSpriteHeight(0)
+	, mMovementDirection(MOVEMENT_DIRECTION::NONE)
+	, mRequestedMovementDirection(MOVEMENT_DIRECTION::NONE)
+	, mTimeTillNextMove(MOVEMENT_DELAY_WORLD_MAP)
+	, mButtonIsPressed(false)
+	, mCurrentPowerUpState(CHARACTER_MAP_POWER_UP_STATE::TANOOKI)
+	, mCurrentFrame(0)
+	, mEndFrame(0)
+	, mStartFrame(0)
 {
-	// Set the default values for the variables
-	mPosition                     = startPosition;
-	mMoveToPosition               = mPosition;
-	mAmountOfSpritesOnHeight      = spritesOnHeight;
-	mAmountOfSpritesOnWidth       = spritesOnWidth;
-	mTimeRemainingTillFrameChange = mTimePerAnimationFrame;
-	mSingleSpriteWidth            = 0;
-	mSingleSpriteHeight           = 0;
-	mMovementDirection            = MOVEMENT_DIRECTION::NONE;
-	mRequestedMovementDirection   = MOVEMENT_DIRECTION::NONE;
-	mTimeTillNextMove             = MOVEMENT_DELAY_WORLD_MAP;
-	mButtonIsPressed              = false;
-
 	// Load in the sprite sheet
 	mSpriteSheet = new Texture2D(renderer);
 	if (!mSpriteSheet->LoadFromFile(filePathToSpriteSheet))
@@ -35,8 +43,8 @@ BaseWorldMapCharacter::BaseWorldMapCharacter(SDL_Renderer* renderer, const std::
 	mSingleSpriteWidth  = mSpriteSheet->GetWidth() / mAmountOfSpritesOnWidth;
 	mSingleSpriteHeight = mSpriteSheet->GetHeight() / mAmountOfSpritesOnHeight;
 
-	mCurrentPowerUpState = CHARACTER_MAP_POWER_UP_STATE::FROG;
-	ChangePowerUpState(CHARACTER_MAP_POWER_UP_STATE::LEAF);
+	// Set the starting state to be small mario
+	ChangePowerUpState(CHARACTER_MAP_POWER_UP_STATE::SMALL);
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------- //

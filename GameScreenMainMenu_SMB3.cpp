@@ -25,8 +25,6 @@ void GameScreenMainMenu_SMB3::Render()
 
 ReturnDataFromGameScreen GameScreenMainMenu_SMB3::Update(const float deltaTime, SDL_Event e)
 {
-
-
 	return ReturnDataFromGameScreen();
 }
 

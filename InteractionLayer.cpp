@@ -12,28 +12,32 @@
 
 // --------------------------------------------------------------------------------------------------------------------------- //
 
-InteractableLayer::InteractableLayer(std::string filePathToDataFile, std::string filePathToSpriteSheet, std::map<char, unsigned int> lookupConversion, SDL_Renderer* renderer, Vector2D offsetFromTopLeft)
+InteractableLayer::InteractableLayer(std::string filePathToDataFile
+, std::string                  filePathToSpriteSheet
+, std::map<char, unsigned int> lookupConversion
+, SDL_Renderer*                renderer
+, Vector2D                     offsetFromTopLeft) 
+: mAmountOfSpritesInDataFile(0)
+, mLevelHeight(0)
+, mLevelWidth(0)
+, mAmountOfSpritesOnSpriteSheetHeight(0)
+, mAmountOfSpritesOnSpriteSheetWidth(0)
+, mOffsetFromTopLeft(offsetFromTopLeft)
 {
-	mAmountOfSpritesInDataFile			= 0;
-	mLevelHeight						= 0;
-	mLevelWidth						    = 0;
-	mAmountOfSpritesOnSpriteSheetWidth  = 0;
-	mAmountOfSpritesOnSpriteSheetHeight = 0;
-
+	// Load in the data from the file
 	if(!LoadInDataFromFile(filePathToDataFile, lookupConversion))
 	{
 		std::cout << "Failed to load the Interaction layer data: " << filePathToDataFile << std::endl;
 		return;
 	}
 
+	// Create the sprite sheet 
 	mSpriteSheet = new Texture2D(renderer);
 	if (!mSpriteSheet->LoadFromFile(filePathToSpriteSheet))
 	{
 		std::cout << "Failed to create the sprite sheet for the interaction layer: " << filePathToSpriteSheet << std::endl;
 		return;
 	}
-
-	mOffsetFromTopLeft = offsetFromTopLeft;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //

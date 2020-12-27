@@ -10,15 +10,17 @@
 
 // ----------------------------------------------------------------- //
 
-BackgroundLayer_WorldMap::BackgroundLayer_WorldMap(const std::string filePath, SDL_Renderer* renderer, std::map<char, unsigned int> conversionTable)
+BackgroundLayer_WorldMap::BackgroundLayer_WorldMap(const std::string filePath
+, SDL_Renderer* renderer
+, std::map<char, unsigned int> conversionTable)
+: mWidth(0)
+, mHeight(0)
+, mSpritesOnSpriteSheetHeight(0)
+, mSpritesOnSpriteSheetWidth(0)
+, mBackgroundIndexStore(nullptr)
+, mMapPortionOffset(0, 0)           // The offset into the index store, for scrolling of the background without moving the actual render positions
+, mSpriteSheet(nullptr)
 {
-	// Default the variable values
-	mWidth						= 0;
-	mHeight					    = 0;
-	mSpritesOnSpriteSheetWidth  = 0;
-	mSpritesOnSpriteSheetHeight = 0;
-	mBackgroundIndexStore       = nullptr;
-
 	// First load in the sprite sheet
 	mSpriteSheet = new Texture2D(renderer);
 	if (!mSpriteSheet->LoadFromFile(filePath + "/BackgroundSprites.png"))
@@ -29,9 +31,6 @@ BackgroundLayer_WorldMap::BackgroundLayer_WorldMap(const std::string filePath, S
 
 	// Now we need to load in the data from the file associated with this world
 	LoadInDataFromFile(filePath + "/Background Layer.txt", conversionTable);
-
-	// The offset into the index store, for scrolling of the background without moving the actual render positions
-	mMapPortionOffset = Vector2D(0, 0);
 }
 
 // ----------------------------------------------------------------- //

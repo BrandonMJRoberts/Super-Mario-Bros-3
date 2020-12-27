@@ -34,11 +34,8 @@ private:
 	unsigned int   mLevelHeight; // Read in from the data file
 	int            mLevelEndType;
 
-	unsigned int   mSpriteOnSpriteSheetWidth;  // Read in from the data file
-	unsigned int   mSpriteOnSpriteSheetHeight; // Read in from the data file
-
-	unsigned int   mAountOfSpritesOnSpriteSheetWidth;
-	unsigned int   mAountOfSpritesOnSpriteSheetHeight;
+	unsigned int   mAmountOfSpritesOnSpriteSheetWidth;
+	unsigned int   mAmountOfSpritesOnSpriteSheetHeight;
 
 	Vector2D       mOffsetFromTopLeft;
 };

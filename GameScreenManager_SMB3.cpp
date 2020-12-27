@@ -9,21 +9,16 @@
 
 // ------------------------------------------------------------------------ //
 
-GameScreenManager_SMB3::GameScreenManager_SMB3()
+GameScreenManager_SMB3::GameScreenManager_SMB3() : mRenderer(nullptr), mCurrentScreen(nullptr)
 {
-	mRenderer      = nullptr;
-	mCurrentScreen = nullptr;
+	
 }
 
 // ------------------------------------------------------------------------ //
 
-GameScreenManager_SMB3::GameScreenManager_SMB3(SDL_Renderer* renderer)
+GameScreenManager_SMB3::GameScreenManager_SMB3(SDL_Renderer* renderer) : mRenderer(renderer), mCurrentScreen(nullptr)
 {
-	mRenderer      = renderer;
-	mCurrentScreen = nullptr;
-
 	// Default to being in the main menu
-	//ChangeScreen(SCREENS_SMB3::LEVEL, "SDL_Mario_Project/Levels/World 1/Level 1");
 	ChangeScreen(SCREENS_SMB3::WORLD_MAP);
 }
 
