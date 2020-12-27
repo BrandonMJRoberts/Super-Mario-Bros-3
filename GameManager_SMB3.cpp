@@ -20,7 +20,7 @@ GameManager_SMB3::GameManager_SMB3()
 
 	mCurrentWorldIndex  = 1; // Start in world 1
 
-	mRenderReferencePoint = Vector2D();
+	mRenderReferencePoint = Vector2D(0, 10);
 	mWorldMapOffsetPoint  = Vector2D(1, 1);
 
 	mScrollingRight       = false;

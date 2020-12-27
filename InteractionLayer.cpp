@@ -63,25 +63,21 @@ InteractableLayer::~InteractableLayer()
 
 void InteractableLayer::Render()
 {
+	// Only render if there is a sprite sheet to render from
 	if (mSpriteSheet)
 	{
-		// For rendering we need to loop through the correct area around the player and render the correct interactble object in the correct position
-
 		// First convert the actual position into a grid position
-		Vector2D gridReferencePoint      = Commons_SMB3::ConvertFromRealPositionToGridPositionReturn(GameManager_SMB3::GetInstance()->GetRenderReferencePoint(), RESOLUTION_OF_SPRITES);
-		Vector2D interGridPositionOffset = Vector2D(((int(gridReferencePoint.x) - gridReferencePoint.x) * RESOLUTION_OF_SPRITES), ((int(gridReferencePoint.y) - gridReferencePoint.y) * RESOLUTION_OF_SPRITES));
+		Vector2D gridReferencePoint      = GameManager_SMB3::GetInstance()->GetRenderReferencePoint();
 
-		SDL_Rect portionOfSpriteSheet, destRect;
+		int xLerp = (int(gridReferencePoint.x) - gridReferencePoint.x) * RESOLUTION_OF_SPRITES;
+		int yLerp = (int(gridReferencePoint.y) - gridReferencePoint.y) * RESOLUTION_OF_SPRITES;
 
-		portionOfSpriteSheet.x = 0;
-		portionOfSpriteSheet.y = 0;
-		portionOfSpriteSheet.w = RESOLUTION_OF_SPRITES;
-		portionOfSpriteSheet.h = RESOLUTION_OF_SPRITES;
+		SDL_Rect portionOfSpriteSheet{ 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES };
 
-		destRect.x			   = (int)interGridPositionOffset.x + ((int)mOffsetFromTopLeft.x * RESOLUTION_OF_SPRITES);
-		destRect.y			   = (int)interGridPositionOffset.y + ((int)mOffsetFromTopLeft.y * RESOLUTION_OF_SPRITES);
-		destRect.w			   = RESOLUTION_OF_SPRITES;
-		destRect.h			   = RESOLUTION_OF_SPRITES;
+		SDL_Rect destRect            { xLerp + (mOffsetFromTopLeft.x * RESOLUTION_OF_SPRITES), 
+			                           yLerp + (mOffsetFromTopLeft.y * RESOLUTION_OF_SPRITES), 
+			                           RESOLUTION_OF_SPRITES, 
+			                           RESOLUTION_OF_SPRITES };
 
 		// Loop through the internal store of sprite indexes and render the correct ones in the correct positions
 		for (int row = (int)(mOffsetFromTopLeft.y + gridReferencePoint.y); row < (int)gridReferencePoint.y + mOffsetFromTopLeft.y + BACKGROUND_SPRITE_RENDER_HEIGHT; row++)
@@ -101,16 +97,21 @@ void InteractableLayer::Render()
 				// Now we just need to render the correct sprite in the correct position
 				if (mInteractionLayerDataStore[row][col] != 150)
 				{
-					portionOfSpriteSheet.x = (mInteractionLayerDataStore[row][col] % mAmountOfSpritesOnSpriteSheetWidth) * RESOLUTION_OF_SPRITES;
-					portionOfSpriteSheet.y = ((int)(mInteractionLayerDataStore[row][col] / mAmountOfSpritesOnSpriteSheetWidth)) * RESOLUTION_OF_SPRITES;
+					portionOfSpriteSheet.x =     (mInteractionLayerDataStore[row][col] % mAmountOfSpritesOnSpriteSheetWidth)  * RESOLUTION_OF_SPRITES;
+					portionOfSpriteSheet.y = (int(mInteractionLayerDataStore[row][col] / mAmountOfSpritesOnSpriteSheetWidth)) * RESOLUTION_OF_SPRITES;
 
 					mSpriteSheet->Render(portionOfSpriteSheet, destRect);
 				}
+
+				// Move the x-axis along 
 				destRect.x += RESOLUTION_OF_SPRITES;
 			}
 
+			// move the y-axis along
 			destRect.y += RESOLUTION_OF_SPRITES;
-			destRect.x = (int)interGridPositionOffset.x + int(mOffsetFromTopLeft.x * RESOLUTION_OF_SPRITES);
+
+			// Reset the xPosition
+			destRect.x = xLerp + int(mOffsetFromTopLeft.x * RESOLUTION_OF_SPRITES);
 		}
 	}
 }
