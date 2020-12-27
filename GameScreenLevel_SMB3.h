@@ -17,7 +17,7 @@ class GameScreenLevel_SMB3 final : public GameScreen_SMB3
 {
 public:
 	GameScreenLevel_SMB3() = delete;
-	GameScreenLevel_SMB3(SDL_Renderer* renderer, const char* levelFilePath, bool playingAsMario);
+	GameScreenLevel_SMB3(SDL_Renderer* renderer, const char* levelFilePath, const bool playingAsMario);
 	~GameScreenLevel_SMB3();
 
 	void Render() override;

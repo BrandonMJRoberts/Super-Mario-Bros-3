@@ -133,13 +133,14 @@ std::string GameManager_SMB3::GetCurrentWorldMapFilePath()
 
 void GameManager_SMB3::Update(const float deltaTime)
 {
+	// Add onto the reference point the amount that has progressed, in terms of grid position, not pixel position
 	if (mScrollingLeft)
 	{
-		AddToReferencePoint(Vector2D(-RESOLUTION_OF_SPRITES * (double)deltaTime * mScrollingSpeedMultiplier, 0));
+		AddToReferencePoint(Vector2D((double)deltaTime * -1 * mScrollingSpeedMultiplier, 0));
 	}
 	else if (mScrollingRight)
 	{
-		AddToReferencePoint(Vector2D(RESOLUTION_OF_SPRITES * (double)deltaTime * mScrollingSpeedMultiplier, 0));
+		AddToReferencePoint(Vector2D((double)deltaTime * mScrollingSpeedMultiplier, 0));
 	}
 }
 

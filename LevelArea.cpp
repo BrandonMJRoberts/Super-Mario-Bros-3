@@ -18,9 +18,9 @@ LevelAreas::LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Rende
 	mInteractableLayer = new InteractableLayer(areaFilePath + "/Interactable Layer.txt",   areaFilePath + "/InteractableSprites.png", ConversionFromCharToIntIndexMap, renderer, Vector2D());
 	mObjectLayer       = new ObjectLayer(areaFilePath       + "/Object Layer.txt",         renderer);
 	
-	if (mBackgroundLayer->GetLevelAreaType() >= 0)
+	if (mBackgroundLayer->GetLevelEndingType() >= 0)
 	{
-		std::string filePath = "SDL_Mario_Project/Levels/LevelEndingSections/Section" + std::to_string(mBackgroundLayer->GetLevelAreaType());
+		std::string filePath = "SDL_Mario_Project/Levels/LevelEndingSections/Section" + std::to_string(mBackgroundLayer->GetLevelEndingType());
 		mEndingSection       = new BackgroundLayer(filePath + "/Background Layer.txt", filePath + "/BackgroundSprites.png", ConversionFromCharToIntIndexMap, renderer, Vector2D(mBackgroundLayer->GetLevelWidth() - 2, 0));
 	}
 	else
@@ -89,7 +89,7 @@ std::string LevelAreas::CalculateNameOfArea(std::string areaFilePath)
 
 void LevelAreas::Render()
 {
-	// Render in this order: Background, interaction, object
+	// Render in this order: Background, Ending, interaction, object
 	if (mBackgroundLayer)
 		mBackgroundLayer->Render();
 

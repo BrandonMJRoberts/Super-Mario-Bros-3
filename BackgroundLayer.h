@@ -17,7 +17,7 @@ public:
 	~BackgroundLayer();
 
 	void         Render();
-	int          GetLevelAreaType()		 { return mLevelEndType; }
+	int          GetLevelEndingType()    { return mLevelEndType; }
 	unsigned int GetLevelWidth()         { return mLevelWidth;   }
 	unsigned int GetLevelHeight()        { return mLevelHeight; }
 

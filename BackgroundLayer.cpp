@@ -220,105 +220,56 @@ bool BackgroundLayer::LoadInDataFromFile(std::string filePath, std::map<char, un
 
 void BackgroundLayer::Render()
 {
-	// First check if the sprite sheet has been loaded correctly
-	if (mSpriteSheet)
-	{
-		// Setup the render rects
-		SDL_Rect portionOfSpriteSheet{ 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES };
-		SDL_Rect destRect{ 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES };
+	// offsetFromTopLeft is a physical screen space rendering position and is needed for the ending section to render at the far right of the level and not over the main level
+	// gridReferencePoint is the player's position - as we need to render what is around the player
 
-		// Now we need to loop through the level - rendering what is needed to be seen
-		for (unsigned int row = 0; row < mLevelHeight; row++)
-		{
-			// Now loop through all of the columns that need to be rendered
-			for (unsigned int col = 0; col < mLevelWidth; col++)
-			{
-				// Now find the correct portion of the sprite sheet that needs rendering
-				portionOfSpriteSheet.x =     (mBackgroundSpriteIndexStore[row][col] % mAountOfSpritesOnSpriteSheetWidth) * RESOLUTION_OF_SPRITES;
-				portionOfSpriteSheet.y = (int(mBackgroundSpriteIndexStore[row][col] / mAountOfSpritesOnSpriteSheetWidth)) * RESOLUTION_OF_SPRITES;
-
-				// Now render the correct sprite in the correct position
-				mSpriteSheet->Render(portionOfSpriteSheet, destRect);
-
-				destRect.x += RESOLUTION_OF_SPRITES;
-			}
-
-			destRect.x = 0;
-			destRect.y += RESOLUTION_OF_SPRITES;
-		}
-	}
-	else
-		std::cout << "No sprite sheet loaded for the level background!" << std::endl;
-
-
-/*
 	// If there is a sprite sheet then we can render
 	if (mSpriteSheet)
 	{
-		// First convert the actual position into a grid position
-		Vector2D gridReferencePoint = Commons_SMB3::ConvertFromRealPositionToGridPositionReturn(GameManager_SMB3::GetInstance()->GetRenderReferencePoint(), RESOLUTION_OF_SPRITES);
+		// The grid reference point is a grid position, not a real position
+		Vector2D gridReferencePoint   = GameManager_SMB3::GetInstance()->GetRenderReferencePoint();
 
-		// Quick outs so we dont process anything we dont need to
-		if (gridReferencePoint.x > mOffsetFromTopLeft.x + mLevelWidth  + BACKGROUND_SPRITE_RENDER_WIDTH     || // To the far right of the section
-			gridReferencePoint.x < mOffsetFromTopLeft.x                - BACKGROUND_SPRITE_RENDER_WIDTH	    || // To the far left of the section
-			gridReferencePoint.y > mOffsetFromTopLeft.y                + BACKGROUND_SPRITE_RENDER_HEIGHT	|| // Below the section
-			gridReferencePoint.y < mOffsetFromTopLeft.y - mLevelHeight - BACKGROUND_SPRITE_RENDER_HEIGHT) // Above the section
+		int xLerp = int(((int)gridReferencePoint.x - gridReferencePoint.x) * RESOLUTION_OF_SPRITES);
+		int yLerp = int(((int)gridReferencePoint.y - gridReferencePoint.y) * RESOLUTION_OF_SPRITES);
+
+		SDL_Rect portionOfSpriteSheet {0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES};
+		SDL_Rect destRect             {xLerp, yLerp + int(mOffsetFromTopLeft.y * RESOLUTION_OF_SPRITES), RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES };
+
+		// Loop through the internal store of sprite indexes and render the correct ones in the correct positions
+		// Must be a signed int to allow for negative values, and negative scrolling
+		for (int row = int(gridReferencePoint.y); row < gridReferencePoint.y + BACKGROUND_SPRITE_RENDER_HEIGHT; row++)
 		{
-			return;
-		}
-		else
-		{
+			// Checks to remove scope errors and to make sure we are only rendering what is on the screen
+			if (row >= int(mLevelHeight) || row < 0)
+				continue;
 
-			// Now get the distance from this position to the next one, so that we can scroll smoothly
-			Vector2D interGridPositionOffset = Vector2D(((int(gridReferencePoint.x) - gridReferencePoint.x) * RESOLUTION_OF_SPRITES), ((int(gridReferencePoint.y) - gridReferencePoint.y) * RESOLUTION_OF_SPRITES));
-
-			SDL_Rect portionOfSpriteSheet, destRect;
-
-			// Setup default values like this as SDL_Rect doesnt have a useful constructor
-			portionOfSpriteSheet.x = 0;
-			portionOfSpriteSheet.y = 0;
-			portionOfSpriteSheet.w = RESOLUTION_OF_SPRITES;
-			portionOfSpriteSheet.h = RESOLUTION_OF_SPRITES;
-
-			destRect.x = (int)interGridPositionOffset.x;
-			destRect.y = (int)interGridPositionOffset.y + (mOffsetFromTopLeft.y * RESOLUTION_OF_SPRITES);
-			destRect.w = RESOLUTION_OF_SPRITES;
-			destRect.h = RESOLUTION_OF_SPRITES;
-
-			// Loop through the internal store of sprite indexes and render the correct ones in the correct positions
-			// Must be a signed int to allow for negative values, and negative scrolling
-			for (int row = (int)gridReferencePoint.y; row < gridReferencePoint.y + BACKGROUND_SPRITE_RENDER_HEIGHT; row++)
+			for (int col = int(gridReferencePoint.x) - int(mOffsetFromTopLeft.x); col < (gridReferencePoint.x + BACKGROUND_SPRITE_RENDER_WIDTH) - mOffsetFromTopLeft.x; col++)
 			{
-				// Checks to remove scope errors and to make sure we are only rendering what is on the screen
-				if (row >= (int)mLevelHeight || row < 0)
-					continue;
-
-				for (int col = (int)gridReferencePoint.x - mOffsetFromTopLeft.x; col < (gridReferencePoint.x + BACKGROUND_SPRITE_RENDER_WIDTH) - mOffsetFromTopLeft.x; col++)
+				// Error checking
+				if (col >= (int)mLevelWidth || col < 0)
 				{
-					if (col >= (int)mLevelWidth || col < 0)
-					{
-						// Make sure to add the offset on even if we are not rendering this column
-						destRect.x += RESOLUTION_OF_SPRITES;
-						continue;
-					}
-
-					// Now we are correctly looping through the correct area of the grid to be rendered
-					// Now we just need to render the correct sprite in the correct position
-					portionOfSpriteSheet.x =       (mBackgroundSpriteIndexStore[row][col] % mAountOfSpritesOnSpriteSheetWidth) * RESOLUTION_OF_SPRITES;
-					portionOfSpriteSheet.y = ((int)(mBackgroundSpriteIndexStore[row][col] / mAountOfSpritesOnSpriteSheetWidth)) * RESOLUTION_OF_SPRITES;
-
-					mSpriteSheet->Render(portionOfSpriteSheet, destRect);
-
+					// Make sure to add the offset on even if we are not rendering this column
 					destRect.x += RESOLUTION_OF_SPRITES;
+					continue;
 				}
 
-				destRect.y += RESOLUTION_OF_SPRITES;
-				destRect.x = (int)interGridPositionOffset.x;
+				// Now we are correctly looping through the correct area of the grid to be rendered
+				// Now we just need to render the correct sprite in the correct position
+				portionOfSpriteSheet.x =     (mBackgroundSpriteIndexStore[row][col] % mAountOfSpritesOnSpriteSheetWidth)  * RESOLUTION_OF_SPRITES;
+				portionOfSpriteSheet.y = (int(mBackgroundSpriteIndexStore[row][col] / mAountOfSpritesOnSpriteSheetWidth)) * RESOLUTION_OF_SPRITES;
+
+				// Render the sprite in the correct position
+				mSpriteSheet->Render(portionOfSpriteSheet, destRect);
+
+				// Move along the x-axis
+				destRect.x += RESOLUTION_OF_SPRITES;
 			}
+
+			// Move down the y-axis and reset the x-axis
+			destRect.y += yLerp + RESOLUTION_OF_SPRITES;
+			destRect.x = xLerp;
 		}
 	}
-
-	*/
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //
