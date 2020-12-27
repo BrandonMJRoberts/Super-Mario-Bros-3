@@ -69,13 +69,13 @@ void InteractableLayer::Render()
 		// First convert the actual position into a grid position
 		Vector2D gridReferencePoint      = GameManager_SMB3::GetInstance()->GetRenderReferencePoint();
 
-		int xLerp = (int(gridReferencePoint.x) - gridReferencePoint.x) * RESOLUTION_OF_SPRITES;
-		int yLerp = (int(gridReferencePoint.y) - gridReferencePoint.y) * RESOLUTION_OF_SPRITES;
+		int xLerp = int((int(gridReferencePoint.x) - gridReferencePoint.x) * RESOLUTION_OF_SPRITES);
+		int yLerp = int((int(gridReferencePoint.y) - gridReferencePoint.y) * RESOLUTION_OF_SPRITES);
 
 		SDL_Rect portionOfSpriteSheet{ 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES };
 
-		SDL_Rect destRect            { xLerp + (mOffsetFromTopLeft.x * RESOLUTION_OF_SPRITES), 
-			                           yLerp + (mOffsetFromTopLeft.y * RESOLUTION_OF_SPRITES), 
+		SDL_Rect destRect            { xLerp + int(mOffsetFromTopLeft.x * RESOLUTION_OF_SPRITES), 
+			                           yLerp + int(mOffsetFromTopLeft.y * RESOLUTION_OF_SPRITES), 
 			                           RESOLUTION_OF_SPRITES, 
 			                           RESOLUTION_OF_SPRITES };
 
