@@ -4,6 +4,8 @@
 #include "InteractionLayer.h"
 #include "ObjectLayer.h"
 
+#include "BaseCharacter.h"
+
 #include <iostream>
 
 // --------------------------------------------------------------------------------------------------------------------------- //
@@ -87,14 +89,14 @@ std::string LevelAreas::CalculateNameOfArea(std::string areaFilePath)
 
 // --------------------------------------------------------------------------------------------------------------------------- //
 
-void LevelAreas::Render()
+void LevelAreas::Render(Vector2D gridReferencePoint)
 {
 	// Render in this order: Background, Ending, interaction, object
 	if (mBackgroundLayer)
-		mBackgroundLayer->Render();
+		mBackgroundLayer->Render(gridReferencePoint);
 
 	if (mEndingSection)
-		mEndingSection->Render();
+		mEndingSection->Render(gridReferencePoint);
 
 	if (mInteractableLayer)
 		mInteractableLayer->Render();
@@ -105,7 +107,7 @@ void LevelAreas::Render()
 
 // --------------------------------------------------------------------------------------------------------------------------- //
 
-void LevelAreas::Update(const float deltaTime, SDL_Event e)
+void LevelAreas::Update(const float deltaTime, SDL_Event e, BaseCharacter* player)
 {
 	// First update the interaction layer and then the object layer
 	if (mInteractableLayer)
@@ -113,6 +115,9 @@ void LevelAreas::Update(const float deltaTime, SDL_Event e)
 
 	if (mObjectLayer)
 		mObjectLayer->Update(deltaTime, e);
+
+	if (player)
+		player->Update(deltaTime, e);
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //
@@ -130,6 +135,18 @@ std::string LevelAreas::ReplaceDoubleBackslashWithFrontSlash(std::string filePat
 	}
 
 	return returnString;
+}
+
+// --------------------------------------------------------------------------------------------------------------------------- //
+
+Vector2D LevelAreas::GetInitialSpawnPoint() const
+{
+	if (mObjectLayer)
+	{
+		mObjectLayer->GetInitialSpawnPoint();
+	}
+	
+	return Vector2D();
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //

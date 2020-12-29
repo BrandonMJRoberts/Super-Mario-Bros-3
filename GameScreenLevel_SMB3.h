@@ -10,6 +10,7 @@
 struct SDL_Renderer;
 class  Texture2D;
 class  LevelAreas;
+class  BaseCharacter;
 
 // ----------------------------------------------------------------------------------------------------------- //
 
@@ -33,9 +34,11 @@ private:
 	std::vector<LevelAreas*> mAreas;
 
 	// Id of which level area the player is currently in (will default to the area named 'overworld')
-	unsigned int mCurrentLevelAreaID;
+	unsigned int             mCurrentLevelAreaID;
 
-	const SDL_Renderer* mRenderer;
+	const SDL_Renderer*      mRenderer;
+
+	BaseCharacter*           mPlayer;
 
 };
 

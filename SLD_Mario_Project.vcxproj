@@ -165,6 +165,7 @@
   <ItemGroup>
     <ClCompile Include="BackgroundLayer.cpp" />
     <ClCompile Include="BackgroundLayer_WorldMap.cpp" />
+    <ClCompile Include="BaseCharacter.cpp" />
     <ClCompile Include="BaseObject_SMB3.cpp" />
     <ClCompile Include="BaseWorldMapCharacter.cpp" />
     <ClCompile Include="BorderWorldMap.cpp" />
@@ -177,6 +178,8 @@
     <ClCompile Include="GameScreen_SMB3.cpp" />
     <ClCompile Include="InteractionLayer.cpp" />
     <ClCompile Include="LevelArea.cpp" />
+    <ClCompile Include="Luigi.cpp" />
+    <ClCompile Include="Mario.cpp" />
     <ClCompile Include="NodeMap_WorldMap.cpp" />
     <ClCompile Include="ObjectLayer.cpp" />
     <ClCompile Include="Power_Up.cpp" />

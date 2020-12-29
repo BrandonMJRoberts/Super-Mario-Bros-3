@@ -7,7 +7,7 @@
 
 // Rendering boundary 
 #define BACKGROUND_SPRITE_RENDER_WIDTH  18
-#define BACKGROUND_SPRITE_RENDER_HEIGHT 12
+#define BACKGROUND_SPRITE_RENDER_HEIGHT 13
 
 // Used for spawning/despawning enemies
 #define LEVEL_BOUNDING_AREA_WIDTH 18

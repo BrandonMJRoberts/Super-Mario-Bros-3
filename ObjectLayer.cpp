@@ -143,3 +143,19 @@ bool ObjectLayer::LoadInDataFromFile(std::string filePath)
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //
+
+// NEED TO ACTUALLY HOOK THESE UP TO THE SPAWN POINTS WHEN THIS FUNCTIONALITY HAS BEEN ADDED
+
+Vector2D ObjectLayer::GetInitialSpawnPoint() const
+{
+	return Vector2D();
+}
+
+// -------------------------------------------------------------------------------------------------------------------------- //
+
+Vector2D ObjectLayer::GetSpawnPoint(unsigned int spawnPointIndex) const
+{
+	return Vector2D();
+}
+
+// -------------------------------------------------------------------------------------------------------------------------- //

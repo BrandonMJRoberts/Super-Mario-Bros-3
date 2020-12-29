@@ -39,7 +39,7 @@ BackgroundLayer::BackgroundLayer(std::string filePathToDataFile
 		std::cout << "Failed to load in the background data from the file, check the formatting and that the file exists." << std::endl;
 	}
 
-	// This offset is grid distance across the infinate virtual screen - eg. The ending of a level will have a large offset (about 150) whereas the main level has an offset of 0
+	// This offset is grid distance across the infinite virtual screen - eg. The ending of a level will have a large offset (about 150) whereas the main level has an offset of 0
 	mOffsetFromTopLeft                = offsetFromTopLeft;
 }
 
@@ -199,17 +199,6 @@ bool BackgroundLayer::LoadInDataFromFile(std::string filePath, std::map<char, un
 		return false;
 	}
 
-	// Now output the data stored
-	//for (unsigned int row = 0; row < mLevelHeight; row++)
-	//{
-	//	for (unsigned int col = 0; col < mLevelWidth - 1; col++)
-	//	{
-	//		std::cout << mBackgroundSpriteIndexStore[row][col] << " ";
-	//	}
-
-	//	std::cout << std::endl;
-	//}
-
 	std::cout << std::endl;
 
 	return true;
@@ -217,7 +206,7 @@ bool BackgroundLayer::LoadInDataFromFile(std::string filePath, std::map<char, un
 
 // --------------------------------------------------------------------------------------------------------------------------- //
 
-void BackgroundLayer::Render()
+void BackgroundLayer::Render(Vector2D gridReferencePoint)
 {
 	// offsetFromTopLeft is a physical screen space rendering position and is needed for the ending section to render at the far right of the level and not over the main level
 	// gridReferencePoint is the player's position - as we need to render what is around the player
@@ -225,24 +214,30 @@ void BackgroundLayer::Render()
 	// If there is a sprite sheet then we can render
 	if (mSpriteSheet)
 	{
-		// The grid reference point is a grid position, not a real position
-		Vector2D gridReferencePoint   = GameManager_SMB3::GetInstance()->GetRenderReferencePoint();
+		// This reference point is the offset into the index store, changing this allows for the scorlling of the screen
+		//Vector2D gridReferencePoint   = GameManager_SMB3::GetInstance()->GetRenderReferencePoint();
 
-		int xLerp = int(((int)gridReferencePoint.x - gridReferencePoint.x) * RESOLUTION_OF_SPRITES);
-		int yLerp = int(((int)gridReferencePoint.y - gridReferencePoint.y) * RESOLUTION_OF_SPRITES);
+		int      xLerp                = int(((int)gridReferencePoint.x - gridReferencePoint.x) * RESOLUTION_OF_SPRITES);
+		int      yLerp                = int(((int)gridReferencePoint.y - gridReferencePoint.y) * RESOLUTION_OF_SPRITES);
 
-		SDL_Rect portionOfSpriteSheet {0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES};
-		SDL_Rect destRect             {xLerp, yLerp + int(mOffsetFromTopLeft.y * RESOLUTION_OF_SPRITES), RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES };
+		SDL_Rect portionOfSpriteSheet {0, 0, 
+			                           RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES};
+
+		SDL_Rect destRect             {xLerp, yLerp, 
+			                           RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES };
 
 		// Loop through the internal store of sprite indexes and render the correct ones in the correct positions
 		// Must be a signed int to allow for negative values, and negative scrolling
-		for (int row = int(gridReferencePoint.y); row < gridReferencePoint.y + BACKGROUND_SPRITE_RENDER_HEIGHT; row++)
+		for (int row = int(gridReferencePoint.y + mOffsetFromTopLeft.y); row < (gridReferencePoint.y + BACKGROUND_SPRITE_RENDER_HEIGHT) + mOffsetFromTopLeft.y; row++)
 		{
 			// Checks to remove scope errors and to make sure we are only rendering what is on the screen
 			if (row >= int(mLevelHeight) || row < 0)
+			{
+				destRect.y += RESOLUTION_OF_SPRITES;
 				continue;
+			}
 
-			for (int col = int(gridReferencePoint.x) - int(mOffsetFromTopLeft.x); col < (gridReferencePoint.x + BACKGROUND_SPRITE_RENDER_WIDTH) - mOffsetFromTopLeft.x; col++)
+			for (int col = int(gridReferencePoint.x - mOffsetFromTopLeft.x); col < (gridReferencePoint.x + BACKGROUND_SPRITE_RENDER_WIDTH) - mOffsetFromTopLeft.x; col++)
 			{
 				// Error checking
 				if (col >= (int)mLevelWidth || col < 0)
@@ -265,7 +260,7 @@ void BackgroundLayer::Render()
 			}
 
 			// Move down the y-axis and reset the x-axis
-			destRect.y += yLerp + RESOLUTION_OF_SPRITES;
+			destRect.y += RESOLUTION_OF_SPRITES;
 			destRect.x = xLerp;
 		}
 	}

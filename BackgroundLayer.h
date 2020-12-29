@@ -16,7 +16,7 @@ public:
 	BackgroundLayer(std::string filePathToDataFile, std::string filePathToSpriteSheet, std::map<char, unsigned int> lookupConversion, SDL_Renderer* renderer, Vector2D offset);
 	~BackgroundLayer();
 
-	void         Render();
+	void         Render(Vector2D gridReferencePoint);
 	int          GetLevelEndingType()    { return mLevelEndType; }
 	unsigned int GetLevelWidth()         { return mLevelWidth;   }
 	unsigned int GetLevelHeight()        { return mLevelHeight; }

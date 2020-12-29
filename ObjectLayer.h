@@ -16,6 +16,9 @@ public:
 	void Render();
 	void Update(const float deltaTime, SDL_Event e);
 
+	Vector2D GetInitialSpawnPoint() const;
+	Vector2D GetSpawnPoint(unsigned int spawnPointIndex) const;
+
 private:
 	bool LoadInDataFromFile(std::string filePath);
 
@@ -27,7 +30,7 @@ private:
 	std::vector<BaseObject_SMB3> mUnspawnedObjectsInLevel;
 	std::vector<BaseObject_SMB3> mSpawnedObjectsInLevel;
 
-	SDL_Renderer*          mRenderer;
+	SDL_Renderer*                mRenderer;
 
 };
 

@@ -17,7 +17,7 @@ public:
 	WorldMapMario(const std::string filePathToSpriteSheet, SDL_Renderer* renderer, Vector2D startPos, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, const float timePerAnimationFrame);
 	~WorldMapMario() override;
 
-	void Render()                      override;
+	void Render()                                                                 override;
 	void Update(const float deltaTime, NodeMap_WorldMap& nodeMapRef, SDL_Event e) override;
 };
 

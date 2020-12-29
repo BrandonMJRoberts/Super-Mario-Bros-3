@@ -5,6 +5,10 @@
 #include "LevelArea.h"
 #include "Commons_SMB3.h"
 
+#include "BaseCharacter.h"
+#include "Mario.h"
+#include "Luigi.h"
+
 #include <SDL.h>
 #include <filesystem>
 #include <iostream>
@@ -16,6 +20,7 @@ GameScreenLevel_SMB3::GameScreenLevel_SMB3(SDL_Renderer* renderer
 	, const bool  playingAsMario) 
 	: GameScreen_SMB3(renderer)
 	, mCurrentLevelAreaID(0)    // Default the level area to being zero in case there is not one named 'Overworld'
+	, mPlayer(nullptr)
 {
 	// Setup the lookup table
 	InitialiseLookUpTable();
@@ -34,6 +39,16 @@ GameScreenLevel_SMB3::GameScreenLevel_SMB3(SDL_Renderer* renderer
 		if (thisIsStartingArea)
 			mCurrentLevelAreaID = mAreas.size() - 1;
 	}
+
+	// Now create the player that will be in these levels
+	if (playingAsMario)
+	{
+		mPlayer = new Mario(renderer, "SDL_Mario_Project/Characters/Mario/In Game Mario/SmallMarioSpriteSheet.png", mAreas[mCurrentLevelAreaID]->GetInitialSpawnPoint(), Vector2D(16, 1));
+	}
+	else
+	{
+		mPlayer = new Luigi(renderer, "SDL_Mario_Project/Characters/Luigi/In Game Luigi/SmallLuigiSpriteSheet.png", mAreas[mCurrentLevelAreaID]->GetInitialSpawnPoint(), Vector2D(16, 1));
+	}
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //
@@ -44,6 +59,9 @@ GameScreenLevel_SMB3::~GameScreenLevel_SMB3()
 		delete mAreas[i];
 
 	mAreas.clear();
+
+	delete mPlayer;
+	mPlayer = nullptr;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //
@@ -52,11 +70,15 @@ void GameScreenLevel_SMB3::Render()
 {
 	// Render the current area we are in
 	if (mAreas.size() > mCurrentLevelAreaID)
-		mAreas[mCurrentLevelAreaID]->Render();
+		mAreas[mCurrentLevelAreaID]->Render(mPlayer->GetPosition());
 	else
 	{
 		std::cout << "Render Error: The current area does not exist." << std::endl;
 	}
+
+	// Render the player
+	if (mPlayer)
+		mPlayer->Render();
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //
@@ -66,11 +88,12 @@ ReturnDataFromGameScreen GameScreenLevel_SMB3::Update(const float deltaTime, SDL
 	// Now handle input
 	HandleInput(deltaTime, e);
 
+	// Update the game manager
 	GameManager_SMB3::GetInstance()->Update(deltaTime);
 
 	// Update the area we are currently in if it exists
 	if (mAreas.size() > mCurrentLevelAreaID)
-		mAreas[mCurrentLevelAreaID]->Update(deltaTime, e);
+		mAreas[mCurrentLevelAreaID]->Update(deltaTime, e, mPlayer);
 	else
 	{
 		std::cout << "Update Error: The current area does not exist. Returning to the main menu." << std::endl;

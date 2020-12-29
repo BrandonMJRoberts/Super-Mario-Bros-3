@@ -61,9 +61,6 @@
     <Filter Include="Header Files\Mario Bros 3\Objects">
       <UniqueIdentifier>{9cd9bf8d-168b-4cd7-88da-38b89c05f3cc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Mario Bros 3\Audio">
-      <UniqueIdentifier>{68b8d7fa-0a25-47ff-939c-526b84543b7d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Mario Bros 3\Audio">
       <UniqueIdentifier>{f81eb1bc-3e47-4829-adf3-dfd74a14e215}</UniqueIdentifier>
     </Filter>
@@ -96,6 +93,21 @@
     </Filter>
     <Filter Include="Header Files\Mario Bros 3\Game Screens Mario 3\World Map Data">
       <UniqueIdentifier>{08c4198b-ff5d-46ae-b59f-ae09fa0d1675}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Mario Bros 3\Characters\Level">
+      <UniqueIdentifier>{617d8917-7d6b-4212-b927-17989545f61d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Mario Bros 3\Audio">
+      <UniqueIdentifier>{68b8d7fa-0a25-47ff-939c-526b84543b7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Mario Bros 3\Characters\World Map">
+      <UniqueIdentifier>{9614e512-a81a-46f7-ad90-e9c253fa442c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mario Bros 3\Characters\Level">
+      <UniqueIdentifier>{edb74c92-af2b-40fb-9c22-08ef55f68423}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mario Bros 3\Characters\World Map">
+      <UniqueIdentifier>{f8bae00b-582d-4b81-a5c7-60c4017734eb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -177,11 +189,20 @@
     <ClCompile Include="StatsHUD.cpp">
       <Filter>Source Files\Mario Bros 3\HUD</Filter>
     </ClCompile>
-    <ClCompile Include="WorldMapMario.cpp">
-      <Filter>Source Files\Mario Bros 3\Characters</Filter>
-    </ClCompile>
     <ClCompile Include="BaseWorldMapCharacter.cpp">
-      <Filter>Source Files\Mario Bros 3\Characters</Filter>
+      <Filter>Source Files\Mario Bros 3\Characters\World Map</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldMapMario.cpp">
+      <Filter>Source Files\Mario Bros 3\Characters\World Map</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseCharacter.cpp">
+      <Filter>Source Files\Mario Bros 3\Characters\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="Luigi.cpp">
+      <Filter>Source Files\Mario Bros 3\Characters\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="Mario.cpp">
+      <Filter>Source Files\Mario Bros 3\Characters\Level</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -242,15 +263,6 @@
     <ClInclude Include="GameScreenMainMenu_SMB3.h">
       <Filter>Header Files\Mario Bros 3\Game Screens Mario 3</Filter>
     </ClInclude>
-    <ClInclude Include="BaseCharacter.h">
-      <Filter>Header Files\Mario Bros 3\Characters</Filter>
-    </ClInclude>
-    <ClInclude Include="Luigi.h">
-      <Filter>Header Files\Mario Bros 3\Characters</Filter>
-    </ClInclude>
-    <ClInclude Include="Mario.h">
-      <Filter>Header Files\Mario Bros 3\Characters</Filter>
-    </ClInclude>
     <ClInclude Include="BaseObject_SMB3.h">
       <Filter>Header Files\Mario Bros 3\Objects</Filter>
     </ClInclude>
@@ -287,11 +299,20 @@
     <ClInclude Include="StatsHUD.h">
       <Filter>Header Files\Mario Bros 3\HUD</Filter>
     </ClInclude>
-    <ClInclude Include="WorldMapMario.h">
-      <Filter>Header Files\Mario Bros 3\Characters</Filter>
-    </ClInclude>
     <ClInclude Include="BaseWorldMapCharacter.h">
-      <Filter>Header Files\Mario Bros 3\Characters</Filter>
+      <Filter>Header Files\Mario Bros 3\Characters\World Map</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldMapMario.h">
+      <Filter>Header Files\Mario Bros 3\Characters\World Map</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseCharacter.h">
+      <Filter>Header Files\Mario Bros 3\Characters\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="Luigi.h">
+      <Filter>Header Files\Mario Bros 3\Characters\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="Mario.h">
+      <Filter>Header Files\Mario Bros 3\Characters\Level</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

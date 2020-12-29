@@ -5,9 +5,12 @@
 #include <map>
 #include <SDL.h>
 
+#include "Commons_SMB3.h"
+
 class BackgroundLayer;
 class InteractableLayer;
 class ObjectLayer;
+class BaseCharacter;
 
 class LevelAreas final
 {
@@ -16,10 +19,12 @@ public:
 	LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Renderer* renderer, std::map<char, unsigned int> ConversionFromCharToIntIndexMap);
 	~LevelAreas();
 
-	void Render();
-	void Update(const float deltaTime, SDL_Event e);
+	void Render(Vector2D gridReferencePoint);
+	void Update(const float deltaTime, SDL_Event e, BaseCharacter* player);
 
-	unsigned int GetLevelWidth() { return mLevelWidth; }
+	unsigned int GetLevelWidth() const { return mLevelWidth; }
+
+	Vector2D     GetInitialSpawnPoint() const;
 
 private:
 	std::string ReplaceDoubleBackslashWithFrontSlash(std::string areaFilePath);

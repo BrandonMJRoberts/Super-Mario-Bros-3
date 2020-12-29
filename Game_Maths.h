@@ -23,9 +23,18 @@ struct Vector2D
 		return Vector2D(this->x + other.x, this->y + other.y);
 	}
 
-	Vector2D operator+=(const Vector2D other)
+	Vector2D operator+=(const Vector2D& other)
 	{
-		return Vector2D(this->x + other.x, this->y + other.y);
+		this->x += other.x; 
+		this->y += other.y;
+
+		return *this;
+	}
+
+	Vector2D operator-=(const Vector2D other)
+	{
+		this->x -= other.x;
+		this->y -= other.y;
 	}
 
 	Vector2D operator-(const Vector2D other)

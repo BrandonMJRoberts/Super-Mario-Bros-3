@@ -11,31 +11,25 @@ GameManager_SMB3* GameManager_SMB3::mInstance = nullptr;
 // ---------------------------------------------------------------------- //
 
 GameManager_SMB3::GameManager_SMB3()
+: mCurrentLivesMario(5)
+, mCurrentLivesLuigi(5)
+, mCurrentScoreLuigi(0)
+, mCurrentScoreMario(0)
+, mCurrentWorldIndex(1)
+, mRenderReferencePoint(0, 10)
+, mWorldMapOffsetPoint(1, 1)
+, mScrollingLeft(false)
+, mScrollingRight(false)
+, mScrollingSpeedMultiplier(5.0f)
+, mHitRightBoundary(false)
+, mHitLeftBoundary(false)
+, mHitTopBoundary(false)
+, mHitBottomBoundary(false)
+, mMarioPowerUpState(CHARACTER_MAP_POWER_UP_STATE::SMALL)
+, mLuigiPowerUpState(CHARACTER_MAP_POWER_UP_STATE::SMALL)
+, mCurrentlyPlayingAsMario(true)
 {
-	mCurrentLivesMario = 5;
-	mCurrentLivesLuigi = 5;
 
-	mCurrentScoreLuigi = 0;
-	mCurrentScoreMario = 0;
-
-	mCurrentWorldIndex  = 1; // Start in world 1
-
-	mRenderReferencePoint = Vector2D(0, 10);
-	mWorldMapOffsetPoint  = Vector2D(1, 1);
-
-	mScrollingRight       = false;
-	mScrollingLeft        = false;
-	mScrollingSpeedMultiplier = 5.0f;
-
-	mHitRightBoundary  = false;
-	mHitLeftBoundary   = false;
-	mHitTopBoundary    = false;
-	mHitBottomBoundary = false;
-
-	mMarioPowerUpState = CHARACTER_MAP_POWER_UP_STATE::SMALL;
-	mLuigiPowerUpState = CHARACTER_MAP_POWER_UP_STATE::SMALL;
-
-	mCurrentlyPlayingAsMario = true;
 }
 
 // ---------------------------------------------------------------------- //
