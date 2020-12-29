@@ -13,7 +13,7 @@ public:
 	ObjectLayer(std::string filePathToDataFile, SDL_Renderer* renderer);
 	~ObjectLayer();
 
-	void Render();
+	void Render(const Vector2D gridReferencePoint);
 	void Update(const float deltaTime, SDL_Event e);
 
 	Vector2D GetInitialSpawnPoint() const;

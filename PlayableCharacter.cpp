@@ -5,7 +5,8 @@
 // ----------------------------------------------------- //
 
 PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D spawnPoint, Vector2D numberOfSpritesOnDimensions)
-: mPosition(spawnPoint)
+: mRealGridPosition(spawnPoint)
+, mScreenGridPosition(spawnPoint)
 , mVelocity(0, 0)
 , mAcceleration(0, 0)
 , mIsAlive(true)
@@ -54,8 +55,8 @@ void PlayableCharacter::Render()
 			                           int(mSingleSpriteHeight) };
 
 		// Now calculate where we should render it
-		SDL_Rect destRect {int(mPosition.x * RESOLUTION_OF_SPRITES), 
-			               int(mPosition.y * RESOLUTION_OF_SPRITES),
+		SDL_Rect destRect {int(mScreenGridPosition.x * RESOLUTION_OF_SPRITES), 
+			               int(mScreenGridPosition.y * RESOLUTION_OF_SPRITES),
 			               int(mSingleSpriteWidth), 
 			               int(mSingleSpriteHeight) };
 
@@ -74,7 +75,18 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e)
 	HandleMovementInput(e);
 
 	// Now apply any movement that the player is currently doing to their position
-	mPosition += (mVelocity * deltaTime);
+	mRealGridPosition += (mVelocity * deltaTime);
+
+	// And if the player is in a part of the screen in which they can move then move them
+	if (mScreenGridPosition.x < (LEVEL_BOUNDING_AREA_WIDTH / 2.0f) && mRealGridPosition.x > 0.0f)
+	{
+		mScreenGridPosition.x += (mVelocity.x * deltaTime);
+	}
+
+	if (mScreenGridPosition.y < LEVEL_BOUNDING_AREA_HEIGHT && mRealGridPosition.y > 0.0f)
+	{
+		mScreenGridPosition.y += (mVelocity.y * deltaTime);
+	}
 }
 
 // ----------------------------------------------------- //

@@ -65,31 +65,33 @@ InteractableLayer::~InteractableLayer()
 
 // --------------------------------------------------------------------------------------------------------------------------- //
 
-void InteractableLayer::Render()
+void InteractableLayer::Render(const Vector2D gridReferencePoint)
 {
 	// Only render if there is a sprite sheet to render from
 	if (mSpriteSheet)
 	{
-		// First convert the actual position into a grid position
-		Vector2D gridReferencePoint      = GameManager_SMB3::GetInstance()->GetRenderReferencePoint();
-
 		int xLerp = int((int(gridReferencePoint.x) - gridReferencePoint.x) * RESOLUTION_OF_SPRITES);
 		int yLerp = int((int(gridReferencePoint.y) - gridReferencePoint.y) * RESOLUTION_OF_SPRITES);
 
-		SDL_Rect portionOfSpriteSheet{ 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES };
+		SDL_Rect portionOfSpriteSheet{ 0, 0, 
+			                           RESOLUTION_OF_SPRITES, 
+			                           RESOLUTION_OF_SPRITES };
 
-		SDL_Rect destRect            { xLerp + int(mOffsetFromTopLeft.x * RESOLUTION_OF_SPRITES), 
-			                           yLerp + int(mOffsetFromTopLeft.y * RESOLUTION_OF_SPRITES), 
+		SDL_Rect destRect            { xLerp, 
+			                           yLerp, 
 			                           RESOLUTION_OF_SPRITES, 
 			                           RESOLUTION_OF_SPRITES };
 
 		// Loop through the internal store of sprite indexes and render the correct ones in the correct positions
-		for (int row = (int)(mOffsetFromTopLeft.y + gridReferencePoint.y); row < (int)gridReferencePoint.y + mOffsetFromTopLeft.y + BACKGROUND_SPRITE_RENDER_HEIGHT; row++)
+		for (int row = int(gridReferencePoint.y + mOffsetFromTopLeft.y); row < (gridReferencePoint.y + BACKGROUND_SPRITE_RENDER_HEIGHT) + mOffsetFromTopLeft.y; row++)
 		{
 			if (row >= (int)mLevelHeight || row < 0)
+			{
+				destRect.y += RESOLUTION_OF_SPRITES;
 				continue;
+			}
 
-			for (int col = int(mOffsetFromTopLeft.x + gridReferencePoint.x); col < (int)gridReferencePoint.x + mOffsetFromTopLeft.x + BACKGROUND_SPRITE_RENDER_WIDTH; col++)
+			for (int col = int(gridReferencePoint.x - mOffsetFromTopLeft.x); col < (gridReferencePoint.x + BACKGROUND_SPRITE_RENDER_WIDTH) - mOffsetFromTopLeft.x; col++)
 			{
 				if (col >= (int)mLevelWidth || col < mOffsetFromTopLeft.x || col < 0)
 				{
@@ -111,11 +113,9 @@ void InteractableLayer::Render()
 				destRect.x += RESOLUTION_OF_SPRITES;
 			}
 
-			// move the y-axis along
+			// move the y-axis along and reset the x-position
 			destRect.y += RESOLUTION_OF_SPRITES;
-
-			// Reset the xPosition
-			destRect.x = xLerp + int(mOffsetFromTopLeft.x * RESOLUTION_OF_SPRITES);
+			destRect.x = xLerp;
 		}
 	}
 }

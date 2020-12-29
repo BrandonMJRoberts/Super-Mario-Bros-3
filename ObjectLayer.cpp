@@ -29,7 +29,7 @@ ObjectLayer::~ObjectLayer()
 
 // -------------------------------------------------------------------------------------------------------------------------- //
 
-void ObjectLayer::Render()
+void ObjectLayer::Render(const Vector2D gridReferencePoint)
 {
 
 }

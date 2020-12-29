@@ -211,9 +211,6 @@ void BackgroundLayer::Render(Vector2D gridReferencePoint)
 	// If there is a sprite sheet then we can render
 	if (mSpriteSheet)
 	{
-		// This reference point is the offset into the index store, changing this allows for the scorlling of the screen
-		//Vector2D gridReferencePoint   = GameManager_SMB3::GetInstance()->GetRenderReferencePoint();
-
 		int      xLerp                = int(((int)gridReferencePoint.x - gridReferencePoint.x) * RESOLUTION_OF_SPRITES);
 		int      yLerp                = int(((int)gridReferencePoint.y - gridReferencePoint.y) * RESOLUTION_OF_SPRITES);
 

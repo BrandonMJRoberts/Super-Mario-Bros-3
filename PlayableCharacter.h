@@ -13,12 +13,15 @@ public:
 	virtual void Render();
 	virtual void Update(const float deltaTime, SDL_Event e);
 
-	const Vector2D GetPosition() const { return mPosition; }
+	const Vector2D GetRealGridPosition()     const { return mRealGridPosition; }
+	const Vector2D GetScreenGridPosition()   const { return mScreenGridPosition; }
 
 private:
 	void HandleMovementInput(SDL_Event e);
 
-	Vector2D   mPosition;
+	Vector2D   mRealGridPosition;
+	Vector2D   mScreenGridPosition;
+
 	Vector2D   mVelocity;
 	Vector2D   mAcceleration;
 

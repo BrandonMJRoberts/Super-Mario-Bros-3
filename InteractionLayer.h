@@ -17,7 +17,7 @@ public:
 	InteractableLayer(std::string filePathToDataFile, std::string filePathToSpriteSheet, std::map<char, unsigned int> lookupConversion, SDL_Renderer* renderer, Vector2D offsetFromTopLeft);
 	~InteractableLayer();
 
-	void Render();                      // For rendering the colliable objects in the level
+	void Render(const Vector2D gridReferencePoint);                      // For rendering the colliable objects in the level
 	void Update(const float deltaTime); // Update for updating animations, such as breaking a brick block
 
 private:

@@ -99,10 +99,10 @@ void LevelAreas::Render(Vector2D gridReferencePoint)
 		mEndingSection->Render(gridReferencePoint);
 
 	if (mInteractableLayer)
-		mInteractableLayer->Render();
+		mInteractableLayer->Render(gridReferencePoint);
 
 	if (mObjectLayer)
-		mObjectLayer->Render();
+		mObjectLayer->Render(gridReferencePoint);
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //

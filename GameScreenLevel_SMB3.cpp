@@ -68,7 +68,7 @@ void GameScreenLevel_SMB3::Render()
 {
 	// Render the current area we are in
 	if (mAreas.size() > mCurrentLevelAreaID)
-		mAreas[mCurrentLevelAreaID]->Render(mPlayer->GetPosition());
+		mAreas[mCurrentLevelAreaID]->Render(mPlayer->GetRealGridPosition());
 	else
 	{
 		std::cout << "Render Error: The current area does not exist." << std::endl;
