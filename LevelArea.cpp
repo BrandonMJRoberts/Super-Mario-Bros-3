@@ -4,7 +4,7 @@
 #include "InteractionLayer.h"
 #include "ObjectLayer.h"
 
-#include "BaseCharacter.h"
+#include "PlayableCharacter.h"
 
 #include <iostream>
 
@@ -107,7 +107,7 @@ void LevelAreas::Render(Vector2D gridReferencePoint)
 
 // --------------------------------------------------------------------------------------------------------------------------- //
 
-void LevelAreas::Update(const float deltaTime, SDL_Event e, BaseCharacter* player)
+void LevelAreas::Update(const float deltaTime, SDL_Event e, PlayableCharacter* player)
 {
 	// First update the interaction layer and then the object layer
 	if (mInteractableLayer)

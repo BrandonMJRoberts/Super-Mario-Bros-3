@@ -1,14 +1,14 @@
-#ifndef _BASE_CHARACTER_H
-#define _BASE_CHARACTER_H
+#ifndef _PLAYABLE_CHARACTER_H
+#define _PLAYABLE_CHARACTER_H
 
 #include "Commons_SMB3.h"
 #include "Texture2D.h"
 
-class BaseCharacter abstract
+class PlayableCharacter
 {
 public:
-	BaseCharacter(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D spawnPoint, Vector2D numberOfSpritesOnDimensions);
-	virtual ~BaseCharacter();
+	PlayableCharacter(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D spawnPoint, Vector2D numberOfSpritesOnDimensions);
+	virtual ~PlayableCharacter();
 
 	virtual void Render();
 	virtual void Update(const float deltaTime, SDL_Event e);
@@ -34,7 +34,6 @@ private:
 	unsigned int mEndFrame;
 
 	bool       mIsAlive;
-
 };
 
 

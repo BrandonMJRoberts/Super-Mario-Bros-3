@@ -208,9 +208,6 @@ bool BackgroundLayer::LoadInDataFromFile(std::string filePath, std::map<char, un
 
 void BackgroundLayer::Render(Vector2D gridReferencePoint)
 {
-	// offsetFromTopLeft is a physical screen space rendering position and is needed for the ending section to render at the far right of the level and not over the main level
-	// gridReferencePoint is the player's position - as we need to render what is around the player
-
 	// If there is a sprite sheet then we can render
 	if (mSpriteSheet)
 	{

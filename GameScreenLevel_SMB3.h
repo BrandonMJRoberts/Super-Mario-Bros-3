@@ -10,7 +10,7 @@
 struct SDL_Renderer;
 class  Texture2D;
 class  LevelAreas;
-class  BaseCharacter;
+class  PlayableCharacter;
 
 // ----------------------------------------------------------------------------------------------------------- //
 
@@ -38,7 +38,7 @@ private:
 
 	const SDL_Renderer*      mRenderer;
 
-	BaseCharacter*           mPlayer;
+	PlayableCharacter*       mPlayer;
 
 };
 

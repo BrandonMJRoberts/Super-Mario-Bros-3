@@ -1,10 +1,10 @@
-#include "BaseCharacter.h"
+#include "PlayableCharacter.h"
 
 #include "Constants_SMB3.h"
 
 // ----------------------------------------------------- //
 
-BaseCharacter::BaseCharacter(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D spawnPoint, Vector2D numberOfSpritesOnDimensions)
+PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D spawnPoint, Vector2D numberOfSpritesOnDimensions)
 : mPosition(spawnPoint)
 , mVelocity(0, 0)
 , mAcceleration(0, 0)
@@ -35,7 +35,7 @@ BaseCharacter::BaseCharacter(SDL_Renderer* renderer, const char* filePathToSprit
 
 // ----------------------------------------------------- //
 
-BaseCharacter::~BaseCharacter()
+PlayableCharacter::~PlayableCharacter()
 {
 	delete mSpriteSheet;
 	mSpriteSheet = nullptr;
@@ -43,7 +43,7 @@ BaseCharacter::~BaseCharacter()
 
 // ----------------------------------------------------- //
 
-void BaseCharacter::Render()
+void PlayableCharacter::Render()
 {
 	if (mSpriteSheet)
 	{
@@ -68,7 +68,7 @@ void BaseCharacter::Render()
 
 // ----------------------------------------------------- //
 
-void BaseCharacter::Update(const float deltaTime, SDL_Event e)
+void PlayableCharacter::Update(const float deltaTime, SDL_Event e)
 {
 	// First handle input to see if the player wants to move in a direction
 	HandleMovementInput(e);
@@ -79,7 +79,7 @@ void BaseCharacter::Update(const float deltaTime, SDL_Event e)
 
 // ----------------------------------------------------- //
 
-void BaseCharacter::HandleMovementInput(SDL_Event e)
+void PlayableCharacter::HandleMovementInput(SDL_Event e)
 {
 	switch (e.type)
 	{

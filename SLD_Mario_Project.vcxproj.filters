@@ -195,13 +195,7 @@
     <ClCompile Include="WorldMapMario.cpp">
       <Filter>Source Files\Mario Bros 3\Characters\World Map</Filter>
     </ClCompile>
-    <ClCompile Include="BaseCharacter.cpp">
-      <Filter>Source Files\Mario Bros 3\Characters\Level</Filter>
-    </ClCompile>
-    <ClCompile Include="Luigi.cpp">
-      <Filter>Source Files\Mario Bros 3\Characters\Level</Filter>
-    </ClCompile>
-    <ClCompile Include="Mario.cpp">
+    <ClCompile Include="PlayableCharacter.cpp">
       <Filter>Source Files\Mario Bros 3\Characters\Level</Filter>
     </ClCompile>
   </ItemGroup>
@@ -305,13 +299,7 @@
     <ClInclude Include="WorldMapMario.h">
       <Filter>Header Files\Mario Bros 3\Characters\World Map</Filter>
     </ClInclude>
-    <ClInclude Include="BaseCharacter.h">
-      <Filter>Header Files\Mario Bros 3\Characters\Level</Filter>
-    </ClInclude>
-    <ClInclude Include="Luigi.h">
-      <Filter>Header Files\Mario Bros 3\Characters\Level</Filter>
-    </ClInclude>
-    <ClInclude Include="Mario.h">
+    <ClInclude Include="PlayableCharacter.h">
       <Filter>Header Files\Mario Bros 3\Characters\Level</Filter>
     </ClInclude>
   </ItemGroup>

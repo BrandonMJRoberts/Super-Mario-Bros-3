@@ -5,9 +5,7 @@
 #include "LevelArea.h"
 #include "Commons_SMB3.h"
 
-#include "BaseCharacter.h"
-#include "Mario.h"
-#include "Luigi.h"
+#include "PlayableCharacter.h"
 
 #include <SDL.h>
 #include <filesystem>
@@ -43,11 +41,11 @@ GameScreenLevel_SMB3::GameScreenLevel_SMB3(SDL_Renderer* renderer
 	// Now create the player that will be in these levels
 	if (playingAsMario)
 	{
-		mPlayer = new Mario(renderer, "SDL_Mario_Project/Characters/Mario/In Game Mario/SmallMarioSpriteSheet.png", mAreas[mCurrentLevelAreaID]->GetInitialSpawnPoint(), Vector2D(16, 1));
+		mPlayer = new PlayableCharacter(renderer, "SDL_Mario_Project/Characters/Mario/In Game Mario/SmallMarioSpriteSheet.png", mAreas[mCurrentLevelAreaID]->GetInitialSpawnPoint(), Vector2D(16, 1));
 	}
 	else
 	{
-		mPlayer = new Luigi(renderer, "SDL_Mario_Project/Characters/Luigi/In Game Luigi/SmallLuigiSpriteSheet.png", mAreas[mCurrentLevelAreaID]->GetInitialSpawnPoint(), Vector2D(16, 1));
+		mPlayer = new PlayableCharacter(renderer, "SDL_Mario_Project/Characters/Luigi/In Game Luigi/SmallLuigiSpriteSheet.png", mAreas[mCurrentLevelAreaID]->GetInitialSpawnPoint(), Vector2D(16, 1));
 	}
 }
 

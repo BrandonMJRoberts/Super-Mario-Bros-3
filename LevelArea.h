@@ -10,7 +10,7 @@
 class BackgroundLayer;
 class InteractableLayer;
 class ObjectLayer;
-class BaseCharacter;
+class PlayableCharacter;
 
 class LevelAreas final
 {
@@ -20,7 +20,7 @@ public:
 	~LevelAreas();
 
 	void Render(Vector2D gridReferencePoint);
-	void Update(const float deltaTime, SDL_Event e, BaseCharacter* player);
+	void Update(const float deltaTime, SDL_Event e, PlayableCharacter* player);
 
 	unsigned int GetLevelWidth() const { return mLevelWidth; }
 

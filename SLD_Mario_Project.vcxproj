@@ -165,7 +165,7 @@
   <ItemGroup>
     <ClCompile Include="BackgroundLayer.cpp" />
     <ClCompile Include="BackgroundLayer_WorldMap.cpp" />
-    <ClCompile Include="BaseCharacter.cpp" />
+    <ClCompile Include="PlayableCharacter.cpp" />
     <ClCompile Include="BaseObject_SMB3.cpp" />
     <ClCompile Include="BaseWorldMapCharacter.cpp" />
     <ClCompile Include="BorderWorldMap.cpp" />
@@ -178,8 +178,6 @@
     <ClCompile Include="GameScreen_SMB3.cpp" />
     <ClCompile Include="InteractionLayer.cpp" />
     <ClCompile Include="LevelArea.cpp" />
-    <ClCompile Include="Luigi.cpp" />
-    <ClCompile Include="Mario.cpp" />
     <ClCompile Include="NodeMap_WorldMap.cpp" />
     <ClCompile Include="ObjectLayer.cpp" />
     <ClCompile Include="Power_Up.cpp" />
@@ -216,7 +214,7 @@
     <ClInclude Include="NodeMap_WorldMap.h" />
     <ClInclude Include="ObjectLayer.h" />
     <ClInclude Include="Power_Up.h" />
-    <ClInclude Include="BaseCharacter.h" />
+    <ClInclude Include="PlayableCharacter.h" />
     <ClInclude Include="Character.h" />
     <ClInclude Include="CharacterLuigi.h" />
     <ClInclude Include="CharacterMario.h" />
@@ -231,8 +229,6 @@
     <ClInclude Include="GameScreenMainMenu_SMB3.h" />
     <ClInclude Include="GameScreenManager.h" />
     <ClInclude Include="GameScreenWorldMap_SMB3.h" />
-    <ClInclude Include="Luigi.h" />
-    <ClInclude Include="Mario.h" />
     <ClInclude Include="StatsHUD.h" />
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="WorldMapMario.h" />
