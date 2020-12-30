@@ -74,19 +74,20 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e)
 	// First handle input to see if the player wants to move in a direction
 	HandleMovementInput(e);
 
-	// Now apply any movement that the player is currently doing to their position
-	mRealGridPosition += (mVelocity * deltaTime);
+	Vector2D newRealGridPos   = mRealGridPosition   + (mVelocity * deltaTime);
+	Vector2D newScreenGridPos = mScreenGridPosition + (mVelocity * deltaTime);
 
-	// And if the player is in a part of the screen in which they can move then move them
-	if (mScreenGridPosition.x < (LEVEL_BOUNDING_AREA_WIDTH / 2.0f) && mRealGridPosition.x > 0.0f)
-	{
-		mScreenGridPosition.x += (mVelocity.x * deltaTime);
-	}
+	if (newRealGridPos.y <= 0.0f)
+		mRealGridPosition.y = 0.0f;
+	else if (newRealGridPos.y >= LEVEL_BOUNDING_AREA_HEIGHT)
+		mRealGridPosition.y = LEVEL_BOUNDING_AREA_HEIGHT;
+	else
+		mRealGridPosition.y = newRealGridPos.y;
 
-	if (mScreenGridPosition.y < LEVEL_BOUNDING_AREA_HEIGHT && mRealGridPosition.y > 0.0f)
-	{
-		mScreenGridPosition.y += (mVelocity.y * deltaTime);
-	}
+	if (newRealGridPos.x <= 0.0f)
+		mRealGridPosition.x = 0.0f;
+	else if (newRealGridPos.x >= LEVEL_BOUNDING_AREA_WIDTH)
+		mRealGridPosition.x = LEVEL_BOUNDING_AREA_WIDTH;
 }
 
 // ----------------------------------------------------- //
