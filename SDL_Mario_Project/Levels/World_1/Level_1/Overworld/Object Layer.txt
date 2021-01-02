@@ -8,12 +8,14 @@ GOOMBA
 33 1 L
 52 2 L
 55 2 L
+NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
 # PARA_GOOMBA - Position - Start facing direction - Start in air
 PARA_GOOMBA
 59 2 L F
+NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
@@ -21,12 +23,14 @@ PARA_GOOMBA
 KOOPA_TROOPER_RED
 36 3 L
 131 3 L
+NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
 # KOOPER_TROOPER_GREEN - Position - Start facing direction
 KOOPER_TROOPER_GREEN
 92 1 L
+NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
@@ -35,6 +39,7 @@ PARA_KOOPER_TROOPER_GREEN
 83 7 L F
 86 7 L F
 89 7 L F
+NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
@@ -72,16 +77,18 @@ COIN
 113 19
 
 115 17
+NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
-#PIPE - Left of mouth position (vec2) - Width (uint) - Height (uint) - Pipe type (uint) - Pipe Facing Direction (0 = Up, 1 = Right, 2 = Down, 3 = Left) - directory for loading in level (string) - stage entrance ID (0 is for the start point in the overworld) - Enemy contained within pipe - Double Ended (Bool)
+#PIPE - Left of mouth position (vec2) - Width (uint) - Height (uint) - Pipe type (uint) - Pipe Facing Direction (0 = Up, 1 = Right, 2 = Down, 3 = Left) - file directory for loading in level (string) - stage entrance ID (0 is for the start point in the overworld) - Enemy contained within pipe - Double Ended (Bool)
 PIPE
 22 3 2 3 1 F NONE -1 FIRE_PIRHANNA_RED F
 112 2 2 2 1 F NONE -1 PIRHANNA_GREEN F
 116 3 2 3 1 F NONE -1 FIRE_PIHRANNA_GREEN F
-140 19 2 12 F "Levels/World 1/Level 1/Pipe" 0 NONE F
+140 19 2 12 F Levels/World-1/Level-1/Pipe 0 NONE F
 144 2 2 2 F NONE -1 NONE F
+NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
@@ -89,6 +96,7 @@ PIPE
 SPAWN_POINT
 1 1 0
 144 3 1
+NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
@@ -105,6 +113,7 @@ QUESTIONMARK_BLOCK
 43 4 COIN 1 F NONE
 
 92 3 MUSHROOM 1 T LEAF
+NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
@@ -137,12 +146,14 @@ BRICK_BLOCK
 131 2 T NONE
 
 132 1 T NONE
+NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
 # INVISIBLE_BLOCK - Position - Item to drop - Quantity
 INVISIBLE_BLOCK
 90 17 LIFE 1
+NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 

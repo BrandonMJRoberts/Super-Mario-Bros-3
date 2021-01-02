@@ -4,6 +4,10 @@
 #include <iostream>
 #include <sstream>
 
+#include <string.h>
+
+#include "AllObjectsInclude.h"
+
 #include "Constants_SMB3.h"
 
 // -------------------------------------------------------------------------------------------------------------------------- //
@@ -12,6 +16,8 @@ ObjectLayer::ObjectLayer(std::string filePathToDataFile,
 	                     SDL_Renderer* renderer)
 : mRenderer(renderer)
 {
+	InstantiateNameConversions();
+
 	// Load in the data from the file
 	if (!LoadInDataFromFile(filePathToDataFile))
 	{
@@ -24,7 +30,22 @@ ObjectLayer::ObjectLayer(std::string filePathToDataFile,
 
 ObjectLayer::~ObjectLayer()
 {
+	DestroyAllNameConversions();
+	mNameToObjectConversion.clear();
 
+	for (unsigned int i = 0; i < mUnspawnedObjectsInLevel.size(); i++)
+	{
+		delete mUnspawnedObjectsInLevel[i];
+		mUnspawnedObjectsInLevel[i] = nullptr;
+	}
+	mUnspawnedObjectsInLevel.clear();
+
+	for (unsigned int i = 0; i < mSpawnedObjectsInLevel.size(); i++)
+	{
+		delete mSpawnedObjectsInLevel[i];
+		mSpawnedObjectsInLevel[i] = nullptr;
+	}
+	mSpawnedObjectsInLevel.clear();
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //
@@ -36,18 +57,20 @@ void ObjectLayer::Render()
 
 // -------------------------------------------------------------------------------------------------------------------------- //
 
-void ObjectLayer::Update(const float deltaTime, SDL_Event e)
+void ObjectLayer::Update(const float deltaTime, SDL_Event e, Vector2D playerPosition)
 {
 	// Loop through all objects in the level and update them
 	for (unsigned int i = 0; i < mSpawnedObjectsInLevel.size(); i++)
 	{
 		// Check if the object needs to be moved to the other list
-		if (mSpawnedObjectsInLevel[i].Update(deltaTime))
+		if (mSpawnedObjectsInLevel[i]->Update(deltaTime, playerPosition))
 		{
 			// Then add this object to the other list - its position will be reset in its update so we dont need to do it here
 			mUnspawnedObjectsInLevel.push_back(mSpawnedObjectsInLevel[i]);
 		}
 	}
+
+
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //
@@ -85,61 +108,52 @@ bool ObjectLayer::LoadInDataFromFile(std::string filePath)
 		return false;
 	}
 
-	std::string       line, objectDefinitionType;
-	char              lineChar[MAX_LEVEL_WIDTH];
-	std::stringstream ssLine;
+	std::string       line, objectNameLine;
 
-	unsigned int failsafeCounter = 0;
+	unsigned int      failsafeCounter = 0;
 
 	// Loop through the entire file untill it is empty
-	while (line != "END")
+	while (std::getline(dataFile, line))
 	{
-		failsafeCounter++;
-		if (failsafeCounter > FAILSAFE_MAX_COUNT_FILE_LOADING_LOOPS)
+		if (failsafeCounter++ > FAILSAFE_MAX_COUNT_FILE_LOADING_LOOPS)
 		{
-			std::cout << "The file " << filePath << " does not contain the END." << std::endl;
-			return false;
+			dataFile.close();
+			break;
 		}
 
-		dataFile.getline(lineChar, MAX_LEVEL_WIDTH);
-		line = std::string(lineChar);
-
-		// If the line is a comment then just skip over it, or if the entire line is empty
-		if (line[0] == '#' || line == "")
+		// First check to see if we have hit the end of the file
+		if (line == "END")
+		{
+			dataFile.close();
+			return true;
+		}
+		
+		// Check if the line is empty or is a comment
+		if (line == "" || line[0] == '#')
 			continue;
 
-		// If we hit the end declaration then stop reading in from the file
-		if (line == "END")
-			break;
-
-		// First check if we are on a new object type definition
-		// This check works through checking if the first word is a string or an int, as all object definitions start with a position
-		// So first check if the line starts with an int
-		if (int(line[0] > 47 && int(line[0]) < 58))
+		// If we have hit 
+		if (line == "NEXT")
 		{
-			// Then it is a definition of another object of the currently selected type
+			objectNameLine = "";
+			continue;
+		}
 
-			// Need to think of a way to efficiently do this !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			if (line == "GOOMBA")
-			{
-				// Temperary placeholder as all objects have not been created yet
-				mUnspawnedObjectsInLevel.push_back(BaseObject_SMB3(mRenderer));
-			}
-			else
-			{
-				std::cout << "Tried to create an object that is of a type that doesnt exist!" << std::endl;
-				return false;
-			}
+		// Now check if we are waiting for a new name of definition
+		if (objectNameLine == "")
+		{
+			objectNameLine = line;
+			continue;
 		}
 		else
 		{
-			// We are re-stating the object definition
-			objectDefinitionType = line;
+			// Create a new instance of the object
+			mUnspawnedObjectsInLevel.push_back(mNameToObjectConversion[objectNameLine]->Clone(line));
+			continue;
 		}
-	
 	}
 
-	return true;
+	return false;
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //
@@ -156,6 +170,41 @@ Vector2D ObjectLayer::GetInitialSpawnPoint() const
 Vector2D ObjectLayer::GetSpawnPoint(unsigned int spawnPointIndex) const
 {
 	return Vector2D();
+}
+
+// -------------------------------------------------------------------------------------------------------------------------- //
+
+void ObjectLayer::InstantiateNameConversions()
+{
+	// Setup the conversions from a string to a base default data type
+
+	// Collectables
+	mNameToObjectConversion["COIN"] = new Coin_SMB3(Vector2D(), false, mRenderer, "", 0, 0, 0, 0, false, 0.3f);
+
+	// Block objects
+	mNameToObjectConversion["BRICK BLOCK"] = new BrickBlock(Vector2D(), false, mRenderer, "", 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.5f, 1, POWER_UP_TYPE::MUSHROOM, false, nullptr, nullptr, true);
+
+	// Enemy Objects
+	mNameToObjectConversion["GOOMBA"] = new Goomba(Vector2D(), false, mRenderer, "", 0, 0, 0, 0, 0.3f, true, false, true);
+
+	//mNameToObjectConversion["QUESTION MARK BLOCK"];
+}
+
+// -------------------------------------------------------------------------------------------------------------------------- //
+
+void ObjectLayer::DestroyAllNameConversions()
+{
+	// Collectables
+	delete mNameToObjectConversion["COIN"];
+	mNameToObjectConversion["COIN"] = nullptr;
+
+	// Block objects
+	delete mNameToObjectConversion["BRICK BLOCK"];
+	mNameToObjectConversion["BRICK BLOCK"] = nullptr;
+
+	delete mNameToObjectConversion["GOOMBA"];
+	mNameToObjectConversion["GOOMBA"] = nullptr;
+
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //

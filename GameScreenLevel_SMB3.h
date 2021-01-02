@@ -1,7 +1,7 @@
 #ifndef _GAME_SCREEN_LEVEL_H_
 #define _GAME_SCREEN_LEVEL_H_
 
-#include "BaseObject_SMB3.h"
+#include "BaseObject.h"
 #include "GameScreen_SMB3.h"
 
 #include <map>

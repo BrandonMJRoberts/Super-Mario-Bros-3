@@ -3,8 +3,13 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
-#include "BaseObject_SMB3.h"
+#include <SDL.h>
+
+#include "Game_Maths.h"
+
+class BaseObject;
 
 class ObjectLayer final
 {
@@ -14,7 +19,7 @@ public:
 	~ObjectLayer();
 
 	void Render();
-	void Update(const float deltaTime, SDL_Event e);
+	void Update(const float deltaTime, SDL_Event e, Vector2D playerPosition);
 
 	Vector2D GetInitialSpawnPoint() const;
 	Vector2D GetSpawnPoint(unsigned int spawnPointIndex) const;
@@ -26,9 +31,14 @@ private:
 	void CheckIfShouldSpawnObject();
 	void CheckForDestroyingObjects();
 
+	void InstantiateNameConversions();
+	void DestroyAllNameConversions();
+
 	// When spawned the objects get moved to the unspawned list - unless they are one of a select few exceptions (such as spawn points)
-	std::vector<BaseObject_SMB3> mUnspawnedObjectsInLevel;
-	std::vector<BaseObject_SMB3> mSpawnedObjectsInLevel;
+	std::vector<BaseObject*> mUnspawnedObjectsInLevel;
+	std::vector<BaseObject*> mSpawnedObjectsInLevel;
+
+	std::map<std::string, BaseObject*> mNameToObjectConversion;
 
 	SDL_Renderer*                mRenderer;
 

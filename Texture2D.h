@@ -19,15 +19,19 @@ public:
 	void Render(Vector2D newPosition, SDL_RendererFlip flip, double angle = 0.0f);
 	void Render(SDL_Rect portionOfSpriteSheet, SDL_Rect destRect, SDL_RendererFlip flip = SDL_FLIP_NONE, double angle = 0.0f);
 
-	int GetHeight() { return mHeight; }
-	int GetWidth()  { return mWidth;  } 
+	int GetHeight() const { return mHeight; }
+	int GetWidth()  const { return mWidth;  } 
+
+	std::string GetFilePath() const { return mFilePathToSpriteSheet; }
 
 private:
 	SDL_Renderer* mRenderer;
 	SDL_Texture*  mTexture;
 
-	int mWidth;
-	int mHeight;
+	std::string   mFilePathToSpriteSheet;
+
+	int           mWidth;
+	int           mHeight;
 };
 
 #endif // !_TEXTURE_2D_H

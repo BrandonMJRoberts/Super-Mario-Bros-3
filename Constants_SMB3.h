@@ -27,4 +27,7 @@
 
 #define MOVEMENT_DELAY_WORLD_MAP 0.05f
 
+#define COLLECTABLE_MOVEMENT_SPEED 1.5f
+
+
 #endif

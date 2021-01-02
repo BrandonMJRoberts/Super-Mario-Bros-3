@@ -1,0 +1,1 @@
+#include "Para_Koopa_Trooper_SMB3.h"

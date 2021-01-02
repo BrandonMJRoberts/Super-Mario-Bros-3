@@ -5,11 +5,13 @@
 // -------------------------------------------------------------------------------------------------------------------------- //
 
 Texture2D::Texture2D(SDL_Renderer* renderer)
+: mRenderer(renderer)
+, mTexture(nullptr)
+, mWidth(0)
+, mHeight(0)
+, mFilePathToSpriteSheet("")
 {
-	mRenderer = renderer;
-	mTexture  = NULL;
-	mWidth    = 0;
-	mHeight   = 0;
+
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //
@@ -45,6 +47,9 @@ bool Texture2D::LoadFromFile(std::string path)
 		mHeight = Surface->h;
 
 		SDL_FreeSurface(Surface);
+
+		// Store the file path so we can tell if this texture has already been loaded
+		mFilePathToSpriteSheet = path;
 	}
 	else
 	{
