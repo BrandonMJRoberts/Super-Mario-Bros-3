@@ -70,6 +70,8 @@ BaseObject* BrickBlock::Clone(std::string dataForNewObject)
 	
 	newItemType = ConvertFromStringToItemType[newItemTypeString];
 
+	if(mThisSpriteSheet)
+	{
 	// Return the new instance
 	return new BrickBlock(newPos, 
 		                  false, 
@@ -86,6 +88,9 @@ BaseObject* BrickBlock::Clone(std::string dataForNewObject)
 		                  newItemType,
 						  nullptr,
 		                  mCanTurnToCoin);
+	}
+	else 
+		return nullptr;
 
 }
 

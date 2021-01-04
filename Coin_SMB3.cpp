@@ -49,7 +49,10 @@ BaseObject* Coin_SMB3::Clone(std::string dataLine)
 	unsigned int xPos, yPos;
 	extractLine >> xPos >> yPos;
 
-	return new Coin_SMB3(Vector2D((double)xPos, (double)yPos), false, mRenderer, mThisSpriteSheet->GetFilePath().c_str(), mSpritesOnWidth, mSpritesOnHeight, mCollisionBox.x, mCollisionBox.y, false, mTimePerFrame);
+	if (mThisSpriteSheet)
+		return new Coin_SMB3(Vector2D((double)xPos, (double)yPos), false, mRenderer, mThisSpriteSheet->GetFilePath().c_str(), mSpritesOnWidth, mSpritesOnHeight, mCollisionBox.x, mCollisionBox.y, false, mTimePerFrame);
+	else
+		return nullptr;
 }
 
 // ---------------------------------------------------------------------------------- //

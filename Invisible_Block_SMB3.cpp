@@ -1,5 +1,7 @@
 #include "Invisible_Block_SMB3.h"
 
+#include "CollectableObject.h"
+
 // ------------------------------------------------------------------------------ //
 
 InvisibleBlock::InvisibleBlock(const Vector2D           spawnPosition,

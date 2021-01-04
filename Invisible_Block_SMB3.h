@@ -1,5 +1,5 @@
-#ifndef _INVISIBLE_BLOCK_SMB3_H_
-#define _INVISIBLE_BLOCK_SMB3_H_
+#ifndef _INVIS_BLOCK_H_
+#define _INVIS_BLOCK_H_
 
 #include "BlockObject.h"
 
@@ -25,6 +25,6 @@ public:
 	BaseObject* Clone(std::string dataLine) override;
 
 	bool        Update(const float deltaTime, const Vector2D playerPosition) override;
-}
+};
 
 #endif

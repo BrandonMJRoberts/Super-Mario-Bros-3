@@ -19,26 +19,26 @@ NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
-# KOOPA_TROOPER_RED - Position - Start facing direction
-KOOPA_TROOPER_RED
-36 3 L
-131 3 L
+# KOOPA_TROOPER_RED - Position - Start facing direction - Is red or green
+KOOPA_TROOPER
+36 3 L R
+131 3 L R
 NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
-# KOOPER_TROOPER_GREEN - Position - Start facing direction
-KOOPER_TROOPER_GREEN
-92 1 L
+# KOOPA_TROOPER - Position - Start facing direction - Is red or green
+KOOPA_TROOPER
+92 1 L G
 NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
-# PARA_KOOPER_TROOPER_GREEN - Position - Start facing direction - Start in air
-PARA_KOOPER_TROOPER_GREEN
-83 7 L F
-86 7 L F
-89 7 L F
+# PARA_KOOPA_TROOPER_GREEN - Position - Start facing direction - Start in air - is Red or green
+PARA_KOOPA_TROOPER
+83 7 L F G
+86 7 L F G
+89 7 L F G
 NEXT
 
 # -------------------------------------------------------------------------------------------------- #

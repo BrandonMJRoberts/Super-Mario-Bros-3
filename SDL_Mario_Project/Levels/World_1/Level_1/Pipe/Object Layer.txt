@@ -19,19 +19,22 @@ COIN
 15 4
 14 4
 13 5
+NEXT
 
 # ---------------------------------------------------------------------------- #
 
 #PIPE - Left of mouth position (vec2) - Width (uint) - Height (uint) - Pipe type (uint) - Pipe Facing Direction (0 = Up, 1 = Right, 2 = Down, 3 = Left) - directory for loading in level (string) - stage entrance ID (0 is for the start point in the overworld) - Enemy contained within pipe - Double Ended (Bool)
 PIPE
-22 10 2 2 0 2 "Levels/World 1/Level 1/Overworld" 1 NONE F
+22 10 2 2 0 2 Levels/World 1/Level 1/Overworld 1 NONE F
 8 10 2 2 0 2 NONE -1 NONE F
+NEXT
 
 # ---------------------------------------------------------------------------- #
 
-# SPAWN_POINT - Position - ID to go to 
+# SPAWN_POINT - Position - ID
 SPAWN_POINT
 8 9 0
+NEXT
 
 # ---------------------------------------------------------------------------- #
 

@@ -1,5 +1,5 @@
-#ifndef _COLLECTABLE_OBJECT_H_
-#define _COLLECTABLE_OBJECT_H_
+#ifndef _COLLECTABLE_OBJECT_BASE_H_
+#define _COLLECTABLE_OBJECT_BASE_H_
 
 #include "PhysicalObject.h"
 

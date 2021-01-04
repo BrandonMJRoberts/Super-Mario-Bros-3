@@ -1,5 +1,5 @@
-#ifndef _QUESTION_MARK_BLOCK_SMB3_H_
-#define _QUESTION_MARK_BLOCK_SMB3_H_
+#ifndef _QUESTION_MARK_BLOCK_H_
+#define _QUESTION_MARK_BLOCK_H_
 
 #include "BlockObject.h"
 

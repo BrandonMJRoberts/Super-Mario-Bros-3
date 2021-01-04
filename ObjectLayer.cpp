@@ -194,6 +194,8 @@ void ObjectLayer::InstantiateNameConversions()
 
 	mNameToObjectConversion["KOOPA_TROOPER"]      = new KoopaTrooper(Vector2D(), false, mRenderer, "", 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, true, false, true);
 	mNameToObjectConversion["PARA_KOOPA_TROOPER"] = new KoopaTrooper(Vector2D(), false, mRenderer, "", 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, true, true, true);
+
+	mNameToObjectConversion["SPAWN_POINT"]        = new SpawnPoint(Vector2D(), false, -1);
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //
