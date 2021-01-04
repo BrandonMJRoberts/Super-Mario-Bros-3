@@ -179,15 +179,21 @@ void ObjectLayer::InstantiateNameConversions()
 	// Setup the conversions from a string to a base default data type
 
 	// Collectables
-	mNameToObjectConversion["COIN"] = new Coin_SMB3(Vector2D(), false, mRenderer, "", 0, 0, 0, 0, false, 0.3f);
+	mNameToObjectConversion["COIN"]               = new Coin_SMB3(Vector2D(), false, mRenderer, "", 0, 0, 0, 0, false, 0.3f);
 
 	// Block objects
-	mNameToObjectConversion["BRICK BLOCK"] = new BrickBlock(Vector2D(), false, mRenderer, "", 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.5f, 1, POWER_UP_TYPE::MUSHROOM, false, nullptr, nullptr, true);
+	mNameToObjectConversion["BRICK_BLOCK"]         = new BrickBlock(Vector2D(), false, mRenderer, "", 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.5f, 1, POWER_UP_TYPE::MUSHROOM, false, nullptr, nullptr, true);
+	mNameToObjectConversion["INVISIBLE_BLOCK"]     = new InvisibleBlock(Vector2D(), false, mRenderer, "", 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, 1, POWER_UP_TYPE::NONE, false, (CollectableObject*)mNameToObjectConversion["COIN"], nullptr);
+	mNameToObjectConversion["QUESTION_MARK_BLOCK"] = new QuestionMarkBlock(Vector2D(), false, mRenderer, "", 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, 1, POWER_UP_TYPE::NONE, false, (CollectableObject*)mNameToObjectConversion["COIN"], nullptr);
+
+	mNameToObjectConversion["PIPE"]                = new Pipe(Vector2D(), false, mRenderer, "", 0, 0, 0, 0, 0.0f);
 
 	// Enemy Objects
-	mNameToObjectConversion["GOOMBA"] = new Goomba(Vector2D(), false, mRenderer, "", 0, 0, 0, 0, 0.3f, true, false, true);
+	mNameToObjectConversion["GOOMBA"]             = new Goomba(Vector2D(), false, mRenderer, "", 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, true, false, true);
+	mNameToObjectConversion["PARA_GOOMBA"]        = new ParaGoomba(Vector2D(), false, mRenderer, "", 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, true, true, true);
 
-	//mNameToObjectConversion["QUESTION MARK BLOCK"];
+	mNameToObjectConversion["KOOPA_TROOPER"]      = new KoopaTrooper(Vector2D(), false, mRenderer, "", 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, true, false, true);
+	mNameToObjectConversion["PARA_KOOPA_TROOPER"] = new KoopaTrooper(Vector2D(), false, mRenderer, "", 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, true, true, true);
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //
@@ -202,9 +208,21 @@ void ObjectLayer::DestroyAllNameConversions()
 	delete mNameToObjectConversion["BRICK BLOCK"];
 	mNameToObjectConversion["BRICK BLOCK"] = nullptr;
 
+	delete mNameToObjectConversion["INVISIBLE BLOCK"];
+	mNameToObjectConversion["INVISIBLE BLOCK"] = nullptr;
+
+	delete mNameToObjectConversion["QUESTION_MARK_BLOCK"];
+	mNameToObjectConversion["QUESTION_MARK_BLOCK"] = nullptr;
+
+	delete mNameToObjectConversion["PIPE"];
+	mNameToObjectConversion["PIPE"] = nullptr;
+
+	// Enemies
 	delete mNameToObjectConversion["GOOMBA"];
 	mNameToObjectConversion["GOOMBA"] = nullptr;
 
+	delete mNameToObjectConversion["KOOPA TROOPER"];
+	mNameToObjectConversion["KOOPA TROOPER"] = nullptr;
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //

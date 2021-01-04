@@ -1,5 +1,5 @@
-#ifndef _BRICK_BLOCK_H_
-#define _BRICK_BLOCK_H_
+#ifndef _BRICK_BLOCK_SMB3_H_
+#define _BRICK_BLOCK_SMB3_H_
 
 #include "BlockObject.h"
 

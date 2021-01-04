@@ -101,7 +101,7 @@ NEXT
 # -------------------------------------------------------------------------------------------------- #
 
 # QUESTIONMARK_BLOCK - Position - Item to drop - Quantity - Scalable - Scales to
-QUESTIONMARK_BLOCK
+QUESTION_MARK_BLOCK
 11 4 COIN 1 F NONE
 12 4 COIN 1 F NONE
 

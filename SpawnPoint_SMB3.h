@@ -1,5 +1,5 @@
-#ifndef _SPAWN_POINT_H_
-#define _SPAWN_POINT_H_
+#ifndef _SPAWN_POINT_SMB3_H_
+#define _SPAWN_POINT_SMB3_H_
 
 #include "BaseObject.h"
 

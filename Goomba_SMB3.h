@@ -3,7 +3,7 @@
 
 #include "EnemyObject.h"
 
-class Goomba final : public EnemyObject
+class Goomba : public EnemyObject
 {
 public:
 	Goomba(const Vector2D      spawnPosition,
@@ -18,15 +18,15 @@ public:
 		   const bool          canMove,
 	       const bool          canJump,
 		   const bool          startFacingLeft);
-	~Goomba() override;
+	virtual ~Goomba() override;
 
-	BaseObject* Clone(std::string data) override;
+	virtual BaseObject* Clone(std::string data) override;
 
-	bool Update(const float deltaTime, const Vector2D playerPosition) override;
+	virtual bool Update(const float deltaTime, const Vector2D playerPosition) override;
 
-	void Move()   override;
-	void Jump()   override;
-	void Attack() override;
+	virtual void Move()   override;
+	virtual void Jump()   override;
+	virtual void Attack() override;
 
 private:
 
