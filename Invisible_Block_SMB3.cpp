@@ -2,6 +2,8 @@
 
 #include "CollectableObject.h"
 
+#include <sstream>
+
 // ------------------------------------------------------------------------------ //
 
 InvisibleBlock::InvisibleBlock(const Vector2D           spawnPosition,
@@ -48,7 +50,24 @@ InvisibleBlock::~InvisibleBlock()
 
 BaseObject* InvisibleBlock::Clone(std::string dataLine)
 {
-	return nullptr;
+	// First extract the data
+	std::stringstream data(dataLine);
+
+	Vector2D     newPos;
+	std::string  itemToDrop;
+	CollectableObject* objectToDrop = nullptr;
+
+	data >> newPos.x >> newPos.y >> itemToDrop;
+
+	if(ConvertFromStringToItemType[itemToDrop])
+		objectToDrop = ConvertFromStringToItemType[itemToDrop];
+
+	if (mThisSpriteSheet)
+	{
+		return new InvisibleBlock(newPos, false, mRenderer, mThisSpriteSheet->GetFilePath(), mSpritesOnWidth, mSpritesOnHeight, mCollisionBox.x, mCollisionBox.y, mTimePerFrame, mHitsBlockCanTake, mPowerUpTypeForDamage, false, objectToDrop, nullptr);
+	}
+	else 
+		return nullptr;
 }
 
 // ------------------------------------------------------------------------------ //

@@ -17,7 +17,8 @@ public:
 		             const float		 timePerFrame,
 		             const bool          canMove,
 		             const bool          canJump,
-		             const bool          startFacingLeft);
+		             const bool          startFacingLeft,
+		             const char  colourIndexOfKoopa);
 	~ParaKoopaTrooper() override;
 
 	BaseObject* Clone(std::string dataLine) override;

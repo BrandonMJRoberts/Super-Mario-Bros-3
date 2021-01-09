@@ -1,5 +1,7 @@
 #include "Para_Goomba_SMB3.h"
 
+#include <sstream>
+
 // ------------------------------------------------------------------------------------------------ //
 
 ParaGoomba::ParaGoomba(const Vector2D      spawnPosition,
@@ -42,7 +44,22 @@ ParaGoomba::~ParaGoomba()
 
 BaseObject* ParaGoomba::Clone(std::string data)
 {
-	return nullptr;
+	std::stringstream streamLine(data);
+
+	Vector2D newPos;
+	char     facingDirectionChar;
+	char     colourChar;
+
+	streamLine >> newPos.x >> newPos.y >> facingDirectionChar >> colourChar;
+
+	bool startMovingLeft = true;
+	if (facingDirectionChar == 'R')
+		startMovingLeft = false;
+
+	if (mThisSpriteSheet)
+		return new ParaGoomba(newPos, false, mRenderer, mThisSpriteSheet->GetFilePath(), mSpritesOnWidth, mSpritesOnHeight, mCollisionBox.x, mCollisionBox.y, mTimePerFrame, mCanJump, mCanJump, startMovingLeft);
+	else 
+		return nullptr;
 }
 
 // ------------------------------------------------------------------------------------------------ //

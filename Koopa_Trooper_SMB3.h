@@ -17,7 +17,8 @@ public:
 				 const float		 timePerFrame,
 				 const bool          canMove,
 				 const bool          canJump,
-				 const bool          startFacingLeft);
+				 const bool          startFacingLeft,
+		         const char          colourIndexOfKoopa);
 	virtual ~KoopaTrooper() override;
 
 	virtual BaseObject* Clone(std::string dataLine) override;
@@ -25,7 +26,7 @@ public:
 	virtual bool        Update(const float deltaTime, const Vector2D playerPosition) override;
 
 private:
-
+	const unsigned int mColourIndexOfKoopa;
 };
 
 #endif

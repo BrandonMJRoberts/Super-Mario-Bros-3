@@ -3,6 +3,7 @@
 #include "CollectableObject.h"
 
 #include "AllCollectablesInclude.h"
+#include "Constants_SMB3.h"
 
 // ------------------------------------------------------------- //
 
@@ -70,7 +71,7 @@ void BlockObject::ReleaseCollectableObject(const POWER_UP_TYPE powerUpStateWhenH
 
 void BlockObject::SetupConversionTypes()
 {
-	ConvertFromStringToItemType["COIN"] = new Coin_SMB3(Vector2D(), false, mRenderer, "", 1, 1, 0, 0, false, 0.3f);
+	ConvertFromStringToItemType["COIN"] = new Coin_SMB3(Vector2D(), false, mRenderer, "SDL_Mario_Project/Objects/Coin.png", 6, 1, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, false, 0.3f);
 }
 
 // ------------------------------------------------------------- //

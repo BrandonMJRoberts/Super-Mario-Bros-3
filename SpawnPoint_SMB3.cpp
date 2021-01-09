@@ -1,5 +1,7 @@
 #include "SpawnPoint_SMB3.h"
 
+#include <sstream>
+
 // ------------------------------------------------------------------------------------------------------------------------ //
 
 SpawnPoint::SpawnPoint(const Vector2D spawnPosition, const bool startSpawnedInLevel, const unsigned int spawnPointIndex) 
@@ -21,7 +23,14 @@ SpawnPoint::~SpawnPoint()
 
 BaseObject* SpawnPoint::Clone(std::string dataForClone)
 {
-	return nullptr;
+	std::stringstream streamLine(dataForClone);
+
+	Vector2D spawnPos;
+	unsigned int entranceID;
+
+	streamLine >> spawnPos.x >> spawnPos.y >> entranceID;
+
+	return new SpawnPoint(spawnPos, true, entranceID);
 }
 
 // ------------------------------------------------------------------------------------------------------------------------ //

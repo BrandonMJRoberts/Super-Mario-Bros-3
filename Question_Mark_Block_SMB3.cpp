@@ -1,5 +1,7 @@
 #include "Question_Mark_Block_SMB3.h"
 
+#include <sstream>
+
 // ---------------------------------------------------------------------------------------------- //
 
 QuestionMarkBlock::QuestionMarkBlock(const Vector2D           spawnPosition,
@@ -53,7 +55,26 @@ bool QuestionMarkBlock::Update(const float deltaTime, const Vector2D playerPosit
 
 BaseObject* QuestionMarkBlock::Clone(std::string dataForNewObject)
 {
-	return nullptr;
+	std::stringstream streamLine(dataForNewObject);
+
+	Vector2D    newPos;
+	std::string nameOfItemToDrop, nameOfMaxItemToDrop;
+	unsigned int quantity;
+	char scalable;
+	bool canScale = true;
+
+	streamLine >> newPos.x >> newPos.y >> nameOfItemToDrop >> quantity >> scalable >> nameOfItemToDrop;
+
+	if (scalable == 'F')
+		canScale = false;
+
+	if (mThisSpriteSheet)
+	{
+		return new QuestionMarkBlock(newPos, false, mRenderer, mThisSpriteSheet->GetFilePath(), mSpritesOnWidth, mSpritesOnHeight, mCollisionBox.x, mCollisionBox.y, mTimePerFrame, mHitsBlockCanTake, mPowerUpTypeForDamage, canScale, ConvertFromStringToItemType[nameOfItemToDrop], ConvertFromStringToItemType[nameOfMaxItemToDrop]);
+	}
+	else
+		return nullptr;
+
 }
 
 // ---------------------------------------------------------------------------------------------- //

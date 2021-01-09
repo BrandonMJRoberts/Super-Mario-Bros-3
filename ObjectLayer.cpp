@@ -63,7 +63,7 @@ void ObjectLayer::Update(const float deltaTime, SDL_Event e, Vector2D playerPosi
 	for (unsigned int i = 0; i < mSpawnedObjectsInLevel.size(); i++)
 	{
 		// Check if the object needs to be moved to the other list
-		if (mSpawnedObjectsInLevel[i]->Update(deltaTime, playerPosition))
+		if (mSpawnedObjectsInLevel[i] && mSpawnedObjectsInLevel[i]->Update(deltaTime, playerPosition))
 		{
 			// Then add this object to the other list - its position will be reset in its update so we dont need to do it here
 			mUnspawnedObjectsInLevel.push_back(mSpawnedObjectsInLevel[i]);
@@ -149,6 +149,13 @@ bool ObjectLayer::LoadInDataFromFile(std::string filePath)
 		{
 			// Create a new instance of the object
 			mUnspawnedObjectsInLevel.push_back(mNameToObjectConversion[objectNameLine]->Clone(line));
+
+			// Check if the object should start spawned in the level
+			if (mUnspawnedObjectsInLevel[mUnspawnedObjectsInLevel.size() - 1] && mUnspawnedObjectsInLevel[mUnspawnedObjectsInLevel.size() - 1]->GetIsSpawnedInLevel())
+			{
+				mSpawnedObjectsInLevel.push_back(mUnspawnedObjectsInLevel[mUnspawnedObjectsInLevel.size() - 1]);
+				mUnspawnedObjectsInLevel.pop_back();
+			}
 			continue;
 		}
 	}
@@ -179,21 +186,21 @@ void ObjectLayer::InstantiateNameConversions()
 	// Setup the conversions from a string to a base default data type
 
 	// Collectables
-	mNameToObjectConversion["COIN"]               = new Coin_SMB3(Vector2D(), false, mRenderer, "", 0, 0, 0, 0, false, 0.3f);
+	mNameToObjectConversion["COIN"]                = new Coin_SMB3(Vector2D(), false, mRenderer, "SDL_Mario_Project/Objects/Coin.png", 6, 1, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, false, 0.3f);
 
 	// Block objects
-	mNameToObjectConversion["BRICK_BLOCK"]         = new BrickBlock(Vector2D(), false, mRenderer, "", 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.5f, 1, POWER_UP_TYPE::MUSHROOM, false, nullptr, nullptr, true);
-	mNameToObjectConversion["INVISIBLE_BLOCK"]     = new InvisibleBlock(Vector2D(), false, mRenderer, "", 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, 1, POWER_UP_TYPE::NONE, false, (CollectableObject*)mNameToObjectConversion["COIN"], nullptr);
-	mNameToObjectConversion["QUESTION_MARK_BLOCK"] = new QuestionMarkBlock(Vector2D(), false, mRenderer, "", 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, 1, POWER_UP_TYPE::NONE, false, (CollectableObject*)mNameToObjectConversion["COIN"], nullptr);
+	mNameToObjectConversion["BRICK_BLOCK"]         = new BrickBlock(Vector2D(), false, mRenderer, "SDL_Mario_Project/Objects/BrickBlock.png", 4, 1, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.5f, 1, POWER_UP_TYPE::MUSHROOM, false, nullptr, nullptr, true);
+	mNameToObjectConversion["INVISIBLE_BLOCK"]     = new InvisibleBlock(Vector2D(), false, mRenderer, "SDL_Mario_Project/Objects/InvisibleBlock.png", 2, 1, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, 1, POWER_UP_TYPE::NONE, false, (CollectableObject*)mNameToObjectConversion["COIN"], nullptr);
+	mNameToObjectConversion["QUESTION_MARK_BLOCK"] = new QuestionMarkBlock(Vector2D(), false, mRenderer, "SDL_Mario_Project/Objects/QuestionMarkBlock.png", 5, 1, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, 1, POWER_UP_TYPE::NONE, false, (CollectableObject*)mNameToObjectConversion["COIN"], nullptr);
 
 	mNameToObjectConversion["PIPE"]                = new Pipe(Vector2D(), false, mRenderer, "", 0, 0, 0, 0, 0.0f);
 
 	// Enemy Objects
-	mNameToObjectConversion["GOOMBA"]             = new Goomba(Vector2D(), false, mRenderer, "", 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, true, false, true);
-	mNameToObjectConversion["PARA_GOOMBA"]        = new ParaGoomba(Vector2D(), false, mRenderer, "", 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, true, true, true);
+	mNameToObjectConversion["GOOMBA"]             = new Goomba(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Goomba/Goomba.png", 6, 3, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, true, false, true);
+	mNameToObjectConversion["PARA_GOOMBA"]        = new ParaGoomba(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Goomba/Goomba.png", 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, true, true, true);
 
-	mNameToObjectConversion["KOOPA_TROOPER"]      = new KoopaTrooper(Vector2D(), false, mRenderer, "", 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, true, false, true);
-	mNameToObjectConversion["PARA_KOOPA_TROOPER"] = new KoopaTrooper(Vector2D(), false, mRenderer, "", 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, true, true, true);
+	mNameToObjectConversion["KOOPA_TROOPER"]      = new KoopaTrooper(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Koopa Trooper/Koopa.png", 14, 3, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, true, false, true, 0);
+	mNameToObjectConversion["PARA_KOOPA_TROOPER"] = new KoopaTrooper(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Koopa Trooper/Koopa.png", 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, true, true, true, 0);
 
 	mNameToObjectConversion["SPAWN_POINT"]        = new SpawnPoint(Vector2D(), false, -1);
 }
@@ -223,8 +230,17 @@ void ObjectLayer::DestroyAllNameConversions()
 	delete mNameToObjectConversion["GOOMBA"];
 	mNameToObjectConversion["GOOMBA"] = nullptr;
 
+	delete mNameToObjectConversion["PARA_GOOMBA"];
+	mNameToObjectConversion["PARA_GOOMBA"] = nullptr;
+
 	delete mNameToObjectConversion["KOOPA TROOPER"];
 	mNameToObjectConversion["KOOPA TROOPER"] = nullptr;
+
+	delete mNameToObjectConversion["PARA_KOOPA_TROOPER"];
+	mNameToObjectConversion["PARA_KOOPA_TROOPER"] = nullptr;
+
+	delete mNameToObjectConversion["SPAWN_POINT"];
+	mNameToObjectConversion["SPAWN_POINT"] = nullptr;
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //

@@ -1,5 +1,7 @@
 #include "Koopa_Trooper_SMB3.h"
 
+#include <sstream>
+
 // ------------------------------------------------------------------------------ //
 
 KoopaTrooper::KoopaTrooper(const Vector2D      spawnPosition,
@@ -13,7 +15,8 @@ KoopaTrooper::KoopaTrooper(const Vector2D      spawnPosition,
 	const float			timePerFrame,
 	const bool          canMove,
 	const bool          canJump,
-	const bool          startFacingLeft)
+	const bool          startFacingLeft,
+	const char          colourIndexOfKoopa)
 
 : EnemyObject(spawnPosition
 , startSpawnedInLevel
@@ -27,8 +30,13 @@ KoopaTrooper::KoopaTrooper(const Vector2D      spawnPosition,
 , canMove
 , canJump
 , startFacingLeft)
+, mColourIndexOfKoopa(colourIndexOfKoopa)
 {
-
+	switch (colourIndexOfKoopa)
+	{
+	default:
+	break;
+	}
 }
 
 // ------------------------------------------------------------------------------ //
@@ -42,7 +50,26 @@ KoopaTrooper::~KoopaTrooper()
 
 BaseObject* KoopaTrooper::Clone(std::string dataLine)
 {
-	return nullptr;
+	std::stringstream data(dataLine);
+
+	Vector2D newPos;
+	char     charPlaceHolder;
+
+	data >> newPos.x >> newPos.y >> charPlaceHolder;
+
+	bool startFacingLeft = true;
+
+	if (charPlaceHolder == 'R')
+		startFacingLeft = false;
+
+	data >> charPlaceHolder;
+
+	if (mThisSpriteSheet)
+	{
+		return new KoopaTrooper(newPos, false, mRenderer, mThisSpriteSheet->GetFilePath(), mSpritesOnWidth, mSpritesOnHeight, mCollisionBox.x, mCollisionBox.y, mTimePerFrame, mCanJump, mCanJump, startFacingLeft, charPlaceHolder);
+	}
+	else 
+		return nullptr;
 }
 
 // ------------------------------------------------------------------------------ //

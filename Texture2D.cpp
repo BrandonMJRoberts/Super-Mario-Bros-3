@@ -40,6 +40,7 @@ bool Texture2D::LoadFromFile(std::string path)
 		if (mTexture == NULL)
 		{
 			std::cout << "Unable to create the texture from surface: Error: " << SDL_GetError() << std::endl;
+			std::cout << "File path: " << path << std::endl;
 			return false;
 		}
 
@@ -54,6 +55,7 @@ bool Texture2D::LoadFromFile(std::string path)
 	else
 	{
 		std::cout << "Unable to create texture from surface: Error: " << IMG_GetError() << std::endl;
+		std::cout << "File path: " << path << std::endl;
 		return false;
 	}
 

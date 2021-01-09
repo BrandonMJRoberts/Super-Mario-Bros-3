@@ -1,5 +1,7 @@
 #include "Goomba_SMB3.h"
 
+#include <sstream>
+
 // ------------------------------------------------------------- //
 
 Goomba::Goomba(const Vector2D      spawnPosition,
@@ -42,7 +44,20 @@ Goomba::~Goomba()
 
 BaseObject* Goomba::Clone(std::string data)
 {
-	return nullptr;
+	// First extra the data from the line passed in
+	std::stringstream dataLine(data);
+
+	Vector2D newPos;
+	char     facingDirection;
+
+	dataLine >> newPos.x >> newPos.y >> facingDirection;
+
+	bool startFacingLeft = facingDirection == 'L' ? true : false;
+
+	if (mThisSpriteSheet)
+		return new Goomba(newPos, false, mRenderer, mThisSpriteSheet->GetFilePath(), mSpritesOnWidth, mSpritesOnHeight, mCollisionBox.x, mCollisionBox.y, mTimePerFrame, mCanMove, mCanJump, startFacingLeft);
+	else
+		return nullptr;
 }
 
 // ------------------------------------------------------------- //
