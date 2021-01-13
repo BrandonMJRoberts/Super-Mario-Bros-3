@@ -114,7 +114,7 @@ void LevelAreas::Update(const float deltaTime, SDL_Event e, PlayableCharacter* p
 		mInteractableLayer->Update(deltaTime);
 
 	if (mObjectLayer)
-		mObjectLayer->Update(deltaTime, e, player->GetPosition());
+		mObjectLayer->Update(deltaTime, e, player->GetRealGridPosition());
 
 	if (player)
 		player->Update(deltaTime, e);

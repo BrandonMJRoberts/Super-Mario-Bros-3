@@ -20,8 +20,8 @@ public:
 	ObjectLayer(std::string filePathToDataFile, SDL_Renderer* renderer);
 	~ObjectLayer();
 
-	void Render();
-	void Update(const float deltaTime, SDL_Event e);
+	void Render(const Vector2D gridReferencePoint);
+	void Update(const float deltaTime, SDL_Event e, Vector2D playerPosition);
 
 	Vector2D GetInitialSpawnPoint() const;
 	Vector2D GetSpawnPoint(unsigned int spawnPointIndex) const;
