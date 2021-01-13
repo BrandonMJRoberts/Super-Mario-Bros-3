@@ -225,9 +225,6 @@
     <ClCompile Include="EnemyObject.cpp">
       <Filter>Source Files\Mario Bros 3\Objects\Abstract Objects</Filter>
     </ClCompile>
-    <ClCompile Include="SpawnPoint_SMB3.cpp">
-      <Filter>Source Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
-    </ClCompile>
     <ClCompile Include="Brick_Block_SMB3.cpp">
       <Filter>Source Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
     </ClCompile>
@@ -251,6 +248,9 @@
     </ClCompile>
     <ClCompile Include="Question_Mark_Block_SMB3.cpp">
       <Filter>Source Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="SpawnPoint_SMB3.cpp">
+      <Filter>Source Files\Mario Bros 3\Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -374,9 +374,6 @@
     <ClInclude Include="BlockObject.h">
       <Filter>Header Files\Mario Bros 3\Objects\Abstract Objects</Filter>
     </ClInclude>
-    <ClInclude Include="SpawnPoint_SMB3.h">
-      <Filter>Header Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
-    </ClInclude>
     <ClInclude Include="Goomba_SMB3.h">
       <Filter>Header Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
     </ClInclude>
@@ -402,6 +399,9 @@
       <Filter>Header Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
     </ClInclude>
     <ClInclude Include="AllCollectablesInclude.h">
+      <Filter>Header Files\Mario Bros 3\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="SpawnPoint_SMB3.h">
       <Filter>Header Files\Mario Bros 3\Objects</Filter>
     </ClInclude>
   </ItemGroup>

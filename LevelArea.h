@@ -22,7 +22,9 @@ public:
 	void Render(Vector2D gridReferencePoint);
 	void Update(const float deltaTime, SDL_Event e, PlayableCharacter* player);
 
-	unsigned int GetLevelWidth() const { return mLevelWidth; }
+	unsigned int GetLevelWidth()  const { return mLevelWidth; }
+
+	Vector2D     GetLevelBounds() const { return Vector2D(mLevelWidth, mLevelHeight); }
 
 	Vector2D     GetInitialSpawnPoint() const;
 
@@ -33,6 +35,7 @@ private:
 	std::string        mNameOfArea;
 
 	unsigned int       mLevelWidth;
+	unsigned int       mLevelHeight;
 
 	BackgroundLayer*   mBackgroundLayer;
 	BackgroundLayer*   mEndingSection;

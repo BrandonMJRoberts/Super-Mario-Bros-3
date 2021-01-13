@@ -68,7 +68,7 @@ void GameScreenLevel_SMB3::Render()
 {
 	// Render the current area we are in
 	if (mAreas.size() > mCurrentLevelAreaID)
-		mAreas[mCurrentLevelAreaID]->Render(mPlayer->GetRealGridPosition());
+		mAreas[mCurrentLevelAreaID]->Render(mPlayer->GetRenderReferencePoint());
 	else
 	{
 		std::cout << "Render Error: The current area does not exist." << std::endl;
@@ -91,7 +91,12 @@ ReturnDataFromGameScreen GameScreenLevel_SMB3::Update(const float deltaTime, SDL
 
 	// Update the area we are currently in if it exists
 	if (mAreas.size() > mCurrentLevelAreaID)
+	{
 		mAreas[mCurrentLevelAreaID]->Update(deltaTime, e, mPlayer);
+
+		if(mPlayer)
+			mPlayer->Update(deltaTime, e, mAreas[mCurrentLevelAreaID]->GetLevelBounds());
+	}
 	else
 	{
 		std::cout << "Update Error: The current area does not exist. Returning to the main menu." << std::endl;

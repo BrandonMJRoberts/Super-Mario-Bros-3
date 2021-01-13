@@ -11,6 +11,8 @@
 // --------------------------------------------------------------------------------------------------------------------------- //
 
 LevelAreas::LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Renderer* renderer, std::map<char, unsigned int> ConversionFromCharToIntIndexMap)
+	: mLevelHeight(0)
+	, mLevelWidth(0)
 {
 	// There is a strange thing happening when the areafilePath is passed in where it adds '\\' instead of '/'
 	areaFilePath       = ReplaceDoubleBackslashWithFrontSlash(areaFilePath);
@@ -41,6 +43,11 @@ LevelAreas::LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Rende
 		mLevelWidth = mBackgroundLayer->GetLevelWidth() + mEndingSection->GetLevelWidth() - 1; // -1 to account for the overlap
 	else
 		mLevelWidth = mBackgroundLayer->GetLevelWidth();
+
+	if (mBackgroundLayer)
+		mLevelHeight = mBackgroundLayer->GetLevelHeight();
+	else if (mEndingSection)
+		mLevelHeight = mEndingSection->GetLevelHeight();
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //
@@ -113,11 +120,8 @@ void LevelAreas::Update(const float deltaTime, SDL_Event e, PlayableCharacter* p
 	if (mInteractableLayer)
 		mInteractableLayer->Update(deltaTime);
 
-	if (mObjectLayer)
+	if (mObjectLayer && player)
 		mObjectLayer->Update(deltaTime, e, player->GetRealGridPosition());
-
-	if (player)
-		player->Update(deltaTime, e);
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //
