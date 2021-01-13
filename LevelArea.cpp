@@ -143,7 +143,7 @@ Vector2D LevelAreas::GetInitialSpawnPoint() const
 {
 	if (mObjectLayer)
 	{
-		mObjectLayer->GetInitialSpawnPoint();
+		return mObjectLayer->GetInitialSpawnPoint();
 	}
 	
 	return Vector2D();
