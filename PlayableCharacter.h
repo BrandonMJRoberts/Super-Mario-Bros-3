@@ -4,14 +4,16 @@
 #include "Commons_SMB3.h"
 #include "Texture2D.h"
 
-class PlayableCharacter
+#include "Subject.h"
+
+class PlayableCharacter final : public Subject
 {
 public:
 	PlayableCharacter(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D spawnPoint, Vector2D numberOfSpritesOnDimensions);
-	virtual ~PlayableCharacter();
+	~PlayableCharacter() override;
 
-	virtual void Render();
-	virtual void Update(const float deltaTime, SDL_Event e, const Vector2D levelBounds);
+	void Render();
+	void Update(const float deltaTime, SDL_Event e, const Vector2D levelBounds);
 
 	const Vector2D GetRealGridPosition()     const { return mRealGridPosition; }
 	const Vector2D GetScreenGridPosition()   const { return mScreenGridPosition; }

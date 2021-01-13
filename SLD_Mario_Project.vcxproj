@@ -203,7 +203,7 @@
     <ClCompile Include="Question_Mark_Block_SMB3.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="SpawnPoint_SMB3.cpp" />
-    <ClCompile Include="StatsHUD.cpp" />
+    <ClCompile Include="HUD_Display.cpp" />
     <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="WorldMapMario.cpp" />
   </ItemGroup>
@@ -237,6 +237,7 @@
     <ClInclude Include="Game_Maths.h" />
     <ClInclude Include="NodeMap_WorldMap.h" />
     <ClInclude Include="ObjectLayer.h" />
+    <ClInclude Include="Observer.h" />
     <ClInclude Include="Para_Goomba_SMB3.h" />
     <ClInclude Include="Para_Koopa_Trooper_SMB3.h" />
     <ClInclude Include="PhysicalObject.h" />
@@ -259,7 +260,8 @@
     <ClInclude Include="GameScreenWorldMap_SMB3.h" />
     <ClInclude Include="Question_Mark_Block_SMB3.h" />
     <ClInclude Include="SpawnPoint_SMB3.h" />
-    <ClInclude Include="StatsHUD.h" />
+    <ClInclude Include="HUD_Display.h" />
+    <ClInclude Include="Subject.h" />
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="WorldMapMario.h" />
   </ItemGroup>

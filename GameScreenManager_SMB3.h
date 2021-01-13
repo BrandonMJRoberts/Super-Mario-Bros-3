@@ -6,6 +6,8 @@
 
 #include "GameScreen_SMB3.h"
 
+class HUD_Display;
+
 // -------------------------------------------------------------------------------------- //
 
 class GameScreenManager_SMB3 final
@@ -26,6 +28,7 @@ private:
 
 	ReturnDataFromGameScreen mReturnDataPlaceHolder;
 
+	HUD_Display*             HUD;
 };
 
 // -------------------------------------------------------------------------------------- //

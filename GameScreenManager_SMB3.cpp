@@ -7,19 +7,24 @@
 #include "GameManager_SMB3.h"
 #include "Commons_SMB3.h"
 
+#include "HUD_Display.h"
+
 // ------------------------------------------------------------------------ //
 
-GameScreenManager_SMB3::GameScreenManager_SMB3() : mRenderer(nullptr), mCurrentScreen(nullptr)
+GameScreenManager_SMB3::GameScreenManager_SMB3() : mRenderer(nullptr), mCurrentScreen(nullptr), HUD(nullptr)
 {
 	
 }
 
 // ------------------------------------------------------------------------ //
 
-GameScreenManager_SMB3::GameScreenManager_SMB3(SDL_Renderer* renderer) : mRenderer(renderer), mCurrentScreen(nullptr)
+GameScreenManager_SMB3::GameScreenManager_SMB3(SDL_Renderer* renderer) : mRenderer(renderer), mCurrentScreen(nullptr), HUD(nullptr)
 {
 	// Default to being in the main menu
 	ChangeScreen(SCREENS_SMB3::WORLD_MAP);
+
+	// Create the new hud this high up as it is persistant accross all types of gamescreens - from the world map and into the levels themselves
+	HUD = new HUD_Display(renderer);
 }
 
 // ------------------------------------------------------------------------ //

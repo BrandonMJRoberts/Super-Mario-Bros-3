@@ -16,7 +16,9 @@ public:
 
 	bool LoadFromFile(std::string path);
 	void Free();
-	void Render(Vector2D newPosition, SDL_RendererFlip flip, double angle = 0.0f);
+
+	void Render(      Vector2D newPosition, SDL_RendererFlip flip, double angle = 0.0f);
+	void Render(const Vector2D newPosition, SDL_RendererFlip flip, double angle = 0.0f);
 	void Render(SDL_Rect portionOfSpriteSheet, SDL_Rect destRect, SDL_RendererFlip flip = SDL_FLIP_NONE, double angle = 0.0f);
 
 	int GetHeight() const { return mHeight; }

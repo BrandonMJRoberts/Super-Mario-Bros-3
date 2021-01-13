@@ -55,13 +55,46 @@ enum class MOVEMENT_DIRECTION : char
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 
-enum class ITEM_TYPES
+enum class ITEM_TYPES : unsigned int
 {
 	MUSHROOM = 0,
 	FIRE_FLOWER,
 
 
 	P_SWITCH,
+
+};
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+
+enum class END_CARD_TYPES : char
+{
+	EMPTY = 0,
+	MUSHROOM,
+	FLOWER,
+	STAR
+};
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+
+enum class SUBJECT_NOTIFICATION_TYPES
+{
+	TAKE_LIFE = 0,
+	ADD_LIFE,
+
+	ADD_SCORE,
+	TAKE_SCORE,
+
+	UPDATE_P_METER,
+
+	INCREMENT_WORLD_ID,
+
+	ADD_END_CARD,
+
+	ADD_MONEY,
+
+	SET_PAUSED,
+	SET_UNPAUSED
 
 };
 

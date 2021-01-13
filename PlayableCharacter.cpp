@@ -5,7 +5,8 @@
 // ----------------------------------------------------- //
 
 PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D spawnPoint, Vector2D numberOfSpritesOnDimensions)
-: mRealGridPosition(spawnPoint)
+: Subject()
+, mRealGridPosition(spawnPoint)
 , mScreenGridPosition()
 , mRenderRefencePoint(0, 0)
 

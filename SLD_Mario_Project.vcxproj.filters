@@ -121,6 +121,9 @@
     <Filter Include="Header Files\Mario Bros 3\Objects\Spawnable Objects">
       <UniqueIdentifier>{1d897f2f-5606-455a-a04d-d3f60f4a5d7a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Mario Bros 3\Observer/Subject">
+      <UniqueIdentifier>{4056bc0b-af0f-4928-8af9-8a58ee6ebc17}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -195,9 +198,6 @@
     <ClCompile Include="BorderWorldMap.cpp">
       <Filter>Source Files\Mario Bros 3\Game Screens Mario 3\World Map Data</Filter>
     </ClCompile>
-    <ClCompile Include="StatsHUD.cpp">
-      <Filter>Source Files\Mario Bros 3\HUD</Filter>
-    </ClCompile>
     <ClCompile Include="BaseWorldMapCharacter.cpp">
       <Filter>Source Files\Mario Bros 3\Characters\World Map</Filter>
     </ClCompile>
@@ -251,6 +251,9 @@
     </ClCompile>
     <ClCompile Include="SpawnPoint_SMB3.cpp">
       <Filter>Source Files\Mario Bros 3\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="HUD_Display.cpp">
+      <Filter>Source Files\Mario Bros 3\HUD</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -341,9 +344,6 @@
     <ClInclude Include="BorderWorldMap.h">
       <Filter>Header Files\Mario Bros 3\Game Screens Mario 3\World Map Data</Filter>
     </ClInclude>
-    <ClInclude Include="StatsHUD.h">
-      <Filter>Header Files\Mario Bros 3\HUD</Filter>
-    </ClInclude>
     <ClInclude Include="BaseWorldMapCharacter.h">
       <Filter>Header Files\Mario Bros 3\Characters\World Map</Filter>
     </ClInclude>
@@ -403,6 +403,15 @@
     </ClInclude>
     <ClInclude Include="SpawnPoint_SMB3.h">
       <Filter>Header Files\Mario Bros 3\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="HUD_Display.h">
+      <Filter>Header Files\Mario Bros 3\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="Observer.h">
+      <Filter>Header Files\Mario Bros 3\Observer/Subject</Filter>
+    </ClInclude>
+    <ClInclude Include="Subject.h">
+      <Filter>Header Files\Mario Bros 3\Observer/Subject</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
