@@ -9,6 +9,8 @@
 
 #include "Game_Maths.h"
 
+#include "SpawnPoint_SMB3.h"
+
 class BaseObject;
 
 class ObjectLayer final
@@ -26,10 +28,11 @@ public:
 
 private:
 	bool LoadInDataFromFile(std::string filePath);
+	bool InPlayArea(Vector2D positionToCheck);
 
 	// Loops through all objects that have not been created and spawns them if needed
-	void CheckIfShouldSpawnObject();
-	void CheckForDestroyingObjects();
+	void CheckIfObjectsShouldSpawn();
+	void UpdateSpawnedObjects(const float deltaTime, Vector2D playerPos);
 
 	void InstantiateNameConversions();
 	void DestroyAllNameConversions();
@@ -38,8 +41,12 @@ private:
 	std::vector<BaseObject*> mUnspawnedObjectsInLevel;
 	std::vector<BaseObject*> mSpawnedObjectsInLevel;
 
+	// Spawnpoints
+	std::vector<SpawnPoint>  mSpawnPoints;
+
 	std::map<std::string, BaseObject*> mNameToObjectConversion;
 
+	// Renderer
 	SDL_Renderer*                mRenderer;
 
 };

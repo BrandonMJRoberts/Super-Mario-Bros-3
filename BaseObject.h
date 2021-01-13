@@ -21,6 +21,8 @@ public:
 	bool         GetIsSpawnedInLevel() const            { return mIsCurrentlySpawnedInLevel; }
 	void         SetIsSpawnedInLevel(const bool newVal) { mIsCurrentlySpawnedInLevel = newVal; }
 
+	Vector2D     GetSpawnPosition() const { return mSpawnPosition; }
+
 protected:
 	Vector2D            mCurrentPosition;
 	Vector2D	        mSpawnPosition;

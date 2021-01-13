@@ -16,7 +16,6 @@
 #include "Question_Mark_Block_SMB3.h"
 
 #include "Pipe_SMB3.h"
-#include "SpawnPoint_SMB3.h"
 
 
 #endif

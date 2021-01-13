@@ -3,20 +3,22 @@
 
 #include "BaseObject.h"
 
-class SpawnPoint final : public BaseObject 
+class SpawnPoint final 
 {
 public:
 	SpawnPoint() = delete;
-	SpawnPoint(const Vector2D spawnPosition, const bool startSpawnedInLevel, const unsigned int spawnPointIndex);
-	~SpawnPoint() override;
+	SpawnPoint(std::string dataLine);
+	~SpawnPoint();
 
-	BaseObject* Clone(std::string dataLineForClone) override;
+	void               Instantiate(std::string dataLineForClone);
 
+	const Vector2D     GetPosition()                   const { return mPosition; }
 	const unsigned int GetSpawnPointIndex()            const { return mSpawnPointIndex; }
 	const bool         IsIndex(unsigned int testIndex) const { if (testIndex == mSpawnPointIndex) return true; return false; }
 
 private:
-	const unsigned int mSpawnPointIndex;
+	Vector2D     mPosition;
+	unsigned int mSpawnPointIndex;
 };
 
 #endif

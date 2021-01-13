@@ -4,12 +4,9 @@
 
 // ------------------------------------------------------------------------------------------------------------------------ //
 
-SpawnPoint::SpawnPoint(const Vector2D spawnPosition, const bool startSpawnedInLevel, const unsigned int spawnPointIndex) 
-: BaseObject(spawnPosition
-, startSpawnedInLevel)
-, mSpawnPointIndex(spawnPointIndex)
+SpawnPoint::SpawnPoint(std::string dataLine) : mSpawnPointIndex(0), mPosition(0, 0)
 {
-
+	Instantiate(dataLine);
 }
 
 // ------------------------------------------------------------------------------------------------------------------------ //
@@ -21,16 +18,11 @@ SpawnPoint::~SpawnPoint()
 
 // ------------------------------------------------------------------------------------------------------------------------ //
 
-BaseObject* SpawnPoint::Clone(std::string dataForClone)
+void SpawnPoint::Instantiate(std::string dataForClone)
 {
 	std::stringstream streamLine(dataForClone);
 
-	Vector2D spawnPos;
-	unsigned int entranceID;
-
-	streamLine >> spawnPos.x >> spawnPos.y >> entranceID;
-
-	return new SpawnPoint(spawnPos, true, entranceID);
+	streamLine >> mPosition.x >> mPosition.y >> mSpawnPointIndex;
 }
 
 // ------------------------------------------------------------------------------------------------------------------------ //

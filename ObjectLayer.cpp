@@ -33,6 +33,7 @@ ObjectLayer::~ObjectLayer()
 	DestroyAllNameConversions();
 	mNameToObjectConversion.clear();
 
+	// Clear up all memory used
 	for (unsigned int i = 0; i < mUnspawnedObjectsInLevel.size(); i++)
 	{
 		delete mUnspawnedObjectsInLevel[i];
@@ -46,53 +47,80 @@ ObjectLayer::~ObjectLayer()
 		mSpawnedObjectsInLevel[i] = nullptr;
 	}
 	mSpawnedObjectsInLevel.clear();
+
+	// Clear the spawnpoint store
+	mSpawnPoints.clear();
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //
 
 void ObjectLayer::Render()
 {
-
+	// Loop through all of the spawned objects are render them
+	for (unsigned int i = 0; i < mSpawnedObjectsInLevel.size(); i++)
+	{
+		if(mSpawnedObjectsInLevel[i])
+			mSpawnedObjectsInLevel[i]->Render();
+	}
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //
 
 void ObjectLayer::Update(const float deltaTime, SDL_Event e, Vector2D playerPosition)
 {
-	// Loop through all objects in the level and update them
-	for (unsigned int i = 0; i < mSpawnedObjectsInLevel.size(); i++)
-	{
-		// Check if the object needs to be moved to the other list
-		if (mSpawnedObjectsInLevel[i] && mSpawnedObjectsInLevel[i]->Update(deltaTime, playerPosition))
-		{
-			// Then add this object to the other list - its position will be reset in its update so we dont need to do it here
-			mUnspawnedObjectsInLevel.push_back(mSpawnedObjectsInLevel[i]);
-		}
-	}
+	UpdateSpawnedObjects(deltaTime, playerPosition);
 
-
+	CheckIfObjectsShouldSpawn();
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //
 
-void ObjectLayer::CheckIfShouldSpawnObject()
+void ObjectLayer::CheckIfObjectsShouldSpawn()
 {
+	std::vector<unsigned int> removeIDs;
+
 	// Loop through all unspawned objects and check if they need to be spawned
 	for (unsigned int i = 0; i < mUnspawnedObjectsInLevel.size(); i++)
 	{
-		// if(mUnspawnedObjectsInLevel.GetSpawnPosition() // is within the play area bounding)
-			// Move to the other list	
+		if (mUnspawnedObjectsInLevel[i] && InPlayArea(mUnspawnedObjectsInLevel[i]->GetSpawnPosition()))
+		{
+			mSpawnedObjectsInLevel.push_back(mUnspawnedObjectsInLevel[i]);
+
+			removeIDs.push_back(i);
+
+			continue;
+		}
+	}
+
+	// Now remove these from the other list
+	if (removeIDs.size() > 0)
+	{
+		unsigned int offset = 0;
+
+		for (unsigned int i = 0; i < removeIDs.size(); i++)
+		{
+			mUnspawnedObjectsInLevel.erase(mUnspawnedObjectsInLevel.begin() + removeIDs[i] - offset++);
+		}
 	}
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //
 
-void ObjectLayer::CheckForDestroyingObjects()
+bool ObjectLayer::InPlayArea(Vector2D positionToCheck)
+{
+	// Do the bounds checks
+	return false;
+}
+
+// -------------------------------------------------------------------------------------------------------------------------- //
+
+void ObjectLayer::UpdateSpawnedObjects(const float deltaTime, Vector2D playerPos)
 {
 	// Loop through all spawned objects and check if they need to be unspawned ('destroyed')
 	for (unsigned int i = 0; i < mSpawnedObjectsInLevel.size(); i++)
 	{
-
+		if(mSpawnedObjectsInLevel[i])
+			mSpawnedObjectsInLevel[i]->Update(deltaTime, playerPos);
 	}
 }
 
@@ -147,6 +175,13 @@ bool ObjectLayer::LoadInDataFromFile(std::string filePath)
 		}
 		else
 		{
+			// First check if it is a spawnpoint as they need to be handelled seperately from the other objects
+			if (objectNameLine == "SPAWN_POINT")
+			{
+				mSpawnPoints.push_back(SpawnPoint(line));
+				continue;
+			}
+
 			// Create a new instance of the object
 			mUnspawnedObjectsInLevel.push_back(mNameToObjectConversion[objectNameLine]->Clone(line));
 
@@ -169,6 +204,14 @@ bool ObjectLayer::LoadInDataFromFile(std::string filePath)
 
 Vector2D ObjectLayer::GetInitialSpawnPoint() const
 {
+	// Loop through all spawned objects - as spawnpoints are forced to always be spawned - and get the spawnpoint with ID 0
+	for (unsigned int i = 0; i < mSpawnPoints.size(); i++)
+	{
+		if (mSpawnPoints[i].IsIndex(0))
+			return mSpawnPoints[i].GetPosition();
+	}
+
+	// If we cant find the spawnpoint then just return nothing
 	return Vector2D();
 }
 
@@ -176,6 +219,14 @@ Vector2D ObjectLayer::GetInitialSpawnPoint() const
 
 Vector2D ObjectLayer::GetSpawnPoint(unsigned int spawnPointIndex) const
 {
+	// Loop through all spawned objects - as spawnpoints are forced to always be spawned - and get the spawnpoint with ID 0
+	for (unsigned int i = 0; i < mSpawnPoints.size(); i++)
+	{
+		if (mSpawnPoints[i].IsIndex(spawnPointIndex))
+			return mSpawnPoints[i].GetPosition();
+	}
+
+	// If we cant find the spawnpoint then just return nothing
 	return Vector2D();
 }
 
@@ -201,8 +252,6 @@ void ObjectLayer::InstantiateNameConversions()
 
 	mNameToObjectConversion["KOOPA_TROOPER"]      = new KoopaTrooper(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Koopa Trooper/Koopa.png", 14, 3, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, true, false, true, 0);
 	mNameToObjectConversion["PARA_KOOPA_TROOPER"] = new KoopaTrooper(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Koopa Trooper/Koopa.png", 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, true, true, true, 0);
-
-	mNameToObjectConversion["SPAWN_POINT"]        = new SpawnPoint(Vector2D(), false, -1);
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //
@@ -238,9 +287,6 @@ void ObjectLayer::DestroyAllNameConversions()
 
 	delete mNameToObjectConversion["PARA_KOOPA_TROOPER"];
 	mNameToObjectConversion["PARA_KOOPA_TROOPER"] = nullptr;
-
-	delete mNameToObjectConversion["SPAWN_POINT"];
-	mNameToObjectConversion["SPAWN_POINT"] = nullptr;
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //
