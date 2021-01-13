@@ -35,4 +35,26 @@ namespace Commons_SMB3
 	}
 
 	// ------------------------------------------------ //
+
+	void RemoveHyphonsFromString(char*& line, unsigned int length)
+	{
+		for (unsigned int i = 0; i < length; i++)
+		{
+			if (line[i] == '-')
+				line[i] = ' ';
+		}
+	}
+
+	// ------------------------------------------------ //
+
+	void ReplaceHyphonsWithSpacesInString(char*& line, unsigned int length)
+	{
+		for (unsigned int i = 0; i < length; i++)
+		{
+			if (line[i] == ' ')
+				line[i] = '-';
+		}
+	}
+
+	// ------------------------------------------------ //
 }

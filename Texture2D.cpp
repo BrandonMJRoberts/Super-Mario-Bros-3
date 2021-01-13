@@ -5,11 +5,13 @@
 // -------------------------------------------------------------------------------------------------------------------------- //
 
 Texture2D::Texture2D(SDL_Renderer* renderer)
+: mRenderer(renderer)
+, mTexture(nullptr)
+, mWidth(0)
+, mHeight(0)
+, mFilePathToSpriteSheet("")
 {
-	mRenderer = renderer;
-	mTexture  = NULL;
-	mWidth    = 0;
-	mHeight   = 0;
+
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //
@@ -38,6 +40,7 @@ bool Texture2D::LoadFromFile(std::string path)
 		if (mTexture == NULL)
 		{
 			std::cout << "Unable to create the texture from surface: Error: " << SDL_GetError() << std::endl;
+			std::cout << "File path: " << path << std::endl;
 			return false;
 		}
 
@@ -45,10 +48,14 @@ bool Texture2D::LoadFromFile(std::string path)
 		mHeight = Surface->h;
 
 		SDL_FreeSurface(Surface);
+
+		// Store the file path so we can tell if this texture has already been loaded
+		mFilePathToSpriteSheet = path;
 	}
 	else
 	{
 		std::cout << "Unable to create texture from surface: Error: " << IMG_GetError() << std::endl;
+		std::cout << "File path: " << path << std::endl;
 		return false;
 	}
 

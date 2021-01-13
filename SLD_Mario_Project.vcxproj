@@ -165,8 +165,20 @@
   <ItemGroup>
     <ClCompile Include="BackgroundLayer.cpp" />
     <ClCompile Include="BackgroundLayer_WorldMap.cpp" />
+    <ClCompile Include="BlockObject.cpp" />
+    <ClCompile Include="Brick_Block_SMB3.cpp" />
+    <ClCompile Include="Coin_SMB3.cpp" />
+    <ClCompile Include="CollectableObject.cpp" />
+    <ClCompile Include="EnemyObject.cpp" />
+    <ClCompile Include="Goomba_SMB3.cpp" />
+    <ClCompile Include="Invisible_Block_SMB3.cpp" />
+    <ClCompile Include="Koopa_Trooper_SMB3.cpp" />
+    <ClCompile Include="Para_Goomba_SMB3.cpp" />
+    <ClCompile Include="Para_Koopa_Trooper_SMB3.cpp" />
+    <ClCompile Include="PhysicalObject.cpp" />
+    <ClCompile Include="Pipe_SMB3.cpp" />
     <ClCompile Include="PlayableCharacter.cpp" />
-    <ClCompile Include="BaseObject_SMB3.cpp" />
+    <ClCompile Include="BaseObject.cpp" />
     <ClCompile Include="BaseWorldMapCharacter.cpp" />
     <ClCompile Include="BorderWorldMap.cpp" />
     <ClCompile Include="Commons_SMB3.cpp" />
@@ -188,7 +200,9 @@
     <ClCompile Include="GameScreen.cpp" />
     <ClCompile Include="GameScreenLevel1.cpp" />
     <ClCompile Include="GameScreenManager.cpp" />
+    <ClCompile Include="Question_Mark_Block_SMB3.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="SpawnPoint_SMB3.cpp" />
     <ClCompile Include="StatsHUD.cpp" />
     <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="WorldMapMario.cpp" />
@@ -200,19 +214,33 @@
     <Library Include="SDL2\SDL2_mixer.lib" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AllCollectablesInclude.h" />
+    <ClInclude Include="AllObjectsInclude.h" />
     <ClInclude Include="BackgroundLayer.h" />
     <ClInclude Include="BackgroundLayer_WorldMap.h" />
-    <ClInclude Include="BaseObject_SMB3.h" />
+    <ClInclude Include="BaseObject.h" />
     <ClInclude Include="BaseWorldMapCharacter.h" />
+    <ClInclude Include="BlockObject.h" />
     <ClInclude Include="BorderWorldMap.h" />
+    <ClInclude Include="Brick_Block_SMB3.h" />
+    <ClInclude Include="Coin_SMB3.h" />
+    <ClInclude Include="CollectableObject.h" />
+    <ClInclude Include="EnemyObject.h" />
     <ClInclude Include="GameManager_SMB3.h" />
     <ClInclude Include="GameScreenManager_SMB3.h" />
     <ClInclude Include="GameScreen_SMB3.h" />
+    <ClInclude Include="Goomba_SMB3.h" />
     <ClInclude Include="InteractionLayer.h" />
+    <ClInclude Include="Invisible_Block_SMB3.h" />
+    <ClInclude Include="Koopa_Trooper_SMB3.h" />
     <ClInclude Include="LevelArea.h" />
     <ClInclude Include="Game_Maths.h" />
     <ClInclude Include="NodeMap_WorldMap.h" />
     <ClInclude Include="ObjectLayer.h" />
+    <ClInclude Include="Para_Goomba_SMB3.h" />
+    <ClInclude Include="Para_Koopa_Trooper_SMB3.h" />
+    <ClInclude Include="PhysicalObject.h" />
+    <ClInclude Include="Pipe_SMB3.h" />
     <ClInclude Include="Power_Up.h" />
     <ClInclude Include="PlayableCharacter.h" />
     <ClInclude Include="Character.h" />
@@ -229,6 +257,8 @@
     <ClInclude Include="GameScreenMainMenu_SMB3.h" />
     <ClInclude Include="GameScreenManager.h" />
     <ClInclude Include="GameScreenWorldMap_SMB3.h" />
+    <ClInclude Include="Question_Mark_Block_SMB3.h" />
+    <ClInclude Include="SpawnPoint_SMB3.h" />
     <ClInclude Include="StatsHUD.h" />
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="WorldMapMario.h" />

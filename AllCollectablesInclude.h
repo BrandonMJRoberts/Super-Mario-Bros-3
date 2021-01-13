@@ -1,0 +1,6 @@
+#ifndef _ALL_COLLECTABLE_OBJECTS_INCLUDE_H_
+#define _ALL_COLLECTABLE_OBJECTS_INCLUDE_H_
+
+#include "Coin_SMB3.h"
+
+#endif

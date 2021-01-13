@@ -53,7 +53,19 @@ enum class MOVEMENT_DIRECTION : char
 	DOWN
 };
 
-// ------------------------------------------------ //
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+
+enum class ITEM_TYPES
+{
+	MUSHROOM = 0,
+	FIRE_FLOWER,
+
+
+	P_SWITCH,
+
+};
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 
 // For the common functions they need to be encapsulated in a namespace to avoid re-definition errors
 namespace Commons_SMB3
@@ -65,6 +77,10 @@ namespace Commons_SMB3
 	void ConvertFromGridPositionToRealPositionRef(Vector2D& position, const unsigned int ResolutionOfSprites);
 
 	Vector2D ConvertFromGridPositionToRealPositionReturn(Vector2D position, const unsigned int ResolutionOfSprites);
+
+	void RemoveHyphonsFromString(char*& line, unsigned int length);
+
+	void ReplaceHyphonsWithSpacesInString(char*& line, unsigned int length);
 }
 
 // ------------------------------------------------ //

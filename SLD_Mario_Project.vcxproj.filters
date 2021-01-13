@@ -109,6 +109,18 @@
     <Filter Include="Source Files\Mario Bros 3\Characters\World Map">
       <UniqueIdentifier>{f8bae00b-582d-4b81-a5c7-60c4017734eb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Mario Bros 3\Objects\Abstract Objects">
+      <UniqueIdentifier>{c14e8514-4873-408f-b163-6cd60aa67435}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mario Bros 3\Objects\Spawnable Objects">
+      <UniqueIdentifier>{76064dcf-8bdd-470d-b920-b8cafd083cd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Mario Bros 3\Objects\Abstract Objects">
+      <UniqueIdentifier>{c8cacc01-6ef6-45a0-be18-6c818c1f706d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Mario Bros 3\Objects\Spawnable Objects">
+      <UniqueIdentifier>{1d897f2f-5606-455a-a04d-d3f60f4a5d7a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -153,9 +165,6 @@
     <ClCompile Include="GameScreenMainMenu_SMB3.cpp">
       <Filter>Source Files\Mario Bros 3\Game Screens Mario 3</Filter>
     </ClCompile>
-    <ClCompile Include="BaseObject_SMB3.cpp">
-      <Filter>Source Files\Mario Bros 3\Objects</Filter>
-    </ClCompile>
     <ClCompile Include="GameScreenLevel_SMB3.cpp">
       <Filter>Source Files\Mario Bros 3\Game Screens Mario 3\Level Data</Filter>
     </ClCompile>
@@ -197,6 +206,51 @@
     </ClCompile>
     <ClCompile Include="PlayableCharacter.cpp">
       <Filter>Source Files\Mario Bros 3\Characters\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseObject.cpp">
+      <Filter>Source Files\Mario Bros 3\Objects\Abstract Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicalObject.cpp">
+      <Filter>Source Files\Mario Bros 3\Objects\Abstract Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Coin_SMB3.cpp">
+      <Filter>Source Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="BlockObject.cpp">
+      <Filter>Source Files\Mario Bros 3\Objects\Abstract Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="CollectableObject.cpp">
+      <Filter>Source Files\Mario Bros 3\Objects\Abstract Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyObject.cpp">
+      <Filter>Source Files\Mario Bros 3\Objects\Abstract Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="SpawnPoint_SMB3.cpp">
+      <Filter>Source Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Brick_Block_SMB3.cpp">
+      <Filter>Source Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Goomba_SMB3.cpp">
+      <Filter>Source Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Invisible_Block_SMB3.cpp">
+      <Filter>Source Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Koopa_Trooper_SMB3.cpp">
+      <Filter>Source Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Para_Goomba_SMB3.cpp">
+      <Filter>Source Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Para_Koopa_Trooper_SMB3.cpp">
+      <Filter>Source Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Pipe_SMB3.cpp">
+      <Filter>Source Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="Question_Mark_Block_SMB3.cpp">
+      <Filter>Source Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -257,9 +311,6 @@
     <ClInclude Include="GameScreenMainMenu_SMB3.h">
       <Filter>Header Files\Mario Bros 3\Game Screens Mario 3</Filter>
     </ClInclude>
-    <ClInclude Include="BaseObject_SMB3.h">
-      <Filter>Header Files\Mario Bros 3\Objects</Filter>
-    </ClInclude>
     <ClInclude Include="GameScreenLevel_SMB3.h">
       <Filter>Header Files\Mario Bros 3\Game Screens Mario 3\Level Data</Filter>
     </ClInclude>
@@ -301,6 +352,57 @@
     </ClInclude>
     <ClInclude Include="PlayableCharacter.h">
       <Filter>Header Files\Mario Bros 3\Characters\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="AllObjectsInclude.h">
+      <Filter>Header Files\Mario Bros 3\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseObject.h">
+      <Filter>Header Files\Mario Bros 3\Objects\Abstract Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicalObject.h">
+      <Filter>Header Files\Mario Bros 3\Objects\Abstract Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Coin_SMB3.h">
+      <Filter>Header Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyObject.h">
+      <Filter>Header Files\Mario Bros 3\Objects\Abstract Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="CollectableObject.h">
+      <Filter>Header Files\Mario Bros 3\Objects\Abstract Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="BlockObject.h">
+      <Filter>Header Files\Mario Bros 3\Objects\Abstract Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="SpawnPoint_SMB3.h">
+      <Filter>Header Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Goomba_SMB3.h">
+      <Filter>Header Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Para_Goomba_SMB3.h">
+      <Filter>Header Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Para_Koopa_Trooper_SMB3.h">
+      <Filter>Header Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Koopa_Trooper_SMB3.h">
+      <Filter>Header Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Pipe_SMB3.h">
+      <Filter>Header Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Question_Mark_Block_SMB3.h">
+      <Filter>Header Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Brick_Block_SMB3.h">
+      <Filter>Header Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Invisible_Block_SMB3.h">
+      <Filter>Header Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="AllCollectablesInclude.h">
+      <Filter>Header Files\Mario Bros 3\Objects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

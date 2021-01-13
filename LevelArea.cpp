@@ -114,7 +114,7 @@ void LevelAreas::Update(const float deltaTime, SDL_Event e, PlayableCharacter* p
 		mInteractableLayer->Update(deltaTime);
 
 	if (mObjectLayer)
-		mObjectLayer->Update(deltaTime, e);
+		mObjectLayer->Update(deltaTime, e, player->GetPosition());
 
 	if (player)
 		player->Update(deltaTime, e);
@@ -143,7 +143,7 @@ Vector2D LevelAreas::GetInitialSpawnPoint() const
 {
 	if (mObjectLayer)
 	{
-		mObjectLayer->GetInitialSpawnPoint();
+		return mObjectLayer->GetInitialSpawnPoint();
 	}
 	
 	return Vector2D();
