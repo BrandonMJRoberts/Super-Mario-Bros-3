@@ -7,6 +7,8 @@
 
 #include "PlayableCharacter.h"
 
+#include "Observer.h"
+
 #include <SDL.h>
 #include <filesystem>
 #include <iostream>
@@ -14,8 +16,9 @@
 // --------------------------------------------------------------------------------------------------------------------------- //
 
 GameScreenLevel_SMB3::GameScreenLevel_SMB3(SDL_Renderer* renderer
-	, const char* levelFilePath 
-	, const bool  playingAsMario) 
+	, const char* levelFilePath
+	, const bool  playingAsMario
+	, Observer&   HUD_Observer)
 	: GameScreen_SMB3(renderer)
 	, mCurrentLevelAreaID(0)    // Default the level area to being zero in case there is not one named 'Overworld'
 	, mPlayer(nullptr)
@@ -42,10 +45,12 @@ GameScreenLevel_SMB3::GameScreenLevel_SMB3(SDL_Renderer* renderer
 	if (playingAsMario)
 	{
 		mPlayer = new PlayableCharacter(renderer, "SDL_Mario_Project/Characters/Mario/In Game Mario/SmallMarioSpriteSheet.png", mAreas[mCurrentLevelAreaID]->GetInitialSpawnPoint(), Vector2D(16, 1));
+		mPlayer->AddObserver(HUD_Observer);
 	}
 	else
 	{
 		mPlayer = new PlayableCharacter(renderer, "SDL_Mario_Project/Characters/Luigi/In Game Luigi/SmallLuigiSpriteSheet.png", mAreas[mCurrentLevelAreaID]->GetInitialSpawnPoint(), Vector2D(16, 1));
+		mPlayer->AddObserver(HUD_Observer);
 	}
 }
 

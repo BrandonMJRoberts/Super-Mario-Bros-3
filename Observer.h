@@ -5,14 +5,14 @@
 
 #include <string>
 
-class Observer abstract
+class Observer
 {
 public:
 	virtual void OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string data) { ; }
+	virtual ~Observer() { ; }
 
 protected:
 	Observer() { ; }
-	virtual ~Observer() { ; }
 
 };
 

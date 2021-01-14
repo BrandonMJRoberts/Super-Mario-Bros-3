@@ -47,6 +47,9 @@ void GameScreenManager_SMB3::Render()
 	// Render the current screen
 	if(mCurrentScreen)
 		mCurrentScreen->Render();
+
+	if (HUD)
+		HUD->Render();
 }
 
 // ------------------------------------------------------------------------ //
@@ -80,7 +83,7 @@ void GameScreenManager_SMB3::ChangeScreen(SCREENS_SMB3 newScreen, std::string fi
 
 	// Load into a level
 	case SCREENS_SMB3::LEVEL:
-		mCurrentScreen = (GameScreen_SMB3*)(new GameScreenLevel_SMB3(mRenderer, filePath.c_str(), true));
+		mCurrentScreen = (GameScreen_SMB3*)(new GameScreenLevel_SMB3(mRenderer, filePath.c_str(), true, *HUD));
 	break;
 
 	// Go to a world map

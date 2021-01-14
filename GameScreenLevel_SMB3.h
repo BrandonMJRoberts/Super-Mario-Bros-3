@@ -11,6 +11,7 @@ struct SDL_Renderer;
 class  Texture2D;
 class  LevelAreas;
 class  PlayableCharacter;
+class  Observer;
 
 // ----------------------------------------------------------------------------------------------------------- //
 
@@ -18,7 +19,7 @@ class GameScreenLevel_SMB3 final : public GameScreen_SMB3
 {
 public:
 	GameScreenLevel_SMB3() = delete;
-	GameScreenLevel_SMB3(SDL_Renderer* renderer, const char* levelFilePath, const bool playingAsMario);
+	GameScreenLevel_SMB3(SDL_Renderer* renderer, const char* levelFilePath, const bool playingAsMario, Observer& HUD_Observer);
 	~GameScreenLevel_SMB3();
 
 	void Render() override;

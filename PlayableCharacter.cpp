@@ -6,7 +6,7 @@
 
 PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D spawnPoint, Vector2D numberOfSpritesOnDimensions)
 : Subject()
-, mRealGridPosition(spawnPoint)
+, mRealGridPosition(1, 26)
 , mScreenGridPosition()
 , mRenderRefencePoint(0, 0)
 
@@ -123,8 +123,8 @@ void PlayableCharacter::CapScreenPositionToInteractableArea(const float deltaTim
 	// First do the y checks
 	if (newScreenGridPos.y <= 0.0f)
 		mScreenGridPosition.y = 0.0f;
-	else if (newScreenGridPos.y >= double(SCREEN_HEIGHT_GRID_SMB3) - 1.0f)
-		mScreenGridPosition.y = double(SCREEN_HEIGHT_GRID_SMB3) - 1.0f;
+	else if (newScreenGridPos.y >= PLAYABLE_SCREEN_AREA_HEIGHT)
+		mScreenGridPosition.y = PLAYABLE_SCREEN_AREA_HEIGHT;
 	else
 		mScreenGridPosition.y = newScreenGridPos.y;
 

@@ -15,7 +15,7 @@ HUD_Display::HUD_Display(SDL_Renderer* renderer) : Observer()
 	, mPMeterOffset()
 	, mTimerCounterOffset()
 	, mFirstEndCardOffset()
-	, mBackgroundSpriteOffset()
+	, mBackgroundSpriteOffset(0, 550)
 	, mEndCards { END_CARD_TYPES::EMPTY, END_CARD_TYPES::EMPTY, END_CARD_TYPES::EMPTY }
 	, mTimeRemaming(0.0f)
 	, mCurrentWorldID(0)
@@ -121,21 +121,21 @@ void HUD_Display::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string 
 	case SUBJECT_NOTIFICATION_TYPES::SET_UNPAUSED:       mPaused = false;   return;
 
 	case SUBJECT_NOTIFICATION_TYPES::ADD_MONEY:
-		unsigned int amount;
-		dataLine >> amount;
-		mCurrentMoneyCount += amount;
+		unsigned int moneyAmount;
+		dataLine >> moneyAmount;
+		mCurrentMoneyCount += moneyAmount;
 	return;
 
 	case SUBJECT_NOTIFICATION_TYPES::ADD_SCORE:
-		unsigned int amount;
-		dataLine >> amount;
-		mCurrentScore += amount;
+		unsigned int scoreAmount;
+		dataLine >> scoreAmount;
+		mCurrentScore += scoreAmount;
 	return;
 
 	case SUBJECT_NOTIFICATION_TYPES::TAKE_SCORE:
-		unsigned int amount;
-		dataLine >> amount;
-		mCurrentScore -= amount;
+		unsigned int minusScore;
+		dataLine >> minusScore;
+		mCurrentScore -= minusScore;
 	return;
 
 	case SUBJECT_NOTIFICATION_TYPES::ADD_END_CARD:

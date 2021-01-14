@@ -22,9 +22,10 @@ public:
 		}
 	}
 
-protected:
-	Subject()  { ; }
 	virtual ~Subject() { mObservers.clear(); }
+
+protected:
+	Subject() { ; }
 
 	std::vector<Observer> mObservers;
 };
