@@ -82,8 +82,20 @@ void ObjectLayer::CheckIfObjectsShouldSpawn()
 	// Loop through all unspawned objects and check if they need to be spawned
 	for (unsigned int i = 0; i < mUnspawnedObjectsInLevel.size(); i++)
 	{
-		if (mUnspawnedObjectsInLevel[i] && InPlayArea(mUnspawnedObjectsInLevel[i]->GetSpawnPosition()))
+		// If an object is instance locked and is outside of the play area then un-instance lock it
+		if (mUnspawnedObjectsInLevel[i]->GetIsInstanceLocked() && !InPlayArea(mUnspawnedObjectsInLevel[i]->GetSpawnPosition()))
 		{
+			// Unlock it
+			mUnspawnedObjectsInLevel[i]->SetInstanceLocked(false);
+
+			// Continue as the check below required the object to be in the play area - to be in here it cannot be
+			continue;
+		}
+
+		// If the object exists, and is in the play area, and is not instance locked
+		if (mUnspawnedObjectsInLevel[i] && InPlayArea(mUnspawnedObjectsInLevel[i]->GetSpawnPosition()) && !mUnspawnedObjectsInLevel[i]->GetIsInstanceLocked())
+		{
+			// Then set this object should spawn into the world
 			mSpawnedObjectsInLevel.push_back(mUnspawnedObjectsInLevel[i]);
 
 			removeIDs.push_back(i);
@@ -119,8 +131,21 @@ void ObjectLayer::UpdateSpawnedObjects(const float deltaTime, Vector2D playerPos
 	// Loop through all spawned objects and check if they need to be unspawned ('destroyed')
 	for (unsigned int i = 0; i < mSpawnedObjectsInLevel.size(); i++)
 	{
-		if(mSpawnedObjectsInLevel[i])
-			mSpawnedObjectsInLevel[i]->Update(deltaTime, playerPos);
+		if (mSpawnedObjectsInLevel[i])
+		{
+			// If they return true then they need to be unspawned / destroyed
+			if (mSpawnedObjectsInLevel[i]->Update(deltaTime, playerPos))
+			{
+				// First store internally that this object has been removed from active play
+				mSpawnedObjectsInLevel[i]->SetInstanceLocked(true);
+
+				// Add it to the other list
+				mUnspawnedObjectsInLevel.push_back(mSpawnedObjectsInLevel[i]);
+
+				// Remove this object from the spawned list
+				mSpawnedObjectsInLevel.erase(mSpawnedObjectsInLevel.begin() + i);
+			}
+		}
 	}
 }
 

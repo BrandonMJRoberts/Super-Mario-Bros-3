@@ -8,6 +8,7 @@ BaseObject::BaseObject(const Vector2D spawnPosition, const bool startSpawnedInLe
 : mCurrentPosition(0, 0)
 , mSpawnPosition(spawnPosition)
 , mIsCurrentlySpawnedInLevel(startSpawnedInLevel)
+, mIsInstanceLocked(false)
 {
 	if (startSpawnedInLevel)
 		mCurrentPosition = spawnPosition;

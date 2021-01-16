@@ -21,13 +21,17 @@ public:
 	bool         GetIsSpawnedInLevel() const            { return mIsCurrentlySpawnedInLevel; }
 	void         SetIsSpawnedInLevel(const bool newVal) { mIsCurrentlySpawnedInLevel = newVal; }
 
-	Vector2D     GetSpawnPosition() const { return mSpawnPosition; }
+	Vector2D     GetSpawnPosition()               const { return mSpawnPosition; }
+	
+	void         SetInstanceLocked(const bool newVal)   { mIsInstanceLocked = newVal; }
+	bool         GetIsInstanceLocked()            const { return mIsInstanceLocked; }
 
 protected:
 	Vector2D            mCurrentPosition;
 	Vector2D	        mSpawnPosition;
 
 	bool                mIsCurrentlySpawnedInLevel;
+	bool                mIsInstanceLocked;
 };
 
 #endif // !_BASE_OBJECT_SMB3_H_
