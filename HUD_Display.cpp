@@ -15,7 +15,7 @@ HUD_Display::HUD_Display(SDL_Renderer* renderer) : Observer()
 	, mCurrentWorldOffset()
 	, mPMeterOffset()
 	, mTimerCounterOffset()
-	, mFirstEndCardOffset()
+	, mFirstEndCardOffset(500, 579)
 	, mBackgroundSpriteOffset(0, 550)
 	, mEndCards { END_CARD_TYPES::EMPTY, END_CARD_TYPES::EMPTY, END_CARD_TYPES::EMPTY }
 	, mTimeRemaming(0.0f)
@@ -23,6 +23,8 @@ HUD_Display::HUD_Display(SDL_Renderer* renderer) : Observer()
 	, mCurrentEndCardCount(0)
 	, mPMeterFillAmount(0)
 	, mFontRenderer(nullptr)
+	, mEndCardsSingleSpriteWidth(0)
+	, mEndCardsSingleSpriteHeight(0)
 {
 	// Now load in the sprite sheets needed
 	LoadInSprites(renderer);
@@ -34,6 +36,12 @@ HUD_Display::HUD_Display(SDL_Renderer* renderer) : Observer()
 	{
 		std::cout << "Failed to create the font renderer for the HUD!" << std::endl;
 		return;
+	}
+
+	if (mEndCardsSpriteSheet)
+	{
+		mEndCardsSingleSpriteWidth  = mEndCardsSpriteSheet->GetWidth() / 2;
+		mEndCardsSingleSpriteHeight = mEndCardsSpriteSheet->GetHeight() / 2;
 	}
 }
 
@@ -88,8 +96,28 @@ void HUD_Display::DeleteAllSprites()
 
 void HUD_Display::Render()
 { 
+	// Render the main background sprite
 	if (mBackgroundSprite)
 		mBackgroundSprite->Render(mBackgroundSpriteOffset, SDL_FLIP_NONE, 0.0f);
+
+	// Now render the three cards to the right of the main sprite
+	if (mEndCardsSpriteSheet)
+	{
+		Vector2D offset((int)mEndCardsSingleSpriteWidth, 0);
+
+		mDestRectPlaceHolder   = SDL_Rect{ (int)mFirstEndCardOffset.x, (int)mFirstEndCardOffset.y, (int)mEndCardsSingleSpriteWidth, (int)mEndCardsSingleSpriteHeight };
+		mSourceRectPlaceHolder = SDL_Rect{0, 0, (int)mEndCardsSingleSpriteWidth, (int)mEndCardsSingleSpriteHeight };
+
+		for (unsigned int i = 0; i < 3; i++)
+		{
+			mSourceRectPlaceHolder.x = ((int)mEndCards[i] % 2) * (int)mEndCardsSingleSpriteWidth;
+			mSourceRectPlaceHolder.y = ((int)mEndCards[i] / 2) * (int)mEndCardsSingleSpriteHeight;
+
+			mEndCardsSpriteSheet->Render(mSourceRectPlaceHolder, mDestRectPlaceHolder, SDL_FLIP_NONE, 0.0f);
+
+			mDestRectPlaceHolder.x += (int)offset.x;
+		}
+	}
 }
 
 // ------------------------------------------------------------------------ //

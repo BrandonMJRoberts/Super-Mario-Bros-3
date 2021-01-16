@@ -35,6 +35,9 @@ private:
 	unsigned int mCurrentEndCardCount;
 	unsigned int mPMeterFillAmount;
 
+	unsigned int mEndCardsSingleSpriteWidth;
+	unsigned int mEndCardsSingleSpriteHeight;
+
 	float        mTimeRemaming;
 	bool         mPaused;
 
