@@ -124,6 +124,9 @@
     <Filter Include="Header Files\Mario Bros 3\Observer/Subject">
       <UniqueIdentifier>{4056bc0b-af0f-4928-8af9-8a58ee6ebc17}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Text Renderer">
+      <UniqueIdentifier>{fdeaa7c3-be4e-4a11-94f0-6aebf9b4c8b6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -254,6 +257,9 @@
     </ClCompile>
     <ClCompile Include="HUD_Display.cpp">
       <Filter>Source Files\Mario Bros 3\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="TextRenderer.cpp">
+      <Filter>Header Files\Text Renderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -412,6 +418,9 @@
     </ClInclude>
     <ClInclude Include="Subject.h">
       <Filter>Header Files\Mario Bros 3\Observer/Subject</Filter>
+    </ClInclude>
+    <ClInclude Include="TextRenderer.h">
+      <Filter>Header Files\Text Renderer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

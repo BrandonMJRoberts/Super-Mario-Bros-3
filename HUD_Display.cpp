@@ -1,6 +1,7 @@
 #include "Hud_Display.h"
 
 #include "Texture2D.h"
+#include "TextRenderer.h"
 
 #include <sstream>
 #include <SDL.h>
@@ -21,9 +22,19 @@ HUD_Display::HUD_Display(SDL_Renderer* renderer) : Observer()
 	, mCurrentWorldID(0)
 	, mCurrentEndCardCount(0)
 	, mPMeterFillAmount(0)
+	, mFontRenderer(nullptr)
 {
 	// Now load in the sprite sheets needed
 	LoadInSprites(renderer);
+
+	// Now create the text renderer
+	mFontRenderer = new TextRenderer(renderer, "SDL_Mario_Project/Fonts and HUD/Font..png", 12, 3);
+
+	if (!mFontRenderer)
+	{
+		std::cout << "Failed to create the font renderer for the HUD!" << std::endl;
+		return;
+	}
 }
 
 // ------------------------------------------------------------------------ //

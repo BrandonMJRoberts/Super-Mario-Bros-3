@@ -8,6 +8,7 @@
 #include <sdl.h>
 
 class Texture2D;
+class TextRenderer;
 
 // The HUD is an observer of multiple areas in order to update its data
 class HUD_Display final : public Observer
@@ -68,6 +69,8 @@ private:
 	const Vector2D mTimerCounterOffset;
 	const Vector2D mFirstEndCardOffset;
 	const Vector2D mBackgroundSpriteOffset;
+
+	TextRenderer* mFontRenderer;
 };
 
 #endif // !_HUD_DISPLAY_H_

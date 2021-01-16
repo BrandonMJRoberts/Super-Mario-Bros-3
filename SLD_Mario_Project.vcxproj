@@ -204,6 +204,7 @@
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="SpawnPoint_SMB3.cpp" />
     <ClCompile Include="HUD_Display.cpp" />
+    <ClCompile Include="TextRenderer.cpp" />
     <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="WorldMapMario.cpp" />
   </ItemGroup>
@@ -262,6 +263,7 @@
     <ClInclude Include="SpawnPoint_SMB3.h" />
     <ClInclude Include="HUD_Display.h" />
     <ClInclude Include="Subject.h" />
+    <ClInclude Include="TextRenderer.h" />
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="WorldMapMario.h" />
   </ItemGroup>

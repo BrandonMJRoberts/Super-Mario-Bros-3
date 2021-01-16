@@ -9,7 +9,7 @@
 class PlayableCharacter final : public Subject
 {
 public:
-	PlayableCharacter(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D spawnPoint, Vector2D numberOfSpritesOnDimensions);
+	PlayableCharacter(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D spawnPoint, Vector2D numberOfSpritesOnDimensions, const Vector2D levelBounds);
 	~PlayableCharacter() override;
 
 	void Render();
@@ -23,9 +23,7 @@ public:
 private:
 	void HandleMovementInput(SDL_Event e);
 
-	void CapRealPositionToPlayableArea(const float deltaTime, const Vector2D levelBounds);
-	void CapScreenPositionToInteractableArea(const float deltaTime);
-	void CalculateRenderReferencePoint(const Vector2D levelBounds);
+	void CalculateNewPosition(const Vector2D levelBounds, const float deltaTime);
 
 	Vector2D   mRealGridPosition;   // The player's position in the collision world
 	Vector2D   mScreenGridPosition; // Player's screen position
