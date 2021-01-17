@@ -30,7 +30,8 @@ ParaGoomba::ParaGoomba(const Vector2D      spawnPosition,
 , canJump
 , startFacingLeft)
 {
-
+	mEndSpriteID   = 0;
+	mStartSpriteID = 0;
 }
 
 // ------------------------------------------------------------------------------------------------ //
@@ -66,6 +67,8 @@ BaseObject* ParaGoomba::Clone(std::string data)
 
 bool ParaGoomba::Update(const float deltaTime, const Vector2D playerPosition)
 {
+	PhysicalObject::Update(deltaTime, playerPosition);
+
 	return false;
 }
 

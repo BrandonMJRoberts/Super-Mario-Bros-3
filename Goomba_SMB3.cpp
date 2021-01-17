@@ -30,7 +30,8 @@ Goomba::Goomba(const Vector2D      spawnPosition,
 , canJump
 , startFacingLeft)
 {
-
+	mEndSpriteID   = 1;
+	mStartSpriteID = 0;
 }
 
 // ------------------------------------------------------------- //
@@ -64,6 +65,8 @@ BaseObject* Goomba::Clone(std::string data)
 
 bool Goomba::Update(const float deltaTime, const Vector2D playerPosition)
 {
+	PhysicalObject::Update(deltaTime, playerPosition);
+
 	return false;
 }
 

@@ -32,7 +32,8 @@ ParaKoopaTrooper::ParaKoopaTrooper(const Vector2D      spawnPosition,
 , startFacingLeft
 , colourIndexOfKoopa)
 {
-
+	mEndSpriteID   = 0;
+	mStartSpriteID = 0;
 }
 
 // --------------------------------------------------------------------------------------------- //
@@ -64,6 +65,8 @@ BaseObject* ParaKoopaTrooper::Clone(std::string dataLine)
 
 bool ParaKoopaTrooper::Update(const float deltaTime, const Vector2D playerPosition)
 {
+	PhysicalObject::Update(deltaTime, playerPosition);
+
 	return false;
 }
 

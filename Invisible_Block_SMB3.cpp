@@ -36,7 +36,8 @@ InvisibleBlock::InvisibleBlock(const Vector2D           spawnPosition,
 , baseObjectReleased
 , maxObjectReleased)
 {
-
+	mEndSpriteID   = 0;
+	mStartSpriteID = 0;
 }
 
 // ------------------------------------------------------------------------------ //
@@ -74,6 +75,8 @@ BaseObject* InvisibleBlock::Clone(std::string dataLine)
 
 bool InvisibleBlock::Update(const float deltaTime, const Vector2D playerPosition)
 {
+	PhysicalObject::Update(deltaTime, playerPosition);
+
 	return false;
 }
 

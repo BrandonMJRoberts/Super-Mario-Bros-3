@@ -38,6 +38,9 @@ BrickBlock::BrickBlock(const Vector2D      spawnPosition,
 , mCanTurnToCoin(canTurnToCoin)
 {
 	mHitsBlockCanTake = 1;
+
+	mEndSpriteID   = 0;
+	mStartSpriteID = 0;
 }
 
 // -------------------------------------------------------------------------------------------------- //

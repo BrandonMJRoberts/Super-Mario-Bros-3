@@ -123,8 +123,8 @@ void PhysicalObject::Render(const Vector2D renderReferencePoint)
 									  (int)mSingleSpriteWidth,
 									  (int)mSingleSpriteHeight };
 
-		SDL_Rect destRect           { (int)renderPos.x * RESOLUTION_OF_SPRITES,
-									  ((int)renderPos.y * RESOLUTION_OF_SPRITES) - (int)mSingleSpriteHeight,
+		SDL_Rect destRect           {  int(renderPos.x * RESOLUTION_OF_SPRITES),
+									  int(renderPos.y * RESOLUTION_OF_SPRITES) - (int)mSingleSpriteHeight,
 									 (int)mSingleSpriteWidth,
 									 (int)mSingleSpriteHeight };
 
@@ -136,6 +136,21 @@ void PhysicalObject::Render(const Vector2D renderReferencePoint)
 
 bool PhysicalObject::Update(const float deltaTime, const Vector2D playerPosition)
 {
+	// Update the frame time and adjust the current frame if needed
+	mTimeRemainingTillNextFrame -= deltaTime;
+
+	if (mTimeRemainingTillNextFrame <= 0.0f)
+	{
+		mTimeRemainingTillNextFrame = mTimePerFrame;
+
+		mCurrentSpriteID++;
+
+		if (mCurrentSpriteID > mEndSpriteID)
+		{
+			mCurrentSpriteID = mStartSpriteID;
+		}
+	}
+
 	return false;
 }
 

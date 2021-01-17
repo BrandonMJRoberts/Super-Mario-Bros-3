@@ -34,7 +34,9 @@ QuestionMarkBlock::QuestionMarkBlock(const Vector2D           spawnPosition,
 , baseObjectReleased
 , maxObjectReleased)
 {
-
+	mEndSpriteID     = 3;
+	mStartSpriteID   = 0;
+	mCurrentSpriteID = 0;
 }
 
 // ---------------------------------------------------------------------------------------------- //
@@ -48,6 +50,8 @@ QuestionMarkBlock::~QuestionMarkBlock()
 
 bool QuestionMarkBlock::Update(const float deltaTime, const Vector2D playerPosition)
 {
+	PhysicalObject::Update(deltaTime, playerPosition);
+
 	return false;
 }
 

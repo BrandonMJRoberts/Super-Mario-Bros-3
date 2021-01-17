@@ -30,6 +30,8 @@ Coin_SMB3::Coin_SMB3(const Vector2D spawnPosition
 , timePerAnimationFrame
 , collectableCanMove)
 {
+	mEndSpriteID   = 5;
+	mStartSpriteID = 0;
 }
 
 // ---------------------------------------------------------------------------------- //
@@ -66,6 +68,8 @@ void Coin_SMB3::Render(const Vector2D renderReferencePoint)
 
 bool Coin_SMB3::Update(const float deltaTime, const Vector2D playerPosition)
 {
+	PhysicalObject::Update(deltaTime, playerPosition);
+
 	return false;
 }
 

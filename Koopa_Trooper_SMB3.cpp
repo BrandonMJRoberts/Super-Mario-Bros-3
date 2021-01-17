@@ -32,6 +32,9 @@ KoopaTrooper::KoopaTrooper(const Vector2D      spawnPosition,
 , startFacingLeft)
 , mColourIndexOfKoopa(colourIndexOfKoopa)
 {
+	mEndSpriteID   = 1;
+	mStartSpriteID = 0;
+
 	switch (colourIndexOfKoopa)
 	{
 	default:
@@ -76,6 +79,8 @@ BaseObject* KoopaTrooper::Clone(std::string dataLine)
 
 bool KoopaTrooper::Update(const float deltaTime, const Vector2D playerPosition)
 {
+	PhysicalObject::Update(deltaTime, playerPosition);
+
 	return false;
 }
 
