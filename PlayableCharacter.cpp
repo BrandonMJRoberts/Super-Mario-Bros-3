@@ -6,9 +6,9 @@
 
 PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D spawnPoint, Vector2D numberOfSpritesOnDimensions, const Vector2D levelBounds)
 : Subject()
-, mRealGridPosition(0, 0)
+, mRealGridPosition(spawnPoint)
 , mScreenGridPosition(0, 0)
-, mRenderRefencePoint(0, 0)
+, mRenderRefencePoint(spawnPoint)
 
 , mVelocity(0, 0)
 , mAcceleration(0, 0)
@@ -37,6 +37,36 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 	{
 		mSingleSpriteWidth  = mSpriteSheet->GetWidth()  / (unsigned int)numberOfSpritesOnDimensions.x;
 		mSingleSpriteHeight = mSpriteSheet->GetHeight() / (unsigned int)numberOfSpritesOnDimensions.y;
+	}
+
+	// Now calculate where the starting screen space position the player should be
+	
+	// If the player is near a boundary then they need specific positioning - starting with the Y axis
+	if (spawnPoint.y + (PLAYABLE_SCREEN_AREA_HEIGHT / 2) > levelBounds.y)
+	{
+		mScreenGridPosition.y = (BACKGROUND_SPRITE_RENDER_HEIGHT - 1) - (levelBounds.y - spawnPoint.y);
+	}
+	else if (spawnPoint.y - (PLAYABLE_SCREEN_AREA_HEIGHT / 2) < 0.0f)
+	{
+		mScreenGridPosition.y = spawnPoint.y;
+	}
+	else
+	{
+		mScreenGridPosition.y = LEVEL_BOUNDING_AREA_HEIGHT / 2;
+	}
+
+	// Now for the X axis
+	if (spawnPoint.x + (PLAYABLE_SCREEN_AREA_WIDTH / 2) > levelBounds.x)
+	{
+		mScreenGridPosition.x = levelBounds.x - spawnPoint.x;
+	}
+	else if (spawnPoint.x - (PLAYABLE_SCREEN_AREA_WIDTH / 2) < 0.0f)
+	{
+		mScreenGridPosition.x = spawnPoint.x;
+	}
+	else
+	{
+		mScreenGridPosition.x = LEVEL_BOUNDING_AREA_WIDTH / 2;
 	}
 }
 
@@ -118,7 +148,7 @@ void PlayableCharacter::CalculateNewPosition(const Vector2D levelBounds, const f
 	// First update the real grid position of the player so that when the player moves their actual point in the world moves as well
 	mRealGridPosition = newRealGridPos;
 
-	//std::cout << "Grid Pos Y: " << mRealGridPosition.y << std::endl;
+	std::cout << "Grid Pos Y: " << mRealGridPosition.y << std::endl;
 
 	// Starting with the Y axis
 	if (mRealGridPosition.y - (PLAYABLE_SCREEN_AREA_HEIGHT / 2) <= 0.0f)

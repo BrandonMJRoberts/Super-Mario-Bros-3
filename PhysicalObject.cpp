@@ -73,6 +73,12 @@ PhysicalObject::PhysicalObject(const Vector2D spawnPosition
 		mThisSpriteSheet = mSpriteSheets[indexOfExisting];
 	}
 
+	// Make sure to setup the sprite width and height
+	if (mThisSpriteSheet && spritesOnWidth != 0 && spritesOnHeight != 0)
+	{
+		mSingleSpriteWidth  = mThisSpriteSheet->GetWidth() / spritesOnWidth;
+		mSingleSpriteHeight = mThisSpriteSheet->GetHeight() / spritesOnHeight;
+	}
 }
 
 // ----------------------------------------------------------------------------------------------------- //

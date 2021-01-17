@@ -28,10 +28,10 @@ public:
 
 private:
 	bool LoadInDataFromFile(std::string filePath);
-	bool InPlayArea(Vector2D positionToCheck);
+	bool InPlayArea(const Vector2D testPosition, const Vector2D gridReferencePoint);
 
 	// Loops through all objects that have not been created and spawns them if needed
-	void CheckIfObjectsShouldSpawn();
+	void CheckIfObjectsShouldSpawn(const Vector2D gridReferencePoint);
 	void UpdateSpawnedObjects(const float deltaTime, Vector2D playerPos);
 
 	void InstantiateNameConversions();

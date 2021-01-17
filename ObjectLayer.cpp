@@ -12,7 +12,7 @@
 
 // -------------------------------------------------------------------------------------------------------------------------- //
 
-ObjectLayer::ObjectLayer(std::string filePathToDataFile, 
+ObjectLayer::ObjectLayer(std::string   filePathToDataFile, 
 	                     SDL_Renderer* renderer)
 : mRenderer(renderer)
 {
@@ -66,48 +66,53 @@ void ObjectLayer::Render(const Vector2D gridReferencePoint)
 
 // -------------------------------------------------------------------------------------------------------------------------- //
 
-void ObjectLayer::Update(const float deltaTime, SDL_Event e, Vector2D playerPosition)
+void ObjectLayer::Update(const float deltaTime, SDL_Event e, Vector2D gridReferencePoint)
 {
-	UpdateSpawnedObjects(deltaTime, playerPosition);
+	// Update the currently spawned objects
+	UpdateSpawnedObjects(deltaTime, gridReferencePoint);
 
-	CheckIfObjectsShouldSpawn();
+	// See if any of the object not currently spawned should spawn again
+	CheckIfObjectsShouldSpawn(gridReferencePoint);
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //
 
-void ObjectLayer::CheckIfObjectsShouldSpawn()
+void ObjectLayer::CheckIfObjectsShouldSpawn(const Vector2D gridReferencePoint)
 {
 	std::vector<unsigned int> removeIDs;
 
 	// Loop through all unspawned objects and check if they need to be spawned
 	for (unsigned int i = 0; i < mUnspawnedObjectsInLevel.size(); i++)
 	{
-		// If an object is instance locked and is outside of the play area then un-instance lock it
-		if (mUnspawnedObjectsInLevel[i]->GetIsInstanceLocked() && !InPlayArea(mUnspawnedObjectsInLevel[i]->GetSpawnPosition()))
+		if (mUnspawnedObjectsInLevel[i])
 		{
-			// Unlock it
-			mUnspawnedObjectsInLevel[i]->SetInstanceLocked(false);
+			// If an object is instance locked and is outside of the play area then un-instance lock it
+			if (mUnspawnedObjectsInLevel[i]->GetIsInstanceLocked() && !InPlayArea(mUnspawnedObjectsInLevel[i]->GetSpawnPosition(), gridReferencePoint))
+			{
+				// Unlock it
+				mUnspawnedObjectsInLevel[i]->SetInstanceLocked(false);
 
-			// Continue as the check below required the object to be in the play area - to be in here it cannot be
-			continue;
-		}
+				// Continue as the check below required the object to be in the play area - to be in here it cannot be
+				continue;
+			}
 
-		// If the object exists, and is in the play area, and is not instance locked
-		if (mUnspawnedObjectsInLevel[i] && InPlayArea(mUnspawnedObjectsInLevel[i]->GetSpawnPosition()) && !mUnspawnedObjectsInLevel[i]->GetIsInstanceLocked())
-		{
-			// Then set this object should spawn into the world
-			mSpawnedObjectsInLevel.push_back(mUnspawnedObjectsInLevel[i]);
+			// If the object exists, and is in the play area, and is not instance locked
+			if (InPlayArea(mUnspawnedObjectsInLevel[i]->GetSpawnPosition(), gridReferencePoint) && !mUnspawnedObjectsInLevel[i]->GetIsInstanceLocked())
+			{
+				// Then set this object should spawn into the world
+				mSpawnedObjectsInLevel.push_back(mUnspawnedObjectsInLevel[i]);
 
-			removeIDs.push_back(i);
+				removeIDs.push_back(i);
 
-			continue;
+				continue;
+			}
 		}
 	}
 
 	// Now remove these from the other list
 	if (removeIDs.size() > 0)
 	{
-		unsigned int offset = 0;
+		unsigned int offset(0);
 
 		for (unsigned int i = 0; i < removeIDs.size(); i++)
 		{
@@ -118,15 +123,27 @@ void ObjectLayer::CheckIfObjectsShouldSpawn()
 
 // -------------------------------------------------------------------------------------------------------------------------- //
 
-bool ObjectLayer::InPlayArea(Vector2D positionToCheck)
+bool ObjectLayer::InPlayArea(const Vector2D testPosition, const Vector2D gridReferencePoint)
 {
-	// Do the bounds checks
+	// First check if the X is valid
+	if (testPosition.x > gridReferencePoint.x - ((SCREEN_WIDTH_GRID_SMB3 / 2) + 1) &&
+		testPosition.x < gridReferencePoint.x + ((SCREEN_WIDTH_GRID_SMB3 / 2) + 1))
+	{
+		// Now check if the Y is valid
+		if (testPosition.y > gridReferencePoint.y - ((SCREEN_HEIGHT_GRID_SMB3 / 2) + 1) && 
+			testPosition.y < gridReferencePoint.y + ((SCREEN_HEIGHT_GRID_SMB3 / 2) + 1))
+		{
+			return true;
+		}
+	}
+
+	// Not in the bounds so return false.
 	return false;
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //
 
-void ObjectLayer::UpdateSpawnedObjects(const float deltaTime, Vector2D playerPos)
+void ObjectLayer::UpdateSpawnedObjects(const float deltaTime, Vector2D gridReferencePoint)
 {
 	// Loop through all spawned objects and check if they need to be unspawned ('destroyed')
 	for (unsigned int i = 0; i < mSpawnedObjectsInLevel.size(); i++)
@@ -134,7 +151,7 @@ void ObjectLayer::UpdateSpawnedObjects(const float deltaTime, Vector2D playerPos
 		if (mSpawnedObjectsInLevel[i])
 		{
 			// If they return true then they need to be unspawned / destroyed
-			if (mSpawnedObjectsInLevel[i]->Update(deltaTime, playerPos))
+			if (mSpawnedObjectsInLevel[i]->Update(deltaTime, gridReferencePoint))
 			{
 				// First store internally that this object has been removed from active play
 				mSpawnedObjectsInLevel[i]->SetInstanceLocked(true);
@@ -269,14 +286,14 @@ void ObjectLayer::InstantiateNameConversions()
 	mNameToObjectConversion["INVISIBLE_BLOCK"]     = new InvisibleBlock(Vector2D(), false, mRenderer, "SDL_Mario_Project/Objects/InvisibleBlock.png", 2, 1, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, 1, POWER_UP_TYPE::NONE, false, (CollectableObject*)mNameToObjectConversion["COIN"], nullptr);
 	mNameToObjectConversion["QUESTION_MARK_BLOCK"] = new QuestionMarkBlock(Vector2D(), false, mRenderer, "SDL_Mario_Project/Objects/QuestionMarkBlock.png", 5, 1, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, 1, POWER_UP_TYPE::NONE, false, (CollectableObject*)mNameToObjectConversion["COIN"], nullptr);
 
-	mNameToObjectConversion["PIPE"]                = new Pipe(Vector2D(), false, mRenderer, "", 0, 0, 0, 0, 0.0f);
+	mNameToObjectConversion["PIPE"]                = new Pipe(Vector2D(), false, mRenderer, "", 1, 1, 0, 0, 0.0f);
 
 	// Enemy Objects
 	mNameToObjectConversion["GOOMBA"]             = new Goomba(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Goomba/Goomba.png", 6, 3, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, true, false, true);
-	mNameToObjectConversion["PARA_GOOMBA"]        = new ParaGoomba(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Goomba/Goomba.png", 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, true, true, true);
+	mNameToObjectConversion["PARA_GOOMBA"]        = new ParaGoomba(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Goomba/Goomba.png", 1, 1, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, true, true, true);
 
 	mNameToObjectConversion["KOOPA_TROOPER"]      = new KoopaTrooper(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Koopa Trooper/Koopa.png", 14, 3, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, true, false, true, 0);
-	mNameToObjectConversion["PARA_KOOPA_TROOPER"] = new KoopaTrooper(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Koopa Trooper/Koopa.png", 0, 0, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, true, true, true, 0);
+	mNameToObjectConversion["PARA_KOOPA_TROOPER"] = new KoopaTrooper(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Koopa Trooper/Koopa.png", 1, 1, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, true, true, true, 0);
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //
