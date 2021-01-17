@@ -112,17 +112,19 @@ PhysicalObject::~PhysicalObject()
 
 // ----------------------------------------------------------------------------------------------------- //
 
-void PhysicalObject::Render()
+void PhysicalObject::Render(const Vector2D renderReferencePoint)
 {
 	if (mThisSpriteSheet)
 	{
-		SDL_Rect portionOfSpriteSheet{(mCurrentSpriteID % mSpritesOnWidth) * mSingleSpriteWidth,
-									  (mCurrentSpriteID / mSpritesOnWidth) * mSingleSpriteHeight,
+		Vector2D renderPos = Vector2D(mCurrentPosition.x - renderReferencePoint.x, mCurrentPosition.y - renderReferencePoint.y);
+
+		SDL_Rect portionOfSpriteSheet{ (int)(mCurrentSpriteID % mSpritesOnWidth) * (int)mSingleSpriteWidth,
+									  (int)(mCurrentSpriteID / mSpritesOnWidth) * (int)mSingleSpriteHeight,
 									  (int)mSingleSpriteWidth,
 									  (int)mSingleSpriteHeight };
 
-		SDL_Rect destRect           { mCurrentPosition.x * RESOLUTION_OF_SPRITES,
-									  mCurrentPosition.y * RESOLUTION_OF_SPRITES,
+		SDL_Rect destRect           { (int)renderPos.x * RESOLUTION_OF_SPRITES,
+									  ((int)renderPos.y * RESOLUTION_OF_SPRITES) - (int)mSingleSpriteHeight,
 									 (int)mSingleSpriteWidth,
 									 (int)mSingleSpriteHeight };
 

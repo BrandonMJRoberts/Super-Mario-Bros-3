@@ -23,7 +23,7 @@ public:
 
 	virtual BaseObject* Clone(std::string dataForNewObject) = 0;
 
-	virtual void        Render() override;
+	virtual void        Render(const Vector2D renderReferencePoint) override;
 	virtual bool        Update(const float deltaTime, const Vector2D playerPosition) override;
 
 	const Vector2D      GetCollisionBox() const { return mCollisionBox; }

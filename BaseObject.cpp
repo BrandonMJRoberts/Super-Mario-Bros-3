@@ -22,7 +22,7 @@ BaseObject::~BaseObject()
 
 // ------------------------------------------------------------------------ //
 
-void BaseObject::Render()
+void BaseObject::Render(const Vector2D renderReferencePoint)
 {
 
 }

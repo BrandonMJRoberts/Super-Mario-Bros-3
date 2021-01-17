@@ -60,7 +60,7 @@ void ObjectLayer::Render(const Vector2D gridReferencePoint)
 	for (unsigned int i = 0; i < mSpawnedObjectsInLevel.size(); i++)
 	{
 		if(mSpawnedObjectsInLevel[i])
-			mSpawnedObjectsInLevel[i]->Render();
+			mSpawnedObjectsInLevel[i]->Render(gridReferencePoint);
 	}
 }
 
@@ -102,6 +102,8 @@ void ObjectLayer::CheckIfObjectsShouldSpawn(const Vector2D gridReferencePoint)
 				// Then set this object should spawn into the world
 				mSpawnedObjectsInLevel.push_back(mUnspawnedObjectsInLevel[i]);
 
+				mUnspawnedObjectsInLevel[i]->SetPositionToSpawn();
+
 				removeIDs.push_back(i);
 
 				continue;
@@ -125,13 +127,14 @@ void ObjectLayer::CheckIfObjectsShouldSpawn(const Vector2D gridReferencePoint)
 
 bool ObjectLayer::InPlayArea(const Vector2D testPosition, const Vector2D gridReferencePoint)
 {
+	const double XDistance = abs(gridReferencePoint.x - testPosition.x);
+	const double YDistance = abs(gridReferencePoint.y - testPosition.y);
+
 	// First check if the X is valid
-	if (testPosition.x > gridReferencePoint.x - ((SCREEN_WIDTH_GRID_SMB3 / 2) + 1) &&
-		testPosition.x < gridReferencePoint.x + ((SCREEN_WIDTH_GRID_SMB3 / 2) + 1))
+	if (XDistance < SCREEN_WIDTH_GRID_SMB3)
 	{
 		// Now check if the Y is valid
-		if (testPosition.y > gridReferencePoint.y - ((SCREEN_HEIGHT_GRID_SMB3 / 2) + 1) && 
-			testPosition.y < gridReferencePoint.y + ((SCREEN_HEIGHT_GRID_SMB3 / 2) + 1))
+		if (YDistance < SCREEN_HEIGHT_GRID_SMB3)
 		{
 			return true;
 		}
@@ -151,7 +154,7 @@ void ObjectLayer::UpdateSpawnedObjects(const float deltaTime, Vector2D gridRefer
 		if (mSpawnedObjectsInLevel[i])
 		{
 			// If they return true then they need to be unspawned / destroyed
-			if (mSpawnedObjectsInLevel[i]->Update(deltaTime, gridReferencePoint))
+			if (mSpawnedObjectsInLevel[i]->Update(deltaTime, gridReferencePoint) || !InPlayArea(mSpawnedObjectsInLevel[i]->GetCurrentPosition(), gridReferencePoint))
 			{
 				// First store internally that this object has been removed from active play
 				mSpawnedObjectsInLevel[i]->SetInstanceLocked(true);
