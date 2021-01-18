@@ -204,3 +204,13 @@ bool NodeMap_WorldMap::GetPositionIsWalkable(const Vector2D position)
 }
 
 // ----------------------------------------------------------------- //
+
+bool NodeMap_WorldMap::GetDataPointIsDot(const char value)
+{
+	if (value == 'X')
+		return true;
+
+	return false;
+}
+
+// ----------------------------------------------------------------- //

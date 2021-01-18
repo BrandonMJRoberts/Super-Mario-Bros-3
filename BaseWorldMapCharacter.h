@@ -37,6 +37,8 @@ protected:
 	void CheckForMovementInput(SDL_Event e);
 	bool CanTurnToDirection(MOVEMENT_DIRECTION newDir, NodeMap_WorldMap& nodeMapRef);
 
+	void SetNewMoveToPosition();
+
 	Texture2D*                   mSpriteSheet;
 
 	Vector2D                     mPosition;

@@ -107,14 +107,22 @@ void BaseWorldMapCharacter::Update(const float deltaTime, NodeMap_WorldMap& node
 		// Now move towards the taget position
 		Vector2D movementDir = (mMoveToPosition - mPosition);
 
-		double accuaracy = 0.05f;
+		double   accuaracy = 0.05f;
 
 		if (movementDir.length() < accuaracy)
 		{
-			mPosition                   = mMoveToPosition;
-			mMovementDirection          = MOVEMENT_DIRECTION::NONE;
-			mRequestedMovementDirection = MOVEMENT_DIRECTION::NONE;
-			return;
+			mPosition = mMoveToPosition;
+
+			if (!CanTurnToDirection(mMovementDirection, nodeMapRef) || nodeMapRef.GetDataPointIsDot(nodeMapRef.GetSpecificDataPoint(mPosition)) || nodeMapRef.GetValueIsLevel(nodeMapRef.GetSpecificDataPoint(mPosition)))
+			{
+				mMovementDirection = MOVEMENT_DIRECTION::NONE;
+				mRequestedMovementDirection = MOVEMENT_DIRECTION::NONE;
+				return;
+			}
+			else
+			{
+				SetNewMoveToPosition();
+			}
 		}
 
 		// Now normalise the direction
@@ -148,32 +156,39 @@ void BaseWorldMapCharacter::Update(const float deltaTime, NodeMap_WorldMap& node
 			mMovementDirection          = mRequestedMovementDirection;
 			mRequestedMovementDirection = MOVEMENT_DIRECTION::NONE;
 
-			// Set the move to position
-			switch (mMovementDirection)
-			{
-			case MOVEMENT_DIRECTION::RIGHT:
-				mMoveToPosition = Vector2D(double(int(mPosition.x)) + 1, int(mPosition.y));
-				mPosition.y     = (int)mPosition.y;
-			break;
-
-			case MOVEMENT_DIRECTION::LEFT:
-				mMoveToPosition = Vector2D(double(int(mPosition.x)) - 1, int(mPosition.y));
-				mPosition.y     = (int)mPosition.y;
-			break;
-
-			case MOVEMENT_DIRECTION::UP:
-				mMoveToPosition = Vector2D(int(mPosition.x), double(int(mPosition.y)) - 1);
-				mPosition.x     = (int)mPosition.x;
-			break;
-
-			case MOVEMENT_DIRECTION::DOWN:
-				mMoveToPosition = Vector2D(int(mPosition.x), double(int(mPosition.y)) + 1);
-				mPosition.x     = (int)mPosition.x;
-			break;
-			}
+			SetNewMoveToPosition();
 		}
 		else
 			mRequestedMovementDirection = MOVEMENT_DIRECTION::NONE;
+	}
+}
+
+// ------------------------------------------------------------------------------------------------------------------------------- //
+
+void BaseWorldMapCharacter::SetNewMoveToPosition()
+{
+	// Set the move to position
+	switch (mMovementDirection)
+	{
+	case MOVEMENT_DIRECTION::RIGHT:
+		mMoveToPosition = Vector2D(double(int(mPosition.x)) + 1, int(mPosition.y));
+		mPosition.y = (int)mPosition.y;
+	break;
+
+	case MOVEMENT_DIRECTION::LEFT:
+		mMoveToPosition = Vector2D(double(int(mPosition.x)) - 1, int(mPosition.y));
+		mPosition.y = (int)mPosition.y;
+	break;
+
+	case MOVEMENT_DIRECTION::UP:
+		mMoveToPosition = Vector2D(int(mPosition.x), double(int(mPosition.y)) - 1);
+		mPosition.x = (int)mPosition.x;
+	break;
+
+	case MOVEMENT_DIRECTION::DOWN:
+		mMoveToPosition = Vector2D(int(mPosition.x), double(int(mPosition.y)) + 1);
+		mPosition.x = (int)mPosition.x;
+	break;
 	}
 }
 

@@ -26,6 +26,8 @@ public:
 	bool        GetValueIsLevel(const char value); 
 	bool        GetPositionIsWalkable(const Vector2D position);
 
+	bool        GetDataPointIsDot(const char value);
+
 private:
 	void        LoadInDataFromFile(const std::string filePath);
 
