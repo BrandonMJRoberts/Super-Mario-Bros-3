@@ -4,6 +4,13 @@
 
 #include <sstream>
 
+unsigned int InvisibleBlock::mCurrentSpriteID(0);
+unsigned int InvisibleBlock::mStartSpriteID(0);
+unsigned int InvisibleBlock::mEndSpriteID(0);
+
+float        InvisibleBlock::mTimeRemainingTillNextFrame(0.0f);
+bool		 InvisibleBlock::mUpdatedStaticVariables(false);
+
 // ------------------------------------------------------------------------------ //
 
 InvisibleBlock::InvisibleBlock(const Vector2D           spawnPosition,
@@ -35,9 +42,9 @@ InvisibleBlock::InvisibleBlock(const Vector2D           spawnPosition,
 , objectReleaseScales
 , baseObjectReleased
 , maxObjectReleased)
+, mTimePerFrame(timePerFrame)
 {
-	mEndSpriteID   = 0;
-	mStartSpriteID = 0;
+	
 }
 
 // ------------------------------------------------------------------------------ //
@@ -81,3 +88,31 @@ bool InvisibleBlock::Update(const float deltaTime, const Vector2D playerPosition
 }
 
 // ------------------------------------------------------------------------------ //
+
+void InvisibleBlock::UpdateStaticVariables(const float deltaTime)
+{
+	mTimeRemainingTillNextFrame -= deltaTime;
+
+	if (mTimeRemainingTillNextFrame <= 0.0f)
+	{
+		mTimeRemainingTillNextFrame = mTimePerFrame;
+
+		mCurrentSpriteID++;
+
+		if (mCurrentSpriteID > mEndSpriteID)
+		{
+			mCurrentSpriteID = mStartSpriteID;
+		}
+	}
+
+	mUpdatedStaticVariables = true;
+}
+
+// ------------------------------------------------------------- //
+
+void InvisibleBlock::Render(const Vector2D renderReferencePoint)
+{
+	RenderSprite(renderReferencePoint, mCurrentSpriteID);
+}
+
+// ------------------------------------------------------------- //

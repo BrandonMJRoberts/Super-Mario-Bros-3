@@ -24,12 +24,25 @@ public:
 	BaseObject* Clone(std::string dataLine) override;
 
 	bool Update(const float deltaTime, const Vector2D playerPosition) override;
+	void Render(const Vector2D renderReferencePoint) override;
 
 	void Move() override;
 	void Jump() override;
 	void Attack() override;
 
+	void        ResetUpdatedStaticVariables() override { mUpdatedStaticVariables = false; }
+
 private:
+	void        UpdateStaticVariables(const float deltaTime);
+
+	static bool				    mUpdatedStaticVariables;
+
+	static unsigned int         mCurrentSpriteID;
+	static unsigned int         mEndSpriteID;
+	static unsigned int         mStartSpriteID;
+
+	static float                mTimeRemainingTillNextFrame;
+	const float					mTimePerFrame;
 };
 
 #endif

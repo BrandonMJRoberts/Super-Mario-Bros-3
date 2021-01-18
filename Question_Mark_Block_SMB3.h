@@ -23,11 +23,23 @@ public:
 	~QuestionMarkBlock() override;
 
 	bool Update(const float deltaTime, const Vector2D playerPosition) override;
+	void Render(const Vector2D renderReferencePoint) override;
 
 	BaseObject* Clone(std::string dataForNewObject) override;
 
-private:
+	void        ResetUpdatedStaticVariables() override { mUpdatedStaticVariables = false; }
 
+private:
+	void        UpdateStaticVariables(const float deltaTime);
+
+	static bool                 mUpdatedStaticVariables;
+
+	static unsigned int         mCurrentSpriteID;
+	static unsigned int         mEndSpriteID;
+	static unsigned int         mStartSpriteID;
+
+	static float                mTimeRemainingTillNextFrame;
+	const float				    mTimePerFrame;
 };
 
 #endif

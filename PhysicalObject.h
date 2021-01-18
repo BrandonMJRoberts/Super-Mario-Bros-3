@@ -23,10 +23,12 @@ public:
 
 	virtual BaseObject* Clone(std::string dataForNewObject) = 0;
 
-	virtual void        Render(const Vector2D renderReferencePoint) override;
+	virtual void        Render(const Vector2D renderReferencePoint) override { ; }
 	virtual bool        Update(const float deltaTime, const Vector2D playerPosition) override;
 
 	const Vector2D      GetCollisionBox() const { return mCollisionBox; }
+
+	void                RenderSprite(const Vector2D renderReferencePoint, const unsigned int currentFrameID);
 
 protected:
 	// Non-instance specific data
@@ -34,22 +36,14 @@ protected:
 	static std::vector<unsigned int> mInstanceCounts;
 	static SDL_Renderer*             mRenderer;
 
-	// Instance specific data for rendering
-	unsigned int         mCurrentSpriteID;
-	unsigned int         mEndSpriteID;
-	unsigned int         mStartSpriteID;
+	unsigned int					 mSingleSpriteWidth;
+	unsigned int					 mSingleSpriteHeight;
 
-	unsigned int         mSingleSpriteWidth;
-	unsigned int         mSingleSpriteHeight;
+	const unsigned int				 mSpritesOnWidth;
+	const unsigned int				 mSpritesOnHeight;
 
-	const unsigned int	 mSpritesOnWidth;
-	const unsigned int	 mSpritesOnHeight;
-
-	Texture2D*           mThisSpriteSheet;
-	const Vector2D       mCollisionBox;
-
-	float                mTimeRemainingTillNextFrame;
-	const float          mTimePerFrame;
+	Texture2D*						 mThisSpriteSheet;
+	const Vector2D					 mCollisionBox;
 };
 
 #endif // !Physical Object

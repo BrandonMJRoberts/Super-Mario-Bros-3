@@ -26,7 +26,19 @@ public:
 
 	virtual BaseObject* Clone(std::string dataLine) override;
 
+	void        ResetUpdatedStaticVariables() override { mUpdatedStaticVariables = false; }
+
 private:
+	void        UpdateStaticVariables(const float deltaTime);
+
+	static bool                 mUpdatedStaticVariables;
+
+	static unsigned int         mCurrentSpriteID;
+	static unsigned int         mEndSpriteID;
+	static unsigned int         mStartSpriteID;
+
+	static float                mTimeRemainingTillNextFrame;
+	const float                 mTimePerFrame;
 };
 
 #endif

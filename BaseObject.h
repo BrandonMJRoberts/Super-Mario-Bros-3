@@ -29,6 +29,8 @@ public:
 
 	void         SetPositionToSpawn()                   { mCurrentPosition = mSpawnPosition; }
 
+	virtual void ResetUpdatedStaticVariables() { ; }
+
 protected:
 	Vector2D            mCurrentPosition;
 	Vector2D	        mSpawnPosition;

@@ -2,11 +2,19 @@
 
 #include <sstream>
 
+unsigned int BrickBlock::mCurrentSpriteID = 0;
+unsigned int BrickBlock::mStartSpriteID   = 0;
+unsigned int BrickBlock::mEndSpriteID     = 3;
+
+float        BrickBlock::mTimeRemainingTillNextFrame = 0.0f;
+
+bool         BrickBlock::mUpdatedStaticVariables = false;
+
 // -------------------------------------------------------------------------------------------------- //
 
 BrickBlock::BrickBlock(const Vector2D      spawnPosition,
 	const bool          startSpawnedInLevel,
-	SDL_Renderer* renderer,
+	SDL_Renderer*        renderer,
 	const std::string   filePathToSpriteSheet,
 	const unsigned int  spritesOnWidth,
 	const unsigned int  spritesOnHeight,
@@ -34,13 +42,10 @@ BrickBlock::BrickBlock(const Vector2D      spawnPosition,
 , objectReleaseScales
 , baseObjectReleased
 , maxObjectReleased)
-
+, mTimePerFrame(timePerFrame)
 , mCanTurnToCoin(canTurnToCoin)
 {
 	mHitsBlockCanTake = 1;
-
-	mEndSpriteID   = 0;
-	mStartSpriteID = 0;
 }
 
 // -------------------------------------------------------------------------------------------------- //
@@ -95,6 +100,45 @@ BaseObject* BrickBlock::Clone(std::string dataForNewObject)
 	else 
 		return nullptr;
 
+}
+
+// -------------------------------------------------------------------------------------------------- //
+
+bool BrickBlock::Update(const float deltaTime, const Vector2D playerPosition)
+{
+	if(!mUpdatedStaticVariables)
+		UpdateStaticVariables(deltaTime);
+
+	return false;
+}
+
+// -------------------------------------------------------------------------------------------------- //
+
+void BrickBlock::UpdateStaticVariables(const float deltaTime)
+{
+	// Update the frame time and adjust the current frame if needed
+	mTimeRemainingTillNextFrame -= deltaTime;
+
+	if (mTimeRemainingTillNextFrame <= 0.0f)
+	{
+		mTimeRemainingTillNextFrame = mTimePerFrame;
+
+		mCurrentSpriteID++;
+
+		if (mCurrentSpriteID > mEndSpriteID)
+		{
+			mCurrentSpriteID = mStartSpriteID;
+		}
+	}
+
+	mUpdatedStaticVariables = true;
+}
+
+// -------------------------------------------------------------------------------------------------- //
+
+void BrickBlock::Render(const Vector2D renderReferencePoint)
+{
+	RenderSprite(renderReferencePoint, mCurrentSpriteID);
 }
 
 // -------------------------------------------------------------------------------------------------- //

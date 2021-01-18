@@ -6,6 +6,13 @@
 
 #include <sstream>
 
+unsigned int Coin_SMB3::mCurrentSpriteID(0);
+unsigned int Coin_SMB3::mStartSpriteID(0);
+unsigned int Coin_SMB3::mEndSpriteID(5);
+
+float        Coin_SMB3::mTimeRemainingTillNextFrame(0.0f);
+bool		 Coin_SMB3::mUpdatedStaticVariables(false);
+
 // ---------------------------------------------------------------------------------- //
 
 Coin_SMB3::Coin_SMB3(const Vector2D spawnPosition
@@ -29,9 +36,9 @@ Coin_SMB3::Coin_SMB3(const Vector2D spawnPosition
 , collisionBoxHeight
 , timePerAnimationFrame
 , collectableCanMove)
+, mTimePerFrame(timePerAnimationFrame)
 {
-	mEndSpriteID   = 5;
-	mStartSpriteID = 0;
+	
 }
 
 // ---------------------------------------------------------------------------------- //
@@ -61,16 +68,38 @@ BaseObject* Coin_SMB3::Clone(std::string dataLine)
 
 void Coin_SMB3::Render(const Vector2D renderReferencePoint)
 {
-	PhysicalObject::Render(renderReferencePoint);
+	RenderSprite(renderReferencePoint, mCurrentSpriteID);
 }
 
 // ---------------------------------------------------------------------------------- //
 
 bool Coin_SMB3::Update(const float deltaTime, const Vector2D playerPosition)
 {
-	PhysicalObject::Update(deltaTime, playerPosition);
+	if(!mUpdatedStaticVariables)
+		UpdateStaticVariables(deltaTime);
 
 	return false;
+}
+
+// ---------------------------------------------------------------------------------- //
+
+void Coin_SMB3::UpdateStaticVariables(const float deltaTime)
+{
+	mTimeRemainingTillNextFrame -= deltaTime;
+
+	if (mTimeRemainingTillNextFrame <= 0.0f)
+	{
+		mTimeRemainingTillNextFrame = mTimePerFrame;
+
+		mCurrentSpriteID++;
+
+		if (mCurrentSpriteID > mEndSpriteID)
+		{
+			mCurrentSpriteID = mStartSpriteID;
+		}
+	}
+
+	mUpdatedStaticVariables = true;
 }
 
 // ---------------------------------------------------------------------------------- //

@@ -2,17 +2,24 @@
 
 #include <sstream>
 
+unsigned int ParaGoomba::mCurrentSpriteID(0);
+unsigned int ParaGoomba::mStartSpriteID(0);
+unsigned int ParaGoomba::mEndSpriteID(0);
+
+float        ParaGoomba::mTimeRemainingTillNextFrame(0.0f);
+bool		 ParaGoomba::mUpdatedStaticVariables(false);
+
 // ------------------------------------------------------------------------------------------------ //
 
 ParaGoomba::ParaGoomba(const Vector2D      spawnPosition,
 	const bool          startSpawnedInLevel,
-	SDL_Renderer* renderer,
+	SDL_Renderer*       renderer,
 	const std::string   filePathToSpriteSheet,
 	const unsigned int  spritesOnWidth,
 	const unsigned int  spritesOnHeight,
 	const double        collisionBoxWidth,
 	const double        collisionBoxHeight,
-	const float		   timePerFrame,
+	const float		    timePerFrame,
 	const bool          canMove,
 	const bool          canJump,
 	const bool          startFacingLeft)
@@ -29,9 +36,9 @@ ParaGoomba::ParaGoomba(const Vector2D      spawnPosition,
 , canMove
 , canJump
 , startFacingLeft)
+, mTimePerFrame(timePerFrame)
 {
-	mEndSpriteID   = 0;
-	mStartSpriteID = 0;
+
 }
 
 // ------------------------------------------------------------------------------------------------ //
@@ -94,3 +101,31 @@ void ParaGoomba::Attack()
 }
 
 // ------------------------------------------------------------------------------------------------ //
+
+void ParaGoomba::UpdateStaticVariables(const float deltaTime)
+{
+	mTimeRemainingTillNextFrame -= deltaTime;
+
+	if (mTimeRemainingTillNextFrame <= 0.0f)
+	{
+		mTimeRemainingTillNextFrame = mTimePerFrame;
+
+		mCurrentSpriteID++;
+
+		if (mCurrentSpriteID > mEndSpriteID)
+		{
+			mCurrentSpriteID = mStartSpriteID;
+		}
+	}
+
+	mUpdatedStaticVariables = true;
+}
+
+// ------------------------------------------------------------- //
+
+void ParaGoomba::Render(const Vector2D renderReferencePoint)
+{
+	RenderSprite(renderReferencePoint, mCurrentSpriteID);
+}
+
+// ------------------------------------------------------------- //

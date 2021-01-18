@@ -24,12 +24,26 @@ public:
 	~BrickBlock() override;
 
 	BaseObject* Clone(std::string dataForNewObject);
+	bool        Update(const float deltaTime, const Vector2D playerPosition) override;
 
-	bool GetCanTurnToCoin() const { return mCanTurnToCoin; }
+	void        Render(const Vector2D renderReferencePoint) override;
+
+	bool        GetCanTurnToCoin()   const { return mCanTurnToCoin; }
+
+	void        ResetUpdatedStaticVariables() override { mUpdatedStaticVariables = false; }
 
 private:
-	bool mCanTurnToCoin;
+	void        UpdateStaticVariables(const float deltaTime);
 
+	bool                        mCanTurnToCoin;
+	static bool                 mUpdatedStaticVariables;
+
+	static unsigned int         mCurrentSpriteID;
+	static unsigned int         mEndSpriteID;
+	static unsigned int         mStartSpriteID;
+
+	static float                mTimeRemainingTillNextFrame;
+	const float                 mTimePerFrame;
 };
 
 #endif

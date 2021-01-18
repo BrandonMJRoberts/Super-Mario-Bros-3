@@ -422,5 +422,8 @@
     <ClInclude Include="TextRenderer.h">
       <Filter>Header Files\Text Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="Animation_Speeds.h">
+      <Filter>Header Files\Mario Bros 3</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

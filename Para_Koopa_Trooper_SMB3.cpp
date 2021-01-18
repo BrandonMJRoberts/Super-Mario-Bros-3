@@ -2,6 +2,13 @@
 
 #include <sstream>
 
+unsigned int ParaKoopaTrooper::mCurrentSpriteID(0);
+unsigned int ParaKoopaTrooper::mStartSpriteID(0);
+unsigned int ParaKoopaTrooper::mEndSpriteID(0);
+
+float        ParaKoopaTrooper::mTimeRemainingTillNextFrame(0.0f);
+bool		 ParaKoopaTrooper::mUpdatedStaticVariables(false);
+
 // --------------------------------------------------------------------------------------------- //
 
 ParaKoopaTrooper::ParaKoopaTrooper(const Vector2D      spawnPosition,
@@ -31,9 +38,9 @@ ParaKoopaTrooper::ParaKoopaTrooper(const Vector2D      spawnPosition,
 , canJump
 , startFacingLeft
 , colourIndexOfKoopa)
+, mTimePerFrame(timePerFrame)
 {
-	mEndSpriteID   = 0;
-	mStartSpriteID = 0;
+	
 }
 
 // --------------------------------------------------------------------------------------------- //
@@ -65,7 +72,8 @@ BaseObject* ParaKoopaTrooper::Clone(std::string dataLine)
 
 bool ParaKoopaTrooper::Update(const float deltaTime, const Vector2D playerPosition)
 {
-	PhysicalObject::Update(deltaTime, playerPosition);
+	if (!mUpdatedStaticVariables)
+		UpdateStaticVariables(deltaTime);
 
 	return false;
 }
@@ -92,3 +100,31 @@ void ParaKoopaTrooper::Attack()
 }
 
 // --------------------------------------------------------------------------------------------- //
+
+void ParaKoopaTrooper::UpdateStaticVariables(const float deltaTime)
+{
+	mTimeRemainingTillNextFrame -= deltaTime;
+
+	if (mTimeRemainingTillNextFrame <= 0.0f)
+	{
+		mTimeRemainingTillNextFrame = mTimePerFrame;
+
+		mCurrentSpriteID++;
+
+		if (mCurrentSpriteID > mEndSpriteID)
+		{
+			mCurrentSpriteID = mStartSpriteID;
+		}
+	}
+
+	mUpdatedStaticVariables = true;
+}
+
+// ------------------------------------------------------------- //
+
+void ParaKoopaTrooper::Render(const Vector2D renderReferencePoint)
+{
+	RenderSprite(renderReferencePoint, mCurrentSpriteID);
+}
+
+// ------------------------------------------------------------- //

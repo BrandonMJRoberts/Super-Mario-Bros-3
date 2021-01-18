@@ -2,6 +2,14 @@
 
 #include <sstream>
 
+unsigned int KoopaTrooper::mCurrentSpriteID(0);
+unsigned int KoopaTrooper::mStartSpriteID(0);
+unsigned int KoopaTrooper::mEndSpriteID(1);
+
+float        KoopaTrooper::mTimeRemainingTillNextFrame(0.0f);
+bool		 KoopaTrooper::mUpdatedStaticVariables(false);
+
+
 // ------------------------------------------------------------------------------ //
 
 KoopaTrooper::KoopaTrooper(const Vector2D      spawnPosition,
@@ -31,9 +39,8 @@ KoopaTrooper::KoopaTrooper(const Vector2D      spawnPosition,
 , canJump
 , startFacingLeft)
 , mColourIndexOfKoopa(colourIndexOfKoopa)
+, mTimePerFrame(timePerFrame)
 {
-	mEndSpriteID   = 1;
-	mStartSpriteID = 0;
 
 	switch (colourIndexOfKoopa)
 	{
@@ -85,3 +92,31 @@ bool KoopaTrooper::Update(const float deltaTime, const Vector2D playerPosition)
 }
 
 // ------------------------------------------------------------------------------ //
+
+void KoopaTrooper::UpdateStaticVariables(const float deltaTime)
+{
+	mTimeRemainingTillNextFrame -= deltaTime;
+
+	if (mTimeRemainingTillNextFrame <= 0.0f)
+	{
+		mTimeRemainingTillNextFrame = mTimePerFrame;
+
+		mCurrentSpriteID++;
+
+		if (mCurrentSpriteID > mEndSpriteID)
+		{
+			mCurrentSpriteID = mStartSpriteID;
+		}
+	}
+
+	mUpdatedStaticVariables = true;
+}
+
+// ------------------------------------------------------------- //
+
+void KoopaTrooper::Render(const Vector2D renderReferencePoint)
+{
+	RenderSprite(renderReferencePoint, mCurrentSpriteID);
+}
+
+// ------------------------------------------------------------- //

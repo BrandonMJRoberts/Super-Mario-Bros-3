@@ -2,6 +2,13 @@
 
 #include <sstream>
 
+unsigned int Goomba::mCurrentSpriteID(0);
+unsigned int Goomba::mStartSpriteID(0);
+unsigned int Goomba::mEndSpriteID(1);
+
+float        Goomba::mTimeRemainingTillNextFrame(0.0f);
+bool		 Goomba::mUpdatedStaticVariables(false);
+
 // ------------------------------------------------------------- //
 
 Goomba::Goomba(const Vector2D      spawnPosition,
@@ -29,9 +36,9 @@ Goomba::Goomba(const Vector2D      spawnPosition,
 , canMove
 , canJump
 , startFacingLeft)
+, mTimePerFrame(timePerFrame)
 {
-	mEndSpriteID   = 1;
-	mStartSpriteID = 0;
+
 }
 
 // ------------------------------------------------------------- //
@@ -65,7 +72,8 @@ BaseObject* Goomba::Clone(std::string data)
 
 bool Goomba::Update(const float deltaTime, const Vector2D playerPosition)
 {
-	PhysicalObject::Update(deltaTime, playerPosition);
+	if (!mUpdatedStaticVariables)
+		UpdateStaticVariables(deltaTime);
 
 	return false;
 }
@@ -89,6 +97,34 @@ void Goomba::Jump()
 void Goomba::Attack()
 {
 
+}
+
+// ------------------------------------------------------------- //
+
+void Goomba::UpdateStaticVariables(const float deltaTime)
+{
+	mTimeRemainingTillNextFrame -= deltaTime;
+
+	if (mTimeRemainingTillNextFrame <= 0.0f)
+	{
+		mTimeRemainingTillNextFrame = mTimePerFrame;
+
+		mCurrentSpriteID++;
+
+		if (mCurrentSpriteID > mEndSpriteID)
+		{
+			mCurrentSpriteID = mStartSpriteID;
+		}
+	}
+
+	mUpdatedStaticVariables = true;
+}
+
+// ------------------------------------------------------------- //
+
+void Goomba::Render(const Vector2D renderReferencePoint)
+{
+	RenderSprite(renderReferencePoint, mCurrentSpriteID);
 }
 
 // ------------------------------------------------------------- //

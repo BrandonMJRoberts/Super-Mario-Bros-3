@@ -24,9 +24,23 @@ public:
 	virtual BaseObject* Clone(std::string dataLine) override;
 
 	virtual bool        Update(const float deltaTime, const Vector2D playerPosition) override;
+	void                Render(const Vector2D renderReferencePoint) override;
+
+	void        ResetUpdatedStaticVariables() override { mUpdatedStaticVariables = false; }
 
 private:
-	const unsigned int mColourIndexOfKoopa;
+	void        UpdateStaticVariables(const float deltaTime);
+
+	const unsigned int		    mColourIndexOfKoopa;
+
+	static bool                 mUpdatedStaticVariables;
+
+	static unsigned int         mCurrentSpriteID;
+	static unsigned int         mEndSpriteID;
+	static unsigned int         mStartSpriteID;
+
+	static float                mTimeRemainingTillNextFrame;
+	const float					mTimePerFrame;
 };
 
 #endif

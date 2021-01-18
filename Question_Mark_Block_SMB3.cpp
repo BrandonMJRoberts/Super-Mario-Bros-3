@@ -2,6 +2,13 @@
 
 #include <sstream>
 
+unsigned int QuestionMarkBlock::mCurrentSpriteID(0);
+unsigned int QuestionMarkBlock::mStartSpriteID(0);
+unsigned int QuestionMarkBlock::mEndSpriteID(3);
+
+float        QuestionMarkBlock::mTimeRemainingTillNextFrame(0.0f);
+bool		 QuestionMarkBlock::mUpdatedStaticVariables(false);
+
 // ---------------------------------------------------------------------------------------------- //
 
 QuestionMarkBlock::QuestionMarkBlock(const Vector2D           spawnPosition,
@@ -33,10 +40,9 @@ QuestionMarkBlock::QuestionMarkBlock(const Vector2D           spawnPosition,
 , objectReleaseScales
 , baseObjectReleased
 , maxObjectReleased)
+, mTimePerFrame(timePerFrame)
 {
-	mEndSpriteID     = 3;
-	mStartSpriteID   = 0;
-	mCurrentSpriteID = 0;
+	
 }
 
 // ---------------------------------------------------------------------------------------------- //
@@ -50,7 +56,8 @@ QuestionMarkBlock::~QuestionMarkBlock()
 
 bool QuestionMarkBlock::Update(const float deltaTime, const Vector2D playerPosition)
 {
-	PhysicalObject::Update(deltaTime, playerPosition);
+	if (!mUpdatedStaticVariables)
+		UpdateStaticVariables(deltaTime);
 
 	return false;
 }
@@ -82,3 +89,31 @@ BaseObject* QuestionMarkBlock::Clone(std::string dataForNewObject)
 }
 
 // ---------------------------------------------------------------------------------------------- //
+
+void QuestionMarkBlock::UpdateStaticVariables(const float deltaTime)
+{
+	mTimeRemainingTillNextFrame -= deltaTime;
+
+	if (mTimeRemainingTillNextFrame <= 0.0f)
+	{
+		mTimeRemainingTillNextFrame = mTimePerFrame;
+
+		mCurrentSpriteID++;
+
+		if (mCurrentSpriteID > mEndSpriteID)
+		{
+			mCurrentSpriteID = mStartSpriteID;
+		}
+	}
+
+	mUpdatedStaticVariables = true;
+}
+
+// ------------------------------------------------------------- //
+
+void QuestionMarkBlock::Render(const Vector2D renderReferencePoint)
+{
+	RenderSprite(renderReferencePoint, mCurrentSpriteID);
+}
+
+// ------------------------------------------------------------- //

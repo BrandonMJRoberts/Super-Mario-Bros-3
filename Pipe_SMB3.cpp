@@ -1,5 +1,7 @@
 #include "Pipe_SMB3.h"
 
+bool Pipe::mUpdatedStaticVariables = false;
+
 // ----------------------------------------------------------------------------------------- //
 
 Pipe::Pipe(const Vector2D      spawnPosition,

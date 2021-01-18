@@ -20,15 +20,10 @@ PhysicalObject::PhysicalObject(const Vector2D spawnPosition
 
 : BaseObject(spawnPosition
 , startSpawnedInLevel)
-, mCurrentSpriteID(0)
-, mStartSpriteID(0)
-, mEndSpriteID(0)
 , mSingleSpriteWidth(0)
 , mSingleSpriteHeight(0)
 , mSpritesOnWidth(spritesOnWidth)
 , mSpritesOnHeight(spritesOnHeight)
-, mTimePerFrame(timePerFrame)
-, mTimeRemainingTillNextFrame(timePerFrame)
 , mThisSpriteSheet(nullptr)
 , mCollisionBox(collisionBoxWidth, collsiionBoxHeight)
 {
@@ -112,18 +107,18 @@ PhysicalObject::~PhysicalObject()
 
 // ----------------------------------------------------------------------------------------------------- //
 
-void PhysicalObject::Render(const Vector2D renderReferencePoint)
+void PhysicalObject::RenderSprite(const Vector2D renderReferencePoint, const unsigned int currentFrameID)
 {
 	if (mThisSpriteSheet)
 	{
 		Vector2D renderPos = Vector2D(mCurrentPosition.x - renderReferencePoint.x, mCurrentPosition.y - renderReferencePoint.y);
 
-		SDL_Rect portionOfSpriteSheet{ (int)(mCurrentSpriteID % mSpritesOnWidth) * (int)mSingleSpriteWidth,
-									  (int)(mCurrentSpriteID / mSpritesOnWidth) * (int)mSingleSpriteHeight,
-									  (int)mSingleSpriteWidth,
-									  (int)mSingleSpriteHeight };
+		SDL_Rect portionOfSpriteSheet{ (int)(currentFrameID % mSpritesOnWidth) * (int)mSingleSpriteWidth,
+									   (int)(currentFrameID / mSpritesOnWidth) * (int)mSingleSpriteHeight,
+									   (int)mSingleSpriteWidth,
+									   (int)mSingleSpriteHeight };
 
-		SDL_Rect destRect           {  int(renderPos.x * RESOLUTION_OF_SPRITES),
+		SDL_Rect destRect           { int(renderPos.x * RESOLUTION_OF_SPRITES),
 									  int(renderPos.y * RESOLUTION_OF_SPRITES) - (int)mSingleSpriteHeight,
 									 (int)mSingleSpriteWidth,
 									 (int)mSingleSpriteHeight };
@@ -136,21 +131,6 @@ void PhysicalObject::Render(const Vector2D renderReferencePoint)
 
 bool PhysicalObject::Update(const float deltaTime, const Vector2D playerPosition)
 {
-	// Update the frame time and adjust the current frame if needed
-	mTimeRemainingTillNextFrame -= deltaTime;
-
-	if (mTimeRemainingTillNextFrame <= 0.0f)
-	{
-		mTimeRemainingTillNextFrame = mTimePerFrame;
-
-		mCurrentSpriteID++;
-
-		if (mCurrentSpriteID > mEndSpriteID)
-		{
-			mCurrentSpriteID = mStartSpriteID;
-		}
-	}
-
 	return false;
 }
 
