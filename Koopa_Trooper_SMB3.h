@@ -31,6 +31,8 @@ public:
 private:
 	void        UpdateStaticVariables(const float deltaTime);
 
+	RenderData  GetRenderData() override { return RenderData{ mCurrentSpriteID, mStartSpriteID, mEndSpriteID, mTimeRemainingTillNextFrame, mTimePerFrame }; }
+
 	const unsigned int		    mColourIndexOfKoopa;
 
 	static bool                 mUpdatedStaticVariables;

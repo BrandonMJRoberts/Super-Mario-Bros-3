@@ -1,18 +1,24 @@
 #include "Pipe_SMB3.h"
 
-bool Pipe::mUpdatedStaticVariables = false;
+unsigned int Pipe::mCurrentSpriteID = 0;
+unsigned int Pipe::mStartSpriteID = 0;
+unsigned int Pipe::mEndSpriteID = 3;
+
+float        Pipe::mTimeRemainingTillNextFrame = 0.0f;
+
+bool         Pipe::mUpdatedStaticVariables = false;
 
 // ----------------------------------------------------------------------------------------- //
 
 Pipe::Pipe(const Vector2D      spawnPosition,
 	const bool          startSpawnedInLevel,
-	SDL_Renderer* renderer,
+	SDL_Renderer*       renderer,
 	const std::string   filePathToSpriteSheet,
 	const unsigned int  spritesOnWidth,
 	const unsigned int  spritesOnHeight,
 	const double        collisionBoxWidth,
 	const double        collisionBoxHeight,
-	const float		   timePerFrame)
+	const float		    timePerFrame)
 
 : PhysicalObject(spawnPosition
 , startSpawnedInLevel
@@ -23,6 +29,7 @@ Pipe::Pipe(const Vector2D      spawnPosition,
 , collisionBoxWidth
 , collisionBoxHeight
 , timePerFrame)
+, mTimePerFrame(timePerFrame)
 {
 
 }

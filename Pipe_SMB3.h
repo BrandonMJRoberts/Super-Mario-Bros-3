@@ -25,6 +25,15 @@ public:
 
 private:
 	static bool mUpdatedStaticVariables;
+
+	RenderData  GetRenderData() override { return RenderData{ mCurrentSpriteID, mStartSpriteID, mEndSpriteID, mTimeRemainingTillNextFrame, mTimePerFrame }; }
+
+	static unsigned int         mCurrentSpriteID;
+	static unsigned int         mEndSpriteID;
+	static unsigned int         mStartSpriteID;
+
+	static float                mTimeRemainingTillNextFrame;
+	const float                 mTimePerFrame;
 };
 
 #endif

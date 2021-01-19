@@ -33,7 +33,10 @@ public:
 	void        ResetUpdatedStaticVariables() override { mUpdatedStaticVariables = false; }
 
 private:
+
 	void        UpdateStaticVariables(const float deltaTime);
+
+	RenderData  GetRenderData() override { return RenderData{mCurrentSpriteID, mStartSpriteID, mEndSpriteID, mTimeRemainingTillNextFrame, mTimePerFrame}; }
 
 	bool                        mCanTurnToCoin;
 	static bool                 mUpdatedStaticVariables;

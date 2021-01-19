@@ -6,6 +6,20 @@
 #include "Texture2D.h"
 #include <vector>
 
+// ------------------------------------------------------------------------------------------------- //
+
+struct RenderData
+{
+	unsigned int& currentFrameID;
+	unsigned int  startrameID;
+	unsigned int  endFrameID;
+
+	float&        timeRemainingTillFrameChange;
+	float         timePerFrame;
+};
+
+// ------------------------------------------------------------------------------------------------- //
+
 class PhysicalObject abstract : public BaseObject
 {
 public:
@@ -30,7 +44,13 @@ public:
 
 	void                RenderSprite(const Vector2D renderReferencePoint, const unsigned int currentFrameID);
 
+	virtual bool        GetHasUpdatedStaticVariables() { return false; }
+
 protected:
+	void                 UpdateStaticVariables(const float deltaTime);
+
+	virtual RenderData   GetRenderData() = 0;
+
 	// Non-instance specific data
 	static std::vector<Texture2D*>   mSpriteSheets;
 	static std::vector<unsigned int> mInstanceCounts;

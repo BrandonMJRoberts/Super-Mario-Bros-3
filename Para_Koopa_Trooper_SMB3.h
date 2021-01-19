@@ -35,6 +35,8 @@ public:
 private:
 	void        UpdateStaticVariables(const float deltaTime);
 
+	RenderData  GetRenderData() override { return RenderData{ mCurrentSpriteID, mStartSpriteID, mEndSpriteID, mTimeRemainingTillNextFrame, mTimePerFrame }; }
+
 	static bool				    mUpdatedStaticVariables;
 
 	static unsigned int         mCurrentSpriteID;

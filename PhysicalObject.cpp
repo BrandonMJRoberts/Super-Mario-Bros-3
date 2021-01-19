@@ -131,7 +131,34 @@ void PhysicalObject::RenderSprite(const Vector2D renderReferencePoint, const uns
 
 bool PhysicalObject::Update(const float deltaTime, const Vector2D playerPosition)
 {
+	if (GetHasUpdatedStaticVariables())
+	{
+		UpdateStaticVariables(deltaTime);
+	}
+
 	return false;
+}
+
+// ----------------------------------------------------------------------------------------------------- //
+
+void PhysicalObject::UpdateStaticVariables(const float deltaTime)
+{
+	RenderData objectSpecificData = GetRenderData();
+
+	// Update the frame time and adjust the current frame if needed
+	objectSpecificData.timeRemainingTillFrameChange -= deltaTime;
+
+	if (objectSpecificData.timeRemainingTillFrameChange <= 0.0f)
+	{
+		objectSpecificData.timeRemainingTillFrameChange = objectSpecificData.timePerFrame;
+
+		objectSpecificData.currentFrameID++;
+
+		if (objectSpecificData.currentFrameID > objectSpecificData.endFrameID)
+		{
+			objectSpecificData.currentFrameID = objectSpecificData.startrameID;
+		}
+	}
 }
 
 // ----------------------------------------------------------------------------------------------------- //
