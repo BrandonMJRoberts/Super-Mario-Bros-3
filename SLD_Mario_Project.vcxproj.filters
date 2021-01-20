@@ -127,6 +127,9 @@
     <Filter Include="Header Files\Text Renderer">
       <UniqueIdentifier>{fdeaa7c3-be4e-4a11-94f0-6aebf9b4c8b6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Mario Bros 3\TextRenderer">
+      <UniqueIdentifier>{b64bd2f7-621c-4cd8-b14b-54808e64b8d9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -259,7 +262,7 @@
       <Filter>Source Files\Mario Bros 3\HUD</Filter>
     </ClCompile>
     <ClCompile Include="TextRenderer.cpp">
-      <Filter>Header Files\Text Renderer</Filter>
+      <Filter>Source Files\Mario Bros 3\TextRenderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

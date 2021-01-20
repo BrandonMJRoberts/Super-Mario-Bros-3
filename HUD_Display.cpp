@@ -9,12 +9,12 @@
 // ------------------------------------------------------------------------ //
 
 HUD_Display::HUD_Display(SDL_Renderer* renderer) : Observer()
-	, mLivesCounterOffset()
-	, mScoreCounterOffset()
-	, mMoneyCounterOffset()
-	, mCurrentWorldOffset()
-	, mPMeterOffset()
-	, mTimerCounterOffset()
+	, mLivesCounterOffset(147, 621)
+	, mScoreCounterOffset(336, 621)
+	, mMoneyCounterOffset(455, 597)
+	, mCurrentWorldOffset(147, 597)
+	, mPMeterOffset(189, 597)
+	, mTimerCounterOffset(455, 621)
 	, mFirstEndCardOffset(500, 579)
 	, mBackgroundSpriteOffset(0, 550)
 	, mEndCards { END_CARD_TYPES::EMPTY, END_CARD_TYPES::EMPTY, END_CARD_TYPES::EMPTY }
@@ -30,7 +30,7 @@ HUD_Display::HUD_Display(SDL_Renderer* renderer) : Observer()
 	LoadInSprites(renderer);
 
 	// Now create the text renderer
-	mFontRenderer = new TextRenderer(renderer, "SDL_Mario_Project/Fonts and HUD/Font..png", 12, 3);
+	mFontRenderer = new TextRenderer(renderer, "SDL_Mario_Project/Fonts and HUD/Font.png", 12, 3);
 
 	if (!mFontRenderer)
 	{
@@ -117,6 +117,56 @@ void HUD_Display::Render()
 
 			mDestRectPlaceHolder.x += (int)offset.x;
 		}
+	}
+
+	if (mPMeterArrowSprite && mCompletePMeterSprite)
+	{
+		for(unsigned int i = 0; i < 5; i++)
+			mPMeterArrowSprite->Render(Vector2D(mPMeterOffset.x + double(i * 26), mPMeterOffset.y), SDL_FLIP_NONE, 0.0f);
+
+		mCompletePMeterSprite->Render(Vector2D(350, 597), SDL_FLIP_NONE, 0.0f);
+	}
+
+ 	if (mFontRenderer)
+	{
+		std::string outputValue;
+
+		// ---------------------------------------------------------------------- //
+
+		// First render the time remaining
+		outputValue = std::to_string((int)mTimeRemaming);
+
+		while (outputValue.size() < 3)
+			outputValue.insert(outputValue.begin(), '0');
+
+		mFontRenderer->RenderFromRight(outputValue, 10, mTimerCounterOffset);
+
+		// ---------------------------------------------------------------------- //
+
+		// Now render the money the player has
+		mFontRenderer->RenderFromRight(std::to_string((int)mCurrentMoneyCount), 10, mMoneyCounterOffset);
+
+		// ---------------------------------------------------------------------- //
+
+		// Now render the current world ID
+		mFontRenderer->RenderFromLeft(std::to_string(mCurrentWorldID), 1, mCurrentWorldOffset);
+
+		// ---------------------------------------------------------------------- //
+
+		// Now render the current live count
+		mFontRenderer->RenderFromRight(std::to_string(mLivesRemaining), 10, mLivesCounterOffset);
+
+		// ---------------------------------------------------------------------- //
+
+		// Now render the current score
+		outputValue = std::to_string((int)mCurrentScore);
+
+		while(outputValue.size() < 7)
+			outputValue.insert(outputValue.begin(), '0');
+
+		mFontRenderer->RenderFromRight(outputValue, 7, mScoreCounterOffset);
+
+		// ---------------------------------------------------------------------- //
 	}
 }
 
