@@ -19,7 +19,8 @@ public:
 
 	BaseObject* Clone(std::string dataLineForClone) override;
 
-	bool Update(const float deltaTime, const Vector2D playerPosition) override;
+	bool        Update(const float deltaTime, const Vector2D playerPosition) override;
+	void        Render(const Vector2D renderReferencePoint) override;
 
 	void        ResetUpdatedStaticVariables() override { mUpdatedStaticVariables = false; }
 
@@ -34,6 +35,9 @@ private:
 
 	static float                mTimeRemainingTillNextFrame;
 	const float                 mTimePerFrame;
+
+	unsigned int				mWidth;
+	unsigned int				mHeight;
 };
 
 #endif

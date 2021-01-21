@@ -114,6 +114,9 @@ namespace Commons_SMB3
 	void RemoveHyphonsFromString(char*& line, unsigned int length);
 
 	void ReplaceHyphonsWithSpacesInString(char*& line, unsigned int length);
+
+	double Max(double val1, double val2);
+	double Min(double val1, double val2);
 }
 
 // ------------------------------------------------ //

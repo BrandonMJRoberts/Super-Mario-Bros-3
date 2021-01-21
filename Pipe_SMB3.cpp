@@ -56,3 +56,10 @@ bool Pipe::Update(const float deltaTime, const Vector2D playerPosition)
 }
 
 // ----------------------------------------------------------------------------------------- //
+
+void Pipe::Render(const Vector2D renderReferencePoint)
+{
+
+}
+
+// ----------------------------------------------------------------------------------------- //

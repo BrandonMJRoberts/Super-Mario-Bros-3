@@ -68,6 +68,9 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 	{
 		mScreenGridPosition.x = LEVEL_BOUNDING_AREA_WIDTH / 2;
 	}
+
+	// Now calculate the starting render reference point
+	CalculateInitialRenderReferencePoint(levelBounds);
 }
 
 // ----------------------------------------------------- //
@@ -119,8 +122,10 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 void PlayableCharacter::CalculateNewPosition(const Vector2D levelBounds, const float deltaTime)
 {
 	// Calculate the new potential positions
-	Vector2D newRealGridPos   = mRealGridPosition   + (mVelocity * deltaTime);
-	Vector2D newScreenGridPos = mScreenGridPosition + (mVelocity * deltaTime);
+	Vector2D movementDistance = (mVelocity * deltaTime);
+
+	Vector2D newRealGridPos   = mRealGridPosition   + movementDistance;
+	Vector2D newScreenGridPos = mScreenGridPosition + movementDistance;
 
 	// First cap the new positions to their relative bounds - starting with the y axis
 	if (newScreenGridPos.y <= 0.0f)
@@ -144,52 +149,69 @@ void PlayableCharacter::CalculateNewPosition(const Vector2D levelBounds, const f
 	else if (newRealGridPos.x >= levelBounds.x)
 		newRealGridPos.x = levelBounds.x;
 
-
 	// First update the real grid position of the player so that when the player moves their actual point in the world moves as well
 	mRealGridPosition = newRealGridPos;
 
-	std::cout << "Grid Pos Y: " << mRealGridPosition.y << std::endl;
-
-	// Starting with the Y axis
-	if (mRealGridPosition.y - (PLAYABLE_SCREEN_AREA_HEIGHT / 2) <= 0.0f)
+	// If we want to scroll the screen then scroll - X axis
+	if ((newScreenGridPos.x > (PLAYABLE_SCREEN_AREA_WIDTH  - (PLAYABLE_SCREEN_AREA_WIDTH / 2)) + 1 && movementDistance.x > 0.0f) ||
+		(newScreenGridPos.x < ((PLAYABLE_SCREEN_AREA_WIDTH / 2) - 1) && movementDistance.x < 0.0f))
 	{
-		// Set the correct reference point
-		mRenderRefencePoint.y = 0.0f;
+		mRenderRefencePoint.x += movementDistance.x;
+	}
+	else // If we are within this leway area then don't scroll the screen
+	{
+		// Allow the player to move freely
+		mScreenGridPosition.x = newScreenGridPos.x;
+	}
 
-		// We also need to update mario's screen position here
+	// If we want to scroll the screen then scroll - Y axis
+	if ((newScreenGridPos.y > PLAYABLE_SCREEN_AREA_HEIGHT - ((PLAYABLE_SCREEN_AREA_HEIGHT / 2) - 1) && movementDistance.y > 0.0f) || 
+		((newScreenGridPos.y < ((PLAYABLE_SCREEN_AREA_HEIGHT / 2) - 1) && (movementDistance.y < 0.0f))))
+	{
+		mRenderRefencePoint.y += movementDistance.y;
+	}
+	else // If we are within this leway area then dont scroll the screen
+	{
+		// Allow the player to move freely
 		mScreenGridPosition.y = newScreenGridPos.y;
 	}
-	else if (mRealGridPosition.y + ((PLAYABLE_SCREEN_AREA_HEIGHT / 2) + 3) >= levelBounds.y)
-	{
-		// Set the correct reference point
-		mRenderRefencePoint.y = levelBounds.y - (BACKGROUND_SPRITE_RENDER_HEIGHT - 1);
 
-		// We also need to update mario's screen position here
-		mScreenGridPosition.y = newScreenGridPos.y;
-	}
-	else
-	{
-		// If not near a y-axis boundary then keep mario in the centre of the y axis
-		mRenderRefencePoint.y = mRealGridPosition.y - (PLAYABLE_SCREEN_AREA_HEIGHT / 2);
-	}
-
-
-	// Now for the X-axis
-	if (mRealGridPosition.x - (PLAYABLE_SCREEN_AREA_WIDTH / 2) <= 0.0f)
+	// Cap the render reference point
+	if (mRenderRefencePoint.x < 0.0f)
 	{
 		mRenderRefencePoint.x = 0.0f;
+	}
+	else if (mRenderRefencePoint.x > levelBounds.x - (PLAYABLE_SCREEN_AREA_WIDTH / 2))
+	{
+		mRenderRefencePoint.x = levelBounds.x - (PLAYABLE_SCREEN_AREA_WIDTH / 2);
+	}
 
+	if (mRenderRefencePoint.y < 0.0f)
+	{
+		mRenderRefencePoint.y = 0.0f;
+	}
+	else if (mRenderRefencePoint.y > levelBounds.y - BACKGROUND_SPRITE_RENDER_HEIGHT + 1)
+	{
+		mRenderRefencePoint.y = levelBounds.y - BACKGROUND_SPRITE_RENDER_HEIGHT + 1;
+	}
+
+	// Now determine if the player should be allowed to move freely
+	if (mRealGridPosition.y + (PLAYABLE_SCREEN_AREA_HEIGHT / 2) + 2 >= levelBounds.y)
+	{
+		mScreenGridPosition.y = newScreenGridPos.y;
+	}
+	else if (mRealGridPosition.y - (PLAYABLE_SCREEN_AREA_HEIGHT / 2) <= 0.0f)
+	{
+		mScreenGridPosition.y = newScreenGridPos.y;
+	}
+
+	if (mRealGridPosition.x - (PLAYABLE_SCREEN_AREA_WIDTH / 2) + 1 <= 0.0f)
+	{
 		mScreenGridPosition.x = newScreenGridPos.x;
 	}
-	else if(mRealGridPosition.x + (PLAYABLE_SCREEN_AREA_WIDTH / 2) >= levelBounds.x)
+	else if (mRealGridPosition.x + (PLAYABLE_SCREEN_AREA_WIDTH / 2) - 1 >= levelBounds.x)
 	{
-		mRenderRefencePoint.x = levelBounds.x - PLAYABLE_SCREEN_AREA_WIDTH;
-
 		mScreenGridPosition.x = newScreenGridPos.x;
-	}
-	else
-	{
-		mRenderRefencePoint.x = newRealGridPos.x - (PLAYABLE_SCREEN_AREA_WIDTH / 2);
 	}
 }
 
@@ -236,6 +258,33 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 		break;
 		}
 		break;
+	}
+}
+
+// ----------------------------------------------------- //
+
+void PlayableCharacter::CalculateInitialRenderReferencePoint(const Vector2D levelBounds)
+{
+	// Starting with the Y axis
+	if (mRealGridPosition.y - (PLAYABLE_SCREEN_AREA_HEIGHT / 2) <= 0.0f)
+	{
+		// Set the correct reference point
+		mRenderRefencePoint.y = 0.0f;
+	}
+	else if (mRealGridPosition.y + ((PLAYABLE_SCREEN_AREA_HEIGHT / 2) + 3) >= levelBounds.y)
+	{
+		// Set the correct reference point
+		mRenderRefencePoint.y = levelBounds.y - (BACKGROUND_SPRITE_RENDER_HEIGHT - 1);
+	}
+
+	// Now for the X-axis
+	if (mRealGridPosition.x - (PLAYABLE_SCREEN_AREA_WIDTH / 2) < 0.0f)
+	{
+		mRenderRefencePoint.x = 0.0f;
+	}
+	else if (mRealGridPosition.x + (PLAYABLE_SCREEN_AREA_WIDTH / 2) >= levelBounds.x)
+	{
+		mRenderRefencePoint.x = levelBounds.x - PLAYABLE_SCREEN_AREA_WIDTH;
 	}
 }
 

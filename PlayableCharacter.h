@@ -24,6 +24,7 @@ private:
 	void HandleMovementInput(SDL_Event e);
 
 	void CalculateNewPosition(const Vector2D levelBounds, const float deltaTime);
+	void CalculateInitialRenderReferencePoint(const Vector2D levelBounds);
 
 	Vector2D   mRealGridPosition;   // The player's position in the collision world
 	Vector2D   mScreenGridPosition; // Player's screen position
