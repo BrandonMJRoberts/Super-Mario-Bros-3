@@ -112,15 +112,15 @@ void ObjectLayer::CheckIfObjectsShouldSpawn(const Vector2D gridReferencePoint)
 		}
 	}
 
-	// Now remove these from the other list
-	if (removeIDs.size() > 0)
-	{
-		unsigned int offset(0);
+	unsigned int offset = 0;
 
-		for (unsigned int i = 0; i < removeIDs.size(); i++)
-		{
-			mUnspawnedObjectsInLevel.erase(mUnspawnedObjectsInLevel.begin() + removeIDs[i] - offset++);
-		}
+	// Now remove these from the other list
+	while (removeIDs.size() > 0)
+	{
+		mUnspawnedObjectsInLevel.erase(mUnspawnedObjectsInLevel.begin() + (removeIDs[0] - offset));
+		offset++;
+
+		removeIDs.erase(removeIDs.begin());
 	}
 }
 
