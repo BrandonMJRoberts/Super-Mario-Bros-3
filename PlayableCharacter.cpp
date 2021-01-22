@@ -153,8 +153,12 @@ void PlayableCharacter::CalculateNewPosition(const Vector2D levelBounds, const f
 	mRealGridPosition = newRealGridPos;
 
 	// If we want to scroll the screen then scroll - X axis
-	if ((newScreenGridPos.x > (PLAYABLE_SCREEN_AREA_WIDTH  - (PLAYABLE_SCREEN_AREA_WIDTH / 2)) + 1 && movementDistance.x > 0.0f) ||
-		(newScreenGridPos.x < ((PLAYABLE_SCREEN_AREA_WIDTH / 2) - 1) && movementDistance.x < 0.0f))
+	if (newScreenGridPos.x > (PLAYABLE_SCREEN_AREA_WIDTH  - (PLAYABLE_SCREEN_AREA_WIDTH / 2.0f)) + 1 && movementDistance.x > 0.0f)
+	{
+		// If moving in the correct direction then scroll the screen
+		mRenderRefencePoint.x += movementDistance.x;
+	}
+	else if (newScreenGridPos.x < ((PLAYABLE_SCREEN_AREA_WIDTH / 2.0f) - 1) && movementDistance.x < 0.0f)
 	{
 		mRenderRefencePoint.x += movementDistance.x;
 	}
@@ -164,15 +168,30 @@ void PlayableCharacter::CalculateNewPosition(const Vector2D levelBounds, const f
 		mScreenGridPosition.x = newScreenGridPos.x;
 	}
 
+	if (mRealGridPosition.x + (PLAYABLE_SCREEN_AREA_WIDTH / 2) - 1 > levelBounds.x || 
+		mRealGridPosition.x - (PLAYABLE_SCREEN_AREA_WIDTH / 2) + 1 < 0.0f)
+	{
+		mScreenGridPosition.x = newScreenGridPos.x;
+	}
+
 	// If we want to scroll the screen then scroll - Y axis
-	if ((newScreenGridPos.y > PLAYABLE_SCREEN_AREA_HEIGHT - ((PLAYABLE_SCREEN_AREA_HEIGHT / 2) - 1) && movementDistance.y > 0.0f) || 
-		((newScreenGridPos.y < ((PLAYABLE_SCREEN_AREA_HEIGHT / 2) - 1) && (movementDistance.y < 0.0f))))
+	if (newScreenGridPos.y > PLAYABLE_SCREEN_AREA_HEIGHT - (PLAYABLE_SCREEN_AREA_HEIGHT / 2.0f) + 2 && movementDistance.y > 0.0f)
 	{
 		mRenderRefencePoint.y += movementDistance.y;
 	}
-	else // If we are within this leway area then dont scroll the screen
+	else if (newScreenGridPos.y < (PLAYABLE_SCREEN_AREA_HEIGHT / 2.0f) && movementDistance.y < 0.0f)
+	{
+		mRenderRefencePoint.y += movementDistance.y;
+	}
+	else
 	{
 		// Allow the player to move freely
+		mScreenGridPosition.y = newScreenGridPos.y;
+	}
+
+	if (mRealGridPosition.y + (PLAYABLE_SCREEN_AREA_HEIGHT / 2.0f) > levelBounds.y || 
+		mRealGridPosition.y - (PLAYABLE_SCREEN_AREA_HEIGHT / 2.0f) < 0.0f)
+	{
 		mScreenGridPosition.y = newScreenGridPos.y;
 	}
 
@@ -195,24 +214,7 @@ void PlayableCharacter::CalculateNewPosition(const Vector2D levelBounds, const f
 		mRenderRefencePoint.y = levelBounds.y - BACKGROUND_SPRITE_RENDER_HEIGHT + 1;
 	}
 
-	// Now determine if the player should be allowed to move freely
-	if (mRealGridPosition.y + (PLAYABLE_SCREEN_AREA_HEIGHT / 2) + 2 >= levelBounds.y)
-	{
-		mScreenGridPosition.y = newScreenGridPos.y;
-	}
-	else if (mRealGridPosition.y - (PLAYABLE_SCREEN_AREA_HEIGHT / 2) <= 0.0f)
-	{
-		mScreenGridPosition.y = newScreenGridPos.y;
-	}
-
-	if (mRealGridPosition.x - (PLAYABLE_SCREEN_AREA_WIDTH / 2) + 1 <= 0.0f)
-	{
-		mScreenGridPosition.x = newScreenGridPos.x;
-	}
-	else if (mRealGridPosition.x + (PLAYABLE_SCREEN_AREA_WIDTH / 2) - 1 >= levelBounds.x)
-	{
-		mScreenGridPosition.x = newScreenGridPos.x;
-	}
+	std::cout << "Y Pos: " << mRealGridPosition.y << "\tScreen Y: " << mScreenGridPosition.y  << std::endl;
 }
 
 // ----------------------------------------------------- //
