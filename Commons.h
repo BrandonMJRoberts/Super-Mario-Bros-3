@@ -38,7 +38,9 @@ enum class SCREENS
 enum class FACING
 {
 	LEFT = 0,
-	RIGHT
+	RIGHT,
+	UP,
+	DOWN
 };
 
 // ---------------------------------------------------------------------- //

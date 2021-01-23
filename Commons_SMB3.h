@@ -100,6 +100,24 @@ enum class SUBJECT_NOTIFICATION_TYPES
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 
+enum class PIPE_TYPE : char
+{
+	BLACK_BLUE = 0,
+	BLACK_WHITE,
+	LIGHT_BROWN,
+	LIGHT_GREY,
+	DARK_GREY,
+	DARK_GREEN,
+	DEFAULT_GREEN,
+	LIGHT_GREEN,
+	DARK_BROWN,
+	VERY_DARK_GREEN,
+	BRIGHT_ORANGE,
+	WHITE_GREEN
+};
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+
 // For the common functions they need to be encapsulated in a namespace to avoid re-definition errors
 namespace Commons_SMB3
 {

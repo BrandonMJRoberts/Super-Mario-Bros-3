@@ -214,7 +214,7 @@ void PlayableCharacter::CalculateNewPosition(const Vector2D levelBounds, const f
 		mRenderRefencePoint.y = levelBounds.y - BACKGROUND_SPRITE_RENDER_HEIGHT + 1;
 	}
 
-	std::cout << "Y Pos: " << mRealGridPosition.y << "\tScreen Y: " << mScreenGridPosition.y  << std::endl;
+	//std::cout << "Y Pos: " << mRealGridPosition.y << "\tScreen Y: " << mScreenGridPosition.y  << std::endl;
 }
 
 // ----------------------------------------------------- //
