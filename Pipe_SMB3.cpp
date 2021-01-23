@@ -114,7 +114,7 @@ Pipe::Pipe(const Vector2D      spawnPosition,
 	mCurrentSpriteID = spriteOffset;
 
 	mDestRect   = { 0, 0, (int)mSingleSpriteWidth, (int)mSingleSpriteHeight};
-	mSourceRect = {0, 0, (int)mSingleSpriteWidth, (int)mSingleSpriteHeight};
+	mSourceRect = { 0, 0, (int)mSingleSpriteWidth, (int)mSingleSpriteHeight};
 }
 
 // ----------------------------------------------------------------------------------------- //
@@ -156,7 +156,7 @@ BaseObject* Pipe::Clone(std::string dataLineForClone)
 		pipeIsVertical = false;
 
 	if (mThisSpriteSheet)
-		return new Pipe(newPosition, false, mRenderer, mThisSpriteSheet->GetFilePath(), mSpritesOnWidth, mSpritesOnHeight, mCollisionBox.x, mCollisionBox.y, mTimePerFrame, dimensions.x, dimensions.y, pipeIsDoubleEnded, containsEnemy, PIPE_TYPE(pipeType), FACING(pipeFacingDirection), filePathToLoadInto, thisStageEntranceID, stageEntranceIDToGoTo, newPipeIsVertical);
+		return new Pipe(newPosition, false, mRenderer, mThisSpriteSheet->GetFilePath(), mSpritesOnWidth, mSpritesOnHeight, mCollisionBox.x, mCollisionBox.y, mTimePerFrame, int(dimensions.x), int(dimensions.y), pipeIsDoubleEnded, containsEnemy, PIPE_TYPE(pipeType), FACING(pipeFacingDirection), filePathToLoadInto, thisStageEntranceID, stageEntranceIDToGoTo, newPipeIsVertical);
 	else
 		return nullptr;
 }
@@ -222,8 +222,18 @@ void Pipe::Render(const Vector2D renderReferencePoint)
 
 void Pipe::ResetRenderPositionToTopLeft(const Vector2D renderReferencePoint)
 {
-	mDestRect.x = (mCurrentPosition.x - renderReferencePoint.x) * RESOLUTION_OF_SPRITES;
-	mDestRect.y = (mCurrentPosition.y - 1 - renderReferencePoint.y) * RESOLUTION_OF_SPRITES;
+	mDestRect.x = int((mCurrentPosition.x - renderReferencePoint.x) * RESOLUTION_OF_SPRITES);
+	mDestRect.y = int((mCurrentPosition.y - 1 - renderReferencePoint.y) * RESOLUTION_OF_SPRITES);
+}
+
+// ----------------------------------------------------------------------------------------- //
+
+void Pipe::ResetSourcePositionToTopLeftOfPipe()
+{
+	mSourceRect = {  int(mCurrentSpriteID % mSpritesOnWidth) * int(mSingleSpriteWidth),
+					 int(mCurrentSpriteID / mSpritesOnWidth) * int(mSingleSpriteHeight),
+					 int(mSingleSpriteWidth),
+					 int(mSingleSpriteHeight) };
 }
 
 // ----------------------------------------------------------------------------------------- //
@@ -231,10 +241,7 @@ void Pipe::ResetRenderPositionToTopLeft(const Vector2D renderReferencePoint)
 void Pipe::RenderTopCovering(const Vector2D renderReferencePoint)
 {
 	// First set the sprite data to being the correct place
-	mSourceRect = { (int)(mCurrentSpriteID % mSpritesOnWidth) * (int)mSingleSpriteWidth,
-					 int(mCurrentSpriteID / mSpritesOnWidth) * (int)mSingleSpriteHeight,
-					(int)mSingleSpriteWidth,
-					(int)mSingleSpriteHeight };
+	ResetSourcePositionToTopLeftOfPipe();
 
 	ResetRenderPositionToTopLeft(renderReferencePoint);
 
@@ -243,7 +250,7 @@ void Pipe::RenderTopCovering(const Vector2D renderReferencePoint)
 
 	// Now shift it along and render the other part of the end
 	mSourceRect.x = ((mCurrentSpriteID + 1) % mSpritesOnWidth) * mSingleSpriteWidth;
-	mDestRect.x += mSingleSpriteWidth;
+	mDestRect.x  += mSingleSpriteWidth;
 
 	RenderPortionSelected();
 }
@@ -253,13 +260,10 @@ void Pipe::RenderTopCovering(const Vector2D renderReferencePoint)
 void Pipe::RenderBottomCovering(const Vector2D renderReferencePoint)
 {
 	// Now render the bottom covering of the pipe
-	mDestRect.y = (mCurrentPosition.y - renderReferencePoint.y + mHeight) * RESOLUTION_OF_SPRITES;
-	mDestRect.x = (mCurrentPosition.x - renderReferencePoint.x) * RESOLUTION_OF_SPRITES;
+	mDestRect.y = int((mCurrentPosition.y - renderReferencePoint.y + (mHeight - 1)) * RESOLUTION_OF_SPRITES);
+	mDestRect.x = int((mCurrentPosition.x - renderReferencePoint.x) * RESOLUTION_OF_SPRITES);
 
-	mSourceRect = { (int)(mCurrentSpriteID % mSpritesOnWidth) * (int)mSingleSpriteWidth,
-					 int(mCurrentSpriteID / mSpritesOnWidth) * (int)mSingleSpriteHeight,
-					(int)mSingleSpriteWidth,
-					(int)mSingleSpriteHeight };
+	ResetSourcePositionToTopLeftOfPipe();
 
 	RenderPortionSelected(true, false);
 
@@ -275,10 +279,10 @@ void Pipe::RenderBottomCovering(const Vector2D renderReferencePoint)
 
 void Pipe::RenderLeftCovering(const Vector2D renderReferencePoint)
 {
-	mSourceRect = { (int)((mCurrentSpriteID + 2) % mSpritesOnWidth) * (int)mSingleSpriteWidth,
-					int((mCurrentSpriteID + 2) / mSpritesOnWidth) * (int)mSingleSpriteHeight,
-					(int)mSingleSpriteWidth,
-					(int)mSingleSpriteHeight };
+	mSourceRect = { int(((mCurrentSpriteID + 2) % mSpritesOnWidth) * mSingleSpriteWidth),
+					int(((mCurrentSpriteID + 2) / mSpritesOnWidth) * mSingleSpriteHeight),
+					int(mSingleSpriteWidth),
+					int(mSingleSpriteHeight) };
 
 	ResetRenderPositionToTopLeft(renderReferencePoint);
 
@@ -294,13 +298,13 @@ void Pipe::RenderLeftCovering(const Vector2D renderReferencePoint)
 
 void Pipe::RenderRightCovering(const Vector2D renderReferencePoint)
 {
-	mSourceRect = { (int)((mCurrentSpriteID + 2) % mSpritesOnWidth) * (int)mSingleSpriteWidth,
-				    int((mCurrentSpriteID + 2) / mSpritesOnWidth) * (int)mSingleSpriteHeight,
-					(int)mSingleSpriteWidth,
-					(int)mSingleSpriteHeight };
+	mSourceRect = { int(((mCurrentSpriteID + 2) % mSpritesOnWidth) * mSingleSpriteWidth),
+				    int(((mCurrentSpriteID + 2) / mSpritesOnWidth) * mSingleSpriteHeight),
+					int(mSingleSpriteWidth),
+					int(mSingleSpriteHeight) };
 
-	mDestRect.x = (mCurrentPosition.x - renderReferencePoint.x + mWidth) * RESOLUTION_OF_SPRITES;
-	mDestRect.y = (mCurrentPosition.y - renderReferencePoint.y) * RESOLUTION_OF_SPRITES;
+	mDestRect.x = int((mCurrentPosition.x - renderReferencePoint.x + (mWidth - 1)) * RESOLUTION_OF_SPRITES);
+	mDestRect.y = int((mCurrentPosition.y - renderReferencePoint.y) * RESOLUTION_OF_SPRITES);
 
 	RenderPortionSelected(false, true);
 
@@ -338,23 +342,23 @@ void Pipe::RenderCentreOfPipe(const Vector2D renderReferencePoint)
 	case FACING::UP:
 		mSourceRect.y = int((mCurrentSpriteID + 8) / mSpritesOnWidth) * mSingleSpriteHeight;
 
-		offset = 1;
+		offset = 0;
 
 		while (offset < distance)
 		{
 			mSourceRect.x = ((mCurrentSpriteID + 8) % mSpritesOnWidth) * mSingleSpriteWidth;
 
 			// Left side
-			mDestRect.x =  (mCurrentPosition.x - renderReferencePoint.x) * RESOLUTION_OF_SPRITES;
-			mDestRect.y = (mCurrentPosition.y - renderReferencePoint.y + offset) * RESOLUTION_OF_SPRITES;
+			mDestRect.x = int((mCurrentPosition.x - renderReferencePoint.x) * RESOLUTION_OF_SPRITES);
+			mDestRect.y = int((mCurrentPosition.y - renderReferencePoint.y + offset) * RESOLUTION_OF_SPRITES);
 
 			RenderPortionSelected();
 
 			mSourceRect.x = ((mCurrentSpriteID + 9) % mSpritesOnWidth) * mSingleSpriteWidth;
 
 			// Right side
-			mDestRect.x = (mCurrentPosition.x - renderReferencePoint.x + 1) * RESOLUTION_OF_SPRITES;
-			mDestRect.y = (mCurrentPosition.y - renderReferencePoint.y + offset) * RESOLUTION_OF_SPRITES;
+			mDestRect.x = int((mCurrentPosition.x - renderReferencePoint.x + 1) * RESOLUTION_OF_SPRITES);
+			mDestRect.y = int((mCurrentPosition.y - renderReferencePoint.y + offset) * RESOLUTION_OF_SPRITES);
 
 			RenderPortionSelected();
 
@@ -374,16 +378,16 @@ void Pipe::RenderCentreOfPipe(const Vector2D renderReferencePoint)
 			mSourceRect.x = ((mCurrentSpriteID + 8) % mSpritesOnWidth) * mSingleSpriteWidth;
 
 			// Left side
-			mDestRect.x = (mCurrentPosition.x - renderReferencePoint.x) * RESOLUTION_OF_SPRITES;
-			mDestRect.y = (mCurrentPosition.y - renderReferencePoint.y + offset) * RESOLUTION_OF_SPRITES;
+			mDestRect.x = int((mCurrentPosition.x - renderReferencePoint.x) * RESOLUTION_OF_SPRITES);
+			mDestRect.y = int((mCurrentPosition.y - renderReferencePoint.y + offset) * RESOLUTION_OF_SPRITES);
 
 			RenderPortionSelected();
 
 			mSourceRect.x = ((mCurrentSpriteID + 9) % mSpritesOnWidth) * mSingleSpriteWidth;
 
 			// Right side
-			mDestRect.x = (mCurrentPosition.x - renderReferencePoint.x + 1) * RESOLUTION_OF_SPRITES;
-			mDestRect.y = (mCurrentPosition.y - renderReferencePoint.y + offset) * RESOLUTION_OF_SPRITES;
+			mDestRect.x = int((mCurrentPosition.x - renderReferencePoint.x + 1) * RESOLUTION_OF_SPRITES);
+			mDestRect.y = int((mCurrentPosition.y - renderReferencePoint.y + offset) * RESOLUTION_OF_SPRITES);
 
 			RenderPortionSelected();
 
@@ -401,8 +405,8 @@ void Pipe::RenderCentreOfPipe(const Vector2D renderReferencePoint)
 			mSourceRect.y = int((mCurrentSpriteID + 3) / mSpritesOnWidth) * mSingleSpriteHeight;
 
 			// Left side
-			mDestRect.x =  (mCurrentPosition.x - renderReferencePoint.x + offset) * RESOLUTION_OF_SPRITES;
-			mDestRect.y =  (mCurrentPosition.y - renderReferencePoint.y)           * RESOLUTION_OF_SPRITES;
+			mDestRect.x = int((mCurrentPosition.x - renderReferencePoint.x + offset) * RESOLUTION_OF_SPRITES);
+			mDestRect.y = int((mCurrentPosition.y - renderReferencePoint.y)           * RESOLUTION_OF_SPRITES);
 
 			RenderPortionSelected();
 
@@ -410,8 +414,8 @@ void Pipe::RenderCentreOfPipe(const Vector2D renderReferencePoint)
 			mSourceRect.y = int((mCurrentSpriteID + 11) / mSpritesOnWidth) * mSingleSpriteHeight;
 
 			// Right side
-			mDestRect.x = (mCurrentPosition.x - renderReferencePoint.x + offset)  * RESOLUTION_OF_SPRITES;
-			mDestRect.y = (mCurrentPosition.y - renderReferencePoint.y + 1)        * RESOLUTION_OF_SPRITES;
+			mDestRect.x = int((mCurrentPosition.x - renderReferencePoint.x + offset)  * RESOLUTION_OF_SPRITES);
+			mDestRect.y = int((mCurrentPosition.y - renderReferencePoint.y + 1)        * RESOLUTION_OF_SPRITES);
 
 			RenderPortionSelected();
 
@@ -429,8 +433,8 @@ void Pipe::RenderCentreOfPipe(const Vector2D renderReferencePoint)
 			mSourceRect.y = int((mCurrentSpriteID + 3) / mSpritesOnWidth) * mSingleSpriteHeight;
 
 			// Left side
-			mDestRect.x = (mCurrentPosition.x - renderReferencePoint.x + offset) * RESOLUTION_OF_SPRITES;
-			mDestRect.y = (mCurrentPosition.y - renderReferencePoint.y)           * RESOLUTION_OF_SPRITES;
+			mDestRect.x = int((mCurrentPosition.x - renderReferencePoint.x + offset) * RESOLUTION_OF_SPRITES);
+			mDestRect.y = int((mCurrentPosition.y - renderReferencePoint.y)           * RESOLUTION_OF_SPRITES);
 
 			RenderPortionSelected(false, true);
 
@@ -438,8 +442,8 @@ void Pipe::RenderCentreOfPipe(const Vector2D renderReferencePoint)
 			mSourceRect.y = int((mCurrentSpriteID + 11) / mSpritesOnWidth) * mSingleSpriteHeight;
 
 			// Right side
-			mDestRect.x = (mCurrentPosition.x - renderReferencePoint.x + offset) * RESOLUTION_OF_SPRITES;
-			mDestRect.y = (mCurrentPosition.y - renderReferencePoint.y + 1) * RESOLUTION_OF_SPRITES;
+			mDestRect.x = int((mCurrentPosition.x - renderReferencePoint.x + offset) * RESOLUTION_OF_SPRITES);
+			mDestRect.y = int((mCurrentPosition.y - renderReferencePoint.y + 1) * RESOLUTION_OF_SPRITES);
 
 			RenderPortionSelected(false, true);
 

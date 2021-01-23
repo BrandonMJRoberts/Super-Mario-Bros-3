@@ -46,6 +46,7 @@ private:
 	void        RenderCentreOfPipe(const Vector2D renderReferencePoint);
 
 	void        ResetRenderPositionToTopLeft(const Vector2D renderReferencePoint);
+	void        ResetSourcePositionToTopLeftOfPipe();
 
 	static bool mUpdatedStaticVariables;
 

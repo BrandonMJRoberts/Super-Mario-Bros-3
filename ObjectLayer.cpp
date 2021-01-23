@@ -129,16 +129,16 @@ void ObjectLayer::CheckIfObjectsShouldSpawn(const Vector2D gridReferencePoint)
 bool ObjectLayer::InPlayArea(const Vector2D testPosition, const Vector2D gridReferencePoint)
 {
 	const double XDistance = abs(gridReferencePoint.x - testPosition.x);
-	const double YDistance = abs(gridReferencePoint.y - testPosition.y);
+// 	const double YDistance = abs(gridReferencePoint.y - testPosition.y);
 
 	// First check if the X is valid
 	if (XDistance < SCREEN_WIDTH_GRID_SMB3)
 	{
 		// Now check if the Y is valid
-		if (YDistance < SCREEN_HEIGHT_GRID_SMB3)
-		{
+		//if (YDistance < SCREEN_HEIGHT_GRID_SMB3)
+		//{
 			return true;
-		}
+		//}
 	}
 
 	// Not in the bounds so return false.
