@@ -81,14 +81,14 @@ NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
-#PIPE - Left of mouth position (vec2) - Width (uint) - Height (uint) - Pipe type (uint) - Pipe Facing Direction (0 = Left, 1 = Right, 2 = Up, 3 = Down) - file directory for loading in level (string) - stage entrance ID (0 is for the start point in the overworld) - Enemy contained within pipe - Double Ended (Bool) - Stage ID to go to (int) - Pipe is vertical (bool)
+#PIPE - Left of mouth position (vec2) - Width (uint) - Height (uint) - Pipe type (uint) - Pipe Facing Direction (0 = Left, 1 = Right, 2 = Up, 3 = Down) - file directory for loading in level (string) - stage entrance ID (0 is for the start point in the overworld) - Enemy contained within pipe - Amount of ends (2 = double ended, 0 = no ends) - Stage ID to go to (int) - Pipe is vertical (bool)
 PIPE
-22 24 2 3 1 2 NONE -1 FIRE_PIRHANNA_RED F -1 T
-112 25 2 2 1 2 NONE -1 PIRHANNA_GREEN F -1 T
-116 24 2 3 1 2 NONE -1 FIRE_PIHRANNA_GREEN F -1 T
-140 8 2 12 1 2 Levels/World-1/Level-1/Pipe 1 NONE F 0 T
-140 24 2 3 1 2 NONE -1 NONE F -1 T
-144 25 2 2 1 2 NONE -1 NONE F -1 T
+22 24 2 3 1 2 NONE -1 FIRE_PIRHANNA_RED 1 -1 T
+112 25 2 2 1 2 NONE -1 PIRHANNA_GREEN 1 -1 T
+116 24 2 3 1 2 NONE -1 FIRE_PIHRANNA_GREEN 1 -1 T
+140 8 2 12 1 2 Levels/World-1/Level-1/Pipe 1 NONE 1 0 T
+140 23 2 3 1 2 NONE -1 NONE 0 -1 T
+144 25 2 2 1 2 NONE -1 NONE 1 -1 T
 NEXT
 
 # -------------------------------------------------------------------------------------------------- #

@@ -26,7 +26,7 @@ Pipe::Pipe(const Vector2D      spawnPosition,
 
 	const unsigned int  width,
 	const unsigned int  height,
-	const bool          doubleEnded,
+	const unsigned int  amountOfPipeEnds,
 	const bool			containsAnEnemy,
 	const PIPE_TYPE     pipeType,
 	const FACING        facingDirection,
@@ -48,7 +48,7 @@ Pipe::Pipe(const Vector2D      spawnPosition,
 
 , mWidth(width)
 , mHeight(height)
-, mIsDoubleEnded(doubleEnded)
+, mAmountOfEnds(amountOfPipeEnds)
 , mContainsAnEnemy(containsAnEnemy)
 , mPipeType(pipeType)
 , mPipeFacingDirection(facingDirection)
@@ -133,21 +133,18 @@ BaseObject* Pipe::Clone(std::string dataLineForClone)
 
 	Vector2D newPosition, dimensions;
 
-	unsigned int pipeType, pipeFacingDirection;
+	unsigned int pipeType, pipeFacingDirection, amountOfEnds;
 	int          thisStageEntranceID, stageEntranceIDToGoTo;
 	std::string  filePathToLoadInto;
-	char         doubleEnded, newPipeIsVertical;
+	char         newPipeIsVertical;
 	bool         pipeIsDoubleEnded = false, containsEnemy = false, pipeIsVertical = true;
 
 	std::string enemyContainedWithinPipe;
 
-	streamData >> newPosition.x >> newPosition.y >> dimensions.x >> dimensions.y >> pipeType >> pipeFacingDirection >> filePathToLoadInto >> thisStageEntranceID >> enemyContainedWithinPipe >> doubleEnded >> stageEntranceIDToGoTo >> newPipeIsVertical;
+	streamData >> newPosition.x >> newPosition.y >> dimensions.x >> dimensions.y >> pipeType >> pipeFacingDirection >> filePathToLoadInto >> thisStageEntranceID >> enemyContainedWithinPipe >> amountOfEnds >> stageEntranceIDToGoTo >> newPipeIsVertical;
 
 	if (filePathToLoadInto == "NONE")
 		filePathToLoadInto = "";
-
-	if (doubleEnded == 'T')
-		pipeIsDoubleEnded = true;
 
 	if (enemyContainedWithinPipe != "")
 		containsEnemy = true;
@@ -156,7 +153,7 @@ BaseObject* Pipe::Clone(std::string dataLineForClone)
 		pipeIsVertical = false;
 
 	if (mThisSpriteSheet)
-		return new Pipe(newPosition, false, mRenderer, mThisSpriteSheet->GetFilePath(), mSpritesOnWidth, mSpritesOnHeight, mCollisionBox.x, mCollisionBox.y, mTimePerFrame, int(dimensions.x), int(dimensions.y), pipeIsDoubleEnded, containsEnemy, PIPE_TYPE(pipeType), FACING(pipeFacingDirection), filePathToLoadInto, thisStageEntranceID, stageEntranceIDToGoTo, newPipeIsVertical);
+		return new Pipe(newPosition, false, mRenderer, mThisSpriteSheet->GetFilePath(), mSpritesOnWidth, mSpritesOnHeight, mCollisionBox.x, mCollisionBox.y, mTimePerFrame, int(dimensions.x), int(dimensions.y), amountOfEnds, containsEnemy, PIPE_TYPE(pipeType), FACING(pipeFacingDirection), filePathToLoadInto, thisStageEntranceID, stageEntranceIDToGoTo, newPipeIsVertical);
 	else
 		return nullptr;
 }
@@ -175,13 +172,13 @@ void Pipe::Render(const Vector2D renderReferencePoint)
 	// First check to see what type of pipe we are rendering
 	if (mPipeIsVertical)
 	{
-		if (mIsDoubleEnded)
+		if (mAmountOfEnds == 2)
 		{
 			RenderTopCovering(renderReferencePoint);
 
 			RenderBottomCovering(renderReferencePoint);
 		}
-		else
+		else if(mAmountOfEnds == 1)
 		{
 			// First check to see if the top of the pipe should have a covering
 			if (mPipeFacingDirection == FACING::UP)
@@ -196,13 +193,13 @@ void Pipe::Render(const Vector2D renderReferencePoint)
 	}
 	else
 	{
-		if (mIsDoubleEnded)
+		if (mAmountOfEnds == 2)
 		{
 			RenderLeftCovering(renderReferencePoint);
 
 			RenderRightCovering(renderReferencePoint);
 		}
-		else
+		else if(mAmountOfEnds == 1)
 		{
 			if(mPipeFacingDirection == FACING::RIGHT)
 			{
@@ -324,15 +321,21 @@ void Pipe::RenderCentreOfPipe(const Vector2D renderReferencePoint)
 
 	if (mPipeIsVertical)
 	{
-		distance = mHeight - 1;
+		if (mAmountOfEnds == 0)
+			distance = mHeight;
+		else
+			distance = mHeight - 1;
 	}
 	else
 	{
-		distance = mWidth - 1;
+		if (mAmountOfEnds == 0)
+			distance = mWidth;
+		else
+			distance = mWidth - 1;
 	}
 
 	// Check to see if it is double ended as this changes the range rendered
-	if (mIsDoubleEnded)
+	if (mAmountOfEnds == 2)
 	{
 		distance--;
 	}

@@ -18,7 +18,7 @@ public:
 
 		const unsigned int  width,
 		const unsigned int  height,
-		const bool          doubleEnded,
+		const unsigned int  amountOfPipeEnds,
 		const bool			containsAnEnemy,
 		const PIPE_TYPE     pipeType,
 		const FACING        facingDirection,
@@ -74,7 +74,7 @@ private:
 	const PIPE_TYPE				mPipeType;
 	const FACING                mPipeFacingDirection;
 
-	const bool					mIsDoubleEnded;
+	const unsigned int			mAmountOfEnds;
 	const bool					mContainsAnEnemy;
 	const bool                  mPipeIsVertical;
 };
