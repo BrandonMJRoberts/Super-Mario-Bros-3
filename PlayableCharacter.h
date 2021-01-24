@@ -20,6 +20,8 @@ public:
 
 	const Vector2D GetRenderReferencePoint() const { return mRenderRefencePoint; }
 
+	void           SetRealPosition(Vector2D newPos) { mRealGridPosition = newPos; }
+
 private:
 	void HandleMovementInput(SDL_Event e);
 

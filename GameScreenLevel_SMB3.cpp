@@ -41,6 +41,8 @@ GameScreenLevel_SMB3::GameScreenLevel_SMB3(SDL_Renderer* renderer
 			mCurrentLevelAreaID = mAreas.size() - 1;
 	}
 
+	mCurrentLevelAreaID = 1;
+
 	// Now create the player that will be in these levels
 	if (playingAsMario)
 	{
@@ -97,7 +99,15 @@ ReturnDataFromGameScreen GameScreenLevel_SMB3::Update(const float deltaTime, SDL
 	// Update the area we are currently in if it exists
 	if (mAreas.size() > mCurrentLevelAreaID)
 	{
-		mAreas[mCurrentLevelAreaID]->Update(deltaTime, e, mPlayer);
+		Area_Transition_Data returnData = mAreas[mCurrentLevelAreaID]->Update(deltaTime, e, mPlayer);
+
+		// -1 means stay in the same area we currently are
+		if (returnData.areaToGoTo != -1)
+		{
+			mCurrentLevelAreaID = returnData.areaToGoTo;
+
+			mPlayer->SetRealPosition(mAreas[mCurrentLevelAreaID]->GetSpawnPointPosition(returnData.spawnpointIDToGoTo));
+		}
 
 		if(mPlayer)
 			mPlayer->Update(deltaTime, e, mAreas[mCurrentLevelAreaID]->GetLevelBounds());

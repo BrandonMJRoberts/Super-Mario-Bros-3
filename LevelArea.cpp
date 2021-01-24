@@ -114,7 +114,7 @@ void LevelAreas::Render(Vector2D gridReferencePoint)
 
 // --------------------------------------------------------------------------------------------------------------------------- //
 
-void LevelAreas::Update(const float deltaTime, SDL_Event e, PlayableCharacter* player)
+Area_Transition_Data LevelAreas::Update(const float deltaTime, SDL_Event e, PlayableCharacter* player)
 {
 	// First update the interaction layer and then the object layer
 	if (mInteractableLayer)
@@ -122,6 +122,8 @@ void LevelAreas::Update(const float deltaTime, SDL_Event e, PlayableCharacter* p
 
 	if (mObjectLayer && player)
 		mObjectLayer->Update(deltaTime, e, player->GetRealGridPosition());
+
+	return Area_Transition_Data{ -1, 0 };
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //
@@ -150,6 +152,18 @@ Vector2D LevelAreas::GetInitialSpawnPoint() const
 		return mObjectLayer->GetInitialSpawnPoint();
 	}
 	
+	return Vector2D();
+}
+
+// --------------------------------------------------------------------------------------------------------------------------- //
+
+const Vector2D LevelAreas::GetSpawnPointPosition(unsigned int ID)
+{
+	if (mObjectLayer)
+	{
+		return mObjectLayer->GetSpawnPoint(ID);
+	}
+
 	return Vector2D();
 }
 

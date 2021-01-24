@@ -118,6 +118,14 @@ enum class PIPE_TYPE : char
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 
+struct Area_Transition_Data final
+{
+	int areaToGoTo;
+	unsigned int spawnpointIDToGoTo;
+};
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+
 // For the common functions they need to be encapsulated in a namespace to avoid re-definition errors
 namespace Commons_SMB3
 {
