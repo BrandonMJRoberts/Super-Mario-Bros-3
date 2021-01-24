@@ -152,6 +152,8 @@ void PlayableCharacter::CalculateNewPosition(const Vector2D levelBounds, const f
 	// First update the real grid position of the player so that when the player moves their actual point in the world moves as well
 	mRealGridPosition = newRealGridPos;
 
+	// ----------------------------------------------------------------------------------------------------------------------------------- //
+
 	// If we want to scroll the screen then scroll - X axis
 	if (newScreenGridPos.x > (PLAYABLE_SCREEN_AREA_WIDTH  - (PLAYABLE_SCREEN_AREA_WIDTH / 2.0f)) + 1 && movementDistance.x > 0.0f)
 	{
@@ -174,6 +176,18 @@ void PlayableCharacter::CalculateNewPosition(const Vector2D levelBounds, const f
 		mScreenGridPosition.x = newScreenGridPos.x;
 	}
 
+	// Cap the render reference point
+	if (mRenderRefencePoint.x < 0.0f)
+	{
+		mRenderRefencePoint.x = 0.0f;
+	}
+	else if (mRenderRefencePoint.x > levelBounds.x - BACKGROUND_SPRITE_RENDER_WIDTH)
+	{
+		mRenderRefencePoint.x = levelBounds.x - BACKGROUND_SPRITE_RENDER_WIDTH;
+	}
+
+	// ----------------------------------------------------------------------------------------------------------------------------------- //
+
 	// If we want to scroll the screen then scroll - Y axis
 	if (newScreenGridPos.y > PLAYABLE_SCREEN_AREA_HEIGHT - (PLAYABLE_SCREEN_AREA_HEIGHT / 2.0f) + 2 && movementDistance.y > 0.0f)
 	{
@@ -195,16 +209,6 @@ void PlayableCharacter::CalculateNewPosition(const Vector2D levelBounds, const f
 		mScreenGridPosition.y = newScreenGridPos.y;
 	}
 
-	// Cap the render reference point
-	if (mRenderRefencePoint.x < 0.0f)
-	{
-		mRenderRefencePoint.x = 0.0f;
-	}
-	else if (mRenderRefencePoint.x > levelBounds.x - (PLAYABLE_SCREEN_AREA_WIDTH / 2))
-	{
-		mRenderRefencePoint.x = levelBounds.x - (PLAYABLE_SCREEN_AREA_WIDTH / 2);
-	}
-
 	if (mRenderRefencePoint.y < 0.0f)
 	{
 		mRenderRefencePoint.y = 0.0f;
@@ -213,6 +217,8 @@ void PlayableCharacter::CalculateNewPosition(const Vector2D levelBounds, const f
 	{
 		mRenderRefencePoint.y = levelBounds.y - BACKGROUND_SPRITE_RENDER_HEIGHT + 1;
 	}
+
+	// ----------------------------------------------------------------------------------------------------------------------------------- //
 
 	//std::cout << "Y Pos: " << mRealGridPosition.y << "\tScreen Y: " << mScreenGridPosition.y  << std::endl;
 }
