@@ -20,13 +20,15 @@ public:
 
 	const Vector2D GetRenderReferencePoint() const { return mRenderRefencePoint; }
 
-	void           SetRealPosition(Vector2D newPos) { mRealGridPosition = newPos; }
+	void           SpawnIntoNewArea(const Vector2D newPos, const Vector2D newLevelBounds);
 
 private:
 	void HandleMovementInput(SDL_Event e);
 
-	void CalculateNewPosition(const Vector2D levelBounds, const float deltaTime);
-	void CalculateInitialRenderReferencePoint(const Vector2D levelBounds);
+	void CalculateNewPosition(const float deltaTime);
+	void CalculateInitialRenderReferencePoint();
+
+	void CalculateScreenBoundsPosition(const Vector2D spawnPoint);
 
 	Vector2D   mRealGridPosition;   // The player's position in the collision world
 	Vector2D   mScreenGridPosition; // Player's screen position
@@ -35,6 +37,8 @@ private:
 
 	Vector2D   mVelocity;
 	Vector2D   mAcceleration;
+
+	Vector2D   mLevelBounds;
 
 	unsigned int mNumberOfSpritesOnWidth;;
 

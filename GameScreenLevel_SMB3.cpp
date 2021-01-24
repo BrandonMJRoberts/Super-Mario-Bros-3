@@ -106,7 +106,7 @@ ReturnDataFromGameScreen GameScreenLevel_SMB3::Update(const float deltaTime, SDL
 		{
 			mCurrentLevelAreaID = returnData.areaToGoTo;
 
-			mPlayer->SetRealPosition(mAreas[mCurrentLevelAreaID]->GetSpawnPointPosition(returnData.spawnpointIDToGoTo));
+			mPlayer->SpawnIntoNewArea(mAreas[mCurrentLevelAreaID]->GetSpawnPointPosition(returnData.spawnpointIDToGoTo), mAreas[mCurrentLevelAreaID]->GetLevelBounds());
 		}
 
 		if(mPlayer)

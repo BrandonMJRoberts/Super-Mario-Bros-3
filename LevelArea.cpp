@@ -123,6 +123,19 @@ Area_Transition_Data LevelAreas::Update(const float deltaTime, SDL_Event e, Play
 	if (mObjectLayer && player)
 		mObjectLayer->Update(deltaTime, e, player->GetRealGridPosition());
 
+	switch (e.type)
+	{
+		case SDL_KEYUP:
+		{
+			switch (e.key.keysym.sym)
+			{
+			case SDLK_m:
+				return Area_Transition_Data{ 0, 0 };
+			break;
+			}
+		}
+	}
+
 	return Area_Transition_Data{ -1, 0 };
 }
 
