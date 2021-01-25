@@ -4,7 +4,6 @@
 
 #include <sstream>
 
-unsigned int Pipe::mCurrentSpriteID = 0;
 unsigned int Pipe::mStartSpriteID = 0;
 unsigned int Pipe::mEndSpriteID = 3;
 
@@ -56,6 +55,7 @@ Pipe::Pipe(const Vector2D      spawnPosition,
 , mStageEntranceID(thisStageEntranceID)
 , mStageEntranceIDToGoTo(stageIDToGoTo)
 , mPipeIsVertical(pipeIsVertical)
+, mCurrentSpriteID(0)
 {
 	unsigned int spriteOffset = 0;
 
