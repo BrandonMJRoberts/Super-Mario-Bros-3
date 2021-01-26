@@ -121,7 +121,7 @@ void PhysicalObject::RenderSprite(const Vector2D renderReferencePoint, const uns
 									   (int)mSingleSpriteHeight };
 
 		SDL_Rect destRect           { int(renderPos.x * RESOLUTION_OF_SPRITES),
-									  int(renderPos.y * RESOLUTION_OF_SPRITES) - (int)mSingleSpriteHeight,
+									  int(renderPos.y * RESOLUTION_OF_SPRITES) - (int)mSingleSpriteHeight + 1,
 									 (int)mSingleSpriteWidth,
 									 (int)mSingleSpriteHeight };
 

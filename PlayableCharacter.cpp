@@ -74,7 +74,7 @@ void PlayableCharacter::Render()
 
 		// Now calculate where we should render it
 		SDL_Rect destRect {int(mScreenGridPosition.x * RESOLUTION_OF_SPRITES), 
-			               int(mScreenGridPosition.y * RESOLUTION_OF_SPRITES) - RESOLUTION_OF_SPRITES,
+			               int(mScreenGridPosition.y * RESOLUTION_OF_SPRITES) - RESOLUTION_OF_SPRITES + 1, // The + 1 makes mario render so that it looks like he is on the floor
 			               int(mSingleSpriteWidth), 
 			               int(mSingleSpriteHeight) };
 
