@@ -110,7 +110,7 @@ ReturnDataFromGameScreen GameScreenLevel_SMB3::Update(const float deltaTime, SDL
 		}
 
 		if(mPlayer)
-			mPlayer->Update(deltaTime, e, mAreas[mCurrentLevelAreaID]->GetLevelBounds());
+			mPlayer->Update(deltaTime, e, mAreas[mCurrentLevelAreaID]->GetLevelBounds(), mAreas[mCurrentLevelAreaID]->GetInteractionLayer(), mAreas[mCurrentLevelAreaID]->GetObjectLayer());
 	}
 	else
 	{

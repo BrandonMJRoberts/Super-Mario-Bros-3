@@ -20,7 +20,7 @@ LevelAreas::LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Rende
 	// Will be implemented using three threads
 	mBackgroundLayer   = new BackgroundLayer(areaFilePath   + "/Background Layer.txt",     areaFilePath + "/BackgroundSprites.png",   ConversionFromCharToIntIndexMap, renderer, Vector2D());
 	mInteractableLayer = new InteractableLayer(areaFilePath + "/Interactable Layer.txt",   areaFilePath + "/InteractableSprites.png", ConversionFromCharToIntIndexMap, renderer, Vector2D());
-	mObjectLayer       = new ObjectLayer(areaFilePath       + "/Object Layer.txt",         renderer);
+	mObjectLayer       = new ObjectLayer(areaFilePath       + "/Object Layer.txt",         renderer, mInteractableLayer);
 	
 	if (mBackgroundLayer->GetLevelEndingType() >= 0)
 	{

@@ -54,7 +54,7 @@ QuestionMarkBlock::~QuestionMarkBlock()
 
 // ---------------------------------------------------------------------------------------------- //
 
-bool QuestionMarkBlock::Update(const float deltaTime, const Vector2D playerPosition)
+bool QuestionMarkBlock::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer)
 {
 	if (!mUpdatedStaticVariables)
 		UpdateStaticVariables(deltaTime);

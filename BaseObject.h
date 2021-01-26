@@ -6,6 +6,8 @@
 #include <iostream>
 #include <string.h>
 
+class InteractableLayer;
+
 class BaseObject abstract
 {
 public:
@@ -16,7 +18,7 @@ public:
 	virtual BaseObject* Clone(std::string dataForNewObject) = 0;
 
 	virtual void Render(const Vector2D renderReferencePoint);
-	virtual bool Update(const float deltaTime, const Vector2D playerPosition);
+	virtual bool Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer);
 
 	bool         GetIsSpawnedInLevel() const            { return mIsCurrentlySpawnedInLevel; }
 	void         SetIsSpawnedInLevel(const bool newVal) { mIsCurrentlySpawnedInLevel = newVal; }
@@ -32,6 +34,7 @@ public:
 	virtual void ResetUpdatedStaticVariables() { ; }
 
 protected:
+
 	Vector2D            mCurrentPosition;
 	Vector2D	        mSpawnPosition;
 

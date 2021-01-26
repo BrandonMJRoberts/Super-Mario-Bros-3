@@ -30,7 +30,7 @@ public:
 
 	virtual BaseObject* Clone(std::string dataForNewObject) = 0;
 
-	virtual bool        Update(const float deltaTime, const Vector2D playerPosition) override;
+	virtual bool        Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer) override;
 
 	void                ReleaseCollectableObject(const POWER_UP_TYPE powerUpStateWhenHit);
 

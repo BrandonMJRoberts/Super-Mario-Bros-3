@@ -41,7 +41,7 @@ EnemyObject::~EnemyObject()
 
 // ------------------------------------------------------------- //
 
-bool EnemyObject::Update(const float deltaTime, const Vector2D playerPosition)
+bool EnemyObject::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer)
 {
 	return true;
 }

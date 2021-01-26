@@ -29,7 +29,7 @@ void BaseObject::Render(const Vector2D renderReferencePoint)
 
 // ------------------------------------------------------------------------ //
 
-bool BaseObject::Update(const float deltaTime, const Vector2D playerPosition)
+bool BaseObject::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer)
 {
 	return false;
 }

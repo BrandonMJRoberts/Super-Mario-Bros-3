@@ -2,6 +2,9 @@
 
 #include "Constants_SMB3.h"
 
+#include "InteractionLayer.h"
+#include "ObjectLayer.h"
+
 // ----------------------------------------------------- //
 
 PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D spawnPoint, Vector2D numberOfSpritesOnDimensions, const Vector2D levelBounds)
@@ -82,13 +85,108 @@ void PlayableCharacter::Render()
 
 // ----------------------------------------------------- //
 
-void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2D levelBounds)
+void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2D levelBounds, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
 	// First handle input to see if the player wants to move in a direction
 	HandleMovementInput(e);
 
-	CalculateNewPosition(deltaTime);
+	// Now update the player's physics
+	UpdatePhysics(deltaTime);
 
+	unsigned int collisionCount = 0;
+
+	// Position to pass into the calculate position function to determine if the screen should scroll or not
+	double potentialNewXPos = mRealGridPosition.x + (mVelocity.x * deltaTime);
+	double potentialNewYPos = mRealGridPosition.y + (mVelocity.y * deltaTime);
+
+	// First check if the player can move on the X axis
+	if (mVelocity.x != 0.0f)
+	{
+		Vector2D     newBottomPos, newTopPos;
+
+		if (mVelocity.x > 0.0f)
+		{
+			// Going to the right
+			newBottomPos = Vector2D(mRealGridPosition.x + 1 + (mVelocity.x * deltaTime), mRealGridPosition.y);
+			newTopPos    = Vector2D(mRealGridPosition.x + 1 + (mVelocity.x * deltaTime), mRealGridPosition.y + 1); // Needs to be adjusted to account for the player's height
+		}
+		else
+		{
+			// Going to the left
+			newBottomPos = Vector2D(mRealGridPosition.x + (mVelocity.x * deltaTime), mRealGridPosition.y);
+			newTopPos    = Vector2D(mRealGridPosition.x + (mVelocity.x * deltaTime), mRealGridPosition.y + 1); // Needs to be adjusted to account for the player's height
+		}
+
+		if (CheckXCollision(newBottomPos, newTopPos, interactionLayer, objectLayer, potentialNewXPos))
+			collisionCount++;
+	}
+
+	// Now handle the Y axis
+	if (mVelocity.y != 0.0f)
+	{
+		Vector2D     newLeftPos, newRightPos;
+
+		if (mVelocity.y > 0.0f)
+		{
+			// Going downwards
+			newLeftPos  = Vector2D(mRealGridPosition.x,     mRealGridPosition.y + (mVelocity.y * deltaTime));
+			newRightPos = Vector2D(mRealGridPosition.x + 1, mRealGridPosition.y + (mVelocity.y * deltaTime));
+		}
+		else
+		{
+			// Going
+			newLeftPos  = Vector2D(mRealGridPosition.x,     mRealGridPosition.y + (mVelocity.y * deltaTime));
+			newRightPos = Vector2D(mRealGridPosition.x + 1, mRealGridPosition.y + (mVelocity.y * deltaTime));
+		}
+
+		if (CheckYCollision(newLeftPos, newRightPos, interactionLayer, objectLayer, potentialNewYPos))
+			collisionCount++;
+	}
+
+	// If we are not prevented from moving in both directions then calculate where we are going to be next frame
+	if(collisionCount < 2)
+		CalculateNewPosition(deltaTime, Vector2D(potentialNewXPos, potentialNewYPos));
+}
+
+// ----------------------------------------------------- //
+
+bool PlayableCharacter::CheckXCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer, double& newXPosRef)
+{
+	// Check to see if we have hit the terrain on the X movement
+	if (   HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1) || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1)
+		|| HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1) || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2))
+	{
+		// Then dont move to the new position
+		newXPosRef = mRealGridPosition.x;
+
+		// Stop the player from moving
+		mAcceleration.x = 0.0f;
+		mVelocity.x     = 0.0f;
+
+		return true;
+	}
+
+	return false;
+}
+
+// ----------------------------------------------------- //
+
+bool PlayableCharacter::CheckYCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer, double& newYPosRef)
+{
+	if (   HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1) || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1)
+		|| HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1) || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2))
+	{
+		// Then dont move in the y axis
+		newYPosRef = mRealGridPosition.y;
+
+		// Stop the player from moving
+		mAcceleration.y = 0.0f;
+		mVelocity.y     = 0.0f;
+
+		return true;
+	}
+
+	return false;
 }
 
 // ----------------------------------------------------- //
@@ -126,12 +224,12 @@ void PlayableCharacter::CalculateScreenBoundsPosition(const Vector2D spawnPoint)
 
 // ----------------------------------------------------- //
 
-void PlayableCharacter::CalculateNewPosition(const float deltaTime)
+void PlayableCharacter::CalculateNewPosition(const float deltaTime, const Vector2D newPos)
 {
 	// Calculate the new potential positions
 	Vector2D movementDistance = (mVelocity * deltaTime);
 
-	Vector2D newRealGridPos   = mRealGridPosition   + movementDistance;
+	Vector2D newRealGridPos   = newPos;
 	Vector2D newScreenGridPos = mScreenGridPosition + movementDistance;
 
 	// First cap the new positions to their relative bounds - starting with the y axis
@@ -234,7 +332,7 @@ void PlayableCharacter::CalculateNewPosition(const float deltaTime)
 
 void PlayableCharacter::HandleMovementInput(SDL_Event e)
 {
-	float speed = 4.0f;
+	float speed = 1.0f;
 
 	switch (e.type)
 	{
@@ -242,19 +340,19 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 		switch (e.key.keysym.sym)
 		{
 		case SDLK_d:
-			mVelocity.x = speed;
+			mAcceleration.x = speed;
 		break;
 
 		case SDLK_a:
-			mVelocity.x = -speed;
+			mAcceleration.x = -speed;
 		break;
 
 		case SDLK_s:
-			mVelocity.y = speed;
+			mAcceleration.y = speed;
 		break;
 
 		case SDLK_w:
-			mVelocity.y = -speed;
+			mAcceleration.y = -speed;
 		break;
 		}
 	break;
@@ -264,12 +362,12 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 		{
 		case SDLK_d:
 		case SDLK_a:
-			mVelocity.x = 0.0f;
+			mAcceleration.x = 0.0f;
 		break;
 
 		case SDLK_s:
 		case SDLK_w:
-			mVelocity.y = 0.0f;
+			mAcceleration.y = 0.0f;
 		break;
 		}
 		break;
@@ -316,3 +414,27 @@ void PlayableCharacter::SpawnIntoNewArea(const Vector2D newPos, const Vector2D n
 	// Now calculate the starting render reference point
 	CalculateInitialRenderReferencePoint();
 }
+
+// ----------------------------------------------------- //
+
+bool PlayableCharacter::HandleCollisionsWithInteractionLayer(InteractableLayer* interactionLayer, const Vector2D newPos)
+{
+	return (interactionLayer->GetIsCollision((unsigned int)newPos.y, (unsigned int)newPos.x));
+}
+
+// ----------------------------------------------------- //
+
+bool PlayableCharacter::HandleCollisionsWithInteractionObjectLayer(ObjectLayer* objectLayer, const Vector2D newPos)
+{
+	return false;
+}
+
+// ----------------------------------------------------- //
+
+void PlayableCharacter::UpdatePhysics(const float deltaTime)
+{
+	// Apply the acceleration of the player 
+	mVelocity += Vector2D(mAcceleration.x * deltaTime, (mAcceleration.y + GRAVITY) * deltaTime);
+}
+
+// ----------------------------------------------------- //

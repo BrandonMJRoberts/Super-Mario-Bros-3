@@ -70,7 +70,7 @@ BaseObject* Goomba::Clone(std::string data)
 
 // ------------------------------------------------------------- //
 
-bool Goomba::Update(const float deltaTime, const Vector2D playerPosition)
+bool Goomba::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer)
 {
 	if (!mUpdatedStaticVariables)
 		UpdateStaticVariables(deltaTime);

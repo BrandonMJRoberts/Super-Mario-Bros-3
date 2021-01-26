@@ -22,7 +22,7 @@ public:
 					  const CollectableObject* maxObjectReleased);
 	~QuestionMarkBlock() override;
 
-	bool Update(const float deltaTime, const Vector2D playerPosition) override;
+	bool Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer) override;
 	void Render(const Vector2D renderReferencePoint) override;
 
 	BaseObject* Clone(std::string dataForNewObject) override;

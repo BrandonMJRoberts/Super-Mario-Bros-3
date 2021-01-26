@@ -30,6 +30,9 @@ public:
 
 	const Vector2D    GetSpawnPointPosition(unsigned int ID);
 
+	InteractableLayer* GetInteractionLayer() { return mInteractableLayer; }
+	ObjectLayer*       GetObjectLayer()      { return mObjectLayer; }
+
 private:
 	std::string ReplaceDoubleBackslashWithFrontSlash(std::string areaFilePath);
 	std::string CalculateNameOfArea(std::string areaFilePath);

@@ -80,9 +80,9 @@ BaseObject* InvisibleBlock::Clone(std::string dataLine)
 
 // ------------------------------------------------------------------------------ //
 
-bool InvisibleBlock::Update(const float deltaTime, const Vector2D playerPosition)
+bool InvisibleBlock::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer)
 {
-	PhysicalObject::Update(deltaTime, playerPosition);
+	PhysicalObject::Update(deltaTime, playerPosition, interactionLayer);
 
 	return false;
 }

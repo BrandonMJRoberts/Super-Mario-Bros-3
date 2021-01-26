@@ -22,7 +22,7 @@ public:
 	~Coin_SMB3() override;
 
 	void Render(const Vector2D renderReferencePoint) override;
-	bool Update(const float deltaTime, const Vector2D playerPosition) override;
+	bool Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer) override;
 
 	virtual BaseObject* Clone(std::string dataLine) override;
 

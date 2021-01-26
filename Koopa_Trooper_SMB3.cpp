@@ -84,9 +84,9 @@ BaseObject* KoopaTrooper::Clone(std::string dataLine)
 
 // ------------------------------------------------------------------------------ //
 
-bool KoopaTrooper::Update(const float deltaTime, const Vector2D playerPosition)
+bool KoopaTrooper::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer)
 {
-	PhysicalObject::Update(deltaTime, playerPosition);
+	PhysicalObject::Update(deltaTime, playerPosition, interactionLayer);
 
 	return false;
 }

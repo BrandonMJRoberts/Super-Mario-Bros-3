@@ -2,6 +2,8 @@
 
 #include "Constants_SMB3.h"
 
+#include "InteractionLayer.h"
+
 SDL_Renderer*			  PhysicalObject::mRenderer(nullptr);
 std::vector<Texture2D*>   PhysicalObject::mSpriteSheets;
 std::vector<unsigned int> PhysicalObject::mInstanceCounts;
@@ -129,11 +131,26 @@ void PhysicalObject::RenderSprite(const Vector2D renderReferencePoint, const uns
 
 // ----------------------------------------------------------------------------------------------------- //
 
-bool PhysicalObject::Update(const float deltaTime, const Vector2D playerPosition)
+bool PhysicalObject::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer)
 {
+	// Animation update
 	if (GetHasUpdatedStaticVariables())
 	{
 		UpdateStaticVariables(deltaTime);
+	}
+
+	if (CheckCollisionsWithInteractionLayer(interactionLayer, deltaTime))
+	{
+		// Must have hit an interactable thing in our current movement direction
+		mAcceleration = Vector2D();
+	}
+	else
+	{
+		// Then the new position is valid to move to
+		mCurrentPosition += (mVelocity * deltaTime);
+
+		// Update the object's velocity using its acceleration
+		mVelocity += (mAcceleration * deltaTime);
 	}
 
 	return false;
@@ -159,6 +176,16 @@ void PhysicalObject::UpdateStaticVariables(const float deltaTime)
 			objectSpecificData.currentFrameID = objectSpecificData.startrameID;
 		}
 	}
+}
+
+// ----------------------------------------------------------------------------------------------------- //
+
+bool PhysicalObject::CheckCollisionsWithInteractionLayer(InteractableLayer* interactionLayer, const float deltaTime)
+{
+	// Check the new position of this object - using its velocity - to determine if it will collide with the interaction layer
+	Vector2D newPos = mCurrentPosition + (mVelocity * deltaTime);
+
+	return (interactionLayer->GetIsCollision((unsigned int)newPos.y, (unsigned int)newPos.x));
 }
 
 // ----------------------------------------------------------------------------------------------------- //

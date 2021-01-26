@@ -6,6 +6,9 @@
 
 #include "Subject.h"
 
+class InteractableLayer;
+class ObjectLayer;
+
 class PlayableCharacter final : public Subject
 {
 public:
@@ -13,7 +16,7 @@ public:
 	~PlayableCharacter() override;
 
 	void Render();
-	void Update(const float deltaTime, SDL_Event e, const Vector2D levelBounds);
+	void Update(const float deltaTime, SDL_Event e, const Vector2D levelBounds, InteractableLayer* interactionLayer, ObjectLayer* objectLayer);
 
 	const Vector2D GetRealGridPosition()     const { return mRealGridPosition; }
 	const Vector2D GetScreenGridPosition()   const { return mScreenGridPosition; }
@@ -25,10 +28,18 @@ public:
 private:
 	void HandleMovementInput(SDL_Event e);
 
-	void CalculateNewPosition(const float deltaTime);
+	void CalculateNewPosition(const float deltaTime, const Vector2D newPos);
 	void CalculateInitialRenderReferencePoint();
 
 	void CalculateScreenBoundsPosition(const Vector2D spawnPoint);
+
+	bool HandleCollisionsWithInteractionLayer(InteractableLayer* interactionLayer, const Vector2D newPos);
+	bool HandleCollisionsWithInteractionObjectLayer(ObjectLayer* objectLayer, const Vector2D newPos);
+
+	bool CheckXCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer, double& newXPosRef);
+	bool CheckYCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer, double& newYPosRef);
+
+	void UpdatePhysics(const float deltaTime);
 
 	Vector2D   mRealGridPosition;   // The player's position in the collision world
 	Vector2D   mScreenGridPosition; // Player's screen position

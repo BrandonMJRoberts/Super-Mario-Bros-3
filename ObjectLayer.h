@@ -12,12 +12,13 @@
 #include "SpawnPoint_SMB3.h"
 
 class BaseObject;
+class InteractableLayer;
 
 class ObjectLayer final
 {
 public:
 	ObjectLayer() = delete;
-	ObjectLayer(std::string filePathToDataFile, SDL_Renderer* renderer);
+	ObjectLayer(std::string filePathToDataFile, SDL_Renderer* renderer, InteractableLayer* interactionLayer);
 	~ObjectLayer();
 
 	void Render(const Vector2D gridReferencePoint);
@@ -48,6 +49,7 @@ private:
 
 	// Renderer
 	SDL_Renderer*                mRenderer;
+	InteractableLayer*     mInteractionLayer;
 
 };
 

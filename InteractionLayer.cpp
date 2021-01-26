@@ -113,7 +113,7 @@ void InteractableLayer::Render(const Vector2D gridReferencePoint)
 				destRect.x += RESOLUTION_OF_SPRITES;
 			}
 
-			// move the y-axis along and reset the x-position
+			// Move the y-axis along and reset the x-position
 			destRect.y += RESOLUTION_OF_SPRITES;
 			destRect.x = xLerp;
 		}

@@ -6,6 +6,8 @@
 #include "Texture2D.h"
 #include <vector>
 
+class InteractableLayer;
+
 // ------------------------------------------------------------------------------------------------- //
 
 struct RenderData
@@ -38,7 +40,7 @@ public:
 	virtual BaseObject* Clone(std::string dataForNewObject) = 0;
 
 	virtual void        Render(const Vector2D renderReferencePoint) override { ; }
-	virtual bool        Update(const float deltaTime, const Vector2D playerPosition) override;
+	virtual bool        Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer) override;
 
 	const Vector2D      GetCollisionBox() const { return mCollisionBox; }
 
@@ -51,10 +53,15 @@ protected:
 
 	virtual RenderData   GetRenderData() = 0;
 
+	bool                 CheckCollisionsWithInteractionLayer(InteractableLayer* interactionLayer, const float deltaTime);
+
 	// Non-instance specific data
 	static std::vector<Texture2D*>   mSpriteSheets;
 	static std::vector<unsigned int> mInstanceCounts;
 	static SDL_Renderer*             mRenderer;
+
+	Vector2D                         mVelocity;
+	Vector2D                         mAcceleration;
 
 	unsigned int					 mSingleSpriteWidth;
 	unsigned int					 mSingleSpriteHeight;

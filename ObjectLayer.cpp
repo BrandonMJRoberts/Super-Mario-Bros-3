@@ -11,11 +11,15 @@
 #include "Constants_SMB3.h"
 #include "Animation_Speeds.h"
 
+#include "InteractionLayer.h"
+
 // -------------------------------------------------------------------------------------------------------------------------- //
 
 ObjectLayer::ObjectLayer(std::string   filePathToDataFile, 
-	                     SDL_Renderer* renderer)
+	                     SDL_Renderer* renderer,
+						 InteractableLayer* interactionLayer)
 : mRenderer(renderer)
+, mInteractionLayer(interactionLayer)
 {
 	InstantiateNameConversions();
 
@@ -155,7 +159,7 @@ void ObjectLayer::UpdateSpawnedObjects(const float deltaTime, Vector2D gridRefer
 		if (mSpawnedObjectsInLevel[i])
 		{
 			// If they return true then they need to be unspawned / destroyed
-			if (mSpawnedObjectsInLevel[i]->Update(deltaTime, gridReferencePoint) || !InPlayArea(mSpawnedObjectsInLevel[i]->GetCurrentPosition(), gridReferencePoint))
+			if (mSpawnedObjectsInLevel[i]->Update(deltaTime, gridReferencePoint, mInteractionLayer) || !InPlayArea(mSpawnedObjectsInLevel[i]->GetCurrentPosition(), gridReferencePoint))
 			{
 				// First store internally that this object has been removed from active play
 				mSpawnedObjectsInLevel[i]->SetInstanceLocked(true);

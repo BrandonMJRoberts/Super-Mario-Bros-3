@@ -30,7 +30,7 @@ public:
 
 	BaseObject* Clone(std::string dataLineForClone) override;
 
-	bool        Update(const float deltaTime, const Vector2D playerPosition) override;
+	bool        Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer) override;
 	void        Render(const Vector2D renderReferencePoint) override;
 
 	void        ResetUpdatedStaticVariables() override { mUpdatedStaticVariables = false; }
