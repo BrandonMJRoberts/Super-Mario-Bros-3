@@ -27,6 +27,8 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , mEndFrame(0)
 , mNumberOfSpritesOnWidth((unsigned int)numberOfSpritesOnDimensions.x)
 , mLevelBounds(levelBounds)
+
+, mCollisionBox(1.0f, 1.0f)
 {
 	// Load in the sprite sheet passed in
 	mSpriteSheet = new Texture2D(renderer);
@@ -107,14 +109,14 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 		if (mVelocity.x > 0.0f)
 		{
 			// Going to the right
-			newBottomPos = Vector2D(mRealGridPosition.x + 1 + (mVelocity.x * deltaTime), mRealGridPosition.y);
-			newTopPos    = Vector2D(mRealGridPosition.x + 1 + (mVelocity.x * deltaTime), mRealGridPosition.y + 1); // Needs to be adjusted to account for the player's height
+			newBottomPos = Vector2D(mRealGridPosition.x + mCollisionBox.x + (mVelocity.x * deltaTime), mRealGridPosition.y);
+			newTopPos    = Vector2D(mRealGridPosition.x + mCollisionBox.x + (mVelocity.x * deltaTime), mRealGridPosition.y + mCollisionBox.y);
 		}
 		else
 		{
 			// Going to the left
 			newBottomPos = Vector2D(mRealGridPosition.x + (mVelocity.x * deltaTime), mRealGridPosition.y);
-			newTopPos    = Vector2D(mRealGridPosition.x + (mVelocity.x * deltaTime), mRealGridPosition.y + 1); // Needs to be adjusted to account for the player's height
+			newTopPos    = Vector2D(mRealGridPosition.x + (mVelocity.x * deltaTime), mRealGridPosition.y + mCollisionBox.y);
 		}
 
 		if (CheckXCollision(newBottomPos, newTopPos, interactionLayer, objectLayer, potentialNewXPos))
@@ -129,14 +131,14 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 		if (mVelocity.y > 0.0f)
 		{
 			// Going downwards
-			newLeftPos  = Vector2D(mRealGridPosition.x,     mRealGridPosition.y + (mVelocity.y * deltaTime));
-			newRightPos = Vector2D(mRealGridPosition.x + 1, mRealGridPosition.y + (mVelocity.y * deltaTime));
+			newLeftPos  = Vector2D(mRealGridPosition.x,                   mRealGridPosition.y + (mVelocity.y * deltaTime));
+			newRightPos = Vector2D(mRealGridPosition.x + mCollisionBox.x, mRealGridPosition.y + (mVelocity.y * deltaTime));
 		}
 		else
 		{
 			// Going
-			newLeftPos  = Vector2D(mRealGridPosition.x,     mRealGridPosition.y + (mVelocity.y * deltaTime));
-			newRightPos = Vector2D(mRealGridPosition.x + 1, mRealGridPosition.y + (mVelocity.y * deltaTime));
+			newLeftPos  = Vector2D(mRealGridPosition.x,                   mRealGridPosition.y + (mVelocity.y * deltaTime));
+			newRightPos = Vector2D(mRealGridPosition.x + mCollisionBox.x, mRealGridPosition.y + (mVelocity.y * deltaTime));
 		}
 
 		if (CheckYCollision(newLeftPos, newRightPos, interactionLayer, objectLayer, potentialNewYPos))

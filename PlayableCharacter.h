@@ -49,6 +49,8 @@ private:
 	Vector2D   mVelocity;
 	Vector2D   mAcceleration;
 
+	Vector2D   mCollisionBox; // Using grid space for the collision box, not pixel size
+
 	Vector2D   mLevelBounds;
 
 	unsigned int mNumberOfSpritesOnWidth;;
