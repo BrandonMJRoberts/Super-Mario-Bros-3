@@ -29,6 +29,7 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , mLevelBounds(levelBounds)
 
 , mCollisionBox(1.0f, 1.0f)
+, kMaxSpeed(10.0f)
 {
 	// Load in the sprite sheet passed in
 	mSpriteSheet = new Texture2D(renderer);
@@ -437,6 +438,13 @@ void PlayableCharacter::UpdatePhysics(const float deltaTime)
 {
 	// Apply the acceleration of the player 
 	mVelocity += Vector2D(mAcceleration.x * deltaTime, (mAcceleration.y + GRAVITY) * deltaTime);
+
+	// Cap the velocity to the max speed if it exceeds it
+	if (mVelocity.x > kMaxSpeed)
+		mVelocity.x = kMaxSpeed;
+
+	if (mVelocity.y > kMaxSpeed)
+		mVelocity.y = kMaxSpeed;
 }
 
 // ----------------------------------------------------- //
