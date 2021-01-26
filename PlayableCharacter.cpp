@@ -111,13 +111,13 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 		{
 			// Going to the right
 			newBottomPos = Vector2D(mRealGridPosition.x + mCollisionBox.x + (mVelocity.x * deltaTime), mRealGridPosition.y);
-			newTopPos    = Vector2D(mRealGridPosition.x + mCollisionBox.x + (mVelocity.x * deltaTime), mRealGridPosition.y + mCollisionBox.y);
+			newTopPos    = Vector2D(mRealGridPosition.x + mCollisionBox.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBox.y);
 		}
 		else
 		{
 			// Going to the left
 			newBottomPos = Vector2D(mRealGridPosition.x + (mVelocity.x * deltaTime), mRealGridPosition.y);
-			newTopPos    = Vector2D(mRealGridPosition.x + (mVelocity.x * deltaTime), mRealGridPosition.y + mCollisionBox.y);
+			newTopPos    = Vector2D(mRealGridPosition.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBox.y);
 		}
 
 		if (CheckXCollision(newBottomPos, newTopPos, interactionLayer, objectLayer, potentialNewXPos))
@@ -156,11 +156,11 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 bool PlayableCharacter::CheckXCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer, double& newXPosRef)
 {
 	// Check to see if we have hit the terrain on the X movement
-	if (   HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1) || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1)
+	if (   HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1) || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2)
 		|| HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1) || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2))
 	{
 		// Then dont move to the new position
-		newXPosRef = mRealGridPosition.x;
+		newXPosRef      = mRealGridPosition.x;
 
 		// Stop the player from moving
 		mAcceleration.x = 0.0f;
@@ -176,11 +176,11 @@ bool PlayableCharacter::CheckXCollision(const Vector2D positionToCheck1, const V
 
 bool PlayableCharacter::CheckYCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer, double& newYPosRef)
 {
-	if (   HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1) || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1)
+	if (   HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1) || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2)
 		|| HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1) || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2))
 	{
 		// Then dont move in the y axis
-		newYPosRef = mRealGridPosition.y;
+		newYPosRef      = mRealGridPosition.y;
 
 		// Stop the player from moving
 		mAcceleration.y = 0.0f;
