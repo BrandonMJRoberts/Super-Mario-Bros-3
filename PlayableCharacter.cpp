@@ -137,9 +137,9 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 		}
 		else
 		{
-			// Going
-			newLeftPos  = Vector2D(mRealGridPosition.x,                   mRealGridPosition.y + (mVelocity.y * deltaTime));
-			newRightPos = Vector2D(mRealGridPosition.x + mCollisionBox.x, mRealGridPosition.y + (mVelocity.y * deltaTime));
+			// Going upwards
+			newLeftPos  = Vector2D(mRealGridPosition.x,                   mRealGridPosition.y - mCollisionBox.y + (mVelocity.y * deltaTime));
+			newRightPos = Vector2D(mRealGridPosition.x + mCollisionBox.x, mRealGridPosition.y - mCollisionBox.y + (mVelocity.y * deltaTime));
 		}
 
 		if (CheckYCollision(newLeftPos, newRightPos, interactionLayer, objectLayer, potentialNewYPos))
@@ -335,7 +335,7 @@ void PlayableCharacter::CalculateNewPosition(const float deltaTime, const Vector
 
 void PlayableCharacter::HandleMovementInput(SDL_Event e)
 {
-	float speed = 1.0f;
+	float speed = 4.0f;
 
 	switch (e.type)
 	{
