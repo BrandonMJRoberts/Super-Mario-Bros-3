@@ -12,6 +12,7 @@ class  Texture2D;
 class  LevelAreas;
 class  PlayableCharacter;
 class  Observer;
+class  Audio_Player;
 
 // ----------------------------------------------------------------------------------------------------------- //
 
@@ -40,6 +41,8 @@ private:
 	const SDL_Renderer*      mRenderer;
 
 	PlayableCharacter*       mPlayer;
+
+	Audio_Player*            mAudioPlayer;
 
 };
 

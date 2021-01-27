@@ -16,15 +16,7 @@ GameManager_SMB3::GameManager_SMB3()
 , mCurrentScoreLuigi(0)
 , mCurrentScoreMario(0)
 , mCurrentWorldIndex(1)
-, mRenderReferencePoint(0, 10)
 , mWorldMapOffsetPoint(1, 1)
-, mScrollingLeft(false)
-, mScrollingRight(false)
-, mScrollingSpeedMultiplier(5.0f)
-, mHitRightBoundary(false)
-, mHitLeftBoundary(false)
-, mHitTopBoundary(false)
-, mHitBottomBoundary(false)
 , mMarioPowerUpState(CHARACTER_MAP_POWER_UP_STATE::SMALL)
 , mLuigiPowerUpState(CHARACTER_MAP_POWER_UP_STATE::SMALL)
 , mCurrentlyPlayingAsMario(true)
@@ -127,15 +119,7 @@ std::string GameManager_SMB3::GetCurrentWorldMapFilePath()
 
 void GameManager_SMB3::Update(const float deltaTime)
 {
-	// Add onto the reference point the amount that has progressed, in terms of grid position, not pixel position
-	if (mScrollingLeft)
-	{
-		AddToReferencePoint(Vector2D((double)deltaTime * -1 * mScrollingSpeedMultiplier, 0));
-	}
-	else if (mScrollingRight)
-	{
-		AddToReferencePoint(Vector2D((double)deltaTime * mScrollingSpeedMultiplier, 0));
-	}
+	
 }
 
 // ---------------------------------------------------------------------- //

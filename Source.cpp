@@ -34,7 +34,7 @@ void CloseSDL();
 
 bool InitSDL()
 {
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0)
 	{
 		std::cout << "SDL did not initialise: " << SDL_GetError() << std::endl;
 		return false;
@@ -66,6 +66,13 @@ bool InitSDL()
 			if (!(IMG_Init(imageFlags) && imageFlags))
 			{
 				std::cout << "SDL_Image could not initialise. Error: " << SDL_GetError() << std::endl;
+				return false;
+			}
+
+			// Setup the audio mixer - Frequence, sample format, hardware channels (2 = sterio), size of audio chunks in bytes 
+			if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+			{
+				std::cout << "Could not setup the audio mixer. Error: " << SDL_GetError() << std::endl;
 				return false;
 			}
 		}
@@ -126,11 +133,11 @@ void Render()
 
 void CloseSDL()
 {
-	SDL_DestroyWindow(gWindow);
-	gWindow = nullptr;
-
 	SDL_DestroyRenderer(gRenderer);
 	gRenderer = nullptr;
+
+	SDL_DestroyWindow(gWindow);
+	gWindow = nullptr;
 
 	if (GAME_IS_MARIO_3)
 	{
@@ -145,6 +152,7 @@ void CloseSDL()
 
 	IMG_Quit();
 	SDL_Quit();
+	Mix_Quit();
 }
 
 // -------------------------------------------------- //

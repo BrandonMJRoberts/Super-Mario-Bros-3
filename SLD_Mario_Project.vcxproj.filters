@@ -264,6 +264,9 @@
     <ClCompile Include="TextRenderer.cpp">
       <Filter>Source Files\Mario Bros 3\TextRenderer</Filter>
     </ClCompile>
+    <ClCompile Include="AudioPlayer.cpp">
+      <Filter>Source Files\Mario Bros 3\Audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="SDL2\SDL2.lib" />
@@ -427,6 +430,9 @@
     </ClInclude>
     <ClInclude Include="Animation_Speeds.h">
       <Filter>Header Files\Mario Bros 3</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioPlayer.h">
+      <Filter>Header Files\Mario Bros 3\Audio</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

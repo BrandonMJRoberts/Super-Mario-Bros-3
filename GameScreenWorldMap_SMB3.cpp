@@ -5,6 +5,8 @@
 #include "WorldMapMario.h"
 #include "Constants_SMB3.h"
 
+#include "AudioPlayer.h"
+
 #include <SDL.h>
 #include <string>
 
@@ -14,6 +16,43 @@ GameScreen_WorldMap_SMB3::GameScreen_WorldMap_SMB3(SDL_Renderer* renderer)
 {
 	// First setup the internal conversion system this program uses
 	SetupConversionTable();
+
+	mAudioPlayer = new Audio_Player("SDL_Mario_Project/Audio/Music/World/01 - Grass Land.mp3");
+
+	// Set the correct audio track for the world map that is being played
+	if (mAudioPlayer)
+	{
+		switch (GameManager_SMB3::GetInstance()->GetCurrentWorldIndex())
+		{
+		case 2:
+			mAudioPlayer->SetMusicTrack("SDL_Mario_Project/Audio/Music/World/05 - Desert Hill.mp3");
+		break;
+
+		case 3:
+			mAudioPlayer->SetMusicTrack("SDL_Mario_Project/Audio/Music/World/08 - Ocean Side.mp3");
+		break;
+
+		case 4:
+			mAudioPlayer->SetMusicTrack("SDL_Mario_Project/Audio/Music/World/12 - Big Island.mp3");
+		break;
+
+		case 5:
+			mAudioPlayer->SetMusicTrack("SDL_Mario_Project/Audio/Music/World/16 - The Sky.mp3");
+		break;
+
+		case 6:
+			mAudioPlayer->SetMusicTrack("SDL_Mario_Project/Audio/Music/World/21 - Iced Land.mp3");
+		break;
+
+		case 7:
+			mAudioPlayer->SetMusicTrack("SDL_Mario_Project/Audio/Music/World/26 - Pipe Maze.mp3");
+		break;
+
+		case 8:
+			mAudioPlayer->SetMusicTrack("SDL_Mario_Project/Audio/Music/World/30 - Castle of Koopa.mp3");
+		break;
+		}
+	}
 
 	// Then construct the file path for the current world
 	std::string filePath = "SDL_Mario_Project/Worlds/World_" + std::to_string(GameManager_SMB3::GetInstance()->GetCurrentWorldIndex());
@@ -55,6 +94,9 @@ GameScreen_WorldMap_SMB3::~GameScreen_WorldMap_SMB3()
 
 	delete mBorder;
 	mBorder = nullptr;
+
+	delete mAudioPlayer;
+	mAudioPlayer = nullptr;
 }
 
 // ----------------------------------------------------------------------------- //

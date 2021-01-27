@@ -8,6 +8,7 @@
 #include "PlayableCharacter.h"
 
 #include "Observer.h"
+#include "AudioPlayer.h"
 
 #include <SDL.h>
 #include <filesystem>
@@ -25,6 +26,8 @@ GameScreenLevel_SMB3::GameScreenLevel_SMB3(SDL_Renderer* renderer
 {
 	// Setup the lookup table
 	InitialiseLookUpTable();
+
+	mAudioPlayer = new Audio_Player("SDL_Mario_Project/Audio/Music/02 - Level Theme 1.mp3");
 
 	// First loop through all folders contained within the file path presented, each folder is a different level area
 	// To do this you use the std::filesystem include
@@ -67,6 +70,9 @@ GameScreenLevel_SMB3::~GameScreenLevel_SMB3()
 
 	delete mPlayer;
 	mPlayer = nullptr;
+
+	delete mAudioPlayer;
+	mAudioPlayer = nullptr;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //
@@ -166,6 +172,7 @@ void GameScreenLevel_SMB3::InitialiseLookUpTable()
 
 void GameScreenLevel_SMB3::HandleInput(const float deltaTime, SDL_Event e)
 {
+	/*
 	// Get the reference once so we dont have to multiple times later on
 	GameManager_SMB3* GM = GameManager_SMB3::GetInstance();
 
@@ -272,6 +279,7 @@ void GameScreenLevel_SMB3::HandleInput(const float deltaTime, SDL_Event e)
 	default:
 	break;
 	}
+	*/
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //

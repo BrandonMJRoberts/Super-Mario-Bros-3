@@ -10,6 +10,8 @@
 
 #include "BaseWorldMapCharacter.h"
 
+class Audio_Player;
+
 class GameScreen_WorldMap_SMB3 final : public GameScreen_SMB3
 {
 public:
@@ -29,6 +31,10 @@ private:
 	BaseWorldMapCharacter*    mPlayer;
 
 	std::map<char, unsigned int> mConversionTable;
+
+	Audio_Player*             mAudioPlayer;
+
+	unsigned int              mWorldID;
 };
 
 #endif

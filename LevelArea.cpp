@@ -5,6 +5,7 @@
 #include "ObjectLayer.h"
 
 #include "PlayableCharacter.h"
+#include "AudioPlayer.h"
 
 #include <iostream>
 

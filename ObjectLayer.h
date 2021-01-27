@@ -49,7 +49,7 @@ private:
 
 	// Renderer
 	SDL_Renderer*                mRenderer;
-	InteractableLayer*     mInteractionLayer;
+	InteractableLayer*           mInteractionLayer;
 
 };
 

@@ -163,6 +163,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AudioPlayer.cpp" />
     <ClCompile Include="BackgroundLayer.cpp" />
     <ClCompile Include="BackgroundLayer_WorldMap.cpp" />
     <ClCompile Include="BlockObject.cpp" />
@@ -218,6 +219,7 @@
     <ClInclude Include="AllCollectablesInclude.h" />
     <ClInclude Include="AllObjectsInclude.h" />
     <ClInclude Include="Animation_Speeds.h" />
+    <ClInclude Include="AudioPlayer.h" />
     <ClInclude Include="BackgroundLayer.h" />
     <ClInclude Include="BackgroundLayer_WorldMap.h" />
     <ClInclude Include="BaseObject.h" />
