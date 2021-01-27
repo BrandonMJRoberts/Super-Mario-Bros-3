@@ -64,9 +64,15 @@ private:
 	unsigned int mStartFrame;
 	unsigned int mEndFrame;
 
-	const float  kMaxSpeed;
+	const float  kMaxSpeedWalking;
+	const float  kMaxSpeedRunning;
+
+	const float  kFrictionMultiplier;
 
 	bool       mIsAlive;
+	bool       mApplyFriction;
+
+	bool       mIsWalking;
 };
 
 

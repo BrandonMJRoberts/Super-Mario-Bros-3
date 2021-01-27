@@ -29,7 +29,11 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , mLevelBounds(levelBounds)
 
 , mCollisionBox(1.0f, 1.0f)
-, kMaxSpeed(10.0f)
+, kMaxSpeedWalking(3.0f)
+, kMaxSpeedRunning(10.0f)
+, mApplyFriction(false)
+, kFrictionMultiplier(5.0f)
+, mIsWalking(true)
 {
 	// Load in the sprite sheet passed in
 	mSpriteSheet = new Texture2D(renderer);
@@ -186,9 +190,12 @@ bool PlayableCharacter::CheckYCollision(const Vector2D positionToCheck1, const V
 		mAcceleration.y = 0.0f;
 		mVelocity.y     = 0.0f;
 
+		mApplyFriction = true;
+
 		return true;
 	}
 
+	mApplyFriction = false;
 	return false;
 }
 
@@ -335,27 +342,40 @@ void PlayableCharacter::CalculateNewPosition(const float deltaTime, const Vector
 
 void PlayableCharacter::HandleMovementInput(SDL_Event e)
 {
-	float speed = 4.0f;
+	double speed      = 10.0f;
+	double multiplier = 1.0f;
+
+	if (mIsWalking)
+	{
+		multiplier = 2.0f;
+	}
 
 	switch (e.type)
 	{
 	case SDL_KEYDOWN:
 		switch (e.key.keysym.sym)
 		{
+		case SDLK_RSHIFT:
+			if (mIsWalking)
+			{
+				mIsWalking = false;
+			}
+		break;
+
 		case SDLK_d:
-			mAcceleration.x = speed;
+			mAcceleration.x = multiplier * speed;
 		break;
 
 		case SDLK_a:
-			mAcceleration.x = -speed;
+			mAcceleration.x = -multiplier * speed;
 		break;
 
 		case SDLK_s:
-			mAcceleration.y = speed;
+			mAcceleration.y = multiplier * speed;
 		break;
 
 		case SDLK_w:
-			mAcceleration.y = -speed;
+			mAcceleration.y = -multiplier * speed;
 		break;
 		}
 	break;
@@ -363,6 +383,10 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 	case SDL_KEYUP:
 		switch (e.key.keysym.sym)
 		{
+		case SDLK_RSHIFT:
+			mIsWalking = true;
+		break;
+
 		case SDLK_d:
 		case SDLK_a:
 			mAcceleration.x = 0.0f;
@@ -373,7 +397,7 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 			mAcceleration.y = 0.0f;
 		break;
 		}
-		break;
+	break;
 	}
 }
 
@@ -436,15 +460,62 @@ bool PlayableCharacter::HandleCollisionsWithInteractionObjectLayer(ObjectLayer* 
 
 void PlayableCharacter::UpdatePhysics(const float deltaTime)
 {
+	// Apply friction to the player's movement 
+	if (mApplyFriction)
+	{
+		float frictionReduction = (kFrictionMultiplier * deltaTime);
+
+		if (abs(mVelocity.x) > 0.05f)
+		{
+			if (mVelocity.x > 0.0f)
+				mVelocity.x -= frictionReduction;
+			else if (mVelocity.x < 0.0f)
+				mVelocity.x += frictionReduction;
+		}
+	}
+
 	// Apply the acceleration of the player 
 	mVelocity += Vector2D(mAcceleration.x * deltaTime, (mAcceleration.y + GRAVITY) * deltaTime);
 
-	// Cap the velocity to the max speed if it exceeds it
-	if (mVelocity.x > kMaxSpeed)
-		mVelocity.x = kMaxSpeed;
+	if (mIsWalking)
+	{
+		// Cap the velocity to the max speed if it exceeds it
+		if (abs(mVelocity.x) > kMaxSpeedWalking)
+		{
+			if (mVelocity.x > 0.0f)
+				mVelocity.x = kMaxSpeedWalking;
+			else
+				mVelocity.x = -kMaxSpeedWalking;
+		}
 
-	if (mVelocity.y > kMaxSpeed)
-		mVelocity.y = kMaxSpeed;
+		if (abs(mVelocity.y) > kMaxSpeedWalking)
+		{
+			if(mVelocity.y > 0.0f)
+				mVelocity.y = kMaxSpeedWalking;
+			else
+				mVelocity.y = -kMaxSpeedWalking;
+		}
+	}
+	else
+	{
+		// Cap the velocity to the max speed if it exceeds it
+		if (abs(mVelocity.x) > kMaxSpeedRunning)
+		{
+			if (mVelocity.x > 0.0f)
+				mVelocity.x = kMaxSpeedRunning;
+			else
+				mVelocity.x = -kMaxSpeedRunning;
+		}
+
+		if (abs(mVelocity.y) > kMaxSpeedRunning)
+		{
+			if (mVelocity.y > 0.0f)
+				mVelocity.y = kMaxSpeedRunning;
+			else
+				mVelocity.y = -kMaxSpeedRunning;
+		}
+	}
+
 }
 
 // ----------------------------------------------------- //
