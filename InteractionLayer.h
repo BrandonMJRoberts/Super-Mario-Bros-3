@@ -20,7 +20,7 @@ public:
 	void Render(const Vector2D gridReferencePoint);                      // For rendering the colliable objects in the level
 	void Update(const float deltaTime); // Update for updating animations, such as breaking a brick block
 
-	bool GetIsCollision(unsigned int row, unsigned int col) { return (mInteractionLayerDataStore[row][col] != 150); }
+	bool GetIsCollision(unsigned int row, unsigned int col);
 
 
 private:

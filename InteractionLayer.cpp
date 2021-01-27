@@ -271,3 +271,15 @@ bool InteractableLayer::CheckAllDataLoaded()
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //
+
+bool InteractableLayer::GetIsCollision(unsigned int row, unsigned int col)
+{
+	// Bounds check
+	if (row < mLevelHeight && row > 0 &&
+		col < mLevelWidth && col > 0)
+	{
+		return (mInteractionLayerDataStore[row][col] != 150);
+	}
+	else
+		return false;
+}
