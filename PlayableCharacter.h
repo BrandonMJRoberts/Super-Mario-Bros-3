@@ -55,7 +55,7 @@ private:
 
 	unsigned int mNumberOfSpritesOnWidth;;
 
-	Texture2D* mSpriteSheet;
+	Texture2D*   mSpriteSheet;
 
 	unsigned int mSingleSpriteWidth;
 	unsigned int mSingleSpriteHeight;
@@ -64,7 +64,15 @@ private:
 	unsigned int mStartFrame;
 	unsigned int mEndFrame;
 
+	const float  kMaxSpeedWalking;
+	const float  kMaxSpeedRunning;
+
+	const float  kFrictionMultiplier;
+
 	bool       mIsAlive;
+	bool       mApplyFriction;
+
+	bool       mIsWalking;
 };
 
 

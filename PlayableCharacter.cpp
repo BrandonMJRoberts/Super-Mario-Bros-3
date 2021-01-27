@@ -29,6 +29,11 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , mLevelBounds(levelBounds)
 
 , mCollisionBox(1.0f, 1.0f)
+, kMaxSpeedWalking(3.0f)
+, kMaxSpeedRunning(10.0f)
+, mApplyFriction(false)
+, kFrictionMultiplier(5.0f)
+, mIsWalking(true)
 {
 	// Load in the sprite sheet passed in
 	mSpriteSheet = new Texture2D(renderer);
@@ -110,13 +115,13 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 		{
 			// Going to the right
 			newBottomPos = Vector2D(mRealGridPosition.x + mCollisionBox.x + (mVelocity.x * deltaTime), mRealGridPosition.y);
-			newTopPos    = Vector2D(mRealGridPosition.x + mCollisionBox.x + (mVelocity.x * deltaTime), mRealGridPosition.y + mCollisionBox.y);
+			newTopPos    = Vector2D(mRealGridPosition.x + mCollisionBox.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBox.y);
 		}
 		else
 		{
 			// Going to the left
 			newBottomPos = Vector2D(mRealGridPosition.x + (mVelocity.x * deltaTime), mRealGridPosition.y);
-			newTopPos    = Vector2D(mRealGridPosition.x + (mVelocity.x * deltaTime), mRealGridPosition.y + mCollisionBox.y);
+			newTopPos    = Vector2D(mRealGridPosition.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBox.y);
 		}
 
 		if (CheckXCollision(newBottomPos, newTopPos, interactionLayer, objectLayer, potentialNewXPos))
@@ -136,9 +141,9 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 		}
 		else
 		{
-			// Going
-			newLeftPos  = Vector2D(mRealGridPosition.x,                   mRealGridPosition.y + (mVelocity.y * deltaTime));
-			newRightPos = Vector2D(mRealGridPosition.x + mCollisionBox.x, mRealGridPosition.y + (mVelocity.y * deltaTime));
+			// Going upwards
+			newLeftPos  = Vector2D(mRealGridPosition.x,                   mRealGridPosition.y - mCollisionBox.y + (mVelocity.y * deltaTime));
+			newRightPos = Vector2D(mRealGridPosition.x + mCollisionBox.x, mRealGridPosition.y - mCollisionBox.y + (mVelocity.y * deltaTime));
 		}
 
 		if (CheckYCollision(newLeftPos, newRightPos, interactionLayer, objectLayer, potentialNewYPos))
@@ -155,11 +160,11 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 bool PlayableCharacter::CheckXCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer, double& newXPosRef)
 {
 	// Check to see if we have hit the terrain on the X movement
-	if (   HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1) || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1)
+	if (   HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1) || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2)
 		|| HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1) || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2))
 	{
 		// Then dont move to the new position
-		newXPosRef = mRealGridPosition.x;
+		newXPosRef      = mRealGridPosition.x;
 
 		// Stop the player from moving
 		mAcceleration.x = 0.0f;
@@ -175,19 +180,22 @@ bool PlayableCharacter::CheckXCollision(const Vector2D positionToCheck1, const V
 
 bool PlayableCharacter::CheckYCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer, double& newYPosRef)
 {
-	if (   HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1) || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1)
+	if (   HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1) || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2)
 		|| HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1) || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2))
 	{
 		// Then dont move in the y axis
-		newYPosRef = mRealGridPosition.y;
+		newYPosRef      = mRealGridPosition.y;
 
 		// Stop the player from moving
 		mAcceleration.y = 0.0f;
 		mVelocity.y     = 0.0f;
 
+		mApplyFriction = true;
+
 		return true;
 	}
 
+	mApplyFriction = false;
 	return false;
 }
 
@@ -334,27 +342,40 @@ void PlayableCharacter::CalculateNewPosition(const float deltaTime, const Vector
 
 void PlayableCharacter::HandleMovementInput(SDL_Event e)
 {
-	float speed = 1.0f;
+	double speed      = 10.0f;
+	double multiplier = 1.0f;
+
+	if (mIsWalking)
+	{
+		multiplier = 2.0f;
+	}
 
 	switch (e.type)
 	{
 	case SDL_KEYDOWN:
 		switch (e.key.keysym.sym)
 		{
+		case SDLK_RSHIFT:
+			if (mIsWalking)
+			{
+				mIsWalking = false;
+			}
+		break;
+
 		case SDLK_d:
-			mAcceleration.x = speed;
+			mAcceleration.x = multiplier * speed;
 		break;
 
 		case SDLK_a:
-			mAcceleration.x = -speed;
+			mAcceleration.x = -multiplier * speed;
 		break;
 
 		case SDLK_s:
-			mAcceleration.y = speed;
+			mAcceleration.y = multiplier * speed;
 		break;
 
 		case SDLK_w:
-			mAcceleration.y = -speed;
+			mAcceleration.y = -multiplier * speed;
 		break;
 		}
 	break;
@@ -362,6 +383,10 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 	case SDL_KEYUP:
 		switch (e.key.keysym.sym)
 		{
+		case SDLK_RSHIFT:
+			mIsWalking = true;
+		break;
+
 		case SDLK_d:
 		case SDLK_a:
 			mAcceleration.x = 0.0f;
@@ -372,7 +397,7 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 			mAcceleration.y = 0.0f;
 		break;
 		}
-		break;
+	break;
 	}
 }
 
@@ -435,8 +460,62 @@ bool PlayableCharacter::HandleCollisionsWithInteractionObjectLayer(ObjectLayer* 
 
 void PlayableCharacter::UpdatePhysics(const float deltaTime)
 {
+	// Apply friction to the player's movement 
+	if (mApplyFriction)
+	{
+		float frictionReduction = (kFrictionMultiplier * deltaTime);
+
+		if (abs(mVelocity.x) > 0.05f)
+		{
+			if (mVelocity.x > 0.0f)
+				mVelocity.x -= frictionReduction;
+			else if (mVelocity.x < 0.0f)
+				mVelocity.x += frictionReduction;
+		}
+	}
+
 	// Apply the acceleration of the player 
 	mVelocity += Vector2D(mAcceleration.x * deltaTime, (mAcceleration.y + GRAVITY) * deltaTime);
+
+	if (mIsWalking)
+	{
+		// Cap the velocity to the max speed if it exceeds it
+		if (abs(mVelocity.x) > kMaxSpeedWalking)
+		{
+			if (mVelocity.x > 0.0f)
+				mVelocity.x = kMaxSpeedWalking;
+			else
+				mVelocity.x = -kMaxSpeedWalking;
+		}
+
+		if (abs(mVelocity.y) > kMaxSpeedWalking)
+		{
+			if(mVelocity.y > 0.0f)
+				mVelocity.y = kMaxSpeedWalking;
+			else
+				mVelocity.y = -kMaxSpeedWalking;
+		}
+	}
+	else
+	{
+		// Cap the velocity to the max speed if it exceeds it
+		if (abs(mVelocity.x) > kMaxSpeedRunning)
+		{
+			if (mVelocity.x > 0.0f)
+				mVelocity.x = kMaxSpeedRunning;
+			else
+				mVelocity.x = -kMaxSpeedRunning;
+		}
+
+		if (abs(mVelocity.y) > kMaxSpeedRunning)
+		{
+			if (mVelocity.y > 0.0f)
+				mVelocity.y = kMaxSpeedRunning;
+			else
+				mVelocity.y = -kMaxSpeedRunning;
+		}
+	}
+
 }
 
 // ----------------------------------------------------- //
