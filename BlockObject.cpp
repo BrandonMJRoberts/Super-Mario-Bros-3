@@ -49,8 +49,11 @@ BlockObject::~BlockObject()
 	mMinimumObjectReleased = nullptr;
 
 	// Clear up the memory allocated
-	DeleteAllConversionObjects();
-	ConvertFromStringToItemType.clear();
+	if (!ConvertFromStringToItemType.empty())
+	{
+		DeleteAllConversionObjects();
+		ConvertFromStringToItemType.clear();
+	}
 }
 
 // ------------------------------------------------------------- //
@@ -78,10 +81,10 @@ void BlockObject::SetupConversionTypes()
 
 void BlockObject::DeleteAllConversionObjects()
 {
-	delete ConvertFromStringToItemType["COIN"];
-	ConvertFromStringToItemType["COIN"] = nullptr;
-
-
+	if (ConvertFromStringToItemType["COIN"])
+	{
+		ConvertFromStringToItemType.erase("COIN");
+	}
 }
 
 // ------------------------------------------------------------- //

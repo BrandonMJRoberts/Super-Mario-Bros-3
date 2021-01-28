@@ -58,7 +58,7 @@ BackgroundLayer::~BackgroundLayer()
 	if (mBackgroundSpriteIndexStore)
 	{
 		// Clear up the memory allocated for the index store
-		for (unsigned int col = 0; col < mLevelWidth; col++)
+		for (unsigned int col = 0; col < mLevelHeight; col++)
 		{
 			delete[] mBackgroundSpriteIndexStore[col];
 		}
@@ -176,21 +176,35 @@ bool BackgroundLayer::LoadInDataFromFile(std::string filePath, std::map<char, un
 			// Now loop through the rows and allocte the memory for the width/columns
 			for (unsigned int row = 0; row < mLevelHeight; row++)
 			{
-				mBackgroundSpriteIndexStore[row] = new unsigned int[mLevelWidth - 1];
+				mBackgroundSpriteIndexStore[row] = new unsigned int[mLevelWidth];
 			}
 
 			// The memory is allocated for access like this: store[row][column]
 		}
 
 		// Now we just need to load in and calculate the elements of the array
-		for (unsigned int charID = 0; charID < line.size(); charID++)
+		for (unsigned int charID = 0; charID < mLevelWidth; charID++)
 		{
 			// The charID represents which column it is on
 			// Across then down
-			mBackgroundSpriteIndexStore[currentRow][charID] = lookupConversion[line[charID]];
+			if(charID < line.size())
+				mBackgroundSpriteIndexStore[currentRow][charID] = lookupConversion[line[charID]];
 		}
 
-		currentRow++;
+		if(currentRow + 1 < mLevelHeight)
+			currentRow++;
+		else
+		{
+			dataFile.close();
+
+			// Now check if all the data has been created correctly
+			if (!CheckAllDataLoaded())
+			{
+				return false;
+			}
+
+			return true;
+		}
 	}
 
 	// Now check if all the data has been created correctly

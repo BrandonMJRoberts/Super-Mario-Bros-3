@@ -22,12 +22,7 @@ Audio_Player::Audio_Player(const char* filePathForStartingMusic)
 
 Audio_Player::~Audio_Player()
 {
-	if (mMusic)
-	{
-		Mix_FreeMusic(mMusic);
-
-		mMusic = nullptr;
-	}
+	RemoveMusicTrack();
 
 	RemoveAllSFX();
 }
@@ -83,6 +78,11 @@ void Audio_Player::PlaySFXTrack(const char* newFilePath)
 void Audio_Player::RemoveMusicTrack()
 {
 	Mix_HaltMusic();
+
+	if(mMusic)
+		Mix_FreeMusic(mMusic);
+
+	mMusic = nullptr;
 }
 
 // ----------------------------------------------------- //

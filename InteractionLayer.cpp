@@ -49,9 +49,9 @@ InteractableLayer::~InteractableLayer()
 	if (mInteractionLayerDataStore)
 	{
 		// Clear up the memory allocated for the index store
-		for (unsigned int col = 0; col < mLevelWidth; col++)
+		for (unsigned int row = 0; row < mLevelHeight; row++)
 		{
-			delete[] mInteractionLayerDataStore[col];
+			delete[] mInteractionLayerDataStore[row];
 		}
 
 		delete[] mInteractionLayerDataStore;
@@ -221,19 +221,32 @@ bool InteractableLayer::LoadInDataFromFile(std::string filePath, std::map<char, 
 			// Now loop through the rows and allocte the memory for the width/columns
 			for (unsigned int row = 0; row < mLevelHeight; row++)
 			{
-				mInteractionLayerDataStore[row] = new unsigned int[mLevelWidth - 1];
+				mInteractionLayerDataStore[row] = new unsigned int[mLevelWidth];
 			}
 
 			// The memory is alloctaed for access like this: store[row][column]
 		}
 
 		// Now we just need to load in and calculate the elements of the array
-		for (unsigned int charID = 0; charID < line.size(); charID++)
+		for (unsigned int charID = 0; charID < mLevelWidth; charID++)
 		{
-			mInteractionLayerDataStore[currentRow][charID] = conversionTable[line[charID]];
+			if(charID < line.size())
+				mInteractionLayerDataStore[currentRow][charID] = conversionTable[line[charID]];
 		}
 
-		currentRow++;
+		if(currentRow + 1 < mLevelHeight)
+			currentRow++;
+		else
+		{
+			dataFile.close();
+
+			if (!CheckAllDataLoaded())
+			{
+				return false;
+			}
+
+			return true;
+		}
 	}
 
 	// Now check if all the data has been created correctly

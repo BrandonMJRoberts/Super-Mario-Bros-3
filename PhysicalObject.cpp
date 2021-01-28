@@ -68,6 +68,9 @@ PhysicalObject::PhysicalObject(const Vector2D spawnPosition
 	else
 	{
 		mThisSpriteSheet = mSpriteSheets[indexOfExisting];
+
+		// Increase the instance count for this sprite sheet
+		mInstanceCounts[indexOfExisting]++;
 	}
 
 	// Make sure to setup the sprite width and height
@@ -85,21 +88,27 @@ PhysicalObject::~PhysicalObject()
 	// Find what index we are currently on and remove one from the instance count
 	for (unsigned int i = 0; i < mSpriteSheets.size(); i++)
 	{
-		if (mThisSpriteSheet->GetFilePath() == mSpriteSheets[i]->GetFilePath())
+		// null checks
+		if (mThisSpriteSheet && mSpriteSheets[i])
 		{
-			mInstanceCounts[i]--;
-
-			if (mInstanceCounts[i] == 0)
+			if (mThisSpriteSheet->GetFilePath() == mSpriteSheets[i]->GetFilePath())
 			{
-				delete mSpriteSheets[i];
-				mSpriteSheets[i] = nullptr;
+				mInstanceCounts[i]--;
 
-				mSpriteSheets.erase(mSpriteSheets.begin() + i);
+				if (mInstanceCounts[i] == 0)
+				{
+					delete mSpriteSheets[i];
+					mSpriteSheets[i] = nullptr;
+
+					// Remove the sprite sheet from the vector
+					mSpriteSheets.erase(mSpriteSheets.begin() + i);
+					
+					// Remove the instance count ID from the vector
+					mInstanceCounts.erase(mInstanceCounts.begin() + i);
+				}
+
+				break;
 			}
-
-			mInstanceCounts.erase(mInstanceCounts.begin() + i);
-
-			break;
 		}
 	}
 

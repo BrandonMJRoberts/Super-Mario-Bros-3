@@ -35,8 +35,11 @@ ObjectLayer::ObjectLayer(std::string   filePathToDataFile,
 
 ObjectLayer::~ObjectLayer()
 {
-	DestroyAllNameConversions();
-	mNameToObjectConversion.clear();
+	if (!mNameToObjectConversion.empty())
+	{
+		DestroyAllNameConversions();
+		mNameToObjectConversion.clear();
+	}
 
 	// Clear up all memory used
 	for (unsigned int i = 0; i < mUnspawnedObjectsInLevel.size(); i++)
@@ -316,34 +319,15 @@ void ObjectLayer::InstantiateNameConversions()
 void ObjectLayer::DestroyAllNameConversions()
 {
 	// Collectables
-	delete mNameToObjectConversion["COIN"];
-	mNameToObjectConversion["COIN"] = nullptr;
-
-	// Block objects
-	delete mNameToObjectConversion["BRICK BLOCK"];
-	mNameToObjectConversion["BRICK BLOCK"] = nullptr;
-
-	delete mNameToObjectConversion["INVISIBLE BLOCK"];
-	mNameToObjectConversion["INVISIBLE BLOCK"] = nullptr;
-
-	delete mNameToObjectConversion["QUESTION_MARK_BLOCK"];
-	mNameToObjectConversion["QUESTION_MARK_BLOCK"] = nullptr;
-
-	delete mNameToObjectConversion["PIPE"];
-	mNameToObjectConversion["PIPE"] = nullptr;
-
-	// Enemies
-	delete mNameToObjectConversion["GOOMBA"];
-	mNameToObjectConversion["GOOMBA"] = nullptr;
-
-	delete mNameToObjectConversion["PARA_GOOMBA"];
-	mNameToObjectConversion["PARA_GOOMBA"] = nullptr;
-
-	delete mNameToObjectConversion["KOOPA TROOPER"];
-	mNameToObjectConversion["KOOPA TROOPER"] = nullptr;
-
-	delete mNameToObjectConversion["PARA_KOOPA_TROOPER"];
-	mNameToObjectConversion["PARA_KOOPA_TROOPER"] = nullptr;
+	mNameToObjectConversion.erase("COIN");
+	mNameToObjectConversion.erase("BRICK BLOCK");
+	mNameToObjectConversion.erase("INVISIBLE_BLOCK");
+	mNameToObjectConversion.erase("QUESTION_MARK_BLOCK");
+	mNameToObjectConversion.erase("PIPE");
+	mNameToObjectConversion.erase("GOOMBA");
+	mNameToObjectConversion.erase("PARA_GOOMBA");
+	mNameToObjectConversion.erase("KOOPA_TROOPER");
+	mNameToObjectConversion.erase("PARA_KOOPA_TROOPER");
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //

@@ -215,24 +215,31 @@ void BackgroundLayer_WorldMap::LoadInDataFromFile(std::string filePath, std::map
 		}
 
 		// If the background data store has not been created before then do it now
-		if (!mBackgroundIndexStore)
+		if (mBackgroundIndexStore == nullptr)
 		{
 			// Allocate the correct amount of memory for this task
 			mBackgroundIndexStore = new unsigned int* [mHeight];
 			for (unsigned int i = 0; i < mHeight; i++)
 			{
-				mBackgroundIndexStore[i] = new unsigned int[mWidth - 1];
+				mBackgroundIndexStore[i] = new unsigned int[mWidth];
 			}
 		}
 
 		// Now we need to load in and allocate the data from the file
-		for (unsigned int charID = 0; charID < sLine.size(); charID++)
+		for (unsigned int column = 0; column < mWidth; column++)
 		{
-			mBackgroundIndexStore[currentRow][charID] = conversionTable[(char)sLine[charID]];
+			if(column < sLine.size() && currentRow < mHeight)
+				mBackgroundIndexStore[currentRow][column] = conversionTable[sLine[column]];
 		}
 
 		// Increment the current row being written to
-		currentRow++;
+		if(currentRow + 1 < mHeight)
+			currentRow++;
+		else
+		{
+			file.close();
+			return;
+		}
 	}
 }
 

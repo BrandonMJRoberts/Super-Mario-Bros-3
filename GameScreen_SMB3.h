@@ -29,7 +29,7 @@ class GameScreen_SMB3
 public:
 	GameScreen_SMB3();
 	GameScreen_SMB3(const SDL_Renderer* renderer);
-	~GameScreen_SMB3();
+	virtual ~GameScreen_SMB3();
 
 	virtual void Render();
 	virtual ReturnDataFromGameScreen Update(const float deltaTime, SDL_Event e);

@@ -109,16 +109,23 @@ void NodeMap_WorldMap::LoadInDataFromFile(const std::string filePath)
 			// Populate the rows with columns
 			for (unsigned int i = 0; i < mHeight; i++)
 			{
-				mNodeMapData[i] = new char[mWidth - 1];
+				mNodeMapData[i] = new char[mWidth];
 			}
 		}
 
-		for (unsigned int i = 0; i < sLine.size(); i++)
+		for (unsigned int column = 0; column < mWidth; column++)
 		{
-			mNodeMapData[currentRow][i] = sLine[i];
+			if(column < sLine.size())
+				mNodeMapData[currentRow][column] = sLine[column];
 		}
 
-		currentRow++;
+		if(currentRow + 1 < mHeight)
+			currentRow++;
+		else
+		{
+			file.close();
+			return;
+		}
 	}
 }
 
