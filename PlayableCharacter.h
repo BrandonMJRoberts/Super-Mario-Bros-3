@@ -73,6 +73,7 @@ private:
 	bool       mApplyFriction;
 
 	bool       mIsWalking;
+	bool       mFacingRight;
 };
 
 

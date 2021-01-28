@@ -34,6 +34,7 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , mApplyFriction(false)
 , kFrictionMultiplier(5.0f)
 , mIsWalking(true)
+, mFacingRight(true)
 {
 	// Load in the sprite sheet passed in
 	mSpriteSheet = new Texture2D(renderer);
@@ -83,8 +84,16 @@ void PlayableCharacter::Render()
 			               int(mSingleSpriteWidth), 
 			               int(mSingleSpriteHeight) };
 
-		// Render it
-		mSpriteSheet->Render(portionOfSpriteSheet, destRect);
+		if (mFacingRight)
+		{
+			// Render it facing Right
+			mSpriteSheet->Render(portionOfSpriteSheet, destRect, SDL_FLIP_HORIZONTAL);
+		}
+		else
+		{
+			// Render it facing left
+			mSpriteSheet->Render(portionOfSpriteSheet, destRect, SDL_FLIP_NONE);
+		}
 	}
 	else
 		std::cout << "Invalid sprite sheet trying to be rendered from: Base Character" << std::endl;
@@ -363,10 +372,12 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 		break;
 
 		case SDLK_d:
+			mFacingRight = true;
 			mAcceleration.x = multiplier * speed;
 		break;
 
 		case SDLK_a:
+			mFacingRight = false;
 			mAcceleration.x = -multiplier * speed;
 		break;
 
