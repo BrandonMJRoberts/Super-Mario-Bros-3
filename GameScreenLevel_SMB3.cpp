@@ -19,7 +19,9 @@
 GameScreenLevel_SMB3::GameScreenLevel_SMB3(SDL_Renderer* renderer
 	, const char* levelFilePath
 	, const bool  playingAsMario
-	, Observer&   HUD_Observer)
+	, Observer&   HUD_Observer
+    , LEVEL_TYPE  levelType)
+
 	: GameScreen_SMB3(renderer)
 	, mCurrentLevelAreaID(0)    // Default the level area to being zero in case there is not one named 'Overworld'
 	, mPlayer(nullptr)
@@ -27,7 +29,38 @@ GameScreenLevel_SMB3::GameScreenLevel_SMB3(SDL_Renderer* renderer
 	// Setup the lookup table
 	InitialiseLookUpTable();
 
-	mAudioPlayer = new Audio_Player("SDL_Mario_Project/Audio/Music/02 - Level Theme 1.mp3");
+	// Setup the audio player and then determine what type of music should be playing for this level
+	mAudioPlayer = new Audio_Player("SDL_Mario_Project/Audio/Music/Levels/02 - Level Theme 1.mp3");
+
+	switch (levelType)
+	{
+	case LEVEL_TYPE::AIR_SHIP:
+		mAudioPlayer->SetMainMusicTrack("SDL_Mario_Project/Audio/Music/Levels/27 - Airship.mp3");
+	break;
+
+	case LEVEL_TYPE::HAMMER_BROTHER:
+		mAudioPlayer->SetMainMusicTrack("SDL_Mario_Project/Audio/Music/Levels/14 - Hammer Brothers.mp3");
+	break;
+
+	case LEVEL_TYPE::MINI_FORTRESS:
+		mAudioPlayer->SetMainMusicTrack("SDL_Mario_Project/Audio/Music/Levels/22 - Mini-Fortress.mp3");
+	break;
+
+	case LEVEL_TYPE::OVERWORLD_2:
+		mAudioPlayer->SetMainMusicTrack("SDL_Mario_Project/Audio/Music/Levels/06 - Level Theme 2.mp3");
+	break;
+
+	case LEVEL_TYPE::UNDER_WATER:
+		mAudioPlayer->SetMainMusicTrack("SDL_Mario_Project/Audio/Music/Levels/09 - Underwater.mp3");
+	break;
+
+	case LEVEL_TYPE::SPADE_PUZZLE:
+		mAudioPlayer->SetMainMusicTrack("SDL_Mario_Project/Audio/Music/Levels/11 - Spade Puzzle.mp3");
+	break;
+	}
+
+	// As you start in the main area then start by playing the main area music
+	mAudioPlayer->PlayMainMusic();
 
 	// First loop through all folders contained within the file path presented, each folder is a different level area
 	// To do this you use the std::filesystem include
@@ -37,14 +70,12 @@ GameScreenLevel_SMB3::GameScreenLevel_SMB3(SDL_Renderer* renderer
 		bool thisIsStartingArea = false;
 
 		// Now we have the file path and the amount of folders then we can setup the level areas
-		mAreas.push_back(new LevelAreas(entry.path().u8string().c_str(), thisIsStartingArea, renderer, mConversionFromCharToIntIndexMap));
+		mAreas.push_back(new LevelAreas(entry.path().u8string().c_str(), thisIsStartingArea, renderer, mConversionFromCharToIntIndexMap, mAudioPlayer));
 
 		// If this is the starting area then set this to be the current index
 		if (thisIsStartingArea)
 			mCurrentLevelAreaID = mAreas.size() - 1;
 	}
-
-	mCurrentLevelAreaID = 1;
 
 	// Now create the player that will be in these levels
 	if (playingAsMario)
@@ -113,6 +144,8 @@ ReturnDataFromGameScreen GameScreenLevel_SMB3::Update(const float deltaTime, SDL
 			mCurrentLevelAreaID = returnData.areaToGoTo;
 
 			mPlayer->SpawnIntoNewArea(mAreas[mCurrentLevelAreaID]->GetSpawnPointPosition(returnData.spawnpointIDToGoTo), mAreas[mCurrentLevelAreaID]->GetLevelBounds());
+
+			mAreas[mCurrentLevelAreaID]->PlayMusicForArea(mAudioPlayer);
 		}
 
 		if(mPlayer)

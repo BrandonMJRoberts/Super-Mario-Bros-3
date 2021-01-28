@@ -11,7 +11,7 @@
 
 // --------------------------------------------------------------------------------------------------------------------------- //
 
-LevelAreas::LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Renderer* renderer, std::map<char, unsigned int> ConversionFromCharToIntIndexMap)
+LevelAreas::LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Renderer* renderer, std::map<char, unsigned int> ConversionFromCharToIntIndexMap, Audio_Player* audioPlayer)
 	: mLevelHeight(0)
 	, mLevelWidth(0)
 {
@@ -23,6 +23,7 @@ LevelAreas::LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Rende
 	mInteractableLayer = new InteractableLayer(areaFilePath + "/Interactable Layer.txt",   areaFilePath + "/InteractableSprites.png", ConversionFromCharToIntIndexMap, renderer, Vector2D());
 	mObjectLayer       = new ObjectLayer(areaFilePath       + "/Object Layer.txt",         renderer, mInteractableLayer);
 	
+	// Create the ending section
 	if (mBackgroundLayer->GetLevelEndingType() >= 0)
 	{
 		std::string filePath = "SDL_Mario_Project/Levels/LevelEndingSections/Section" + std::to_string(mBackgroundLayer->GetLevelEndingType());
@@ -32,12 +33,6 @@ LevelAreas::LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Rende
 	{
 		mEndingSection = nullptr;
 	}
-
-	// Now we need to calculate the name of this area
-	mNameOfArea = CalculateNameOfArea(areaFilePath);
-
-	if (mNameOfArea == "Overworld")
-		isStartingArea = true;
 
 	// Need to account for the ending section not existing
 	if (mEndingSection)
@@ -49,6 +44,41 @@ LevelAreas::LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Rende
 		mLevelHeight = mBackgroundLayer->GetLevelHeight();
 	else if (mEndingSection)
 		mLevelHeight = mEndingSection->GetLevelHeight();
+
+	// Now we need to calculate the name of this area
+	mNameOfArea = CalculateNameOfArea(areaFilePath);
+
+	// Now calculate what the sub area music
+	if (mNameOfArea == "Overworld")
+	{
+		isStartingArea = true;
+
+		// Leave the audio as it is if this is the overworld
+	}
+	else if (mNameOfArea == "Pipe")
+	{
+		audioPlayer->SetSubAreaMusicTrack("SDL_Mario_Project/Audio/Music/Levels/13 - Super Mario Rap.mp3");
+	}
+	else if (mNameOfArea == "Underwater")
+	{
+		audioPlayer->SetSubAreaMusicTrack("SDL_Mario_Project/Audio/Music/Levels/09 - Underwater.mp3");
+	}
+	else if (mNameOfArea == "Coin_Heaven")
+	{
+		audioPlayer->SetSubAreaMusicTrack("SDL_Mario_Project/Audio/Music/Levels/17 - Coin Heaven.mp3");
+	}
+	else if (mNameOfArea == "Pick_A_Box")
+	{
+		audioPlayer->SetSubAreaMusicTrack("SDL_Mario_Project/Audio/Music/Levels/19 - Pick A Box.mp3");
+	}
+	else if (mNameOfArea == "Boom_Boom")
+	{
+		audioPlayer->SetSubAreaMusicTrack("SDL_Mario_Project/Audio/Music/Levels/24 - Boom Boom.mp3");
+	}
+	else if (mNameOfArea == "King_Koopa_Battle")
+	{
+		audioPlayer->SetSubAreaMusicTrack("SDL_Mario_Project/Audio/Music/Levels/32 - King Koopa Battle.mp3");
+	}
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //
@@ -131,8 +161,11 @@ Area_Transition_Data LevelAreas::Update(const float deltaTime, SDL_Event e, Play
 			switch (e.key.keysym.sym)
 			{
 			case SDLK_m:
-				return Area_Transition_Data{ 0, 0 };
+				return Area_Transition_Data{ 1, 0 };
 			break;
+
+			case SDLK_n:
+				return Area_Transition_Data{ 0, 0 };
 			}
 		}
 	}
@@ -179,6 +212,16 @@ const Vector2D LevelAreas::GetSpawnPointPosition(unsigned int ID)
 	}
 
 	return Vector2D();
+}
+
+// --------------------------------------------------------------------------------------------------------------------------- //
+
+void LevelAreas::PlayMusicForArea(Audio_Player* audioPlayer)
+{
+	if (mNameOfArea == "Overworld")
+		audioPlayer->PlayMainMusic();
+	else
+		audioPlayer->PlaySubAreaMusic();
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //

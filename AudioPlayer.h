@@ -18,10 +18,14 @@ public:
 
 	void OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string data) override;
 
-	void SetMusicTrack(const char* newFilePath);
+	void SetMainMusicTrack(const char* newFilePath);
+	void SetSubAreaMusicTrack(const char* newFilePath);
+
+	void PlayMainMusic();
+	void PlaySubAreaMusic();
 
 private:
-	void RemoveMusicTrack();
+	void RemoveMusicTracks();
 
 	void PlaySFXTrack(const char* newFilePath);
 
@@ -32,7 +36,10 @@ private:
 	void PauseAllSFX();
 	void ResumeAllSFX();
 
-	Mix_Music*              mMusic;
+	void SetAudioVolume(int volume);
+
+	Mix_Music*              mMainMusic;
+	Mix_Music*              mSubAreaMusic;
 
 	// Vector to hold the SFX
 	std::vector<Mix_Chunk*> mSFX;

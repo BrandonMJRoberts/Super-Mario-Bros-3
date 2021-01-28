@@ -83,7 +83,7 @@ void GameScreenManager_SMB3::ChangeScreen(SCREENS_SMB3 newScreen, std::string fi
 
 	// Load into a level
 	case SCREENS_SMB3::LEVEL:
-		mCurrentScreen = (GameScreen_SMB3*)(new GameScreenLevel_SMB3(mRenderer, filePath.c_str(), true, *HUD));
+		mCurrentScreen = (GameScreen_SMB3*)(new GameScreenLevel_SMB3(mRenderer, filePath.c_str(), true, *HUD, LEVEL_TYPE::OVERWORLD));
 	break;
 
 	// Go to a world map

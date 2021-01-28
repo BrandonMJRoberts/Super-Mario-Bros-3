@@ -5,24 +5,28 @@
  // ----------------------------------------------------- //
 
 Audio_Player::Audio_Player() 
-	: mMusic(nullptr)
+	: mMainMusic(nullptr)
+	, mSubAreaMusic(nullptr)
 {
-
+	SetAudioVolume(32);
 }
 
 // ----------------------------------------------------- //
 
 Audio_Player::Audio_Player(const char* filePathForStartingMusic)
-	: mMusic(nullptr)
+	: mMainMusic(nullptr)
+	, mSubAreaMusic(nullptr)
 {
-	SetMusicTrack(filePathForStartingMusic);
+	SetAudioVolume(32);
+
+	SetMainMusicTrack(filePathForStartingMusic);
 }
 
 // ----------------------------------------------------- //
 
 Audio_Player::~Audio_Player()
 {
-	RemoveMusicTrack();
+	RemoveMusicTracks();
 
 	RemoveAllSFX();
 }
@@ -36,32 +40,52 @@ void Audio_Player::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string
 
 // ----------------------------------------------------- //
 
-void Audio_Player::SetMusicTrack(const char* newFilePath)
+void Audio_Player::SetSubAreaMusicTrack(const char* newFilePath)
 {
-	if(mMusic)
-		Mix_FreeMusic(mMusic);
+	// Remove the track if it already exists
+	if (mSubAreaMusic)
+		Mix_FreeMusic(mSubAreaMusic);
 
-	mMusic = Mix_LoadMUS(newFilePath);
+	// Load in the new track set
+	mSubAreaMusic = Mix_LoadMUS(newFilePath);
 
-	if (mMusic == nullptr)
+	// Check it worked
+	if (mSubAreaMusic == nullptr)
 	{
 		std::cout << "Failed to load in the music requested!" << std::endl;
-		mMusic = nullptr;
+		mSubAreaMusic = nullptr;
 		return;
 	}
+}
 
-	// Set the music to be playing on a loop
-	Mix_PlayMusic(mMusic, -1);
+// ----------------------------------------------------- //
 
-	Mix_VolumeMusic(MIX_MAX_VOLUME / 4);
+void Audio_Player::SetMainMusicTrack(const char* newFilePath)
+{
+	// Remove the track if it already exists
+	if(mMainMusic)
+		Mix_FreeMusic(mMainMusic);
+
+	// Load in the new track set
+	mMainMusic = Mix_LoadMUS(newFilePath);
+
+	// Check it worked
+	if (mMainMusic == nullptr)
+	{
+		std::cout << "Failed to load in the music requested!" << std::endl;
+		mMainMusic = nullptr;
+		return;
+	}
 }
 
 // ----------------------------------------------------- //
 
 void Audio_Player::PlaySFXTrack(const char* newFilePath)
 {
+	// Load in the track
 	mSFX.push_back(Mix_LoadWAV(newFilePath));
 
+	// Check it exists
 	if (mSFX[mSFX.size() - 1] == nullptr)
 	{
 		std::cout << "Failed to load an SFX track! " << std::endl;
@@ -75,14 +99,18 @@ void Audio_Player::PlaySFXTrack(const char* newFilePath)
 
 // ----------------------------------------------------- //
 
-void Audio_Player::RemoveMusicTrack()
+void Audio_Player::RemoveMusicTracks()
 {
 	Mix_HaltMusic();
 
-	if(mMusic)
-		Mix_FreeMusic(mMusic);
+	if (mMainMusic)
+		Mix_FreeMusic(mMainMusic);
 
-	mMusic = nullptr;
+	if (mSubAreaMusic)
+		Mix_FreeMusic(mSubAreaMusic);
+
+	mMainMusic    = nullptr;
+	mSubAreaMusic = nullptr;
 }
 
 // ----------------------------------------------------- //
@@ -128,6 +156,52 @@ void Audio_Player::ResumeAllSFX()
 {
 	Mix_Resume(1);
 	Mix_Resume(2);
+}
+
+// ----------------------------------------------------- //
+
+void Audio_Player::PlayMainMusic()
+{
+	// Only do anything if we have a track to start playing
+	if (mMainMusic)
+	{
+		// Stop the current music
+		Mix_HaltMusic();
+
+		// Play the music track
+		Mix_PlayMusic(mMainMusic, -1);
+
+		Mix_Volume(1, MIX_MAX_VOLUME / 4);
+	}
+}
+
+// ----------------------------------------------------- //
+
+void Audio_Player::PlaySubAreaMusic() 
+{
+	// Only do anything if we have a track to start playing
+	if (mSubAreaMusic)
+	{
+		// Stop the current music
+		Mix_HaltMusic();
+
+		// Play the music track
+		Mix_PlayMusic(mSubAreaMusic, -1);
+
+		Mix_Volume(1, MIX_MAX_VOLUME / 4);
+	}
+}
+
+// ----------------------------------------------------- //
+
+void Audio_Player::SetAudioVolume(int volume)
+{
+	Mix_Volume(1, MIX_MAX_VOLUME / 4);
+	Mix_Volume(2, MIX_MAX_VOLUME / 4);
+	Mix_Volume(3, MIX_MAX_VOLUME / 4);
+	Mix_Volume(4, MIX_MAX_VOLUME / 4);
+
+	Mix_VolumeMusic(MIX_MAX_VOLUME / 4);
 }
 
 // ----------------------------------------------------- //

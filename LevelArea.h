@@ -12,11 +12,13 @@ class InteractableLayer;
 class ObjectLayer;
 class PlayableCharacter;
 
+class Audio_Player;
+
 class LevelAreas final
 {
 public:
 	LevelAreas() = delete;
-	LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Renderer* renderer, std::map<char, unsigned int> ConversionFromCharToIntIndexMap);
+	LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Renderer* renderer, std::map<char, unsigned int> ConversionFromCharToIntIndexMap, Audio_Player* audioPlayer);
 	~LevelAreas();
 
 	void Render(Vector2D gridReferencePoint);
@@ -32,6 +34,8 @@ public:
 
 	InteractableLayer* GetInteractionLayer() { return mInteractableLayer; }
 	ObjectLayer*       GetObjectLayer()      { return mObjectLayer; }
+
+	void               PlayMusicForArea(Audio_Player* audioPlayer);
 
 private:
 	std::string ReplaceDoubleBackslashWithFrontSlash(std::string areaFilePath);
