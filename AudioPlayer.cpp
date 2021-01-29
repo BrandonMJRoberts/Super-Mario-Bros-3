@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <string>
 
  // ----------------------------------------------------- //
 
@@ -126,6 +127,136 @@ void Audio_Player::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string
 
 	case SUBJECT_NOTIFICATION_TYPES::ENTERING_LEVEL:
 		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Enter Level.wav");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::ADD_LIFE:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/18 - 1-Up.mp3");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::AIRSHIP_MOVES_ON_MAP:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Airship Moves.wav");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::BONUS_NO_MATCH:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Bonus Game No Match.wav");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::BONUS_MATCH:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Bonus Game No Match.wav");
+		break;
+
+	case SUBJECT_NOTIFICATION_TYPES::SPADE_MATCH:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Nspade Match.wav");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::BOSS_DEFEATED:
+		if (data == "Bowser")
+		{
+			PlaySFXTrack("SDL_Mario_Project/Audio/SFX/33 - King Koopa Falls.mp3");
+		}
+		else
+		{
+			PlaySFXTrack("SDL_Mario_Project/Audio/SFX/25 - Boss Clear.mp3");
+		}
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::BROKEN_BLOCK:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Break Brick Block.wav");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::BUMPED_BLOCK:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Bump.wav");
+	break;
+
+	// Both use the same sound
+	case SUBJECT_NOTIFICATION_TYPES::CANNON_FIRES_CANNON_BALL:
+	case SUBJECT_NOTIFICATION_TYPES::THWOMP_HIT_GROUND:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Thwomp-CannonFire.wav");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::COIN_COLLECTED:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Coin.wav");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::COMPLETED_WORLD:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/29 - World Clear.mp3");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::ENTERING_PIPE:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/23 - Warp Pipe.mp3");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::FIRE_FIREBALL:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Fireball.wav");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::FROG_MARIO_WALKS:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Frog Mario Walk.wav");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::GAME_OVER:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/36 - Game Over.mp3");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::HAMMER_BROS_MOVE_AROUND_MAP:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Hammer Bros Shuffle.wav");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::INTO_NEW_WORLD_MAP:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Map New World.wav");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::JUMPED_OFF_ENEMY:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Stomp.wav");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::LEVEL_CLEAR:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/04 - Level Clear.mp3");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::LOW_TIMER:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Hurry_up.wav");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::OPEN_INVENTORY:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Inventory Open Close.wav");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::PLAYER_JUMPED:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Jump.wav");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::PLAYER_KICKED:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Kick.wav");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::PLAYER_SWIPE_OF_TAIL:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Tail.wav");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::PLAYER_TRANSFORM_INTO_RACOON:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Raccoon Transform.wav");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::SET_UNPAUSED:
+	case SUBJECT_NOTIFICATION_TYPES::SET_PAUSED:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/31 - Pause.mp3");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::SPAWN_MUSHROOM:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Mushroom Appears.wav");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::TEXT_DISPLAYING:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Text.wav");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::VINE_GROWS:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Vine.wav");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::USE_WARP_WISTLE:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Whistle.wav");
 	break;
 	}
 }
