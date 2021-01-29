@@ -119,6 +119,14 @@ void Audio_Player::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string
 		else if (data == "King_Koopa_Battle")
 			SetSubAreaMusicTrack("SDL_Mario_Project/Audio/Music/Levels/32 - King Koopa Battle.mp3");
 	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::PLAYER_MOVED_ON_WORLD_MAP:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Map Travel.wav");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::ENTERING_LEVEL:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Enter Level.wav");
+	break;
 	}
 }
 
@@ -198,7 +206,7 @@ void Audio_Player::PlaySFXTrack(const char* newFilePath)
 	}
 
 	// Set the SFX to be playing 
-	Mix_PlayChannel(-1, mSFX[mSFX.size() - 1], 0);
+	Mix_PlayChannel(1, mSFX[mSFX.size() - 1], 0);
 }
 
 // ----------------------------------------------------- //
@@ -321,6 +329,20 @@ void Audio_Player::SetAudioVolume(int volume)
 	Mix_Volume(4, volume);
 
 	Mix_VolumeMusic(volume);
+}
+
+// ----------------------------------------------------- //
+
+void Audio_Player::Update()
+{
+	// Check if any of the SFX have stopped playing and should be removed from the list
+	for (unsigned int i = 0; i < mSFX.size(); i++)
+	{
+		if (!Mix_Playing(1))
+		{
+			RemoveAllSFX();
+		}
+	}
 }
 
 // ----------------------------------------------------- //

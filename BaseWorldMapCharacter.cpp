@@ -14,7 +14,9 @@ BaseWorldMapCharacter::BaseWorldMapCharacter(SDL_Renderer* renderer
 	, const unsigned int spritesOnWidth
 	, const unsigned int spritesOnHeight
 	, const float        timePerAnimationFrame)
-	: mTimePerAnimationFrame(timePerAnimationFrame)
+
+	: Subject()
+	, mTimePerAnimationFrame(timePerAnimationFrame)
 	, mPosition(startPosition)
 	, mMoveToPosition(mPosition)
 	, mAmountOfSpritesOnWidth(spritesOnWidth)
@@ -141,7 +143,9 @@ void BaseWorldMapCharacter::Update(const float deltaTime, NodeMap_WorldMap& node
 
 			if (mTimeTillNextMove <= 0.0f)
 			{
-				mButtonIsPressed = false;
+				Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_MOVED_ON_WORLD_MAP, "");
+
+				mButtonIsPressed  = false;
 				mTimeTillNextMove = MOVEMENT_DELAY_WORLD_MAP;
 			}
 		}

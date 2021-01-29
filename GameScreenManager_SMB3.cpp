@@ -64,6 +64,8 @@ void GameScreenManager_SMB3::Update(const float deltaTime, SDL_Event e)
 	if (mCurrentScreen)
 		mReturnDataPlaceHolder = mCurrentScreen->Update(deltaTime, e);
 
+	mAudioPlayer->Update();
+
 	// Change the screen to the new one requested
 	ChangeScreen(mReturnDataPlaceHolder.GetScreenToGoTo(), mReturnDataPlaceHolder.GetFilePath());
 }
@@ -88,6 +90,8 @@ void GameScreenManager_SMB3::ChangeScreen(SCREENS_SMB3 newScreen, std::string fi
 
 	// Load into a level
 	case SCREENS_SMB3::LEVEL:
+		mAudioPlayer->OnNotify(SUBJECT_NOTIFICATION_TYPES::ENTERING_LEVEL, "");
+
 		mCurrentScreen = (GameScreen_SMB3*)(new GameScreenLevel_SMB3(mRenderer, filePath.c_str(), true, *HUD, LEVEL_TYPE::OVERWORLD, mAudioPlayer));
 	break;
 

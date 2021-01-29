@@ -17,7 +17,10 @@ public:
 
 	void OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string data) override;
 
+	void Update();
+
 private:
+
 	void SetWorldMapMusicTrack(const char* newFilePath);
 	void SetMainLevelMusicTrack(const char* newFilePath);
 	void SetSubAreaMusicTrack(const char* newFilePath);

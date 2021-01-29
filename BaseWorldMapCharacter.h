@@ -7,17 +7,19 @@
 #include "Constants_SMB3.h"
 #include "Texture2D.h"
 
+#include "Subject.h"
+
 struct SDL_Renderer;
 class NodeMap_WorldMap;
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 
-class BaseWorldMapCharacter abstract
+class BaseWorldMapCharacter abstract : public Subject
 {
 public:
 	BaseWorldMapCharacter() = delete;
 	BaseWorldMapCharacter(SDL_Renderer* renderer, const std::string filePathToSpriteSheet, const Vector2D startPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, const float timePerAnimationFrame);
-	virtual ~BaseWorldMapCharacter();
+	virtual ~BaseWorldMapCharacter() override;
 
 	void      ChangePowerUpState(CHARACTER_MAP_POWER_UP_STATE newState);
 
