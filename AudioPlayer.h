@@ -13,19 +13,20 @@ class Audio_Player : public Observer
 {
 public:
 	Audio_Player();
-	Audio_Player(const char* filePathForStartingMusic);
 	~Audio_Player();
 
 	void OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string data) override;
 
-	void SetMainMusicTrack(const char* newFilePath);
+private:
+	void SetWorldMapMusicTrack(const char* newFilePath);
+	void SetMainLevelMusicTrack(const char* newFilePath);
 	void SetSubAreaMusicTrack(const char* newFilePath);
 
-	void PlayMainMusic();
+	void PlayWorldMapMusic();
+	void PlayMainLevelMusic();
 	void PlaySubAreaMusic();
 
-private:
-	void RemoveMusicTracks();
+	void RemoveAllMusicTracks();
 
 	void PlaySFXTrack(const char* newFilePath);
 
@@ -38,7 +39,9 @@ private:
 
 	void SetAudioVolume(int volume);
 
-	Mix_Music*              mMainMusic;
+	// Three types of music required for the game, as there will only be one audio player in the game
+	Mix_Music*              mWorldMapMusic;
+	Mix_Music*              mMainLevelMusic;
 	Mix_Music*              mSubAreaMusic;
 
 	// Vector to hold the SFX

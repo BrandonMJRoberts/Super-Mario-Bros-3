@@ -5,13 +5,12 @@
 #include "ObjectLayer.h"
 
 #include "PlayableCharacter.h"
-#include "AudioPlayer.h"
 
 #include <iostream>
 
 // --------------------------------------------------------------------------------------------------------------------------- //
 
-LevelAreas::LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Renderer* renderer, std::map<char, unsigned int> ConversionFromCharToIntIndexMap, Audio_Player* audioPlayer)
+LevelAreas::LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Renderer* renderer, std::map<char, unsigned int> ConversionFromCharToIntIndexMap)
 	: mLevelHeight(0)
 	, mLevelWidth(0)
 {
@@ -48,37 +47,10 @@ LevelAreas::LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Rende
 	// Now we need to calculate the name of this area
 	mNameOfArea = CalculateNameOfArea(areaFilePath);
 
-	// Now calculate what the sub area music
 	if (mNameOfArea == "Overworld")
-	{
 		isStartingArea = true;
-
-		// Leave the audio as it is if this is the overworld
-	}
-	else if (mNameOfArea == "Pipe")
-	{
-		audioPlayer->SetSubAreaMusicTrack("SDL_Mario_Project/Audio/Music/Levels/13 - Super Mario Rap.mp3");
-	}
-	else if (mNameOfArea == "Underwater")
-	{
-		audioPlayer->SetSubAreaMusicTrack("SDL_Mario_Project/Audio/Music/Levels/09 - Underwater.mp3");
-	}
-	else if (mNameOfArea == "Coin_Heaven")
-	{
-		audioPlayer->SetSubAreaMusicTrack("SDL_Mario_Project/Audio/Music/Levels/17 - Coin Heaven.mp3");
-	}
-	else if (mNameOfArea == "Pick_A_Box")
-	{
-		audioPlayer->SetSubAreaMusicTrack("SDL_Mario_Project/Audio/Music/Levels/19 - Pick A Box.mp3");
-	}
-	else if (mNameOfArea == "Boom_Boom")
-	{
-		audioPlayer->SetSubAreaMusicTrack("SDL_Mario_Project/Audio/Music/Levels/24 - Boom Boom.mp3");
-	}
-	else if (mNameOfArea == "King_Koopa_Battle")
-	{
-		audioPlayer->SetSubAreaMusicTrack("SDL_Mario_Project/Audio/Music/Levels/32 - King Koopa Battle.mp3");
-	}
+	else
+		isStartingArea = false;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //
@@ -212,16 +184,6 @@ const Vector2D LevelAreas::GetSpawnPointPosition(unsigned int ID)
 	}
 
 	return Vector2D();
-}
-
-// --------------------------------------------------------------------------------------------------------------------------- //
-
-void LevelAreas::PlayMusicForArea(Audio_Player* audioPlayer)
-{
-	if (mNameOfArea == "Overworld")
-		audioPlayer->PlayMainMusic();
-	else
-		audioPlayer->PlaySubAreaMusic();
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //

@@ -12,49 +12,10 @@
 
 // ----------------------------------------------------------------------------- //
 
-GameScreen_WorldMap_SMB3::GameScreen_WorldMap_SMB3(SDL_Renderer* renderer)
+GameScreen_WorldMap_SMB3::GameScreen_WorldMap_SMB3(SDL_Renderer* renderer, Audio_Player* audioPlayerRef) : GameScreen_SMB3(renderer, audioPlayerRef)
 {
 	// First setup the internal conversion system this program uses
 	SetupConversionTable();
-
-	mAudioPlayer = new Audio_Player("SDL_Mario_Project/Audio/Music/World/01 - Grass Land.mp3");
-
-	// Set the correct audio track for the world map that is being played
-	if (mAudioPlayer)
-	{
-		switch (GameManager_SMB3::GetInstance()->GetCurrentWorldIndex())
-		{
-		case 2:
-			mAudioPlayer->SetMainMusicTrack("SDL_Mario_Project/Audio/Music/World/05 - Desert Hill.mp3");
-		break;
-
-		case 3:
-			mAudioPlayer->SetMainMusicTrack("SDL_Mario_Project/Audio/Music/World/08 - Ocean Side.mp3");
-		break;
-
-		case 4:
-			mAudioPlayer->SetMainMusicTrack("SDL_Mario_Project/Audio/Music/World/12 - Big Island.mp3");
-		break;
-
-		case 5:
-			mAudioPlayer->SetMainMusicTrack("SDL_Mario_Project/Audio/Music/World/16 - The Sky.mp3");
-		break;
-
-		case 6:
-			mAudioPlayer->SetMainMusicTrack("SDL_Mario_Project/Audio/Music/World/21 - Iced Land.mp3");
-		break;
-
-		case 7:
-			mAudioPlayer->SetMainMusicTrack("SDL_Mario_Project/Audio/Music/World/26 - Pipe Maze.mp3");
-		break;
-
-		case 8:
-			mAudioPlayer->SetMainMusicTrack("SDL_Mario_Project/Audio/Music/World/30 - Castle of Koopa.mp3");
-		break;
-		}
-	}
-
-	mAudioPlayer->PlayMainMusic();
 
 	// Then construct the file path for the current world
 	std::string filePath = "SDL_Mario_Project/Worlds/World_" + std::to_string(GameManager_SMB3::GetInstance()->GetCurrentWorldIndex());
@@ -79,6 +40,10 @@ GameScreen_WorldMap_SMB3::GameScreen_WorldMap_SMB3(SDL_Renderer* renderer)
 		                             5, 
 		                             4,
 									 0.25f);
+
+	// Notify observers that we have completed setup of the world map, and that we need to play the music
+	Notify(SUBJECT_NOTIFICATION_TYPES::SETUP_WORLD_MAP, std::to_string(GameManager_SMB3::GetInstance()->GetCurrentWorldIndex()));
+	Notify(SUBJECT_NOTIFICATION_TYPES::PLAY_WORLD_MAP_MUSIC, std::to_string(GameManager_SMB3::GetInstance()->GetCurrentWorldIndex()));
 }
 
 // ----------------------------------------------------------------------------- //
@@ -96,9 +61,6 @@ GameScreen_WorldMap_SMB3::~GameScreen_WorldMap_SMB3()
 
 	delete mBorder;
 	mBorder = nullptr;
-
-	delete mAudioPlayer;
-	mAudioPlayer = nullptr;
 }
 
 // ----------------------------------------------------------------------------- //

@@ -11,14 +11,14 @@ class Subject abstract
 {
 public:
 	// To add a new observer
-	void AddObserver(Observer& newObserver) { mObservers.push_back(newObserver); }
+	void AddObserver(Observer* newObserver) { mObservers.push_back(newObserver); }
 
 	// Function to notify all observers
 	void Notify(SUBJECT_NOTIFICATION_TYPES notification, std::string data)
 	{
 		for (unsigned int i = 0; i < mObservers.size(); i++)
 		{
-			mObservers[i].OnNotify(notification, data);
+			mObservers[i]->OnNotify(notification, data);
 		}
 	}
 
@@ -27,7 +27,7 @@ public:
 protected:
 	Subject() { ; }
 
-	std::vector<Observer> mObservers;
+	std::vector<Observer*> mObservers;
 };
 
 #endif

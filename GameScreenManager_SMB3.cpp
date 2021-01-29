@@ -11,15 +11,17 @@
 
 // ------------------------------------------------------------------------ //
 
-GameScreenManager_SMB3::GameScreenManager_SMB3() : mRenderer(nullptr), mCurrentScreen(nullptr), HUD(nullptr)
+GameScreenManager_SMB3::GameScreenManager_SMB3() : mRenderer(nullptr), mCurrentScreen(nullptr), HUD(nullptr), mAudioPlayer(nullptr)
 {
-	
 }
 
 // ------------------------------------------------------------------------ //
 
-GameScreenManager_SMB3::GameScreenManager_SMB3(SDL_Renderer* renderer) : mRenderer(renderer), mCurrentScreen(nullptr), HUD(nullptr)
+GameScreenManager_SMB3::GameScreenManager_SMB3(SDL_Renderer* renderer) : mRenderer(renderer), mCurrentScreen(nullptr), HUD(nullptr), mAudioPlayer(nullptr)
 {
+	// Create the audio player
+	mAudioPlayer = new Audio_Player();
+
 	// Default to being in the main menu
 	ChangeScreen(SCREENS_SMB3::WORLD_MAP);
 
@@ -38,6 +40,9 @@ GameScreenManager_SMB3::~GameScreenManager_SMB3()
 		delete mCurrentScreen;
 
 	mCurrentScreen = nullptr;
+
+	delete mAudioPlayer;
+	mAudioPlayer = nullptr;
 }
 
 // ------------------------------------------------------------------------ //
@@ -83,17 +88,17 @@ void GameScreenManager_SMB3::ChangeScreen(SCREENS_SMB3 newScreen, std::string fi
 
 	// Load into a level
 	case SCREENS_SMB3::LEVEL:
-		mCurrentScreen = (GameScreen_SMB3*)(new GameScreenLevel_SMB3(mRenderer, filePath.c_str(), true, *HUD, LEVEL_TYPE::OVERWORLD));
+		mCurrentScreen = (GameScreen_SMB3*)(new GameScreenLevel_SMB3(mRenderer, filePath.c_str(), true, *HUD, LEVEL_TYPE::OVERWORLD, mAudioPlayer));
 	break;
 
 	// Go to a world map
 	case SCREENS_SMB3::WORLD_MAP:
-		mCurrentScreen = (GameScreen_SMB3*)(new GameScreen_WorldMap_SMB3(mRenderer));
+		mCurrentScreen = (GameScreen_SMB3*)(new GameScreen_WorldMap_SMB3(mRenderer, mAudioPlayer));
 	break;
 
 	// Go back to the main menu
 	case SCREENS_SMB3::MAIN_MENU:
-		mCurrentScreen = (GameScreen_SMB3*)(new GameScreenMainMenu_SMB3());
+		mCurrentScreen = (GameScreen_SMB3*)(new GameScreenMainMenu_SMB3(mAudioPlayer));
 	break;
 	}
 }

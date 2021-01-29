@@ -9,6 +9,7 @@ class GameScreenMainMenu_SMB3 final : public GameScreen_SMB3
 {
 public:
 	GameScreenMainMenu_SMB3();
+	GameScreenMainMenu_SMB3(Audio_Player* audioPlayerRef);
 	~GameScreenMainMenu_SMB3();
 
 	void Render() override;

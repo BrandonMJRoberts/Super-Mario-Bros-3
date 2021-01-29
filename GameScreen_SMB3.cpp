@@ -1,19 +1,21 @@
 #include "GameScreen_SMB3.h"
 
+#include "AudioPlayer.h"
+
 #include <SDL.h>
 
 // --------------------------------------------------------------------------- //
 
-GameScreen_SMB3::GameScreen_SMB3() : mRenderer(nullptr)
+GameScreen_SMB3::GameScreen_SMB3() : Subject(), mRenderer(nullptr)
 {
 	
 }
 
 // --------------------------------------------------------------------------- //
 
-GameScreen_SMB3::GameScreen_SMB3(const SDL_Renderer* renderer) : mRenderer(renderer)
+GameScreen_SMB3::GameScreen_SMB3(const SDL_Renderer* renderer, Audio_Player* audioPlayerRef) : Subject(), mRenderer(renderer)
 {
-
+	AddObserver(audioPlayerRef);
 }
 
 // --------------------------------------------------------------------------- //

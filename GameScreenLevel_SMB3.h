@@ -12,7 +12,6 @@ class  Texture2D;
 class  LevelAreas;
 class  PlayableCharacter;
 class  Observer;
-class  Audio_Player;
 
 // ----------------------------------------------------------------------------------------------------------- //
 
@@ -20,7 +19,7 @@ class GameScreenLevel_SMB3 final : public GameScreen_SMB3
 {
 public:
 	GameScreenLevel_SMB3() = delete;
-	GameScreenLevel_SMB3(SDL_Renderer* renderer, const char* levelFilePath, const bool playingAsMario, Observer& HUD_Observer, LEVEL_TYPE levelType);
+	GameScreenLevel_SMB3(SDL_Renderer* renderer, const char* levelFilePath, const bool playingAsMario, Observer& HUD_Observer, LEVEL_TYPE levelType, Audio_Player* audioPlayerRef);
 	~GameScreenLevel_SMB3();
 
 	void Render() override;
@@ -41,9 +40,6 @@ private:
 	const SDL_Renderer*      mRenderer;
 
 	PlayableCharacter*       mPlayer;
-
-	Audio_Player*            mAudioPlayer;
-
 };
 
 // ----------------------------------------------------------------------------------------------------------- //

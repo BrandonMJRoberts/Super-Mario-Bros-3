@@ -6,6 +6,10 @@
 
 #include "Commons_SMB3.h"
 
+#include "Subject.h"
+
+class Audio_Player;
+
 // -------------------------------------------------------------------------------------- //
 
 struct ReturnDataFromGameScreen
@@ -24,12 +28,12 @@ private:
 
 // -------------------------------------------------------------------------------------- //
 
-class GameScreen_SMB3
+class GameScreen_SMB3 : public Subject
 {
 public:
 	GameScreen_SMB3();
-	GameScreen_SMB3(const SDL_Renderer* renderer);
-	virtual ~GameScreen_SMB3();
+	GameScreen_SMB3(const SDL_Renderer* renderer, Audio_Player* audioPlayerRef);
+	virtual ~GameScreen_SMB3() override;
 
 	virtual void Render();
 	virtual ReturnDataFromGameScreen Update(const float deltaTime, SDL_Event e);

@@ -2,7 +2,12 @@
 
 // -------------------------------------------------------------------------------- //
 
-GameScreenMainMenu_SMB3::GameScreenMainMenu_SMB3()
+GameScreenMainMenu_SMB3::GameScreenMainMenu_SMB3() : GameScreen_SMB3()
+{
+
+}
+
+GameScreenMainMenu_SMB3::GameScreenMainMenu_SMB3(Audio_Player* audioPlayerRef) : GameScreen_SMB3(nullptr, audioPlayerRef)
 {
 
 }

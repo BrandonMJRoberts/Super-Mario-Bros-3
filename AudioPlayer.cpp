@@ -1,32 +1,26 @@
 #include "AudioPlayer.h"
 
 #include <iostream>
+#include <sstream>
 
  // ----------------------------------------------------- //
 
-Audio_Player::Audio_Player() 
-	: mMainMusic(nullptr)
+Audio_Player::Audio_Player()
+	: Observer()
+	, mWorldMapMusic(nullptr)
+	, mMainLevelMusic(nullptr)
 	, mSubAreaMusic(nullptr)
 {
+	// Default the volume to not be deafening
 	SetAudioVolume(32);
 }
 
-// ----------------------------------------------------- //
-
-Audio_Player::Audio_Player(const char* filePathForStartingMusic)
-	: mMainMusic(nullptr)
-	, mSubAreaMusic(nullptr)
-{
-	SetAudioVolume(32);
-
-	SetMainMusicTrack(filePathForStartingMusic);
-}
 
 // ----------------------------------------------------- //
 
 Audio_Player::~Audio_Player()
 {
-	RemoveMusicTracks();
+	RemoveAllMusicTracks();
 
 	RemoveAllSFX();
 }
@@ -35,7 +29,97 @@ Audio_Player::~Audio_Player()
 
 void Audio_Player::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string data)
 {
+	std::stringstream streamLine(data);
 
+	switch (notification)
+	{
+	case SUBJECT_NOTIFICATION_TYPES::SETUP_WORLD_MAP:
+		// First calculate what world we are in
+		int world;
+		streamLine >> world;
+
+		switch (world)
+		{
+		default:
+		case 1:
+			SetWorldMapMusicTrack("SDL_Mario_Project/Audio/Music/World/01 - Grass Land.mp3");
+		break;
+
+		case 2:
+			SetWorldMapMusicTrack("SDL_Mario_Project/Audio/Music/World/05 - Desert Hill.mp3");
+		break;
+
+		case 3:
+			SetWorldMapMusicTrack("SDL_Mario_Project/Audio/Music/World/08 - Ocean Side.mp3");
+		break;
+
+		case 4:
+			SetWorldMapMusicTrack("SDL_Mario_Project/Audio/Music/World/12 - Big Island.mp3");
+		break;
+
+		case 5:
+			SetWorldMapMusicTrack("SDL_Mario_Project/Audio/Music/World/16 - The Sky.mp3");
+		break;
+
+		case 6:
+			SetWorldMapMusicTrack("SDL_Mario_Project/Audio/Music/World/21 - Iced Land.mp3");
+		break;
+
+		case 7:
+			SetWorldMapMusicTrack("SDL_Mario_Project/Audio/Music/World/26 - Pipe Maze.mp3");
+		break;
+
+		case 8:
+			SetWorldMapMusicTrack("SDL_Mario_Project/Audio/Music/World/30 - Castle of Koopa.mp3");
+		break;
+		}
+
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::PLAY_WORLD_MAP_MUSIC:
+		PlayWorldMapMusic();
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::PLAY_MAIN_LEVEL_MUSIC:
+		PlayMainLevelMusic();
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::PLAY_SUB_AREA_MUSIC:
+		PlaySubAreaMusic();
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::SETUP_MAIN_LEVEL:
+		if(data == "Overworld")
+			SetMainLevelMusicTrack("SDL_Mario_Project/Audio/Music/Levels/02 - Level Theme 1.mp3");
+		else if(data == "Air_Ship")
+			SetMainLevelMusicTrack("SDL_Mario_Project/Audio/Music/Levels/27 - Airship.mp3");
+		else if(data == "Hammer_Bros")
+			SetMainLevelMusicTrack("SDL_Mario_Project/Audio/Music/Levels/14 - Hammer Brothers.mp3");
+		else if(data == "Mini_Fortress")
+			SetMainLevelMusicTrack("SDL_Mario_Project/Audio/Music/Levels/22 - Mini-Fortress.mp3");
+		else if(data == "Overworld2")
+			SetMainLevelMusicTrack("SDL_Mario_Project/Audio/Music/Levels/06 - Level Theme 2.mp3");
+		else if(data == "Underwater")
+			SetMainLevelMusicTrack("SDL_Mario_Project/Audio/Music/Levels/09 - Underwater.mp3");
+		else if(data == "Spade_Puzzle")
+			SetMainLevelMusicTrack("SDL_Mario_Project/Audio/Music/Levels/11 - Spade Puzzle.mp3");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::SETUP_SUB_LEVEL:
+		if (data == "Pipe")
+			SetSubAreaMusicTrack("SDL_Mario_Project/Audio/Music/Levels/13 - Super Mario Rap.mp3");
+		else if (data == "Underwater")
+			SetSubAreaMusicTrack("SDL_Mario_Project/Audio/Music/Levels/09 - Underwater.mp3");
+		else if (data == "Coin_Heaven")
+			SetSubAreaMusicTrack("SDL_Mario_Project/Audio/Music/Levels/17 - Coin Heaven.mp3");
+		else if (data == "Pick_A_Box")
+			SetSubAreaMusicTrack("SDL_Mario_Project/Audio/Music/Levels/19 - Pick A Box.mp3");
+		else if (data == "Boom_Boom")
+			SetSubAreaMusicTrack("SDL_Mario_Project/Audio/Music/Levels/24 - Boom Boom.mp3");
+		else if (data == "King_Koopa_Battle")
+			SetSubAreaMusicTrack("SDL_Mario_Project/Audio/Music/Levels/32 - King Koopa Battle.mp3");
+	break;
+	}
 }
 
 // ----------------------------------------------------- //
@@ -60,20 +144,40 @@ void Audio_Player::SetSubAreaMusicTrack(const char* newFilePath)
 
 // ----------------------------------------------------- //
 
-void Audio_Player::SetMainMusicTrack(const char* newFilePath)
+void Audio_Player::SetWorldMapMusicTrack(const char* newFilePath)
 {
 	// Remove the track if it already exists
-	if(mMainMusic)
-		Mix_FreeMusic(mMainMusic);
+	if (mWorldMapMusic)
+		Mix_FreeMusic(mWorldMapMusic);
 
 	// Load in the new track set
-	mMainMusic = Mix_LoadMUS(newFilePath);
+	mWorldMapMusic = Mix_LoadMUS(newFilePath);
 
 	// Check it worked
-	if (mMainMusic == nullptr)
+	if (mWorldMapMusic == nullptr)
 	{
 		std::cout << "Failed to load in the music requested!" << std::endl;
-		mMainMusic = nullptr;
+		mWorldMapMusic = nullptr;
+		return;
+	}
+}
+
+// ----------------------------------------------------- //
+
+void Audio_Player::SetMainLevelMusicTrack(const char* newFilePath)
+{
+	// Remove the track if it already exists
+	if(mMainLevelMusic)
+		Mix_FreeMusic(mMainLevelMusic);
+
+	// Load in the new track set
+	mMainLevelMusic = Mix_LoadMUS(newFilePath);
+
+	// Check it worked
+	if (mMainLevelMusic == nullptr)
+	{
+		std::cout << "Failed to load in the music requested!" << std::endl;
+		mMainLevelMusic = nullptr;
 		return;
 	}
 }
@@ -99,18 +203,22 @@ void Audio_Player::PlaySFXTrack(const char* newFilePath)
 
 // ----------------------------------------------------- //
 
-void Audio_Player::RemoveMusicTracks()
+void Audio_Player::RemoveAllMusicTracks()
 {
 	Mix_HaltMusic();
 
-	if (mMainMusic)
-		Mix_FreeMusic(mMainMusic);
+	if (mMainLevelMusic)
+		Mix_FreeMusic(mMainLevelMusic);
+
+	if(mWorldMapMusic)
+		Mix_FreeMusic(mWorldMapMusic);
 
 	if (mSubAreaMusic)
 		Mix_FreeMusic(mSubAreaMusic);
 
-	mMainMusic    = nullptr;
-	mSubAreaMusic = nullptr;
+	mWorldMapMusic  = nullptr;
+	mMainLevelMusic = nullptr;
+	mSubAreaMusic   = nullptr;
 }
 
 // ----------------------------------------------------- //
@@ -160,18 +268,31 @@ void Audio_Player::ResumeAllSFX()
 
 // ----------------------------------------------------- //
 
-void Audio_Player::PlayMainMusic()
+void Audio_Player::PlayWorldMapMusic()
 {
 	// Only do anything if we have a track to start playing
-	if (mMainMusic)
+	if (mWorldMapMusic)
 	{
 		// Stop the current music
 		Mix_HaltMusic();
 
 		// Play the music track
-		Mix_PlayMusic(mMainMusic, -1);
+		Mix_PlayMusic(mWorldMapMusic, -1);
+	}
+}
 
-		Mix_Volume(1, MIX_MAX_VOLUME / 4);
+// ----------------------------------------------------- //
+
+void Audio_Player::PlayMainLevelMusic()
+{
+	// Only do anything if we have a track to start playing
+	if (mMainLevelMusic)
+	{
+		// Stop the current music
+		Mix_HaltMusic();
+
+		// Play the music track
+		Mix_PlayMusic(mMainLevelMusic, -1);
 	}
 }
 
@@ -187,8 +308,6 @@ void Audio_Player::PlaySubAreaMusic()
 
 		// Play the music track
 		Mix_PlayMusic(mSubAreaMusic, -1);
-
-		Mix_Volume(1, MIX_MAX_VOLUME / 4);
 	}
 }
 
@@ -196,12 +315,12 @@ void Audio_Player::PlaySubAreaMusic()
 
 void Audio_Player::SetAudioVolume(int volume)
 {
-	Mix_Volume(1, MIX_MAX_VOLUME / 4);
-	Mix_Volume(2, MIX_MAX_VOLUME / 4);
-	Mix_Volume(3, MIX_MAX_VOLUME / 4);
-	Mix_Volume(4, MIX_MAX_VOLUME / 4);
+	Mix_Volume(1, volume);
+	Mix_Volume(2, volume);
+	Mix_Volume(3, volume);
+	Mix_Volume(4, volume);
 
-	Mix_VolumeMusic(MIX_MAX_VOLUME / 4);
+	Mix_VolumeMusic(volume);
 }
 
 // ----------------------------------------------------- //

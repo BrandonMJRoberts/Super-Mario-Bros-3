@@ -10,13 +10,11 @@
 
 #include "BaseWorldMapCharacter.h"
 
-class Audio_Player;
-
 class GameScreen_WorldMap_SMB3 final : public GameScreen_SMB3
 {
 public:
 	GameScreen_WorldMap_SMB3() = delete;
-	GameScreen_WorldMap_SMB3(SDL_Renderer* renderer);
+	GameScreen_WorldMap_SMB3(SDL_Renderer* renderer, Audio_Player* audioPlayerRef);
 	~GameScreen_WorldMap_SMB3();
 
 	void Render() override;
@@ -32,7 +30,7 @@ private:
 
 	std::map<char, unsigned int> mConversionTable;
 
-	Audio_Player*             mAudioPlayer;
+	//Audio_Player*             mAudioPlayer;
 
 	unsigned int              mWorldID;
 };
