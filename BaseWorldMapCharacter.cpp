@@ -143,8 +143,6 @@ void BaseWorldMapCharacter::Update(const float deltaTime, NodeMap_WorldMap& node
 
 			if (mTimeTillNextMove <= 0.0f)
 			{
-				Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_MOVED_ON_WORLD_MAP, "");
-
 				mButtonIsPressed  = false;
 				mTimeTillNextMove = MOVEMENT_DELAY_WORLD_MAP;
 			}
@@ -157,6 +155,8 @@ void BaseWorldMapCharacter::Update(const float deltaTime, NodeMap_WorldMap& node
 		// Now check if we can turn to this direction
 		if (CanTurnToDirection(mRequestedMovementDirection, nodeMapRef))
 		{
+			Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_MOVED_ON_WORLD_MAP, "");
+
 			mMovementDirection          = mRequestedMovementDirection;
 			mRequestedMovementDirection = MOVEMENT_DIRECTION::NONE;
 

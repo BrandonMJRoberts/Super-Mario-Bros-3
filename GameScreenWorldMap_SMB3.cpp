@@ -107,6 +107,9 @@ ReturnDataFromGameScreen GameScreen_WorldMap_SMB3::Update(const float deltaTime,
 
 				if (mNodeMap->GetValueIsLevel(nodeMapValue))
 				{
+					// Need to insert a gap in here before the transition into the level, to allow time for the animation to play
+
+
 					// Then return that we want to return into a level
 					return ReturnDataFromGameScreen(SCREENS_SMB3::LEVEL, mNodeMap->GetLevelFilePath(nodeMapValue));
 				}
