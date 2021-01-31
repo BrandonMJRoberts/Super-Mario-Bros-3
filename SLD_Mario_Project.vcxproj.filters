@@ -130,6 +130,12 @@
     <Filter Include="Source Files\Mario Bros 3\TextRenderer">
       <UniqueIdentifier>{b64bd2f7-621c-4cd8-b14b-54808e64b8d9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Mario Bros 3\Transitions">
+      <UniqueIdentifier>{ccd1957c-74dc-4ac8-b55d-99a303b5b97b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mario Bros 3\Transitions">
+      <UniqueIdentifier>{24221d90-6180-44f1-bc39-305ab5cc2cd7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -266,6 +272,21 @@
     </ClCompile>
     <ClCompile Include="AudioPlayer.cpp">
       <Filter>Source Files\Mario Bros 3\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Transition.cpp">
+      <Filter>Source Files\Mario Bros 3\Transitions</Filter>
+    </ClCompile>
+    <ClCompile Include="FillScreenWithBlackTransition.cpp">
+      <Filter>Source Files\Mario Bros 3\Transitions</Filter>
+    </ClCompile>
+    <ClCompile Include="FadeInOutTransition.cpp">
+      <Filter>Source Files\Mario Bros 3\Transitions</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldMapSpawnMarioTransition.cpp">
+      <Filter>Source Files\Mario Bros 3\Transitions</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelCompletionFlipTransition.cpp">
+      <Filter>Source Files\Mario Bros 3\Transitions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -433,6 +454,21 @@
     </ClInclude>
     <ClInclude Include="AudioPlayer.h">
       <Filter>Header Files\Mario Bros 3\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Transition.h">
+      <Filter>Header Files\Mario Bros 3\Transitions</Filter>
+    </ClInclude>
+    <ClInclude Include="FadeInOutTransition.h">
+      <Filter>Header Files\Mario Bros 3\Transitions</Filter>
+    </ClInclude>
+    <ClInclude Include="FillScreenWithBlackTransition.h">
+      <Filter>Header Files\Mario Bros 3\Transitions</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelCompletionFlipTransition.h">
+      <Filter>Header Files\Mario Bros 3\Transitions</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldMapSpawnMarioTransition.h">
+      <Filter>Header Files\Mario Bros 3\Transitions</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

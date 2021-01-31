@@ -171,9 +171,12 @@
     <ClCompile Include="Coin_SMB3.cpp" />
     <ClCompile Include="CollectableObject.cpp" />
     <ClCompile Include="EnemyObject.cpp" />
+    <ClCompile Include="FadeInOutTransition.cpp" />
+    <ClCompile Include="FillScreenWithBlackTransition.cpp" />
     <ClCompile Include="Goomba_SMB3.cpp" />
     <ClCompile Include="Invisible_Block_SMB3.cpp" />
     <ClCompile Include="Koopa_Trooper_SMB3.cpp" />
+    <ClCompile Include="LevelCompletionFlipTransition.cpp" />
     <ClCompile Include="Para_Goomba_SMB3.cpp" />
     <ClCompile Include="Para_Koopa_Trooper_SMB3.cpp" />
     <ClCompile Include="PhysicalObject.cpp" />
@@ -207,7 +210,9 @@
     <ClCompile Include="HUD_Display.cpp" />
     <ClCompile Include="TextRenderer.cpp" />
     <ClCompile Include="Texture2D.cpp" />
+    <ClCompile Include="Transition.cpp" />
     <ClCompile Include="WorldMapMario.cpp" />
+    <ClCompile Include="WorldMapSpawnMarioTransition.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="SDL2\SDL2.lib" />
@@ -230,6 +235,8 @@
     <ClInclude Include="Coin_SMB3.h" />
     <ClInclude Include="CollectableObject.h" />
     <ClInclude Include="EnemyObject.h" />
+    <ClInclude Include="FadeInOutTransition.h" />
+    <ClInclude Include="FillScreenWithBlackTransition.h" />
     <ClInclude Include="GameManager_SMB3.h" />
     <ClInclude Include="GameScreenManager_SMB3.h" />
     <ClInclude Include="GameScreen_SMB3.h" />
@@ -239,6 +246,7 @@
     <ClInclude Include="Koopa_Trooper_SMB3.h" />
     <ClInclude Include="LevelArea.h" />
     <ClInclude Include="Game_Maths.h" />
+    <ClInclude Include="LevelCompletionFlipTransition.h" />
     <ClInclude Include="NodeMap_WorldMap.h" />
     <ClInclude Include="ObjectLayer.h" />
     <ClInclude Include="Observer.h" />
@@ -268,7 +276,9 @@
     <ClInclude Include="Subject.h" />
     <ClInclude Include="TextRenderer.h" />
     <ClInclude Include="Texture2D.h" />
+    <ClInclude Include="Transition.h" />
     <ClInclude Include="WorldMapMario.h" />
+    <ClInclude Include="WorldMapSpawnMarioTransition.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

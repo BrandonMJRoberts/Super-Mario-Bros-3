@@ -4,14 +4,18 @@
 
 // -------------------------------------------------------------------------------------------------------------------------- //
 
-Texture2D::Texture2D(SDL_Renderer* renderer)
+Texture2D::Texture2D(SDL_Renderer* renderer, bool hasAlpha)
 : mRenderer(renderer)
 , mTexture(nullptr)
 , mWidth(0)
 , mHeight(0)
 , mFilePathToSpriteSheet("")
+, mHasAlpha(hasAlpha)
 {
-
+	if (mHasAlpha)
+	{
+		SetBlendMode(SDL_BLENDMODE_BLEND);
+	}
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //
@@ -90,6 +94,20 @@ void Texture2D::Render(const Vector2D newPosition, SDL_RendererFlip flip, double
 void Texture2D::Render(SDL_Rect srcRect, SDL_Rect destRect, SDL_RendererFlip flip, double angle)
 {
 	SDL_RenderCopyEx(mRenderer, mTexture, &srcRect, &destRect, angle, NULL, flip);
+}
+
+// -------------------------------------------------------------------------------------------------------------------------- //
+
+void Texture2D::SetBlendMode(SDL_BlendMode blendMode)
+{
+	SDL_SetTextureBlendMode(mTexture, blendMode);
+}
+
+// -------------------------------------------------------------------------------------------------------------------------- //
+
+void Texture2D::SetAlpha(Uint8 alpha)
+{
+	SDL_SetTextureAlphaMod(mTexture, alpha);
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //

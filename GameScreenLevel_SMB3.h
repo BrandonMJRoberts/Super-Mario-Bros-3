@@ -12,6 +12,7 @@ class  Texture2D;
 class  LevelAreas;
 class  PlayableCharacter;
 class  Observer;
+class  Transition;
 
 // ----------------------------------------------------------------------------------------------------------- //
 
@@ -40,6 +41,8 @@ private:
 	const SDL_Renderer*      mRenderer;
 
 	PlayableCharacter*       mPlayer;
+
+	Transition*              mFadeInOutTransition;
 };
 
 // ----------------------------------------------------------------------------------------------------------- //

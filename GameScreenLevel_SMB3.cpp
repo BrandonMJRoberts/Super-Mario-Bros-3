@@ -9,6 +9,8 @@
 
 #include "Observer.h"
 
+#include "FadeInOutTransition.h"
+
 #include <SDL.h>
 #include <filesystem>
 #include <iostream>
@@ -25,6 +27,7 @@ GameScreenLevel_SMB3::GameScreenLevel_SMB3(SDL_Renderer* renderer
 	: GameScreen_SMB3(renderer, audioPlayerRef)
 	, mCurrentLevelAreaID(0)    // Default the level area to being zero in case there is not one named 'Overworld'
 	, mPlayer(nullptr)
+	, mFadeInOutTransition(nullptr)
 {
 	// Setup the lookup table
 	InitialiseLookUpTable();
@@ -64,6 +67,14 @@ GameScreenLevel_SMB3::GameScreenLevel_SMB3(SDL_Renderer* renderer
 	}
 
 	Notify(SUBJECT_NOTIFICATION_TYPES::PLAY_MAIN_LEVEL_MUSIC, "");
+
+	mFadeInOutTransition = new FadeInOutTransition(Vector2D(), 0.0f, "SDL_Mario_Project/Transitions/BlackFadeImage.png", renderer, FADING_STATE::IN, 200.0f);
+
+	if (!mFadeInOutTransition)
+	{
+		std::cout << "Failed to create the fade in/out transition" << std::endl;
+		return;
+	}
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //
@@ -77,6 +88,9 @@ GameScreenLevel_SMB3::~GameScreenLevel_SMB3()
 
 	delete mPlayer;
 	mPlayer = nullptr;
+
+	delete mFadeInOutTransition;
+	mFadeInOutTransition = nullptr;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //
@@ -94,6 +108,9 @@ void GameScreenLevel_SMB3::Render()
 	// Render the player
 	if (mPlayer)
 		mPlayer->Render();
+
+	if(mFadeInOutTransition)
+		mFadeInOutTransition->Render();
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //
@@ -105,6 +122,16 @@ ReturnDataFromGameScreen GameScreenLevel_SMB3::Update(const float deltaTime, SDL
 
 	// Update the game manager
 	GameManager_SMB3::GetInstance()->Update(deltaTime);
+
+	bool fadeComplete = true;
+	if (mFadeInOutTransition)
+		fadeComplete = mFadeInOutTransition->Update(deltaTime);
+
+	if (fadeComplete)
+	{
+		if (mPlayer)
+			mPlayer->Update(deltaTime, e, mAreas[mCurrentLevelAreaID]->GetLevelBounds(), mAreas[mCurrentLevelAreaID]->GetInteractionLayer(), mAreas[mCurrentLevelAreaID]->GetObjectLayer());
+	}
 
 	// Update the area we are currently in if it exists
 	if (mAreas.size() > mCurrentLevelAreaID)
@@ -124,9 +151,6 @@ ReturnDataFromGameScreen GameScreenLevel_SMB3::Update(const float deltaTime, SDL
 			else
 				Notify(SUBJECT_NOTIFICATION_TYPES::PLAY_SUB_AREA_MUSIC, "");
 		}
-
-		if(mPlayer)
-			mPlayer->Update(deltaTime, e, mAreas[mCurrentLevelAreaID]->GetLevelBounds(), mAreas[mCurrentLevelAreaID]->GetInteractionLayer(), mAreas[mCurrentLevelAreaID]->GetObjectLayer());
 	}
 	else
 	{
@@ -182,114 +206,7 @@ void GameScreenLevel_SMB3::InitialiseLookUpTable()
 
 void GameScreenLevel_SMB3::HandleInput(const float deltaTime, SDL_Event e)
 {
-	/*
-	// Get the reference once so we dont have to multiple times later on
-	GameManager_SMB3* GM = GameManager_SMB3::GetInstance();
-
-	// Convert the global position into a grid position first so we are not repeatly doing it
-	Vector2D gridPos     = Commons_SMB3::ConvertFromRealPositionToGridPositionReturn(GM->GetRenderReferencePoint(), RESOLUTION_OF_SPRITES);
-
-	// Perform the boundary checks before checking for input
-	if (gridPos.x <= 0.0f)
-	{
-		GM->SetRenderReferencePointX(0.0f); // Set the position
-		GM->SetScrollingLeft(false);        // Stop movement
-		GM->SetHasHitLeftBoundary(true);    // Set has hit the boundary
-	}
-	else if(gridPos.x > 0.0f)
-	{
-		GM->SetHasHitLeftBoundary(false); // Set has not hit the boundary
-	}
-
-	if (gridPos.x + BACKGROUND_SPRITE_RENDER_WIDTH >= mAreas[mCurrentLevelAreaID]->GetLevelWidth())
-	{
-		// Only bother with the right check if we have not hit the left boundary at the same time
-		if (!GM->GetHasHitLeftBoundary())
-		{
-			GM->SetRenderReferencePointX((mAreas[mCurrentLevelAreaID]->GetLevelWidth() - BACKGROUND_SPRITE_RENDER_WIDTH) * RESOLUTION_OF_SPRITES); // Set the restriction
-		}
-
-		GM->SetScrollingRight(false); // Stop scrolling
-		GM->SetHasHitRightBoundary(true); // Set has hit the boundary
-	}
-	else
-	{
-		GM->SetHasHitRightBoundary(false); // Enable movement
-	}
-
-	switch (e.type)
-	{
-	case SDL_KEYDOWN:
-		switch (e.key.keysym.sym)
-		{
-		case SDLK_a:
-			// Boundary check
-			if (!GM->GetHasHitLeftBoundary())
-			{
-				GM->SetScrollingLeft(true);
-				GM->SetScrollingRight(false);
-			}
-		break;
-
-		case SDLK_d:
-			// Boundary check
-			if (!GM->GetHasHitRightBoundary())
-			{
-				GM->SetScrollingLeft(false);
-				GM->SetScrollingRight(true);	
-			}
-		break;
-
-		case SDLK_s:
-			//GM->AddToReferencePoint(Vector2D(0, -RESOLUTION_OF_SPRITES * (double)deltaTime));
-		break;
-
-		case SDLK_w:
-			//GM->AddToReferencePoint(Vector2D(0, RESOLUTION_OF_SPRITES * (double)deltaTime));
-		break;
-
-		case SDLK_LSHIFT:
-			GM->SetScrollingSpeedMultiplier(3.0f);
-		break;
-
-		default:
-			break;
-		}
-	break;
-
-	case SDL_KEYUP:
-		switch (e.key.keysym.sym)
-		{
-		case SDLK_a:
-			GM->SetScrollingLeft(false);
-		break;
-
-		case SDLK_d:
-			GM->SetScrollingRight(false);
-		break;
-
-		case SDLK_s:
-			//GM->AddToReferencePoint(Vector2D(0, -RESOLUTION_OF_SPRITES * (double)deltaTime));
-		break;
-
-		case SDLK_w:
-			//GM->AddToReferencePoint(Vector2D(0, RESOLUTION_OF_SPRITES * (double)deltaTime));
-		break;
-
-		case SDLK_LSHIFT:
-			GM->SetScrollingSpeedMultiplier(1.0f);
-		break;
-
-		default:
-			break;
-		}
-
-	break;
-
-	default:
-	break;
-	}
-	*/
+	
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //

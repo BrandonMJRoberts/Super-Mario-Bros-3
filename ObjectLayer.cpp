@@ -15,8 +15,8 @@
 
 // -------------------------------------------------------------------------------------------------------------------------- //
 
-ObjectLayer::ObjectLayer(std::string   filePathToDataFile, 
-	                     SDL_Renderer* renderer,
+ObjectLayer::ObjectLayer(std::string        filePathToDataFile, 
+	                     SDL_Renderer*      renderer,
 						 InteractableLayer* interactionLayer)
 : mRenderer(renderer)
 , mInteractionLayer(interactionLayer)
@@ -29,6 +29,9 @@ ObjectLayer::ObjectLayer(std::string   filePathToDataFile,
 		std::cout << "Failed to load in the objects for this level area: " << filePathToDataFile << std::endl;
 		return;
 	}
+
+	// Spawn in the initial objects
+	CheckIfObjectsShouldSpawn(GetSpawnPoint(0));
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //
