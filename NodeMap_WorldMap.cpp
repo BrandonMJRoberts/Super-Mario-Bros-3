@@ -6,6 +6,8 @@
 #include "Texture2D.h"
 #include "Constants_SMB3.h"
 
+std::vector<char> NodeMap_WorldMap::mClearedLevels;
+
 // ----------------------------------------------------------------- //
 
 NodeMap_WorldMap::NodeMap_WorldMap(const std::string filePath)
@@ -216,6 +218,22 @@ bool NodeMap_WorldMap::GetDataPointIsDot(const char value)
 {
 	if (value == 'X')
 		return true;
+
+	return false;
+}
+
+// ----------------------------------------------------------------- //
+
+bool NodeMap_WorldMap::GetPositionIsAClearedLevel(const Vector2D positionToCheck)
+{
+	char dataPoint = GetSpecificDataPoint(positionToCheck);
+
+	// Now check if this level is cleared
+	for (unsigned int i = 0; i < mClearedLevels.size(); i++)
+	{
+		if (dataPoint == mClearedLevels[i])
+			return true;
+	}
 
 	return false;
 }

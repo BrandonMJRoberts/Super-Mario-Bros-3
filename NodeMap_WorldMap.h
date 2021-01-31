@@ -27,11 +27,13 @@ public:
 	bool        GetPositionIsWalkable(const Vector2D position);
 
 	bool        GetDataPointIsDot(const char value);
+	bool        GetPositionIsAClearedLevel(const Vector2D positionToCheck);
 
 private:
 	void        LoadInDataFromFile(const std::string filePath);
 
 	std::map<char, std::string> mLevelLoadingFilePaths;
+	static std::vector<char>    mClearedLevels;
 
 	unsigned int                mWidth;
 	unsigned int                mHeight;

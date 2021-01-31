@@ -6,7 +6,8 @@
 
 #include <SDL.h>
 
-Vector2D BaseWorldMapCharacter::mPosition(0, 0);
+Vector2D           BaseWorldMapCharacter::mPosition(0, 0);
+MOVEMENT_DIRECTION BaseWorldMapCharacter::mPriorMovementDirection(MOVEMENT_DIRECTION::NONE);
 
 // ------------------------------------------------------------------------------------------------------------------------------- //
 
@@ -121,7 +122,8 @@ void BaseWorldMapCharacter::Update(const float deltaTime, NodeMap_WorldMap& node
 
 			if (!CanTurnToDirection(mMovementDirection, nodeMapRef) || nodeMapRef.GetDataPointIsDot(nodeMapRef.GetSpecificDataPoint(mPosition)) || nodeMapRef.GetValueIsLevel(nodeMapRef.GetSpecificDataPoint(mPosition)))
 			{
-				mMovementDirection = MOVEMENT_DIRECTION::NONE;
+				mPriorMovementDirection     = mMovementDirection;
+				mMovementDirection          = MOVEMENT_DIRECTION::NONE;
 				mRequestedMovementDirection = MOVEMENT_DIRECTION::NONE;
 				return;
 			}
@@ -161,6 +163,7 @@ void BaseWorldMapCharacter::Update(const float deltaTime, NodeMap_WorldMap& node
 		{
 			Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_MOVED_ON_WORLD_MAP, "");
 
+			mPriorMovementDirection     = mMovementDirection;
 			mMovementDirection          = mRequestedMovementDirection;
 			mRequestedMovementDirection = MOVEMENT_DIRECTION::NONE;
 
@@ -308,30 +311,94 @@ bool BaseWorldMapCharacter::CanTurnToDirection(MOVEMENT_DIRECTION newDir, NodeMa
 	switch (newDir)
 	{
 	case MOVEMENT_DIRECTION::RIGHT:
+		// if where we are going is clear
 		if (nodeMapRef.GetPositionIsWalkable(Vector2D(int(mPosition.x + 1), int(mPosition.y))))
 		{
-			return true;
+			// If we are not currently stood on a level then we can move there
+			if(!nodeMapRef.GetValueIsLevel(nodeMapRef.GetSpecificDataPoint(mPosition)))
+				return true;
+			else
+			{
+				// Then we are stood on a level, check to see if it is cleared
+				if (nodeMapRef.GetPositionIsAClearedLevel(mPosition))
+					return true;
+				else
+				{
+					// Now we know we are going to a clear space, whilst stood on a non-cleared level
+					// Now check to see if we are going back in the direction that we came from - if so then allow the movement
+					if (mPriorMovementDirection == MOVEMENT_DIRECTION::LEFT)
+						return true;
+				}
+			}
 		}
 	break;
 
 	case MOVEMENT_DIRECTION::LEFT:
+		// if where we are going is clear
 		if (nodeMapRef.GetPositionIsWalkable(Vector2D(int(mPosition.x - 1), int(mPosition.y))))
 		{
-			return true;
+			// If we are not currently stood on a level then we can move there
+			if (!nodeMapRef.GetValueIsLevel(nodeMapRef.GetSpecificDataPoint(mPosition)))
+				return true;
+			else
+			{
+				// Then we are stood on a level, check to see if it is cleared
+				if (nodeMapRef.GetPositionIsAClearedLevel(mPosition))
+					return true;
+				else
+				{
+					// Now we know we are going to a clear space, whilst stood on a non-cleared level
+					// Now check to see if we are going back in the direction that we came from - if so then allow the movement
+					if (mPriorMovementDirection == MOVEMENT_DIRECTION::RIGHT)
+						return true;
+				}
+			}
 		}
 	break;
 
 	case MOVEMENT_DIRECTION::UP:
+		// if where we are going is clear
 		if (nodeMapRef.GetPositionIsWalkable(Vector2D(int(mPosition.x), double(int(mPosition.y)) - 1)))
 		{
-			return true;
+			// If we are not currently stood on a level then we can move there
+			if (!nodeMapRef.GetValueIsLevel(nodeMapRef.GetSpecificDataPoint(mPosition)))
+				return true;
+			else
+			{
+				// Then we are stood on a level, check to see if it is cleared
+				if (nodeMapRef.GetPositionIsAClearedLevel(mPosition))
+					return true;
+				else
+				{
+					// Now we know we are going to a clear space, whilst stood on a non-cleared level
+					// Now check to see if we are going back in the direction that we came from - if so then allow the movement
+					if (mPriorMovementDirection == MOVEMENT_DIRECTION::DOWN)
+						return true;
+				}
+			}
 		}
 	break;
 
 	case MOVEMENT_DIRECTION::DOWN:
+		// if where we are going is clear
 		if (nodeMapRef.GetPositionIsWalkable(Vector2D(int(mPosition.x), double(int(mPosition.y)) + 1)))
 		{
-			return true;
+			// If we are not currently stood on a level then we can move there
+			if (!nodeMapRef.GetValueIsLevel(nodeMapRef.GetSpecificDataPoint(mPosition)))
+				return true;
+			else
+			{
+				// Then we are stood on a level, check to see if it is cleared
+				if (nodeMapRef.GetPositionIsAClearedLevel(mPosition))
+					return true;
+				else
+				{
+					// Now we know we are going to a clear space, whilst stood on a non-cleared level
+					// Now check to see if we are going back in the direction that we came from - if so then allow the movement
+					if (mPriorMovementDirection == MOVEMENT_DIRECTION::UP)
+						return true;
+				}
+			}
 		}
 	break;
 	}

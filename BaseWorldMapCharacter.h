@@ -56,6 +56,7 @@ protected:
 	unsigned int                 mEndFrame;
 
 	MOVEMENT_DIRECTION           mMovementDirection;
+	static MOVEMENT_DIRECTION    mPriorMovementDirection;
 	MOVEMENT_DIRECTION           mRequestedMovementDirection;
 
 	float                        mTimeRemainingTillFrameChange;
