@@ -51,7 +51,7 @@ ReturnDataFromGameScreen::ReturnDataFromGameScreen()
 
 ReturnDataFromGameScreen::ReturnDataFromGameScreen(SCREENS_SMB3 screenType, std::string filePath)
 {
-	mFilePathToLoadNext      = filePath;
+	mFilePathToLoadNext       = filePath;
 	mScreenToTransitionToNext = screenType;
 }
 

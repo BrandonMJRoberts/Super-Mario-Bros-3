@@ -118,7 +118,18 @@ void GameScreenLevel_SMB3::Render()
 ReturnDataFromGameScreen GameScreenLevel_SMB3::Update(const float deltaTime, SDL_Event e)
 {
 	// Now handle input
-	HandleInput(deltaTime, e);
+	//HandleInput(deltaTime, e);
+
+	switch (e.type)
+	{
+	case SDL_KEYDOWN:
+		switch (e.key.keysym.sym)
+		{
+		case SDLK_p:
+			return ReturnDataFromGameScreen(SCREENS_SMB3::WORLD_MAP, "");
+		}
+	break;
+	}
 
 	// Update the game manager
 	GameManager_SMB3::GetInstance()->Update(deltaTime);

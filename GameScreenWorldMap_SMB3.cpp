@@ -45,7 +45,7 @@ GameScreen_WorldMap_SMB3::GameScreen_WorldMap_SMB3(SDL_Renderer* renderer, Audio
 	mPlayer->AddObserver(audioPlayerRef);
 
 	// Notify observers that we have completed setup of the world map, and that we need to play the music
-	Notify(SUBJECT_NOTIFICATION_TYPES::SETUP_WORLD_MAP, std::to_string(GameManager_SMB3::GetInstance()->GetCurrentWorldIndex()));
+	Notify(SUBJECT_NOTIFICATION_TYPES::SETUP_WORLD_MAP,      std::to_string(GameManager_SMB3::GetInstance()->GetCurrentWorldIndex()));
 	Notify(SUBJECT_NOTIFICATION_TYPES::PLAY_WORLD_MAP_MUSIC, std::to_string(GameManager_SMB3::GetInstance()->GetCurrentWorldIndex()));
 }
 

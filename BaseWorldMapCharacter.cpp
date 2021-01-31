@@ -6,6 +6,8 @@
 
 #include <SDL.h>
 
+Vector2D BaseWorldMapCharacter::mPosition(0, 0);
+
 // ------------------------------------------------------------------------------------------------------------------------------- //
 
 BaseWorldMapCharacter::BaseWorldMapCharacter(SDL_Renderer* renderer
@@ -17,7 +19,6 @@ BaseWorldMapCharacter::BaseWorldMapCharacter(SDL_Renderer* renderer
 
 	: Subject()
 	, mTimePerAnimationFrame(timePerAnimationFrame)
-	, mPosition(startPosition)
 	, mMoveToPosition(mPosition)
 	, mAmountOfSpritesOnWidth(spritesOnWidth)
 	, mAmountOfSpritesOnHeight(spritesOnHeight)
@@ -33,6 +34,9 @@ BaseWorldMapCharacter::BaseWorldMapCharacter(SDL_Renderer* renderer
 	, mEndFrame(0)
 	, mStartFrame(0)
 {
+	if (mPosition.x == 0 && mPosition.y == 0)
+		mPosition = startPosition;
+
 	// Load in the sprite sheet
 	mSpriteSheet = new Texture2D(renderer);
 	if (!mSpriteSheet->LoadFromFile(filePathToSpriteSheet))

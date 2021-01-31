@@ -10,7 +10,7 @@
 #include "Subject.h"
 
 struct SDL_Renderer;
-class NodeMap_WorldMap;
+class  NodeMap_WorldMap;
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 
@@ -43,7 +43,7 @@ protected:
 
 	Texture2D*                   mSpriteSheet;
 
-	Vector2D                     mPosition;
+	static Vector2D              mPosition;
 	Vector2D                     mMoveToPosition;
 
 	unsigned int                 mAmountOfSpritesOnWidth;
