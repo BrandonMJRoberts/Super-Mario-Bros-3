@@ -73,7 +73,7 @@ bool FadeInOutTransition::Update(const float deltaTime)
 			}
 			else
 			{
-				if ((int)mCurrentAlpha - (int)mAccumulatedAlphaFade > 255)
+				if ((int)mCurrentAlpha + (int)mAccumulatedAlphaFade > 255)
 				{
 					mCurrentAlpha = 255;
 					mFadingState  = FADING_STATE::NONE;
