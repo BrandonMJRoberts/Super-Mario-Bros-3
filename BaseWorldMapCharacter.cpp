@@ -279,22 +279,22 @@ void BaseWorldMapCharacter::CheckForMovementInput(SDL_Event e)
 		{
 		case SDLK_d:
 			mRequestedMovementDirection = MOVEMENT_DIRECTION::RIGHT;
-			mButtonIsPressed = true;
+			mButtonIsPressed            = true;
 		break;
 
 		case SDLK_w:
 			mRequestedMovementDirection = MOVEMENT_DIRECTION::UP;
-			mButtonIsPressed = true;
+			mButtonIsPressed            = true;
 		break;
 
 		case SDLK_s:
 			mRequestedMovementDirection = MOVEMENT_DIRECTION::DOWN;
-			mButtonIsPressed = true;
+			mButtonIsPressed            = true;
 		break;
 
 		case SDLK_a:
 			mRequestedMovementDirection = MOVEMENT_DIRECTION::LEFT;
-			mButtonIsPressed = true;
+			mButtonIsPressed            = true;
 		break;
 		}
 	break;
