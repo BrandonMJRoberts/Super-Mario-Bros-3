@@ -108,7 +108,8 @@ ReturnDataFromGameScreen GameScreen_WorldMap_SMB3::Update(const float deltaTime,
 				// Now we need to get if the player is on a level space, and if it is enter the level requested
 				char nodeMapValue = mNodeMap->GetSpecificDataPoint(mPlayer->GetGridPosition());
 
-				if (mNodeMap->GetValueIsLevel(nodeMapValue))
+				// Make sure that this is a level and that it is not currently cleared
+				if (mNodeMap->GetValueIsLevel(nodeMapValue) && !mNodeMap->GetPositionIsAClearedLevel(mPlayer->GetGridPosition()))
 				{
 					// Need to insert a gap in here before the transition into the level, to allow time for the animation to play
 
