@@ -8,7 +8,7 @@
 8
 
 # Amount of sprites on sprite sheet height
-4
+5
 
 # The amount of sprites on this sprite sheet that will be animating
 1
@@ -16,6 +16,9 @@
 # The name of the sprite followed on by the amount of frames of animation that it has, 
 # Then the length of time(seconds) between each frame change
 1 4 0.25
+
+# Now state the char ID for a cleared level sprite
+W
 
 # Data for rendering
 111IOSOJOKOS11

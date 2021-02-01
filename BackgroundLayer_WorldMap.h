@@ -9,6 +9,7 @@
 #include "Commons_SMB3.h"
 
 class  Texture2D;
+class  NodeMap_WorldMap;
 struct SDL_Renderer;
 
 // ------------------------------------------------------------------------------------------------------------------------------------------ //
@@ -52,6 +53,8 @@ public:
 	unsigned int   GetSpecificDataPoint(unsigned int row, unsigned int col);
 	unsigned int** GetDataStore() { return mBackgroundIndexStore; }
 
+	void           SetClearedLevels(NodeMap_WorldMap& nodeMap, std::map<char, unsigned int> conversionTable);
+
 private:
 	void LoadInDataFromFile(std::string filePath, std::map<char, unsigned int> conversionTable);
 
@@ -66,6 +69,8 @@ private:
 	std::vector<SpriteThatAnimatesData> mAnimatingSpriteData;
 
 	Vector2D       mMapPortionOffset;
+
+	char		   mClearedLevelSpriteIndex;
 };
 
 // ------------------------------------------------------------------------------------------------------------------------------------------ //

@@ -41,6 +41,9 @@ GameScreen_WorldMap_SMB3::GameScreen_WorldMap_SMB3(SDL_Renderer* renderer, Audio
 		                             4,
 									 0.25f);
 
+	// Now make sure we convert the cleared level's images to the cleared image
+	mBackground->SetClearedLevels(*mNodeMap, mConversionTable);
+
 	// Make the audio manager observe the player for movement notifications
 	mPlayer->AddObserver(audioPlayerRef);
 

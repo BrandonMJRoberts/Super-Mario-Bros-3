@@ -16,6 +16,8 @@ NodeMap_WorldMap::NodeMap_WorldMap(const std::string filePath)
 {
 	// Load in the node data stored in the file
 	LoadInDataFromFile(filePath);
+
+	mClearedLevels.push_back('0');
 }
 
 // ----------------------------------------------------------------- //

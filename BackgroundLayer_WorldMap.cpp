@@ -7,6 +7,7 @@
 #include "Texture2D.h"
 #include "Constants_SMB3.h"
 #include "GameManager_SMB3.h"
+#include "NodeMap_WorldMap.h"
 
 // ----------------------------------------------------------------- //
 
@@ -20,6 +21,7 @@ BackgroundLayer_WorldMap::BackgroundLayer_WorldMap(const std::string filePath
 , mBackgroundIndexStore(nullptr)
 , mMapPortionOffset(0, 0)           // The offset into the index store, for scrolling of the background without moving the actual render positions
 , mSpriteSheet(nullptr)
+, mClearedLevelSpriteIndex('-')
 {
 	// First load in the sprite sheet
 	mSpriteSheet = new Texture2D(renderer);
@@ -214,6 +216,12 @@ void BackgroundLayer_WorldMap::LoadInDataFromFile(std::string filePath, std::map
 			continue;
 		}
 
+		if (mClearedLevelSpriteIndex == '-')
+		{
+			ssLine >> mClearedLevelSpriteIndex;
+			continue;
+		}
+
 		// If the background data store has not been created before then do it now
 		if (mBackgroundIndexStore == nullptr)
 		{
@@ -290,6 +298,25 @@ unsigned int BackgroundLayer_WorldMap::GetSpecificDataPoint(unsigned int row, un
 		return 300;
 
 	return mBackgroundIndexStore[row][col];
+}
+
+// ----------------------------------------------------------------- //
+
+void BackgroundLayer_WorldMap::SetClearedLevels(NodeMap_WorldMap& nodeMap, std::map<char, unsigned int> conversionTable)
+{
+	// Loop through all of the background and determine if it is a cleared level
+	for (unsigned int row = 0; row < mHeight; row++)
+	{
+		for (unsigned int col = 0; col < mWidth; col++)
+		{
+			// First check to see if this position on the node map is a cleared level
+			if (nodeMap.GetPositionIsAClearedLevel(Vector2D(col, row)))
+			{
+				// Then change the store for this index store
+				mBackgroundIndexStore[row][col] = conversionTable[mClearedLevelSpriteIndex];
+			}
+		}
+	}
 }
 
 // ----------------------------------------------------------------- //
