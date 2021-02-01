@@ -11,20 +11,26 @@
 HUD_Display::HUD_Display(SDL_Renderer* renderer) : Observer()
 	, mLivesCounterOffset(147, 621)
 	, mScoreCounterOffset(336, 621)
+	, mLifeIconOffset(48, 624)
 	, mMoneyCounterOffset(455, 597)
 	, mCurrentWorldOffset(147, 597)
 	, mPMeterOffset(189, 597)
+	, mCompletePMeterOffset(348, 597)
 	, mTimerCounterOffset(455, 621)
 	, mFirstEndCardOffset(500, 579)
 	, mBackgroundSpriteOffset(0, 550)
 	, mEndCards { END_CARD_TYPES::EMPTY, END_CARD_TYPES::EMPTY, END_CARD_TYPES::EMPTY }
 	, mTimeRemaming(0.0f)
-	, mCurrentWorldID(0)
+	, mCurrentWorldID(1)
 	, mCurrentEndCardCount(0)
 	, mPMeterFillAmount(0)
 	, mFontRenderer(nullptr)
+	, mLifeIcon(nullptr)
 	, mEndCardsSingleSpriteWidth(0)
 	, mEndCardsSingleSpriteHeight(0)
+	, mPlayingAsMario(true)
+	, mLivesRemaining(5)
+	, mCurrentScore(0)
 {
 	// Now load in the sprite sheets needed
 	LoadInSprites(renderer);
@@ -70,6 +76,9 @@ void HUD_Display::LoadInSprites(SDL_Renderer* renderer)
 
 	mEndCardsSpriteSheet = new Texture2D(renderer);
 	mEndCardsSpriteSheet->LoadFromFile("SDL_Mario_Project/Fonts and HUD/End Cards.png");
+
+	mLifeIcon = new Texture2D(renderer);
+	mLifeIcon->LoadFromFile("SDL_Mario_Project/Fonts and HUD/Mario Luigi Icons.png");
 }
 
 // ------------------------------------------------------------------------ //
@@ -119,12 +128,56 @@ void HUD_Display::Render()
 		}
 	}
 
-	if (mPMeterArrowSprite && mCompletePMeterSprite)
+	if (mPMeterArrowSprite)
 	{
-		for(unsigned int i = 0; i < 5; i++)
-			mPMeterArrowSprite->Render(Vector2D(mPMeterOffset.x + double(i * 26), mPMeterOffset.y), SDL_FLIP_NONE, 0.0f);
+		// Calculate the position for the first arrow to go
+		mSourceRectPlaceHolder = SDL_Rect {0, 0, mPMeterArrowSprite->GetWidth() / 2, mPMeterArrowSprite->GetHeight()};
 
-		mCompletePMeterSprite->Render(Vector2D(350, 597), SDL_FLIP_NONE, 0.0f);
+		// Calculate the correct position on the sprite sheet for the correct type of arrow
+		mDestRectPlaceHolder = SDL_Rect{ (int)mPMeterOffset.x, (int)mPMeterOffset.y, mPMeterArrowSprite->GetWidth() / 2, mPMeterArrowSprite->GetHeight() };
+
+		for (unsigned int i = 0; i <= 5; i++)
+		{
+			// Check to see if this arrow should be filled or not
+			if (mPMeterFillAmount > i)
+				mSourceRectPlaceHolder.x = mPMeterArrowSprite->GetWidth() / 2;
+			else 
+				mSourceRectPlaceHolder.x = 0;
+
+			mPMeterArrowSprite->Render(mSourceRectPlaceHolder, mDestRectPlaceHolder, SDL_FLIP_NONE, 0.0f);
+
+			// Now move the sprite along the HUD
+			mDestRectPlaceHolder.x += mPMeterArrowSprite->GetWidth() / 2;
+		}
+	}
+
+	if (mCompletePMeterSprite)
+	{
+		mSourceRectPlaceHolder = SDL_Rect{ 0, 0, mCompletePMeterSprite->GetWidth() / 2, mCompletePMeterSprite->GetHeight() };
+
+		mDestRectPlaceHolder   = SDL_Rect{ (int)mCompletePMeterOffset.x, (int)mCompletePMeterOffset.y, mCompletePMeterSprite->GetWidth() / 2, mCompletePMeterSprite->GetHeight() };
+
+		if (mPMeterFillAmount == 6)
+			mSourceRectPlaceHolder.x = mCompletePMeterSprite->GetWidth() / 2;
+		else
+			mSourceRectPlaceHolder.x = 0;
+
+		mCompletePMeterSprite->Render(mSourceRectPlaceHolder, mDestRectPlaceHolder, SDL_FLIP_NONE, 0.0f);
+	}
+
+	// Now render the icon before the life counter
+	if (mLifeIcon)
+	{
+		mSourceRectPlaceHolder = SDL_Rect{ 0, 0, mLifeIcon->GetWidth() / 2, mLifeIcon->GetHeight()};
+
+		mDestRectPlaceHolder = SDL_Rect{ (int)mLifeIconOffset.x, (int)mLifeIconOffset.y, mLifeIcon->GetWidth() / 2, mLifeIcon->GetHeight()};
+
+		if (mPlayingAsMario)
+			mSourceRectPlaceHolder.x = 0;
+		else
+			mSourceRectPlaceHolder.x = mLifeIcon->GetWidth() / 2;
+
+		mLifeIcon->Render(mSourceRectPlaceHolder, mDestRectPlaceHolder, SDL_FLIP_NONE, 0.0f);
 	}
 
  	if (mFontRenderer)
@@ -176,6 +229,8 @@ void HUD_Display::Update(const float deltaTime)
 {
 	if (mTimeRemaming > 0.0f)
 		mTimeRemaming -= deltaTime;
+	else
+		mTimeRemaming = 0.0f;
 
 
 }

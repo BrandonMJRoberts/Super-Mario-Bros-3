@@ -30,7 +30,7 @@ private:
 
 	ReturnDataFromGameScreen mReturnDataPlaceHolder;
 
-	HUD_Display*             HUD;
+	HUD_Display*             mHUD;
 
 	Audio_Player*            mAudioPlayer;
 };

@@ -39,6 +39,7 @@ private:
 	unsigned int mEndCardsSingleSpriteHeight;
 
 	float        mTimeRemaming;
+	bool         mPlayingAsMario;
 	bool         mPaused;
 
 	// Array to hold the three current end card types
@@ -59,17 +60,25 @@ private:
 	// Sprite sheet for the end cards
 	Texture2D* mEndCardsSpriteSheet;
 
+	Texture2D* mLifeIcon;
+
 
 	SDL_Rect mDestRectPlaceHolder;
 	SDL_Rect mSourceRectPlaceHolder;
 
 	// Positions for specific element rendering 
 	const Vector2D mLivesCounterOffset;
+	const Vector2D mLifeIconOffset;
 	const Vector2D mScoreCounterOffset;
 	const Vector2D mMoneyCounterOffset;
+
 	const Vector2D mCurrentWorldOffset;
+
 	const Vector2D mPMeterOffset;
+	const Vector2D mCompletePMeterOffset;
+
 	const Vector2D mTimerCounterOffset;
+
 	const Vector2D mFirstEndCardOffset;
 	const Vector2D mBackgroundSpriteOffset;
 
