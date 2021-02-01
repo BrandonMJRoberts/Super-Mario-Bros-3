@@ -9,6 +9,22 @@
 class InteractableLayer;
 class ObjectLayer;
 
+// ---------------------------------------------------------------- //
+
+enum MovementBitField : unsigned int
+{
+	NONE         = 0x00,
+	MOVING_RIGHT = 0x01,
+	MOVING_LEFT  = 0x02,
+	FALLING      = 0x04,
+
+	RUNNING      = 0x08,
+	JUMPING      = 0x16,
+	SWIMMING     = 0x32
+};
+
+// ---------------------------------------------------------------- //
+
 class PlayableCharacter final : public Subject
 {
 public:
@@ -69,11 +85,13 @@ private:
 
 	const float  kFrictionMultiplier;
 
+	unsigned int mCurrentMovements;
+
 	bool       mIsAlive;
 	bool       mApplyFriction;
 
-	bool       mIsWalking;
-	bool       mFacingRight;
+	//bool       mIsWalking;
+	//bool       mFacingRight;
 };
 
 

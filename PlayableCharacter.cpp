@@ -33,8 +33,7 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , kMaxSpeedRunning(10.0f)
 , mApplyFriction(false)
 , kFrictionMultiplier(5.0f)
-, mIsWalking(true)
-, mFacingRight(true)
+, mCurrentMovements(MovementBitField::NONE)
 {
 	// Load in the sprite sheet passed in
 	mSpriteSheet = new Texture2D(renderer);
@@ -84,12 +83,12 @@ void PlayableCharacter::Render()
 			               int(mSingleSpriteWidth), 
 			               int(mSingleSpriteHeight) };
 
-		if (mFacingRight)
+		if (mCurrentMovements & MovementBitField::MOVING_RIGHT)
 		{
 			// Render it facing Right
 			mSpriteSheet->Render(portionOfSpriteSheet, destRect, SDL_FLIP_HORIZONTAL);
 		}
-		else
+		else if(mCurrentMovements == MovementBitField::NONE || mCurrentMovements & MovementBitField::MOVING_LEFT)
 		{
 			// Render it facing left
 			mSpriteSheet->Render(portionOfSpriteSheet, destRect, SDL_FLIP_NONE);
@@ -116,17 +115,18 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 	double potentialNewYPos = mRealGridPosition.y + (mVelocity.y * deltaTime);
 
 	// First check if the player can move on the X axis
-	if (mVelocity.x != 0.0f)
-	{
+	//if (mVelocity.x != 0.0f)
+	//{
 		Vector2D     newBottomPos, newTopPos;
 
-		if (mVelocity.x > 0.0f)
+		//if (mVelocity.x > 0.0f)
+		if(mCurrentMovements & MovementBitField::MOVING_RIGHT)
 		{
 			// Going to the right
 			newBottomPos = Vector2D(mRealGridPosition.x + mCollisionBox.x + (mVelocity.x * deltaTime), mRealGridPosition.y);
 			newTopPos    = Vector2D(mRealGridPosition.x + mCollisionBox.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBox.y);
 		}
-		else
+		else if(mCurrentMovements & MovementBitField::MOVING_LEFT)
 		{
 			// Going to the left
 			newBottomPos = Vector2D(mRealGridPosition.x + (mVelocity.x * deltaTime), mRealGridPosition.y);
@@ -135,7 +135,7 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 
 		if (CheckXCollision(newBottomPos, newTopPos, interactionLayer, objectLayer, potentialNewXPos))
 			collisionCount++;
-	}
+	//}
 
 	// Now handle the Y axis
 	if (mVelocity.y != 0.0f)
@@ -169,14 +169,14 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 bool PlayableCharacter::CheckXCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer, double& newXPosRef)
 {
 	// Check to see if we have hit the terrain on the X movement
-	if (   HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1) || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2)
+	if (   HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1)  || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2)
 		|| HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1) || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2))
 	{
 		// Then dont move to the new position
 		newXPosRef      = mRealGridPosition.x;
 
 		// Stop the player from moving
-		mAcceleration.x = 0.0f;
+		//mAcceleration.x = 0.0f;
 		mVelocity.x     = 0.0f;
 
 		return true;
@@ -196,7 +196,7 @@ bool PlayableCharacter::CheckYCollision(const Vector2D positionToCheck1, const V
 		newYPosRef      = mRealGridPosition.y;
 
 		// Stop the player from moving
-		mAcceleration.y = 0.0f;
+		//mAcceleration.y = 0.0f;
 		mVelocity.y     = 0.0f;
 
 		mApplyFriction = true;
@@ -354,7 +354,8 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 	double speed      = 10.0f;
 	double multiplier = 1.0f;
 
-	if (mIsWalking)
+	// If the player is currently running then set the speed to be correct
+	if (mCurrentMovements & MovementBitField::RUNNING)
 	{
 		multiplier = 2.0f;
 	}
@@ -365,27 +366,37 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 		switch (e.key.keysym.sym)
 		{
 		case SDLK_RSHIFT:
-			if (mIsWalking)
+			// If not running
+			if (!(mCurrentMovements & MovementBitField::RUNNING))
 			{
-				mIsWalking = false;
+				// Store that the player is now running
+				mCurrentMovements |= MovementBitField::RUNNING;
 			}
 		break;
 
 		case SDLK_d:
-			mFacingRight = true;
+			mCurrentMovements |= MovementBitField::MOVING_RIGHT;
+
+			//mFacingRight = true;
 			mAcceleration.x = multiplier * speed;
 		break;
 
 		case SDLK_a:
-			mFacingRight = false;
+			mCurrentMovements |= MovementBitField::MOVING_LEFT;
+
+			//mFacingRight = false;
 			mAcceleration.x = -multiplier * speed;
 		break;
 
 		case SDLK_s:
+			mCurrentMovements |= MovementBitField::FALLING;
+
 			mAcceleration.y = multiplier * speed;
 		break;
 
 		case SDLK_w:
+			mCurrentMovements |= MovementBitField::JUMPING;
+
 			mAcceleration.y = -multiplier * speed;
 		break;
 		}
@@ -395,16 +406,31 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 		switch (e.key.keysym.sym)
 		{
 		case SDLK_RSHIFT:
-			mIsWalking = true;
+			//mIsWalking = true;
+
+			// Set the player to not be running
+			mCurrentMovements &= ~(MovementBitField::RUNNING);
 		break;
 
 		case SDLK_d:
+			mCurrentMovements &= ~(MovementBitField::MOVING_RIGHT);
+
+			mAcceleration.x = 0.0f;
+		break;
+
 		case SDLK_a:
+			mCurrentMovements &= ~(MovementBitField::MOVING_LEFT);
+
 			mAcceleration.x = 0.0f;
 		break;
 
 		case SDLK_s:
+			mCurrentMovements &= ~(MovementBitField::FALLING);
+		break;
+
 		case SDLK_w:
+			mCurrentMovements &= ~(MovementBitField::JUMPING);
+
 			mAcceleration.y = 0.0f;
 		break;
 		}
@@ -488,7 +514,7 @@ void PlayableCharacter::UpdatePhysics(const float deltaTime)
 	// Apply the acceleration of the player 
 	mVelocity += Vector2D(mAcceleration.x * deltaTime, (mAcceleration.y + GRAVITY) * deltaTime);
 
-	if (mIsWalking)
+	if (!(mCurrentMovements & MovementBitField::RUNNING))
 	{
 		// Cap the velocity to the max speed if it exceeds it
 		if (abs(mVelocity.x) > kMaxSpeedWalking)
