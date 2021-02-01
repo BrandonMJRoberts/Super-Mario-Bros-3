@@ -13,14 +13,16 @@ class ObjectLayer;
 
 enum MovementBitField : unsigned int
 {
-	NONE         = 0x00,
-	MOVING_RIGHT = 0x01,
-	MOVING_LEFT  = 0x02,
-	FALLING      = 0x04,
+	NONE         = 0,
+	MOVING_RIGHT = 1,
+	MOVING_LEFT  = 2,
+	FALLING      = 4,
 
-	RUNNING      = 0x08,
-	JUMPING      = 0x16,
-	SWIMMING     = 0x32
+	RUNNING      = 8,
+	JUMPING      = 16,
+	SWIMMING     = 32,
+
+	ENTERING_PIPE_VERTICALLY = 64,
 };
 
 // ---------------------------------------------------------------- //
@@ -28,7 +30,7 @@ enum MovementBitField : unsigned int
 class PlayableCharacter final : public Subject
 {
 public:
-	PlayableCharacter(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D spawnPoint, Vector2D numberOfSpritesOnDimensions, const Vector2D levelBounds);
+	PlayableCharacter(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D spawnPoint, Vector2D numberOfSpritesOnDimensions, const Vector2D levelBounds, const float timePerFrame);
 	~PlayableCharacter() override;
 
 	void Render();
@@ -57,6 +59,17 @@ private:
 
 	void UpdatePhysics(const float deltaTime);
 
+	void UpdateAnimations(const float deltaTime);
+
+	void UpdateAnimationsSmallMario();
+	void UpdateAnimationsLargeMario();
+	void UpdateAnimationsFrogMario();
+	void UpdateAnimationsHammerMario();
+	void UpdateAnimationsFireMario();
+	void UpdateAnimationsTanookiMario();
+	void UpdateAnimationsLeafMario();
+	void UpdateAnimationsStarMario();
+
 	Vector2D   mRealGridPosition;   // The player's position in the collision world
 	Vector2D   mScreenGridPosition; // Player's screen position
 
@@ -80,6 +93,9 @@ private:
 	unsigned int mStartFrame;
 	unsigned int mEndFrame;
 
+	float        mTimeTillNextFrame;
+	const float  mTimePerFrame;
+
 	const float  kBaseMaxSpeed;
 	const float  kMaxSpeedOverall;
 	float        mMaxSpeed;
@@ -89,6 +105,9 @@ private:
 	const float  kFrictionMultiplier;
 
 	unsigned int mCurrentMovements;
+	unsigned int mPriorFrameMovements;
+
+	POWER_UP_TYPE mPowerUpState;
 
 	bool         mIsAlive;
 	bool         mApplyFriction;

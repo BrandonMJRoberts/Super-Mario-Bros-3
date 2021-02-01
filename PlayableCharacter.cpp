@@ -7,7 +7,7 @@
 
 // ----------------------------------------------------- //
 
-PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D spawnPoint, Vector2D numberOfSpritesOnDimensions, const Vector2D levelBounds)
+PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D spawnPoint, Vector2D numberOfSpritesOnDimensions, const Vector2D levelBounds, const float timePerFrame)
 : Subject()
 , mRealGridPosition(spawnPoint)
 , mScreenGridPosition(0, 0)
@@ -36,6 +36,12 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , kFrictionMultiplier(5.0f)
 , mCurrentMovements(MovementBitField::NONE)
 , mPSpeedAccumulatorRate(1.5f)
+
+, mTimePerFrame(timePerFrame)
+, mTimeTillNextFrame(timePerFrame)
+, mPriorFrameMovements(0)
+
+, mPowerUpState(POWER_UP_TYPE::NONE)
 {
 	// Load in the sprite sheet passed in
 	mSpriteSheet = new Texture2D(renderer);
@@ -85,12 +91,13 @@ void PlayableCharacter::Render()
 			               int(mSingleSpriteWidth), 
 			               int(mSingleSpriteHeight) };
 
-		if (mCurrentMovements & MovementBitField::MOVING_RIGHT)
+		// If going right, or if we were going right and are now not moving
+		if (mCurrentMovements & MovementBitField::MOVING_RIGHT || mVelocity.x > 0.0f)
 		{
 			// Render it facing Right
 			mSpriteSheet->Render(portionOfSpriteSheet, destRect, SDL_FLIP_HORIZONTAL);
 		}
-		else if(mCurrentMovements == MovementBitField::NONE || mCurrentMovements & MovementBitField::MOVING_LEFT)
+		else
 		{
 			// Render it facing left
 			mSpriteSheet->Render(portionOfSpriteSheet, destRect, SDL_FLIP_NONE);
@@ -161,6 +168,8 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 	// If we are not prevented from moving in both directions then calculate where we are going to be next frame
 	if(collisionCount < 2)
 		CalculateNewPosition(deltaTime, Vector2D(potentialNewXPos, potentialNewYPos));
+
+	UpdateAnimations(deltaTime);
 }
 
 // ----------------------------------------------------- //
@@ -554,6 +563,199 @@ void PlayableCharacter::UpdatePhysics(const float deltaTime)
 				mVelocity.y = -mMaxSpeed;
 		}
 	}
+
+}
+
+// ----------------------------------------------------- //
+
+void PlayableCharacter::UpdateAnimations(const float deltaTime)
+{
+	mTimeTillNextFrame -= deltaTime;
+
+	// Check to see if we should move the frame on
+	if (mTimeTillNextFrame <= 0.0f)
+	{
+		mCurrentFrame++;
+		mTimeTillNextFrame = mTimePerFrame;
+
+		if (mCurrentFrame > mEndFrame)
+			mCurrentFrame = mStartFrame;
+	}
+
+	// Now check to see if we should change animation
+	if (mPriorFrameMovements != mCurrentMovements)
+	{
+		switch (mPowerUpState)
+		{
+		default:
+		case POWER_UP_TYPE::NONE:
+			UpdateAnimationsSmallMario();
+		break;
+
+		case POWER_UP_TYPE::MUSHROOM:
+			UpdateAnimationsLargeMario();
+		break;
+
+		case POWER_UP_TYPE::FIRE_FLOWER:
+			UpdateAnimationsFireMario();
+		break;
+
+		case POWER_UP_TYPE::TANOOKI_SUIT:
+			UpdateAnimationsTanookiMario();
+		break;
+
+		case POWER_UP_TYPE::FROG_SUIT:
+			UpdateAnimationsFrogMario();
+		break;
+
+		case POWER_UP_TYPE::HAMMER_SUIT:
+			UpdateAnimationsHammerMario();
+		break;
+
+		case POWER_UP_TYPE::STAR:
+			UpdateAnimationsStarMario();
+		break;
+
+		case POWER_UP_TYPE::SUPER_LEAF:
+			UpdateAnimationsLeafMario();
+		break;
+		}
+	}
+}
+
+// ----------------------------------------------------- //
+
+void PlayableCharacter::UpdateAnimationsSmallMario()
+{
+	// Check to see if the player has stopped moving
+	if (mCurrentMovements == 0)
+	{
+		mStartFrame = 0;
+		mEndFrame = 0;
+		mCurrentFrame = 0;
+
+		mPriorFrameMovements = mCurrentMovements;
+
+		return;
+	}
+
+	// If turning around sharply
+	if ((mCurrentMovements & MovementBitField::MOVING_RIGHT && mPriorFrameMovements & MovementBitField::MOVING_LEFT) ||
+		(mCurrentMovements & MovementBitField::MOVING_LEFT && mPriorFrameMovements & MovementBitField::MOVING_RIGHT))
+	{
+		mStartFrame = 6;
+		mEndFrame = 6;
+		mCurrentFrame = mStartFrame;
+
+		mPriorFrameMovements = mCurrentMovements;
+
+		return;
+	}
+
+	// Check to see if we need to start walking
+	if (mCurrentMovements & MovementBitField::MOVING_RIGHT || mCurrentMovements & MovementBitField::MOVING_LEFT)
+	{
+		mStartFrame = 0;
+		mEndFrame = 1;
+		mCurrentFrame = mStartFrame;
+
+		mPriorFrameMovements = mCurrentMovements;
+
+		return;
+	}
+
+	if (mCurrentMovements & MovementBitField::JUMPING)
+	{
+		if (mCurrentMovements & MovementBitField::RUNNING)
+		{
+			// Full sprint jump
+			mStartFrame = 5;
+			mEndFrame = 5;
+			mCurrentFrame = mStartFrame;
+		}
+		else
+		{
+			// Regular jump
+			mStartFrame = 2;
+			mEndFrame = 2;
+			mCurrentFrame = mStartFrame;
+		}
+
+		mPriorFrameMovements = mCurrentMovements;
+
+		return;
+	}
+
+	if (mCurrentMovements & MovementBitField::RUNNING)
+	{
+		mStartFrame = 3;
+		mEndFrame = 4;
+		mCurrentFrame = mStartFrame;
+
+		mPriorFrameMovements = mCurrentMovements;
+
+		return;
+	}
+
+	// If going down/up a pipe
+	if (mCurrentMovements & MovementBitField::ENTERING_PIPE_VERTICALLY)
+	{
+		mStartFrame = 7;
+		mEndFrame = 7;
+		mCurrentFrame = mStartFrame;
+
+		mPriorFrameMovements = mCurrentMovements;
+
+		return;
+	}
+}
+
+// ----------------------------------------------------- //
+
+void PlayableCharacter::UpdateAnimationsLargeMario()
+{
+
+}
+
+// ----------------------------------------------------- //
+
+void PlayableCharacter::UpdateAnimationsFrogMario()
+{
+
+}
+
+// ----------------------------------------------------- //
+
+void PlayableCharacter::UpdateAnimationsHammerMario()
+{
+
+}
+
+// ----------------------------------------------------- //
+
+void PlayableCharacter::UpdateAnimationsFireMario()
+{
+
+}
+
+// ----------------------------------------------------- //
+
+void PlayableCharacter::UpdateAnimationsTanookiMario()
+{
+
+}
+
+// ----------------------------------------------------- //
+
+void PlayableCharacter::UpdateAnimationsLeafMario()
+{
+
+}
+
+// ----------------------------------------------------- //
+
+void PlayableCharacter::UpdateAnimationsStarMario()
+{
 
 }
 

@@ -57,12 +57,12 @@ GameScreenLevel_SMB3::GameScreenLevel_SMB3(SDL_Renderer* renderer
 	// Now create the player that will be in these levels
 	if (playingAsMario)
 	{
-		mPlayer = new PlayableCharacter(renderer, "SDL_Mario_Project/Characters/Mario/In Game Mario/SmallMarioSpriteSheet.png", mAreas[mCurrentLevelAreaID]->GetInitialSpawnPoint(), Vector2D(16, 1), mAreas[mCurrentLevelAreaID]->GetLevelBounds());
+		mPlayer = new PlayableCharacter(renderer, "SDL_Mario_Project/Characters/Mario/In Game Mario/SmallMarioSpriteSheet.png", mAreas[mCurrentLevelAreaID]->GetInitialSpawnPoint(), Vector2D(16, 1), mAreas[mCurrentLevelAreaID]->GetLevelBounds(), 0.1f);
 		mPlayer->AddObserver(&HUD_Observer);
 	}
 	else
 	{
-		mPlayer = new PlayableCharacter(renderer, "SDL_Mario_Project/Characters/Luigi/In Game Luigi/SmallLuigiSpriteSheet.png", mAreas[mCurrentLevelAreaID]->GetInitialSpawnPoint(), Vector2D(16, 1), mAreas[mCurrentLevelAreaID]->GetLevelBounds());
+		mPlayer = new PlayableCharacter(renderer, "SDL_Mario_Project/Characters/Luigi/In Game Luigi/SmallLuigiSpriteSheet.png", mAreas[mCurrentLevelAreaID]->GetInitialSpawnPoint(), Vector2D(16, 1), mAreas[mCurrentLevelAreaID]->GetLevelBounds(), 0.1f);
 		mPlayer->AddObserver(&HUD_Observer);
 	}
 
