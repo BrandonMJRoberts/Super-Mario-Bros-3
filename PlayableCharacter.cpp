@@ -115,27 +115,24 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 	double potentialNewYPos = mRealGridPosition.y + (mVelocity.y * deltaTime);
 
 	// First check if the player can move on the X axis
-	//if (mVelocity.x != 0.0f)
-	//{
-		Vector2D     newBottomPos, newTopPos;
+	Vector2D     newBottomPos, newTopPos;
 
-		//if (mVelocity.x > 0.0f)
-		if(mCurrentMovements & MovementBitField::MOVING_RIGHT)
-		{
-			// Going to the right
-			newBottomPos = Vector2D(mRealGridPosition.x + mCollisionBox.x + (mVelocity.x * deltaTime), mRealGridPosition.y);
-			newTopPos    = Vector2D(mRealGridPosition.x + mCollisionBox.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBox.y);
-		}
-		else if(mCurrentMovements & MovementBitField::MOVING_LEFT)
-		{
-			// Going to the left
-			newBottomPos = Vector2D(mRealGridPosition.x + (mVelocity.x * deltaTime), mRealGridPosition.y);
-			newTopPos    = Vector2D(mRealGridPosition.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBox.y);
-		}
+	//if (mVelocity.x > 0.0f)
+	if(mCurrentMovements & MovementBitField::MOVING_RIGHT)
+	{
+		// Going to the right
+		newBottomPos = Vector2D(mRealGridPosition.x + mCollisionBox.x + (mVelocity.x * deltaTime), mRealGridPosition.y);
+		newTopPos    = Vector2D(mRealGridPosition.x + mCollisionBox.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBox.y);
+	}
+	else if(mCurrentMovements & MovementBitField::MOVING_LEFT)
+	{
+		// Going to the left
+		newBottomPos = Vector2D(mRealGridPosition.x + (mVelocity.x * deltaTime), mRealGridPosition.y);
+		newTopPos    = Vector2D(mRealGridPosition.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBox.y);
+	}
 
-		if (CheckXCollision(newBottomPos, newTopPos, interactionLayer, objectLayer, potentialNewXPos))
-			collisionCount++;
-	//}
+	if (CheckXCollision(newBottomPos, newTopPos, interactionLayer, objectLayer, potentialNewXPos))
+		collisionCount++;
 
 	// Now handle the Y axis
 	if (mVelocity.y != 0.0f)
@@ -176,7 +173,6 @@ bool PlayableCharacter::CheckXCollision(const Vector2D positionToCheck1, const V
 		newXPosRef      = mRealGridPosition.x;
 
 		// Stop the player from moving
-		//mAcceleration.x = 0.0f;
 		mVelocity.x     = 0.0f;
 
 		return true;
@@ -196,7 +192,6 @@ bool PlayableCharacter::CheckYCollision(const Vector2D positionToCheck1, const V
 		newYPosRef      = mRealGridPosition.y;
 
 		// Stop the player from moving
-		//mAcceleration.y = 0.0f;
 		mVelocity.y     = 0.0f;
 
 		mApplyFriction = true;
@@ -377,14 +372,12 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 		case SDLK_d:
 			mCurrentMovements |= MovementBitField::MOVING_RIGHT;
 
-			//mFacingRight = true;
 			mAcceleration.x = multiplier * speed;
 		break;
 
 		case SDLK_a:
 			mCurrentMovements |= MovementBitField::MOVING_LEFT;
 
-			//mFacingRight = false;
 			mAcceleration.x = -multiplier * speed;
 		break;
 
@@ -406,8 +399,6 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 		switch (e.key.keysym.sym)
 		{
 		case SDLK_RSHIFT:
-			//mIsWalking = true;
-
 			// Set the player to not be running
 			mCurrentMovements &= ~(MovementBitField::RUNNING);
 		break;
