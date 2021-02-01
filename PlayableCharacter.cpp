@@ -29,11 +29,13 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , mLevelBounds(levelBounds)
 
 , mCollisionBox(1.0f, 1.0f)
-, kMaxSpeedWalking(3.0f)
-, kMaxSpeedRunning(10.0f)
+, kBaseMaxSpeed(3.0f)
+, mMaxSpeed(kBaseMaxSpeed)
+, kMaxSpeedOverall(10.0f)
 , mApplyFriction(false)
 , kFrictionMultiplier(5.0f)
 , mCurrentMovements(MovementBitField::NONE)
+, mPSpeedAccumulatorRate(1.5f)
 {
 	// Load in the sprite sheet passed in
 	mSpriteSheet = new Texture2D(renderer);
@@ -401,6 +403,8 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 		case SDLK_RSHIFT:
 			// Set the player to not be running
 			mCurrentMovements &= ~(MovementBitField::RUNNING);
+
+			mMaxSpeed = kBaseMaxSpeed;
 		break;
 
 		case SDLK_d:
@@ -508,39 +512,46 @@ void PlayableCharacter::UpdatePhysics(const float deltaTime)
 	if (!(mCurrentMovements & MovementBitField::RUNNING))
 	{
 		// Cap the velocity to the max speed if it exceeds it
-		if (abs(mVelocity.x) > kMaxSpeedWalking)
+		if (abs(mVelocity.x) > kBaseMaxSpeed)
 		{
 			if (mVelocity.x > 0.0f)
-				mVelocity.x = kMaxSpeedWalking;
+				mVelocity.x = kBaseMaxSpeed;
 			else
-				mVelocity.x = -kMaxSpeedWalking;
+				mVelocity.x = -kBaseMaxSpeed;
 		}
 
-		if (abs(mVelocity.y) > kMaxSpeedWalking)
+		if (abs(mVelocity.y) > kBaseMaxSpeed)
 		{
 			if(mVelocity.y > 0.0f)
-				mVelocity.y = kMaxSpeedWalking;
+				mVelocity.y = kBaseMaxSpeed;
 			else
-				mVelocity.y = -kMaxSpeedWalking;
+				mVelocity.y = -kBaseMaxSpeed;
 		}
 	}
 	else
 	{
+
+		// We are running so we need to increase the P-Speed counter - and therefore increase the player's max speed
+		mMaxSpeed += mPSpeedAccumulatorRate * deltaTime;
+
+		if (mMaxSpeed > kMaxSpeedOverall)
+			mMaxSpeed = kMaxSpeedOverall;
+
 		// Cap the velocity to the max speed if it exceeds it
-		if (abs(mVelocity.x) > kMaxSpeedRunning)
+		if (abs(mVelocity.x) > mMaxSpeed)
 		{
 			if (mVelocity.x > 0.0f)
-				mVelocity.x = kMaxSpeedRunning;
+				mVelocity.x = mMaxSpeed;
 			else
-				mVelocity.x = -kMaxSpeedRunning;
+				mVelocity.x = -mMaxSpeed;
 		}
 
-		if (abs(mVelocity.y) > kMaxSpeedRunning)
+		if (abs(mVelocity.y) > mMaxSpeed)
 		{
 			if (mVelocity.y > 0.0f)
-				mVelocity.y = kMaxSpeedRunning;
+				mVelocity.y = mMaxSpeed;
 			else
-				mVelocity.y = -kMaxSpeedRunning;
+				mVelocity.y = -mMaxSpeed;
 		}
 	}
 
