@@ -189,7 +189,7 @@ bool PlayableCharacter::CheckXCollision(const Vector2D positionToCheck1, const V
 
 bool PlayableCharacter::CheckYCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer, double& newYPosRef)
 {
-	if (   HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1) || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2)
+	if (   HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1)  || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2)
 		|| HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1) || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2))
 	{
 		// Then dont move in the y axis
@@ -254,13 +254,13 @@ void PlayableCharacter::CalculateNewPosition(const float deltaTime, const Vector
 	// First cap the new positions to their relative bounds - starting with the y axis
 	if (newScreenGridPos.y <= 0.0f)
 		newScreenGridPos.y = 0.0f;
-	else if (newScreenGridPos.y >= PLAYABLE_SCREEN_AREA_HEIGHT + 2)
-		newScreenGridPos.y = PLAYABLE_SCREEN_AREA_HEIGHT + 2;
+	else if (newScreenGridPos.y >= PLAYABLE_SCREEN_AREA_HEIGHT + 4)
+		newScreenGridPos.y = PLAYABLE_SCREEN_AREA_HEIGHT + 4;
 
 	if (newRealGridPos.y <= 0.0f)
 		newRealGridPos.y = 0.0f;
-	else if (newRealGridPos.y >= mLevelBounds.y)
-		newRealGridPos.y = mLevelBounds.y;
+	else if (newRealGridPos.y >= mLevelBounds.y + 2)
+		newRealGridPos.y = mLevelBounds.y + 2;
 
 	// Now for the x axis
 	if (newScreenGridPos.x <= 0.0f)
@@ -268,10 +268,10 @@ void PlayableCharacter::CalculateNewPosition(const float deltaTime, const Vector
 	else if (newScreenGridPos.x >= (PLAYABLE_SCREEN_AREA_WIDTH - 1))
 		newScreenGridPos.x = (PLAYABLE_SCREEN_AREA_HEIGHT - 1);
 
-	if (newRealGridPos.x <= 0.0f)
-		newRealGridPos.x = 0.0f;
-	else if (newRealGridPos.x >= mLevelBounds.x)
-		newRealGridPos.x = mLevelBounds.x;
+	if (newRealGridPos.x <= -1.0f)
+		newRealGridPos.x = -1.0f;
+	else if (newRealGridPos.x >= mLevelBounds.x + 1)
+		newRealGridPos.x = mLevelBounds.x + 1;
 
 	// First update the real grid position of the player so that when the player moves their actual point in the world moves as well
 	mRealGridPosition = newRealGridPos;
