@@ -7,7 +7,7 @@
 
 // ----------------------------------------------------- //
 
-PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D spawnPoint, Vector2D numberOfSpritesOnDimensions, const Vector2D levelBounds, const float timePerFrame)
+PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D spawnPoint, const Vector2D levelBounds, const float timePerFrame)
 : Subject()
 , mRealGridPosition(spawnPoint)
 , mScreenGridPosition(0, 0)
@@ -25,13 +25,14 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , mCurrentFrame(0)
 , mStartFrame(0)
 , mEndFrame(0)
-, mNumberOfSpritesOnWidth((unsigned int)numberOfSpritesOnDimensions.x)
+, mNumberOfSpritesOnWidth(0)
+, mNumberOfSpritesOnHeight(0)
 , mLevelBounds(levelBounds)
 
 , mCollisionBox(1.0f, 1.0f)
-, kBaseMaxSpeed(3.0f)
+, kBaseMaxSpeed(3.5f)
 , mMaxSpeed(kBaseMaxSpeed)
-, kMaxSpeedOverall(10.0f)
+, kMaxSpeedOverall(8.0f)
 , mApplyFriction(false)
 , kFrictionMultiplier(5.0f)
 , mCurrentMovements(MovementBitField::NONE)
@@ -42,21 +43,9 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , mPriorFrameMovements(0)
 
 , mPowerUpState(POWER_UP_TYPE::NONE)
+, mRenderer(renderer)
 {
-	// Load in the sprite sheet passed in
-	mSpriteSheet = new Texture2D(renderer);
-	if (!mSpriteSheet->LoadFromFile(filePathToSpriteSheet))
-	{
-		std::cout << "Failed to load in the sprite sheet for the level character." << std::endl;
-		mSpriteSheet = nullptr;
-		return;
-	}
-
-	if (numberOfSpritesOnDimensions.x > 0 && numberOfSpritesOnDimensions.y > 0)
-	{
-		mSingleSpriteWidth  = mSpriteSheet->GetWidth()  / (unsigned int)numberOfSpritesOnDimensions.x;
-		mSingleSpriteHeight = mSpriteSheet->GetHeight() / (unsigned int)numberOfSpritesOnDimensions.y;
-	}
+	LoadInCorrectSpriteSheet();
 
 	// Now calculate where the starting screen space position the player should be
 	CalculateScreenBoundsPosition(spawnPoint);
@@ -87,7 +76,7 @@ void PlayableCharacter::Render()
 
 		// Now calculate where we should render it
 		SDL_Rect destRect {int(mScreenGridPosition.x * RESOLUTION_OF_SPRITES), 
-			               int(mScreenGridPosition.y * RESOLUTION_OF_SPRITES) - RESOLUTION_OF_SPRITES + 1, // The + 1 makes mario render so that it looks like he is on the floor
+			               int(mScreenGridPosition.y * RESOLUTION_OF_SPRITES) - int(float(RESOLUTION_OF_SPRITES) * mCollisionBox.y) + 1, // The + 1 makes mario render so that it looks like he is on the floor
 			               int(mSingleSpriteWidth), 
 			               int(mSingleSpriteHeight) };
 
@@ -757,6 +746,113 @@ void PlayableCharacter::UpdateAnimationsLeafMario()
 void PlayableCharacter::UpdateAnimationsStarMario()
 {
 
+}
+
+// ----------------------------------------------------- //
+
+void PlayableCharacter::LoadInCorrectSpriteSheet()
+{
+	if (mSpriteSheet)
+	{
+		delete mSpriteSheet;
+		mSpriteSheet = nullptr;
+	}
+
+	// Create the new sprite sheet
+	mSpriteSheet = new Texture2D(mRenderer);
+
+	switch (mPowerUpState)
+	{
+	default:
+	case POWER_UP_TYPE::NONE:
+		mSpriteSheet->LoadFromFile("SDL_Mario_Project/Characters/Mario/In Game Mario/SmallMarioSpriteSheet.png");
+
+		mNumberOfSpritesOnWidth  = 4;
+		mNumberOfSpritesOnHeight = 4;
+
+		mCollisionBox.x = 1.0f;   // 48 pixels wide
+		mCollisionBox.y = 1.0f;   // 48 pixels tall
+	break;
+
+	case POWER_UP_TYPE::MUSHROOM:
+		mSpriteSheet->LoadFromFile("SDL_Mario_Project/Characters/Mario/In Game Mario/SuperMarioSpriteSheet.png");
+
+		mNumberOfSpritesOnWidth  = 6;
+		mNumberOfSpritesOnHeight = 6;
+
+		mCollisionBox.x = 1.0f;  // 48 pixels wide
+		mCollisionBox.y = 1.17f; // 56 pixels tall
+	break;
+
+	case POWER_UP_TYPE::FIRE_FLOWER:
+		mSpriteSheet->LoadFromFile("SDL_Mario_Project/Characters/Mario/In Game Mario/FireMarioSpriteSheet.png");
+
+		mNumberOfSpritesOnWidth  = 1;
+		mNumberOfSpritesOnHeight = 1;
+
+		mCollisionBox.x = 1.0f;
+		mCollisionBox.y = 2.0f;
+	break;
+
+	case POWER_UP_TYPE::TANOOKI_SUIT:
+		mSpriteSheet->LoadFromFile("SDL_Mario_Project/Characters/Mario/In Game Mario/TanookiMarioLuigiSpriteSheet.png");
+
+		mNumberOfSpritesOnWidth = 1;
+		mNumberOfSpritesOnHeight = 1;
+
+		mCollisionBox.x = 1.0f;
+		mCollisionBox.y = 1.25f; // 60 pixels tall
+	break;
+
+	case POWER_UP_TYPE::FROG_SUIT:
+		mSpriteSheet->LoadFromFile("SDL_Mario_Project/Characters/Mario/In Game Mario/FrogMarioLuigiSpriteSheet.png");
+
+		mNumberOfSpritesOnWidth =1 ;
+		mNumberOfSpritesOnHeight = 1;
+
+		mCollisionBox.x = 1.0f;
+		mCollisionBox.y = 2.0f;
+	break;
+
+	case POWER_UP_TYPE::HAMMER_SUIT:
+		mSpriteSheet->LoadFromFile("SDL_Mario_Project/Characters/Mario/In Game Mario/HammerMarioLuigiSpriteSheet.png");
+
+		mNumberOfSpritesOnWidth = 1;
+		mNumberOfSpritesOnHeight = 1;
+
+		mCollisionBox.x = 1.0f;
+		mCollisionBox.y = 2.0f;
+	break;
+
+	case POWER_UP_TYPE::STAR:
+		mSpriteSheet->LoadFromFile("SDL_Mario_Project/Characters/Mario/In Game Mario/0.png");
+
+		mNumberOfSpritesOnWidth  = 1 ;
+		mNumberOfSpritesOnHeight =1 ;
+
+		mCollisionBox.x = 1.0f;
+		mCollisionBox.y = 2.0f;
+	break;
+
+	case POWER_UP_TYPE::SUPER_LEAF: // Racoon mario
+		mSpriteSheet->LoadFromFile("SDL_Mario_Project/Characters/Mario/In Game Mario/RacoonMarioSpriteSheet.png");
+
+		mNumberOfSpritesOnWidth  = 6;
+		mNumberOfSpritesOnHeight = 6;
+
+		mCollisionBox.x = 1.0f;
+		mCollisionBox.y = 1.875f; // 90 pixels tall
+	break;
+	}
+
+	if (!mSpriteSheet)
+	{
+		std::cout << "Failed to load in the sprite sheet for the playable character!" << std::endl;
+		return;
+	}
+
+	mSingleSpriteWidth  = mSpriteSheet->GetWidth()  / mNumberOfSpritesOnWidth;
+	mSingleSpriteHeight = mSpriteSheet->GetHeight() / mNumberOfSpritesOnHeight;
 }
 
 // ----------------------------------------------------- //

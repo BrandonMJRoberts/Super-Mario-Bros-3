@@ -30,7 +30,7 @@ enum MovementBitField : unsigned int
 class PlayableCharacter final : public Subject
 {
 public:
-	PlayableCharacter(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D spawnPoint, Vector2D numberOfSpritesOnDimensions, const Vector2D levelBounds, const float timePerFrame);
+	PlayableCharacter(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D spawnPoint, const Vector2D levelBounds, const float timePerFrame);
 	~PlayableCharacter() override;
 
 	void Render();
@@ -61,6 +61,8 @@ private:
 
 	void UpdateAnimations(const float deltaTime);
 
+	void LoadInCorrectSpriteSheet();
+
 	void UpdateAnimationsSmallMario();
 	void UpdateAnimationsLargeMario();
 	void UpdateAnimationsFrogMario();
@@ -82,12 +84,14 @@ private:
 
 	Vector2D   mLevelBounds;
 
-	unsigned int mNumberOfSpritesOnWidth;;
-
-	Texture2D*   mSpriteSheet;
+	Texture2D*    mSpriteSheet;
+	SDL_Renderer* mRenderer;
 
 	unsigned int mSingleSpriteWidth;
 	unsigned int mSingleSpriteHeight;
+
+	unsigned int mNumberOfSpritesOnWidth;
+	unsigned int mNumberOfSpritesOnHeight;
 
 	unsigned int mCurrentFrame;
 	unsigned int mStartFrame;
