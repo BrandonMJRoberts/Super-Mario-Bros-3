@@ -44,6 +44,7 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 
 , mPowerUpState(POWER_UP_TYPE::NONE)
 , mRenderer(renderer)
+, mWasFacingRight(true)
 {
 	LoadInCorrectSpriteSheet();
 
@@ -81,7 +82,7 @@ void PlayableCharacter::Render()
 			               int(mSingleSpriteHeight) };
 
 		// If going right, or if we were going right and are now not moving
-		if (mCurrentMovements & MovementBitField::MOVING_RIGHT || mVelocity.x > 0.0f)
+		if (mCurrentMovements & MovementBitField::MOVING_RIGHT || mVelocity.x > 0.0f || (mVelocity.x == 0.0f && mWasFacingRight))
 		{
 			// Render it facing Right
 			mSpriteSheet->Render(portionOfSpriteSheet, destRect, SDL_FLIP_HORIZONTAL);
@@ -137,7 +138,7 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 	{
 		Vector2D     newLeftPos, newRightPos;
 
-		if (mVelocity.y > 0.0f)
+		if (mVelocity.y >= 0.0f)
 		{
 			// Going downwards
 			newLeftPos  = Vector2D(mRealGridPosition.x,                   mRealGridPosition.y + (mVelocity.y * deltaTime));
@@ -210,7 +211,7 @@ void PlayableCharacter::CalculateScreenBoundsPosition(const Vector2D spawnPoint)
 	// If the player is near a boundary then they need specific positioning - starting with the Y axis
 	if (spawnPoint.y + (PLAYABLE_SCREEN_AREA_HEIGHT / 2) > mLevelBounds.y)
 	{
-		mScreenGridPosition.y = (BACKGROUND_SPRITE_RENDER_HEIGHT - 1) - (mLevelBounds.y - spawnPoint.y);
+		mScreenGridPosition.y = (BACKGROUND_SPRITE_RENDER_HEIGHT - 1.0f) - (mLevelBounds.y - spawnPoint.y);
 	}
 	else if (spawnPoint.y - (PLAYABLE_SCREEN_AREA_HEIGHT / 2) < 0.0f)
 	{
@@ -249,8 +250,8 @@ void PlayableCharacter::CalculateNewPosition(const float deltaTime, const Vector
 	// First cap the new positions to their relative bounds - starting with the y axis
 	if (newScreenGridPos.y <= 0.0f)
 		newScreenGridPos.y = 0.0f;
-	else if (newScreenGridPos.y >= PLAYABLE_SCREEN_AREA_HEIGHT + 4)
-		newScreenGridPos.y = PLAYABLE_SCREEN_AREA_HEIGHT + 4;
+	else if (newScreenGridPos.y >= PLAYABLE_SCREEN_AREA_HEIGHT + 4.0f)
+		newScreenGridPos.y = PLAYABLE_SCREEN_AREA_HEIGHT + 4.0f;
 
 	if (newRealGridPos.y <= 0.0f)
 		newRealGridPos.y = 0.0f;
@@ -260,8 +261,8 @@ void PlayableCharacter::CalculateNewPosition(const float deltaTime, const Vector
 	// Now for the x axis
 	if (newScreenGridPos.x <= 0.0f)
 		newScreenGridPos.x = 0.0f;
-	else if (newScreenGridPos.x >= (PLAYABLE_SCREEN_AREA_WIDTH - 1))
-		newScreenGridPos.x = (PLAYABLE_SCREEN_AREA_HEIGHT - 1);
+	else if (newScreenGridPos.x >= (PLAYABLE_SCREEN_AREA_WIDTH - 1.0f))
+		newScreenGridPos.x = (PLAYABLE_SCREEN_AREA_HEIGHT - 1.0f);
 
 	if (newRealGridPos.x <= -1.0f)
 		newRealGridPos.x = -1.0f;
@@ -370,6 +371,8 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 		break;
 
 		case SDLK_d:
+			mWasFacingRight = false;
+
 			mCurrentMovements |= MovementBitField::MOVING_RIGHT;
 
 			mAcceleration.x = multiplier * speed;
@@ -382,15 +385,19 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 		break;
 
 		case SDLK_s:
-			mCurrentMovements |= MovementBitField::FALLING;
+			mCurrentMovements |= MovementBitField::CROUCHING;
 
 			mAcceleration.y = multiplier * speed;
 		break;
 
 		case SDLK_w:
-			mCurrentMovements |= MovementBitField::JUMPING;
+			if (!(mCurrentMovements & MovementBitField::JUMPING) && mVelocity.y == 0.0f)
+			{
+				mCurrentMovements |= MovementBitField::JUMPING;
 
-			mAcceleration.y = -multiplier * speed;
+				//mAcceleration.y = -multiplier * speed;
+				mVelocity.y = -3.0f;
+			}
 		break;
 		}
 	break;
@@ -406,23 +413,27 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 		break;
 
 		case SDLK_d:
+			mWasFacingRight = true;
+
 			mCurrentMovements &= ~(MovementBitField::MOVING_RIGHT);
 
 			mAcceleration.x = 0.0f;
 		break;
 
 		case SDLK_a:
+			mWasFacingRight = false;
+
 			mCurrentMovements &= ~(MovementBitField::MOVING_LEFT);
 
 			mAcceleration.x = 0.0f;
 		break;
 
 		case SDLK_s:
-			mCurrentMovements &= ~(MovementBitField::FALLING);
+			mCurrentMovements &= ~(MovementBitField::CROUCHING);
 		break;
 
 		case SDLK_w:
-			mCurrentMovements &= ~(MovementBitField::JUMPING);
+			//mCurrentMovements &= ~(MovementBitField::JUMPING);
 
 			mAcceleration.y = 0.0f;
 		break;
@@ -495,7 +506,9 @@ void PlayableCharacter::UpdatePhysics(const float deltaTime)
 	{
 		float frictionReduction = (kFrictionMultiplier * deltaTime);
 
-		if (abs(mVelocity.x) > 0.05f)
+		if (abs(mVelocity.x) - frictionReduction < 0.0f)
+			mVelocity.x = 0.0f;
+		else
 		{
 			if (mVelocity.x > 0.0f)
 				mVelocity.x -= frictionReduction;
@@ -507,37 +520,32 @@ void PlayableCharacter::UpdatePhysics(const float deltaTime)
 	// Apply the acceleration of the player 
 	mVelocity += Vector2D(mAcceleration.x * deltaTime, (mAcceleration.y + GRAVITY) * deltaTime);
 
+	// If walking
 	if (!(mCurrentMovements & MovementBitField::RUNNING))
 	{
 		// Cap the velocity to the max speed if it exceeds it
-		if (abs(mVelocity.x) > kBaseMaxSpeed)
-		{
-			if (mVelocity.x > 0.0f)
-				mVelocity.x = kBaseMaxSpeed;
-			else
-				mVelocity.x = -kBaseMaxSpeed;
-		}
+		if (mVelocity.x > kBaseMaxSpeed)
+			mVelocity.x = kBaseMaxSpeed;
+		else if(mVelocity.x < -kBaseMaxSpeed)
+			mVelocity.x = -kBaseMaxSpeed;
 
-		if (abs(mVelocity.y) > kBaseMaxSpeed)
-		{
-			if(mVelocity.y > 0.0f)
-				mVelocity.y = kBaseMaxSpeed;
-			else
-				mVelocity.y = -kBaseMaxSpeed;
-		}
+
+		if(mVelocity.y > kBaseMaxSpeed)
+			mVelocity.y = kBaseMaxSpeed;
+		else if(mVelocity.y < -kBaseMaxSpeed)
+			mVelocity.y = -kBaseMaxSpeed;
 	}
 	else
 	{
 
 		// We are running so we need to increase the P-Speed counter - and therefore increase the player's max speed
-		mMaxSpeed += mPSpeedAccumulatorRate * deltaTime;
-
-		if (mMaxSpeed > kMaxSpeedOverall)
-			mMaxSpeed = kMaxSpeedOverall;
+		//mMaxSpeed += mPSpeedAccumulatorRate * deltaTime;
 
 		// Cap the velocity to the max speed if it exceeds it
 		if (abs(mVelocity.x) > mMaxSpeed)
 		{
+			mMaxSpeed += mPSpeedAccumulatorRate * deltaTime;
+
 			if (mVelocity.x > 0.0f)
 				mVelocity.x = mMaxSpeed;
 			else
@@ -546,13 +554,22 @@ void PlayableCharacter::UpdatePhysics(const float deltaTime)
 
 		if (abs(mVelocity.y) > mMaxSpeed)
 		{
+			mMaxSpeed += mPSpeedAccumulatorRate * deltaTime;
+
 			if (mVelocity.y > 0.0f)
 				mVelocity.y = mMaxSpeed;
 			else
 				mVelocity.y = -mMaxSpeed;
 		}
+
+		if (mMaxSpeed > kMaxSpeedOverall)
+			mMaxSpeed = kMaxSpeedOverall;
 	}
 
+	if (abs(mVelocity.y) < 0.05f)
+	{
+		mCurrentMovements &= ~(MovementBitField::JUMPING);
+	}
 }
 
 // ----------------------------------------------------- //
@@ -619,8 +636,8 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 	// Check to see if the player has stopped moving
 	if (mCurrentMovements == 0)
 	{
-		mStartFrame = 0;
-		mEndFrame = 0;
+		mStartFrame   = 0;
+		mEndFrame     = 0;
 		mCurrentFrame = 0;
 
 		mPriorFrameMovements = mCurrentMovements;
@@ -628,33 +645,10 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 		return;
 	}
 
-	// If turning around sharply
-	if ((mCurrentMovements & MovementBitField::MOVING_RIGHT && mPriorFrameMovements & MovementBitField::MOVING_LEFT) ||
-		(mCurrentMovements & MovementBitField::MOVING_LEFT && mPriorFrameMovements & MovementBitField::MOVING_RIGHT))
-	{
-		mStartFrame = 6;
-		mEndFrame = 6;
-		mCurrentFrame = mStartFrame;
-
-		mPriorFrameMovements = mCurrentMovements;
-
-		return;
-	}
-
-	// Check to see if we need to start walking
-	if (mCurrentMovements & MovementBitField::MOVING_RIGHT || mCurrentMovements & MovementBitField::MOVING_LEFT)
-	{
-		mStartFrame = 0;
-		mEndFrame = 1;
-		mCurrentFrame = mStartFrame;
-
-		mPriorFrameMovements = mCurrentMovements;
-
-		return;
-	}
-
+	// Check to see if they are jumping
 	if (mCurrentMovements & MovementBitField::JUMPING)
 	{
+		// See if this jump is a full speed jump
 		if (mCurrentMovements & MovementBitField::RUNNING)
 		{
 			// Full sprint jump
@@ -675,10 +669,36 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 		return;
 	}
 
+	// If turning around sharply
+	if ((mCurrentMovements & MovementBitField::MOVING_RIGHT && mPriorFrameMovements & MovementBitField::MOVING_LEFT) ||
+		(mCurrentMovements & MovementBitField::MOVING_LEFT && mPriorFrameMovements & MovementBitField::MOVING_RIGHT))
+	{
+		mStartFrame   = 6;
+		mEndFrame     = 6;
+		mCurrentFrame = mStartFrame;
+
+		mPriorFrameMovements = mCurrentMovements;
+
+		return;
+	}
+
+	// Check for sprinting
 	if (mCurrentMovements & MovementBitField::RUNNING)
 	{
 		mStartFrame = 3;
 		mEndFrame = 4;
+		mCurrentFrame = mStartFrame;
+
+		mPriorFrameMovements = mCurrentMovements;
+
+		return;
+	}
+
+	// Check to see if we need to start walking
+	if (mCurrentMovements & MovementBitField::MOVING_RIGHT || mCurrentMovements & MovementBitField::MOVING_LEFT)
+	{
+		mStartFrame   = 0;
+		mEndFrame     = 1;
 		mCurrentFrame = mStartFrame;
 
 		mPriorFrameMovements = mCurrentMovements;

@@ -16,7 +16,7 @@ enum MovementBitField : unsigned int
 	NONE         = 0,
 	MOVING_RIGHT = 1,
 	MOVING_LEFT  = 2,
-	FALLING      = 4,
+	CROUCHING    = 4,
 
 	RUNNING      = 8,
 	JUMPING      = 16,
@@ -115,6 +115,7 @@ private:
 
 	bool         mIsAlive;
 	bool         mApplyFriction;
+	bool         mWasFacingRight;
 };
 
 
