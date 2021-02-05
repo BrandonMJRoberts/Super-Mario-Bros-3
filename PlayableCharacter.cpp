@@ -33,7 +33,7 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , kBaseMaxHorizontalSpeed(6.0f)
 , mMaxHorizontalSpeed(kBaseMaxHorizontalSpeed)
 , kMaxHorizontalSpeedOverall(10.0f)
-, kAirFrictionMultiplier(3.0f)
+, kAirFrictionMultiplier(3.5f)
 , kGroundFrictionMultiplier(7.0f)
 , kJumpHeldAccelerationDepreciationRate(12.0f)
 , mJumpInitialBoost(-12.0f)
@@ -149,7 +149,7 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 
 
 	// Default to going downwards
-	Vector2D leftPos = Vector2D(mRealGridPosition.x, mRealGridPosition.y + (mVelocity.y * deltaTime));
+	Vector2D leftPos  = Vector2D(mRealGridPosition.x,                   mRealGridPosition.y + (mVelocity.y * deltaTime));
 	Vector2D rightPos = Vector2D(mRealGridPosition.x + mCollisionBox.x, mRealGridPosition.y + (mVelocity.y * deltaTime));
 
 	if (mVelocity.y >= 0.0f)
@@ -157,7 +157,9 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 		// Going downwards
 		if (CheckYCollision(leftPos, rightPos, interactionLayer, objectLayer, potentialNewYPos))
 		{
-			mGrounded = true;
+			mGrounded          = true;
+			mCurrentMovements &= ~(MovementBitField::JUMPING);
+			mCurrentMovements &= ~(MovementBitField::HOLDING_JUMP);
 			collisionCount++;
 		}
 		else
@@ -417,7 +419,6 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 
 				mJumpHeldCurrentBoost = kJumpHeldInitialBoost;
 
-				//mAcceleration.y = -multiplier * speed;
 				mGrounded = false;
 
 				// Give the minimum jump height of boost upwards
@@ -600,6 +601,7 @@ void PlayableCharacter::UpdatePhysics(const float deltaTime)
 			mMaxHorizontalSpeed = kMaxHorizontalSpeedOverall;
 	}
 
+	// If we are grounded then stop all jump related things
 	if (mGrounded)
 	{
 		mCurrentMovements &= ~(MovementBitField::JUMPING);
@@ -694,8 +696,8 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 		else
 		{
 			// Regular jump
-			mStartFrame = 2;
-			mEndFrame = 2;
+			mStartFrame   = 2;
+			mEndFrame     = 2;
 			mCurrentFrame = mStartFrame;
 		}
 
@@ -706,7 +708,7 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 
 	// If turning around sharply
 	if ((mCurrentMovements & MovementBitField::MOVING_RIGHT && mPriorFrameMovements & MovementBitField::MOVING_LEFT) ||
-		(mCurrentMovements & MovementBitField::MOVING_LEFT && mPriorFrameMovements & MovementBitField::MOVING_RIGHT))
+		(mCurrentMovements & MovementBitField::MOVING_LEFT  && mPriorFrameMovements & MovementBitField::MOVING_RIGHT))
 	{
 		mStartFrame   = 6;
 		mEndFrame     = 6;
@@ -717,12 +719,27 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 		return;
 	}
 
-	// Check for sprinting
-	if (mCurrentMovements & MovementBitField::RUNNING && mVelocity.x >= kMaxHorizontalSpeedOverall)
+	// Check for sprinting - must be going at least a certain speed in order to get this sprite 
+	if (mCurrentMovements & MovementBitField::RUNNING)
 	{
-		mStartFrame = 3;
-		mEndFrame = 4;
-		mCurrentFrame = mStartFrame;
+		if (abs(mVelocity.x) >= kMaxHorizontalSpeedOverall)
+		{
+			mStartFrame   = 3;
+			mEndFrame     = 4;
+			mCurrentFrame = mStartFrame;
+		}
+		else if(mVelocity.x != 0.0f)
+		{
+			mStartFrame   = 0;
+			mEndFrame     = 1;
+			mCurrentFrame = mStartFrame;
+		}
+		else
+		{
+			mStartFrame   = 0;
+			mEndFrame     = 0;
+			mCurrentFrame = mStartFrame;
+		}
 
 		mPriorFrameMovements = mCurrentMovements;
 
@@ -744,8 +761,8 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 	// If going down/up a pipe
 	if (mCurrentMovements & MovementBitField::ENTERING_PIPE_VERTICALLY)
 	{
-		mStartFrame = 7;
-		mEndFrame = 7;
+		mStartFrame   = 7;
+		mEndFrame     = 7;
 		mCurrentFrame = mStartFrame;
 
 		mPriorFrameMovements = mCurrentMovements;
