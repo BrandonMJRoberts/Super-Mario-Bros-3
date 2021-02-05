@@ -2,7 +2,15 @@
 
 # ------------------------------------------------------------------ #
 
-#PIPE - Left of mouth position (vec2) - Width (uint) - Height (uint) - Pipe type (uint) - Pipe Facing Direction (0 = Up, 1 = Right, 2 = Down, 3 = Left) - directory for loading in level (string) - stage entrance ID (0 is for the start point in the overworld) - Enemy contained within pipe - Double Ended (Bool)
+# SPAWN_POINT - Position - Entrance ID (0 is for the starting spawn)
+SPAWN_POINT
+
+1 25 0     # Default spawnpoint
+74 10 1    # Back in from pipe
+
+# ------------------------------------------------------------------ #
+
+#PIPE - Left of mouth position (vec2) - Width (uint) - Height (uint) - Pipe type (uint) - Pipe Facing Direction (0 = Left, 1 = Right, 2 = Up, 3 = Down) - file directory for loading in level (string) - stage entrance ID (0 is for the start point in the overworld) - Enemy contained within pipe - Amount of ends (2 = double ended, 0 = no ends) - Stage ID to go to (int) - Pipe is vertical (bool)
 PIPE
 25 8 2 4 1 1 NONE -1 GOOMBA T
 
@@ -30,7 +38,7 @@ BRICK_BLOCK
 
 # ------------------------------------------------------------------ #
 
-# QUESTION_MARK_BLOCK - Position - Item to drop - Quantity - Scalable - Scales to - Pre-hit
+# QUESTIONMARK_BLOCK - Position - Item to drop - Quantity - Scalable - Scales to
 QUESTION_MARK_BLOCK
 
 36 5 MUSHROOM 1 T LEAF F
@@ -51,15 +59,6 @@ COIN
 70 9
 71 9
 72 9
-
-# ------------------------------------------------------------------ #
-
-# SPAWN_POINT - Position - Entrance ID (0 for starting spawn)
-SPAWN_POINT
-
-1 2 0      # Default spawnpoint
-74 10 1    # Back in from pipe
-
 
 # ------------------------------------------------------------------ #
 
@@ -88,16 +87,10 @@ GOOMBA
 
 # ------------------------------------------------------------------ #
 
-# RED_PARA_GOOMBA - Position - Start facing direction - Start in air
-RED_PARA_GOOMBA
-57 5 L F
-
-97 6 L T
-
-# ------------------------------------------------------------------ #
-
-# PARA_GOOMBA - Position - Start facing direction - Start in air
+# PARA_GOOMBA - Position - Start facing direction
 PARA_GOOMBA
+57 5 L F
+97 6 L T
 157 1 L F
 
 # ------------------------------------------------------------------ #

@@ -30,11 +30,15 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , mLevelBounds(levelBounds)
 
 , mCollisionBox(1.0f, 1.0f)
-, kBaseMaxSpeed(3.5f)
-, mMaxSpeed(kBaseMaxSpeed)
-, kMaxSpeedOverall(8.0f)
-, mApplyFriction(false)
-, kFrictionMultiplier(5.0f)
+, kBaseMaxHorizontalSpeed(6.0f)
+, mMaxHorizontalSpeed(kBaseMaxHorizontalSpeed)
+, kMaxHorizontalSpeedOverall(12.0f)
+, kAirFrictionMultiplier(2.0f)
+, kGroundFrictionMultiplier(5.0f)
+, kJumpHeldAccelerationDepreciationRate(12.0f)
+, mJumpInitialBoost(-12.0f)
+, kJumpHeldInitialBoost(-17.0f)
+, mJumpHeldCurrentBoost(kJumpHeldInitialBoost)
 , mCurrentMovements(MovementBitField::NONE)
 , mPSpeedAccumulatorRate(1.5f)
 
@@ -45,6 +49,7 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , mPowerUpState(POWER_UP_TYPE::NONE)
 , mRenderer(renderer)
 , mWasFacingRight(true)
+, mGrounded(true)
 {
 	LoadInCorrectSpriteSheet();
 
@@ -81,16 +86,30 @@ void PlayableCharacter::Render()
 			               int(mSingleSpriteWidth), 
 			               int(mSingleSpriteHeight) };
 
-		// If going right, or if we were going right and are now not moving
-		if (mCurrentMovements & MovementBitField::MOVING_RIGHT || mVelocity.x > 0.0f || (mVelocity.x == 0.0f && mWasFacingRight))
+
+		// If going right
+		if (mCurrentMovements & MovementBitField::MOVING_RIGHT)
 		{
 			// Render it facing Right
 			mSpriteSheet->Render(portionOfSpriteSheet, destRect, SDL_FLIP_HORIZONTAL);
 		}
-		else
+		else if (mCurrentMovements & MovementBitField::MOVING_LEFT) // If going left
 		{
 			// Render it facing left
 			mSpriteSheet->Render(portionOfSpriteSheet, destRect, SDL_FLIP_NONE);
+		}
+		else // Not pressing a direction so go off the prior direction
+		{
+			// If we were going right and are now not moving
+			if (mWasFacingRight)
+			{
+				// Then render facing right
+				mSpriteSheet->Render(portionOfSpriteSheet, destRect, SDL_FLIP_HORIZONTAL);
+			}
+			else
+			{
+				mSpriteSheet->Render(portionOfSpriteSheet, destRect, SDL_FLIP_NONE);
+			}
 		}
 	}
 	else
@@ -113,46 +132,50 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 	double potentialNewXPos = mRealGridPosition.x + (mVelocity.x * deltaTime);
 	double potentialNewYPos = mRealGridPosition.y + (mVelocity.y * deltaTime);
 
-	// First check if the player can move on the X axis
-	Vector2D     newBottomPos, newTopPos;
-
-	//if (mVelocity.x > 0.0f)
-	if(mCurrentMovements & MovementBitField::MOVING_RIGHT)
+	Vector2D footPos, headPos;
+	if (mCurrentMovements & MovementBitField::MOVING_RIGHT || mVelocity.x > 0.0f)
 	{
-		// Going to the right
-		newBottomPos = Vector2D(mRealGridPosition.x + mCollisionBox.x + (mVelocity.x * deltaTime), mRealGridPosition.y);
-		newTopPos    = Vector2D(mRealGridPosition.x + mCollisionBox.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBox.y);
+		// Going right
+		footPos = Vector2D(mRealGridPosition.x + mCollisionBox.x + (mVelocity.x * deltaTime), mRealGridPosition.y);
+		headPos = Vector2D(mRealGridPosition.x + mCollisionBox.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBox.y);
 	}
-	else if(mCurrentMovements & MovementBitField::MOVING_LEFT)
+	else if (mCurrentMovements & MovementBitField::MOVING_LEFT || mVelocity.y < 0.0f)
 	{
-		// Going to the left
-		newBottomPos = Vector2D(mRealGridPosition.x + (mVelocity.x * deltaTime), mRealGridPosition.y);
-		newTopPos    = Vector2D(mRealGridPosition.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBox.y);
+		// Going left
+		footPos = Vector2D(mRealGridPosition.x + (mVelocity.x * deltaTime), mRealGridPosition.y);
+		headPos = Vector2D(mRealGridPosition.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBox.y);
 	}
 
-	if (CheckXCollision(newBottomPos, newTopPos, interactionLayer, objectLayer, potentialNewXPos))
+	if (CheckXCollision(footPos, headPos, interactionLayer, objectLayer, potentialNewXPos))
 		collisionCount++;
 
-	// Now handle the Y axis
-	if (mVelocity.y != 0.0f)
-	{
-		Vector2D     newLeftPos, newRightPos;
 
-		if (mVelocity.y >= 0.0f)
+	Vector2D leftPos, rightPos;
+	if (mVelocity.y >= 0.0f)
+	{
+		// Going downwards
+		leftPos  = Vector2D(mRealGridPosition.x, mRealGridPosition.y + (mVelocity.y * deltaTime));
+		rightPos = Vector2D(mRealGridPosition.x + mCollisionBox.x, mRealGridPosition.y + (mVelocity.y * deltaTime));
+
+		if (CheckYCollision(leftPos, rightPos, interactionLayer, objectLayer, potentialNewYPos))
 		{
-			// Going downwards
-			newLeftPos  = Vector2D(mRealGridPosition.x,                   mRealGridPosition.y + (mVelocity.y * deltaTime));
-			newRightPos = Vector2D(mRealGridPosition.x + mCollisionBox.x, mRealGridPosition.y + (mVelocity.y * deltaTime));
+			mGrounded = true;
+			collisionCount++;
 		}
 		else
-		{
-			// Going upwards
-			newLeftPos  = Vector2D(mRealGridPosition.x,                   mRealGridPosition.y - mCollisionBox.y + (mVelocity.y * deltaTime));
-			newRightPos = Vector2D(mRealGridPosition.x + mCollisionBox.x, mRealGridPosition.y - mCollisionBox.y + (mVelocity.y * deltaTime));
-		}
+			mGrounded = false;
 
-		if (CheckYCollision(newLeftPos, newRightPos, interactionLayer, objectLayer, potentialNewYPos))
+	}
+	else
+	{
+		// Going upwards
+		leftPos  = Vector2D(mRealGridPosition.x, mRealGridPosition.y - mCollisionBox.y + (mVelocity.y * deltaTime));
+		rightPos = Vector2D(mRealGridPosition.x + mCollisionBox.x, mRealGridPosition.y - mCollisionBox.y + (mVelocity.y * deltaTime));
+
+		if (CheckYCollision(leftPos, rightPos, interactionLayer, objectLayer, potentialNewYPos))
 			collisionCount++;
+
+		mGrounded = false;
 	}
 
 	// If we are not prevented from moving in both directions then calculate where we are going to be next frame
@@ -166,9 +189,10 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 
 bool PlayableCharacter::CheckXCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer, double& newXPosRef)
 {
-	// Check to see if we have hit the terrain on the X movement
+	// Check to see if we have hit the terrain on the X movement, and the objects in the level, and the screen constraints
 	if (   HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1)  || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2)
-		|| HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1) || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2))
+		|| HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1) || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2) 
+		|| positionToCheck1.x < 0.0f || positionToCheck2.x < 0.0f || positionToCheck1.x > mLevelBounds.x || positionToCheck2.x > mLevelBounds.x)
 	{
 		// Then dont move to the new position
 		newXPosRef      = mRealGridPosition.x;
@@ -186,21 +210,19 @@ bool PlayableCharacter::CheckXCollision(const Vector2D positionToCheck1, const V
 
 bool PlayableCharacter::CheckYCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer, double& newYPosRef)
 {
-	if (   HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1)  || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2)
-		|| HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1) || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2))
+	if ( HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1) || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1) ||
+		 HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2) || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2) ||
+		 positionToCheck1.y < 0.0f || positionToCheck2.y < 0.0f || positionToCheck1.y + mCollisionBox.y > mLevelBounds.y + 2 || positionToCheck2.y + mCollisionBox.y > mLevelBounds.y + 2)
 	{
 		// Then dont move in the y axis
-		newYPosRef      = mRealGridPosition.y;
+		newYPosRef = mRealGridPosition.y;
 
 		// Stop the player from moving
-		mVelocity.y     = 0.0f;
-
-		mApplyFriction = true;
+		mVelocity.y = 0.0f;
 
 		return true;
 	}
 
-	mApplyFriction = false;
 	return false;
 }
 
@@ -391,12 +413,26 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 		break;
 
 		case SDLK_w:
-			if (!(mCurrentMovements & MovementBitField::JUMPING) && mVelocity.y == 0.0f)
+			// If not jumping and grounded
+			if (mGrounded && !(mCurrentMovements & MovementBitField::JUMPING))
 			{
 				mCurrentMovements |= MovementBitField::JUMPING;
 
+				mJumpHeldCurrentBoost = kJumpHeldInitialBoost;
+
 				//mAcceleration.y = -multiplier * speed;
-				mVelocity.y = -3.0f;
+				mGrounded = false;
+
+				// Give the minimum jump height of boost upwards
+				mVelocity.y = mJumpInitialBoost;
+
+				Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_JUMPED, "");
+			}
+
+			// Otherwise check if you are jumping and if so state that you are holding down jump
+			if (mCurrentMovements & MovementBitField::JUMPING)
+			{
+				mCurrentMovements |= MovementBitField::HOLDING_JUMP;
 			}
 		break;
 		}
@@ -409,7 +445,7 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 			// Set the player to not be running
 			mCurrentMovements &= ~(MovementBitField::RUNNING);
 
-			mMaxSpeed = kBaseMaxSpeed;
+			mMaxHorizontalSpeed = kBaseMaxHorizontalSpeed;
 		break;
 
 		case SDLK_d:
@@ -434,6 +470,12 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 
 		case SDLK_w:
 			//mCurrentMovements &= ~(MovementBitField::JUMPING);
+
+			// Not holding jump anymore
+			mCurrentMovements &= ~(MovementBitField::HOLDING_JUMP);
+
+			// If you release jump whilst jumping you cannot continue the extra boost after the release
+			mJumpHeldCurrentBoost = 0.0f;
 
 			mAcceleration.y = 0.0f;
 		break;
@@ -502,19 +544,34 @@ bool PlayableCharacter::HandleCollisionsWithInteractionObjectLayer(ObjectLayer* 
 void PlayableCharacter::UpdatePhysics(const float deltaTime)
 {
 	// Apply friction to the player's movement 
-	if (mApplyFriction)
-	{
-		float frictionReduction = (kFrictionMultiplier * deltaTime);
+	float frictionReduction = (kAirFrictionMultiplier * deltaTime);
 
-		if (abs(mVelocity.x) - frictionReduction < 0.0f)
-			mVelocity.x = 0.0f;
-		else
-		{
-			if (mVelocity.x > 0.0f)
-				mVelocity.x -= frictionReduction;
-			else if (mVelocity.x < 0.0f)
-				mVelocity.x += frictionReduction;
-		}
+	if(mGrounded)
+		frictionReduction = (kGroundFrictionMultiplier * deltaTime);
+
+	// Apply friction to the player's X movement
+	if (abs(mVelocity.x) - frictionReduction < 0.0f)
+		mVelocity.x = 0.0f;
+	else
+	{
+		if (mVelocity.x > 0.0f)
+			mVelocity.x -= frictionReduction;
+		else if (mVelocity.x < 0.0f)
+			mVelocity.x += frictionReduction;
+	}
+
+	// Jumping calculations - you only get the extra jump height if you are holding run, otherwise it is just the regular jump
+	if (mCurrentMovements & MovementBitField::HOLDING_JUMP && mCurrentMovements & MovementBitField::RUNNING)
+	{
+		// If holding down jump then keep mario going up until a point
+		mAcceleration.y = mJumpHeldCurrentBoost;
+
+		// Reduce the current extra being added onto the jump
+		mJumpHeldCurrentBoost += (kJumpHeldAccelerationDepreciationRate * deltaTime);
+
+		// Bounds check
+		if (mJumpHeldCurrentBoost >= 0.0f)
+			mJumpHeldCurrentBoost = 0.0f;
 	}
 
 	// Apply the acceleration of the player 
@@ -524,51 +581,32 @@ void PlayableCharacter::UpdatePhysics(const float deltaTime)
 	if (!(mCurrentMovements & MovementBitField::RUNNING))
 	{
 		// Cap the velocity to the max speed if it exceeds it
-		if (mVelocity.x > kBaseMaxSpeed)
-			mVelocity.x = kBaseMaxSpeed;
-		else if(mVelocity.x < -kBaseMaxSpeed)
-			mVelocity.x = -kBaseMaxSpeed;
-
-
-		if(mVelocity.y > kBaseMaxSpeed)
-			mVelocity.y = kBaseMaxSpeed;
-		else if(mVelocity.y < -kBaseMaxSpeed)
-			mVelocity.y = -kBaseMaxSpeed;
+		if (mVelocity.x > kBaseMaxHorizontalSpeed)
+			mVelocity.x = kBaseMaxHorizontalSpeed;
+		else if(mVelocity.x < -kBaseMaxHorizontalSpeed)
+			mVelocity.x = -kBaseMaxHorizontalSpeed;
 	}
 	else
 	{
-
-		// We are running so we need to increase the P-Speed counter - and therefore increase the player's max speed
-		//mMaxSpeed += mPSpeedAccumulatorRate * deltaTime;
-
 		// Cap the velocity to the max speed if it exceeds it
-		if (abs(mVelocity.x) > mMaxSpeed)
+		if (abs(mVelocity.x) > mMaxHorizontalSpeed)
 		{
-			mMaxSpeed += mPSpeedAccumulatorRate * deltaTime;
+			mMaxHorizontalSpeed += mPSpeedAccumulatorRate * deltaTime;
 
 			if (mVelocity.x > 0.0f)
-				mVelocity.x = mMaxSpeed;
+				mVelocity.x = mMaxHorizontalSpeed;
 			else
-				mVelocity.x = -mMaxSpeed;
+				mVelocity.x = -mMaxHorizontalSpeed;
 		}
 
-		if (abs(mVelocity.y) > mMaxSpeed)
-		{
-			mMaxSpeed += mPSpeedAccumulatorRate * deltaTime;
-
-			if (mVelocity.y > 0.0f)
-				mVelocity.y = mMaxSpeed;
-			else
-				mVelocity.y = -mMaxSpeed;
-		}
-
-		if (mMaxSpeed > kMaxSpeedOverall)
-			mMaxSpeed = kMaxSpeedOverall;
+		if (mMaxHorizontalSpeed > kMaxHorizontalSpeedOverall)
+			mMaxHorizontalSpeed = kMaxHorizontalSpeedOverall;
 	}
 
-	if (abs(mVelocity.y) < 0.05f)
+	if (mGrounded)
 	{
 		mCurrentMovements &= ~(MovementBitField::JUMPING);
+		mCurrentMovements &= ~(MovementBitField::HOLDING_JUMP);
 	}
 }
 

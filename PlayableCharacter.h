@@ -20,9 +20,10 @@ enum MovementBitField : unsigned int
 
 	RUNNING      = 8,
 	JUMPING      = 16,
-	SWIMMING     = 32,
+	HOLDING_JUMP = 32,
+	SWIMMING     = 64,
 
-	ENTERING_PIPE_VERTICALLY = 64,
+	ENTERING_PIPE_VERTICALLY = 128,
 };
 
 // ---------------------------------------------------------------- //
@@ -100,13 +101,18 @@ private:
 	float        mTimeTillNextFrame;
 	const float  mTimePerFrame;
 
-	const float  kBaseMaxSpeed;
-	const float  kMaxSpeedOverall;
-	float        mMaxSpeed;
+	const float  kBaseMaxHorizontalSpeed;
+	const float  kMaxHorizontalSpeedOverall;
+	float        mMaxHorizontalSpeed;
 
 	const float  mPSpeedAccumulatorRate;
 
-	const float  kFrictionMultiplier;
+	const float  kAirFrictionMultiplier;
+	const float  kGroundFrictionMultiplier;
+	const float  kJumpHeldAccelerationDepreciationRate;
+	float        mJumpInitialBoost;
+	const float  kJumpHeldInitialBoost;
+	float        mJumpHeldCurrentBoost;
 
 	unsigned int mCurrentMovements;
 	unsigned int mPriorFrameMovements;
@@ -114,8 +120,8 @@ private:
 	POWER_UP_TYPE mPowerUpState;
 
 	bool         mIsAlive;
-	bool         mApplyFriction;
 	bool         mWasFacingRight;
+	bool         mGrounded;
 };
 
 

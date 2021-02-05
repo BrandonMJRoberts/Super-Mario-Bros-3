@@ -1,22 +1,43 @@
 # Interactable Layer
 
-155 # Width
-27  # Height
+# Width
+177
+# Height
+27
+# Amount of different sprites in level
+13
+# Amount of sprites on sprite sheet width
+4
+# Amount of sprites on sprite sheet height
+2
 
 # Definitions
-GRASS_GROUND_TOP_MIDDDLE	            # ID 0
-GRASS_GROUND_SHALLOW_SLOPE_RIGHT_LOWER      # ID 1
-GRASS_GROUND_SHALLOW_SLOPE_RIGHT_UPPER      # ID 2
-GRASS_GROUND_SHALLOW_SLOPE_LEFT_LOWER       # ID 3
-GRASS_GROUND_SHALLOW_SLOPE_LEFT_UPPER       # ID 4
-GRASS_GROUND_STEEP_SLOPE_RIGHT   	    # ID 5
-GRASS_GROUND_STEEP_SLOPE_LEFT    	    # ID 6
-GRASS_GROUND_TOP_RIGHT_CORNER   	    # ID 7
-GRASS_GROUND_TOP_LEFT_CORNER     	    # ID 8
-GRASS_GROUND_RIGHT_WALL                     # ID 9
-GRASS_GROUND_LEFT_WALL                      # ID A
-UNDERGRASS_GROUND                           # ID B
-WOODEN_UNBREAKABLE_BLOCK                    # ID C
+# ID 0
+GRASS_GROUND_TOP_MIDDDLE
+# ID 1
+GRASS_GROUND_SHALLOW_SLOPE_RIGHT_LOWER
+#ID 2
+GRASS_GROUND_SHALLOW_SLOPE_RIGHT_UPPER
+# ID 3
+GRASS_GROUND_SHALLOW_SLOPE_LEFT_LOWER
+# ID 4
+GRASS_GROUND_SHALLOW_SLOPE_LEFT_UPPER
+# ID 5
+GRASS_GROUND_STEEP_SLOPE_RIGHT
+# ID 6
+GRASS_GROUND_STEEP_SLOPE_LEFT
+# ID 7
+GRASS_GROUND_TOP_RIGHT_CORNER
+# ID 8
+GRASS_GROUND_TOP_LEFT_CORNER
+# ID 9
+GRASS_GROUND_RIGHT_WALL
+# ID A
+GRASS_GROUND_LEFT_WALL
+# ID B
+UNDERGRASS_GROUND
+# ID C
+WOODEN_UNBREAKABLE_BLOCK
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -18,8 +18,8 @@ NodeMap_WorldMap::NodeMap_WorldMap(const std::string filePath)
 	LoadInDataFromFile(filePath);
 
 	//mClearedLevels.push_back('0');
-	mClearedLevels.push_back('1');
-	mClearedLevels.push_back('2');
+	//mClearedLevels.push_back('1');
+	//mClearedLevels.push_back('2');
 }
 
 // ----------------------------------------------------------------- //
