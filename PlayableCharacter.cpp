@@ -32,9 +32,9 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , mCollisionBox(1.0f, 1.0f)
 , kBaseMaxHorizontalSpeed(6.0f)
 , mMaxHorizontalSpeed(kBaseMaxHorizontalSpeed)
-, kMaxHorizontalSpeedOverall(12.0f)
-, kAirFrictionMultiplier(2.0f)
-, kGroundFrictionMultiplier(5.0f)
+, kMaxHorizontalSpeedOverall(10.0f)
+, kAirFrictionMultiplier(3.0f)
+, kGroundFrictionMultiplier(7.0f)
 , kJumpHeldAccelerationDepreciationRate(12.0f)
 , mJumpInitialBoost(-12.0f)
 , kJumpHeldInitialBoost(-17.0f)
@@ -132,14 +132,12 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 	double potentialNewXPos = mRealGridPosition.x + (mVelocity.x * deltaTime);
 	double potentialNewYPos = mRealGridPosition.y + (mVelocity.y * deltaTime);
 
-	Vector2D footPos, headPos;
-	if (mCurrentMovements & MovementBitField::MOVING_RIGHT || mVelocity.x > 0.0f)
-	{
-		// Going right
-		footPos = Vector2D(mRealGridPosition.x + mCollisionBox.x + (mVelocity.x * deltaTime), mRealGridPosition.y);
-		headPos = Vector2D(mRealGridPosition.x + mCollisionBox.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBox.y);
-	}
-	else if (mCurrentMovements & MovementBitField::MOVING_LEFT || mVelocity.y < 0.0f)
+	// Default to checking right 
+	Vector2D footPos = Vector2D(mRealGridPosition.x + mCollisionBox.x + (mVelocity.x * deltaTime), mRealGridPosition.y);
+	Vector2D headPos = Vector2D(mRealGridPosition.x + mCollisionBox.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBox.y);
+	
+	// Check if we are going left - if we are then check left
+	if (mVelocity.x < 0.0f || mCurrentMovements & MovementBitField::MOVING_LEFT)
 	{
 		// Going left
 		footPos = Vector2D(mRealGridPosition.x + (mVelocity.x * deltaTime), mRealGridPosition.y);
@@ -150,13 +148,13 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 		collisionCount++;
 
 
-	Vector2D leftPos, rightPos;
+	// Default to going downwards
+	Vector2D leftPos = Vector2D(mRealGridPosition.x, mRealGridPosition.y + (mVelocity.y * deltaTime));
+	Vector2D rightPos = Vector2D(mRealGridPosition.x + mCollisionBox.x, mRealGridPosition.y + (mVelocity.y * deltaTime));
+
 	if (mVelocity.y >= 0.0f)
 	{
 		// Going downwards
-		leftPos  = Vector2D(mRealGridPosition.x, mRealGridPosition.y + (mVelocity.y * deltaTime));
-		rightPos = Vector2D(mRealGridPosition.x + mCollisionBox.x, mRealGridPosition.y + (mVelocity.y * deltaTime));
-
 		if (CheckYCollision(leftPos, rightPos, interactionLayer, objectLayer, potentialNewYPos))
 		{
 			mGrounded = true;
@@ -164,12 +162,11 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 		}
 		else
 			mGrounded = false;
-
 	}
 	else
 	{
 		// Going upwards
-		leftPos  = Vector2D(mRealGridPosition.x, mRealGridPosition.y - mCollisionBox.y + (mVelocity.y * deltaTime));
+		leftPos  = Vector2D(mRealGridPosition.x,                   mRealGridPosition.y - mCollisionBox.y + (mVelocity.y * deltaTime));
 		rightPos = Vector2D(mRealGridPosition.x + mCollisionBox.x, mRealGridPosition.y - mCollisionBox.y + (mVelocity.y * deltaTime));
 
 		if (CheckYCollision(leftPos, rightPos, interactionLayer, objectLayer, potentialNewYPos))
@@ -687,11 +684,11 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 	if (mCurrentMovements & MovementBitField::JUMPING)
 	{
 		// See if this jump is a full speed jump
-		if (mCurrentMovements & MovementBitField::RUNNING)
+		if (mCurrentMovements & MovementBitField::RUNNING && mVelocity.x >= kMaxHorizontalSpeedOverall)
 		{
 			// Full sprint jump
-			mStartFrame = 5;
-			mEndFrame = 5;
+			mStartFrame   = 5;
+			mEndFrame     = 5;
 			mCurrentFrame = mStartFrame;
 		}
 		else
@@ -721,7 +718,7 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 	}
 
 	// Check for sprinting
-	if (mCurrentMovements & MovementBitField::RUNNING)
+	if (mCurrentMovements & MovementBitField::RUNNING && mVelocity.x >= kMaxHorizontalSpeedOverall)
 	{
 		mStartFrame = 3;
 		mEndFrame = 4;
