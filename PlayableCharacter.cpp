@@ -32,6 +32,7 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , mLevelBounds(levelBounds)
 
 , mCollisionBox(1.0f, 1.0f)
+, mCollisionBoxOffset(0.0f, 0.0f)
 
 , kBaseMaxHorizontalSpeed(6.0f)
 , mMaxHorizontalSpeed(kBaseMaxHorizontalSpeed)
@@ -87,7 +88,7 @@ void PlayableCharacter::Render()
 
 		// Now calculate where we should render it
 		SDL_Rect destRect {int(mScreenGridPosition.x * RESOLUTION_OF_SPRITES), 
-			               int(mScreenGridPosition.y * RESOLUTION_OF_SPRITES) - int(float(RESOLUTION_OF_SPRITES) * mCollisionBox.y) + 1, // Render in the position, moved up the height of the sprite + 1 to make it look like he is running on the ground
+			               int(mScreenGridPosition.y * RESOLUTION_OF_SPRITES) - int(float(RESOLUTION_OF_SPRITES) * mCollisionBox.y) + 2, // Render in the position, moved up the height of the sprite + 1 to make it look like he is running on the ground
 			               int(mSingleSpriteWidth), 
 			               int(mSingleSpriteHeight) };
 
@@ -137,16 +138,16 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 	double potentialNewXPos = mRealGridPosition.x + (mVelocity.x * deltaTime);
 	double potentialNewYPos = mRealGridPosition.y + (mVelocity.y * deltaTime);
 
-	// Default to checking right 
-	Vector2D footPos = Vector2D(mRealGridPosition.x + mCollisionBox.x + (mVelocity.x * deltaTime), mRealGridPosition.y);
-	Vector2D headPos = Vector2D(mRealGridPosition.x + mCollisionBox.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBox.y);
+	// Default to checking right - taking into consideration the position, the collision box width, collision box offset and the movement distance
+	Vector2D footPos = Vector2D(mRealGridPosition.x + mCollisionBox.x + mCollisionBoxOffset.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBoxOffset.y);
+	Vector2D headPos = Vector2D(mRealGridPosition.x + mCollisionBox.x + mCollisionBoxOffset.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBox.y - mCollisionBoxOffset.y);
 	
 	// Check if we are going left - if we are then check left
 	if (mVelocity.x < 0.0f)
 	{
 		// Going left
-		footPos = Vector2D(mRealGridPosition.x + (mVelocity.x * deltaTime), mRealGridPosition.y);
-		headPos = Vector2D(mRealGridPosition.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBox.y);
+		footPos = Vector2D(mRealGridPosition.x + mCollisionBoxOffset.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBoxOffset.y);
+		headPos = Vector2D(mRealGridPosition.x + mCollisionBoxOffset.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBox.y - mCollisionBoxOffset.y);
 	}
 
 	if (CheckXCollision(footPos, headPos, interactionLayer, objectLayer, potentialNewXPos))
@@ -154,8 +155,8 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 
 
 	// Default to going downwards
-	Vector2D leftPos  = Vector2D(mRealGridPosition.x,                   mRealGridPosition.y + (mVelocity.y * deltaTime));
-	Vector2D rightPos = Vector2D(mRealGridPosition.x + mCollisionBox.x, mRealGridPosition.y + (mVelocity.y * deltaTime));
+	Vector2D leftPos  = Vector2D(mRealGridPosition.x + mCollisionBoxOffset.x,                   mRealGridPosition.y - mCollisionBoxOffset.y + (mVelocity.y * deltaTime));
+	Vector2D rightPos = Vector2D(mRealGridPosition.x + mCollisionBoxOffset.x + mCollisionBox.x, mRealGridPosition.y - mCollisionBoxOffset.y + (mVelocity.y * deltaTime));
 
 	if (mVelocity.y >= 0.0f)
 	{
@@ -173,8 +174,8 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 	else
 	{
 		// Going upwards
-		leftPos  = Vector2D(mRealGridPosition.x,                   mRealGridPosition.y - mCollisionBox.y + (mVelocity.y * deltaTime));
-		rightPos = Vector2D(mRealGridPosition.x + mCollisionBox.x, mRealGridPosition.y - mCollisionBox.y + (mVelocity.y * deltaTime));
+		leftPos  = Vector2D(mRealGridPosition.x + mCollisionBoxOffset.x,                   mRealGridPosition.y - mCollisionBox.y - mCollisionBoxOffset.y + (mVelocity.y * deltaTime));
+		rightPos = Vector2D(mRealGridPosition.x + mCollisionBoxOffset.x + mCollisionBox.x, mRealGridPosition.y - mCollisionBox.y - mCollisionBoxOffset.y + (mVelocity.y * deltaTime));
 
 		if (CheckYCollision(leftPos, rightPos, interactionLayer, objectLayer, potentialNewYPos))
 			collisionCount++;
@@ -194,12 +195,15 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 bool PlayableCharacter::CheckXCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer, double& newXPosRef)
 {
 	// Check to see if we have hit the terrain on the X movement, and the objects in the level, and the screen constraints
-	if (   HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1)  || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2)
-		|| HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1) || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2) 
-		|| positionToCheck1.x < 0.0f || positionToCheck2.x < 0.0f || positionToCheck1.x > mLevelBounds.x || positionToCheck2.x > mLevelBounds.x)
+	if (HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1)  || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2) ||
+		HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1) || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2) || 
+		positionToCheck1.x < 0.0f ||
+		positionToCheck2.x < 0.0f ||
+		positionToCheck1.x > mLevelBounds.x ||
+		positionToCheck2.x > mLevelBounds.x)
 	{
 		// Then dont move to the new position
-		newXPosRef      = mRealGridPosition.x;
+		newXPosRef = mRealGridPosition.x;
 
 		// Stop the player from moving
 		mVelocity.x     = 0.0f;
@@ -214,11 +218,14 @@ bool PlayableCharacter::CheckXCollision(const Vector2D positionToCheck1, const V
 
 bool PlayableCharacter::CheckYCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer, double& newYPosRef)
 {
-	if ( HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1) || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1) ||
-		 HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2) || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2) ||
-		 positionToCheck1.y < 0.0f || positionToCheck2.y < 0.0f || positionToCheck1.y + mCollisionBox.y > mLevelBounds.y + 2 || positionToCheck2.y + mCollisionBox.y > mLevelBounds.y + 2)
+	// Check terrain collision
+	if (HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1) || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2) ||
+ 		HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1) || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2) ||
+		positionToCheck1.y < 0.0f ||
+		positionToCheck2.y < 0.0f ||
+		positionToCheck1.y + mCollisionBox.y > mLevelBounds.y + 2 ||
+		positionToCheck2.y + mCollisionBox.y > mLevelBounds.y + 2)
 	{
-		// Then dont move in the y axis
 		newYPosRef = mRealGridPosition.y;
 
 		// Stop the player from moving
@@ -681,12 +688,18 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 
 		mPriorFrameMovements = mCurrentMovements;
 
+		mCollisionBox.x       = 0.83f;
+		mCollisionBoxOffset.x = 0.083f;
+
 		return;
 	}
 
 	// Check to see if they are jumping
 	if (mCurrentMovements & MovementBitField::JUMPING)
 	{
+		mCollisionBox.x = 1.0f;
+		mCollisionBoxOffset.x = 0.0f;
+
 		// See if this jump is a full speed jump
 		if (mCurrentMovements & MovementBitField::RUNNING && abs(mVelocity.x) >= kMaxHorizontalSpeedOverall)
 		{
@@ -712,6 +725,9 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 	if ((mCurrentMovements & MovementBitField::MOVING_RIGHT && mPriorFrameMovements & MovementBitField::MOVING_LEFT) ||
 		(mCurrentMovements & MovementBitField::MOVING_LEFT  && mPriorFrameMovements & MovementBitField::MOVING_RIGHT))
 	{
+		mCollisionBox.x = 1.0f;
+		mCollisionBoxOffset.x = 0.0f;
+
 		mStartFrame   = 6;
 		mEndFrame     = 6;
 		mCurrentFrame = mStartFrame;
@@ -724,6 +740,9 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 	// Check for sprinting - must be going at least a certain speed in order to get this sprite 
 	if (mCurrentMovements & MovementBitField::RUNNING)
 	{
+		mCollisionBox.x = 1.0f;
+		mCollisionBoxOffset.x = 0.0f;
+
 		if (abs(mVelocity.x) >= kBaseMaxHorizontalSpeed)
 		{
 			mStartFrame   = 3;
@@ -751,6 +770,9 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 	// Check to see if we need to start walking
 	if (mCurrentMovements & MovementBitField::MOVING_RIGHT || mCurrentMovements & MovementBitField::MOVING_LEFT)
 	{
+		mCollisionBox.x = 1.0f;
+		mCollisionBoxOffset.x = 0.0f;
+
 		mStartFrame   = 0;
 		mEndFrame     = 1;
 		mCurrentFrame = mStartFrame;
@@ -763,6 +785,9 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 	// If going down/up a pipe
 	if (mCurrentMovements & MovementBitField::ENTERING_PIPE_VERTICALLY)
 	{
+		mCollisionBox.x = 0.8f;
+		mCollisionBoxOffset.x = 0.0f;
+
 		mStartFrame   = 7;
 		mEndFrame     = 7;
 		mCurrentFrame = mStartFrame;

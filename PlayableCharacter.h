@@ -82,6 +82,7 @@ private:
 	Vector2D   mAcceleration;
 
 	Vector2D   mCollisionBox; // Using grid space for the collision box, not pixel size
+	Vector2D   mCollisionBoxOffset; // Not all sprites on sheets render from the bottom left so they shouldnt collide from there
 
 	Vector2D   mLevelBounds;
 
