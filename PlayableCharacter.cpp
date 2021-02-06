@@ -5,6 +5,8 @@
 #include "InteractionLayer.h"
 #include "ObjectLayer.h"
 
+#include <math.h>
+
 // ----------------------------------------------------- //
 
 PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D spawnPoint, const Vector2D levelBounds, const float timePerFrame)
@@ -140,7 +142,7 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 	Vector2D headPos = Vector2D(mRealGridPosition.x + mCollisionBox.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBox.y);
 	
 	// Check if we are going left - if we are then check left
-	if (mVelocity.x < 0.0f || mCurrentMovements & MovementBitField::MOVING_LEFT)
+	if (mVelocity.x < 0.0f)
 	{
 		// Going left
 		footPos = Vector2D(mRealGridPosition.x + (mVelocity.x * deltaTime), mRealGridPosition.y);
@@ -377,7 +379,7 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 	// If the player is currently running then set the speed to be correct
 	if (mCurrentMovements & MovementBitField::RUNNING)
 	{
-		multiplier = 1.25f;
+		multiplier = 1.1f;
 	}
 
 	switch (e.type)
@@ -420,7 +422,7 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 			{
 				mCurrentMovements |= MovementBitField::JUMPING;
 
-				mJumpHeldCurrentBoost = kJumpHeldInitialBoost;
+				mJumpHeldCurrentBoost = kJumpHeldInitialBoost * std::max(float(abs(mVelocity.x) / kMaxHorizontalSpeedOverall), 0.1f);
 
 				mGrounded = false;
 
@@ -686,7 +688,7 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 	if (mCurrentMovements & MovementBitField::JUMPING)
 	{
 		// See if this jump is a full speed jump
-		if (mCurrentMovements & MovementBitField::RUNNING && mVelocity.x >= kMaxHorizontalSpeedOverall)
+		if (mCurrentMovements & MovementBitField::RUNNING && abs(mVelocity.x) >= kMaxHorizontalSpeedOverall)
 		{
 			// Full sprint jump
 			mStartFrame   = 5;
@@ -722,7 +724,7 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 	// Check for sprinting - must be going at least a certain speed in order to get this sprite 
 	if (mCurrentMovements & MovementBitField::RUNNING)
 	{
-		if (abs(mVelocity.x) >= kMaxHorizontalSpeedOverall)
+		if (abs(mVelocity.x) >= kBaseMaxHorizontalSpeed)
 		{
 			mStartFrame   = 3;
 			mEndFrame     = 4;
