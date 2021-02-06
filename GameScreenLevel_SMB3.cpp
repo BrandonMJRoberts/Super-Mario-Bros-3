@@ -59,11 +59,13 @@ GameScreenLevel_SMB3::GameScreenLevel_SMB3(SDL_Renderer* renderer
 	{
 		mPlayer = new PlayableCharacter(renderer, "SDL_Mario_Project/Characters/Mario/In Game Mario/SmallMarioSpriteSheet.png", mAreas[mCurrentLevelAreaID]->GetInitialSpawnPoint(),  mAreas[mCurrentLevelAreaID]->GetLevelBounds(), 0.15f);
 		mPlayer->AddObserver(&HUD_Observer);
+		mPlayer->AddObserver((Observer*)audioPlayerRef);
 	}
 	else
 	{
 		mPlayer = new PlayableCharacter(renderer, "SDL_Mario_Project/Characters/Luigi/In Game Luigi/SmallLuigiSpriteSheet.png", mAreas[mCurrentLevelAreaID]->GetInitialSpawnPoint(), mAreas[mCurrentLevelAreaID]->GetLevelBounds(), 0.15f);
 		mPlayer->AddObserver(&HUD_Observer);
+		mPlayer->AddObserver((Observer*)audioPlayerRef);
 	}
 
 	Notify(SUBJECT_NOTIFICATION_TYPES::PLAY_MAIN_LEVEL_MUSIC, "");
