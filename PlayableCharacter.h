@@ -107,8 +107,7 @@ private:
 
 	const float  mPSpeedAccumulatorRate;
 
-	const float  kAirFrictionMultiplier;
-	const float  kGroundFrictionMultiplier;
+	const float  kFrictionMultiplier;
 	const float  kJumpHeldAccelerationDepreciationRate;
 	float        mJumpInitialBoost;
 	const float  kJumpHeldInitialBoost;

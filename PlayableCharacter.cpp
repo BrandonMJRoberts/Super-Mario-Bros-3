@@ -30,17 +30,20 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , mLevelBounds(levelBounds)
 
 , mCollisionBox(1.0f, 1.0f)
+
 , kBaseMaxHorizontalSpeed(6.0f)
 , mMaxHorizontalSpeed(kBaseMaxHorizontalSpeed)
-, kMaxHorizontalSpeedOverall(10.0f)
-, kAirFrictionMultiplier(3.5f)
-, kGroundFrictionMultiplier(7.0f)
+, kMaxHorizontalSpeedOverall(8.0f)
+
+, kFrictionMultiplier(7.0f)
+
 , kJumpHeldAccelerationDepreciationRate(12.0f)
 , mJumpInitialBoost(-12.0f)
 , kJumpHeldInitialBoost(-17.0f)
 , mJumpHeldCurrentBoost(kJumpHeldInitialBoost)
-, mCurrentMovements(MovementBitField::NONE)
 , mPSpeedAccumulatorRate(1.5f)
+
+, mCurrentMovements(MovementBitField::NONE)
 
 , mTimePerFrame(timePerFrame)
 , mTimeTillNextFrame(timePerFrame)
@@ -82,7 +85,7 @@ void PlayableCharacter::Render()
 
 		// Now calculate where we should render it
 		SDL_Rect destRect {int(mScreenGridPosition.x * RESOLUTION_OF_SPRITES), 
-			               int(mScreenGridPosition.y * RESOLUTION_OF_SPRITES) - int(float(RESOLUTION_OF_SPRITES) * mCollisionBox.y) + 1, // The + 1 makes mario render so that it looks like he is on the floor
+			               int(mScreenGridPosition.y * RESOLUTION_OF_SPRITES) - int(float(RESOLUTION_OF_SPRITES) * mCollisionBox.y) + 1, // Render in the position, moved up the height of the sprite + 1 to make it look like he is running on the ground
 			               int(mSingleSpriteWidth), 
 			               int(mSingleSpriteHeight) };
 
@@ -368,13 +371,13 @@ void PlayableCharacter::CalculateNewPosition(const float deltaTime, const Vector
 
 void PlayableCharacter::HandleMovementInput(SDL_Event e)
 {
-	double speed      = 10.0f;
+	double speed      = 15.0f;
 	double multiplier = 1.0f;
 
 	// If the player is currently running then set the speed to be correct
 	if (mCurrentMovements & MovementBitField::RUNNING)
 	{
-		multiplier = 2.0f;
+		multiplier = 1.25f;
 	}
 
 	switch (e.type)
@@ -542,10 +545,7 @@ bool PlayableCharacter::HandleCollisionsWithInteractionObjectLayer(ObjectLayer* 
 void PlayableCharacter::UpdatePhysics(const float deltaTime)
 {
 	// Apply friction to the player's movement 
-	float frictionReduction = (kAirFrictionMultiplier * deltaTime);
-
-	if(mGrounded)
-		frictionReduction = (kGroundFrictionMultiplier * deltaTime);
+	float frictionReduction = (kFrictionMultiplier * deltaTime);
 
 	// Apply friction to the player's X movement
 	if (abs(mVelocity.x) - frictionReduction < 0.0f)
