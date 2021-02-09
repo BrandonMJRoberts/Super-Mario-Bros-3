@@ -13,7 +13,7 @@ Audio_Player::Audio_Player()
 	, mSubAreaMusic(nullptr)
 {
 	// Default the volume to not be deafening
-	SetAudioVolume(32);
+	SetAudioVolume(48);
 }
 
 
@@ -257,6 +257,15 @@ void Audio_Player::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string
 
 	case SUBJECT_NOTIFICATION_TYPES::USE_WARP_WISTLE:
 		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Whistle.wav");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::GAME_SELECT_COIN_SFX:
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Coin Select.wav");
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::PLAY_GAME_SELECT_MUSIC:
+		SetMainLevelMusicTrack("SDL_Mario_Project/Audio/Music/Game Select.mp3");
+		PlayMainLevelMusic();
 	break;
 	}
 }

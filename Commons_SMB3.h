@@ -144,7 +144,10 @@ enum class SUBJECT_NOTIFICATION_TYPES
 	THWOMP_HIT_GROUND,
 	CANNON_FIRES_CANNON_BALL,
 	VINE_GROWS,
-	USE_WARP_WISTLE
+	USE_WARP_WISTLE,
+
+	GAME_SELECT_COIN_SFX,
+	PLAY_GAME_SELECT_MUSIC
 };
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //

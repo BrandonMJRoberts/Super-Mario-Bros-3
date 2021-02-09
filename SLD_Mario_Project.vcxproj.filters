@@ -136,6 +136,12 @@
     <Filter Include="Source Files\Mario Bros 3\Transitions">
       <UniqueIdentifier>{24221d90-6180-44f1-bc39-305ab5cc2cd7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Game Select">
+      <UniqueIdentifier>{ef97bd14-be5c-4933-a3ff-8460d2d30086}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game Select">
+      <UniqueIdentifier>{e9d36dd6-ac27-4320-b377-fd5fc32b1f33}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -287,6 +293,9 @@
     </ClCompile>
     <ClCompile Include="LevelCompletionFlipTransition.cpp">
       <Filter>Source Files\Mario Bros 3\Transitions</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScreen_GameSelect.cpp">
+      <Filter>Source Files\Game Select</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -469,6 +478,9 @@
     </ClInclude>
     <ClInclude Include="WorldMapSpawnMarioTransition.h">
       <Filter>Header Files\Mario Bros 3\Transitions</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScreen_GameSelect.h">
+      <Filter>Header Files\Game Select</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -173,6 +173,7 @@
     <ClCompile Include="EnemyObject.cpp" />
     <ClCompile Include="FadeInOutTransition.cpp" />
     <ClCompile Include="FillScreenWithBlackTransition.cpp" />
+    <ClCompile Include="GameScreen_GameSelect.cpp" />
     <ClCompile Include="Goomba_SMB3.cpp" />
     <ClCompile Include="Invisible_Block_SMB3.cpp" />
     <ClCompile Include="Koopa_Trooper_SMB3.cpp" />
@@ -239,6 +240,7 @@
     <ClInclude Include="FillScreenWithBlackTransition.h" />
     <ClInclude Include="GameManager_SMB3.h" />
     <ClInclude Include="GameScreenManager_SMB3.h" />
+    <ClInclude Include="GameScreen_GameSelect.h" />
     <ClInclude Include="GameScreen_SMB3.h" />
     <ClInclude Include="Goomba_SMB3.h" />
     <ClInclude Include="InteractionLayer.h" />

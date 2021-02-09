@@ -5,6 +5,8 @@
 
 #include "GameScreen_SMB3.h"
 
+#include "Texture2D.h"
+
 class GameScreenMainMenu_SMB3 final : public GameScreen_SMB3
 {
 public:
@@ -14,7 +16,19 @@ public:
 
 	void Render() override;
 	ReturnDataFromGameScreen Update(const float deltaTime, SDL_Event e) override;
+
 private:
+	Texture2D* mSelectorSprite;
+
+	Texture2D* mSinglePlayerOption;
+	Texture2D* mTwoPlayerOption;
+
+	Texture2D* mNintendoCopyRight;
+
+	Texture2D* mCurtainSprite;
+	Texture2D* mGround;
+
+	Texture2D* mBackground;
 };
 
 #endif // !_GAME_SCREEN_MENU_MENU_SMB3_H_

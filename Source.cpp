@@ -1,6 +1,4 @@
 
-#define GAME_IS_MARIO_3 true
-
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_mixer.h>
@@ -17,18 +15,24 @@
 
 #include "GameScreenManager.h"
 #include "GameScreenManager_SMB3.h"
+#include "GameScreen_GameSelect.h"
 
 SDL_Window*              gWindow			   = nullptr;
 SDL_Renderer*            gRenderer		       = nullptr;
+
 GameScreenManager*       gameScreenManager     = nullptr;
 GameScreenManager_SMB3*  gameSceenManager_SMB3 = nullptr;
-
+GameScreen_GameSelect*   gameSelectScreen      = nullptr;
+ 
 Uint32 gOldTime;
 
 bool InitSDL();
 bool Update();
 void Render();
 void CloseSDL();
+
+bool GameIsMario3 = true;
+bool GameSelected = false;
 
 // -------------------------------------------------- //
 
@@ -41,15 +45,8 @@ bool InitSDL()
 	}
 	else
 	{
-		if (GAME_IS_MARIO_3)
-		{
-			gWindow = SDL_CreateWindow("Super Mario 3", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH_SMB3, SCREEN_HEIGHT_SMB3, SDL_WINDOW_SHOWN);
-		}
-		else
-		{
-			// Did initialise correctly
-			gWindow = SDL_CreateWindow("Super Mario 3", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-		}
+		// Did initialise correctly
+		gWindow = SDL_CreateWindow("Game Select", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH_SMB3, SCREEN_HEIGHT_SMB3, SDL_WINDOW_SHOWN);
 
 		if (gWindow == NULL)
 		{
@@ -103,7 +100,7 @@ bool Update()
 	
 	Uint32 newTime = SDL_GetTicks();
 
-	if (GAME_IS_MARIO_3)
+	if (GameIsMario3)
 		gameSceenManager_SMB3->Update((float)(newTime - gOldTime) / 1000.0f, e);
 	else
 		gameScreenManager->Update((float)(newTime - gOldTime) / 1000.0f, e);
@@ -121,7 +118,7 @@ void Render()
 	SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0x00);
 	SDL_RenderClear(gRenderer);
 
-	if (GAME_IS_MARIO_3)
+	if (GameIsMario3)
 		gameSceenManager_SMB3->Render();
 	else
 		gameScreenManager->Render();
@@ -139,7 +136,7 @@ void CloseSDL()
 	SDL_DestroyWindow(gWindow);
 	gWindow = nullptr;
 
-	if (GAME_IS_MARIO_3)
+	if (GameIsMario3)
 	{
 		delete gameSceenManager_SMB3;
 		gameSceenManager_SMB3 = nullptr;
@@ -161,11 +158,67 @@ int main(int argx, char* args[])
 {
 	if (InitSDL())
 	{
-		if(GAME_IS_MARIO_3)
+		// ---------------------------------------------------------------- /
+
+		// First we need to setup the game select screen
+		SDL_Event e;
+		Uint32    newTime;
+		GameSelectReturnData returnData;
+
+		gameSelectScreen = new GameScreen_GameSelect(gRenderer);
+
+		gOldTime = SDL_GetTicks();
+
+		// Loop until a game is selected
+		while (!GameSelected)
+		{
+			newTime = SDL_GetTicks();
+
+			gameSelectScreen->Render();
+
+			SDL_PollEvent(&e);
+
+			returnData = gameSelectScreen->Update(float(newTime - gOldTime) / 1000.0f, e);
+
+			GameSelected = returnData.gameSelected;
+			GameIsMario3 = returnData.gameSelectedIsMario3;
+
+			if (returnData.quitEverything)
+			{
+				CloseSDL();
+
+				return 0;
+			}
+
+			gOldTime = newTime;
+		}
+
+		// ---------------------------------------------------------------- /
+
+		delete gameSelectScreen;
+		gameSelectScreen = nullptr;
+
+		// Change the title of the window
+		if (GameIsMario3)
+		{
+			SDL_SetWindowTitle(gWindow, "Super Mario Bros 3");
+			SDL_SetWindowSize(gWindow, SCREEN_WIDTH_SMB3, SCREEN_HEIGHT_SMB3);
+		}
+		else
+		{
+			SDL_SetWindowTitle(gWindow, "Mario Bros");
+			SDL_SetWindowSize(gWindow, SCREEN_WIDTH, SCREEN_HEIGHT);
+		}
+
+		// Now the game is selected we can play the real game
+		if(GameIsMario3)
 			gameSceenManager_SMB3 = new GameScreenManager_SMB3(gRenderer);
 		else
-			gameScreenManager = new GameScreenManager(gRenderer, SCREENS::LEVEL1);
+			gameScreenManager     = new GameScreenManager(gRenderer, SCREENS::LEVEL1);
 
+		// ---------------------------------------------------------------- /
+
+		// Loop through and play the actual game
 		gOldTime = SDL_GetTicks();
 
 		bool quit = false;
@@ -175,6 +228,8 @@ int main(int argx, char* args[])
 			Render();
 			quit = Update();
 		}
+
+		// ---------------------------------------------------------------- /
 	}
 
 	CloseSDL();

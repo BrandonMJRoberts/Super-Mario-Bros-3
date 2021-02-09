@@ -3,6 +3,18 @@
 
 // ---------------------------------------------------------------------- //
 
+struct GameSelectReturnData
+{
+	GameSelectReturnData()                                                                  { gameSelected = false; gameSelectedIsMario3 = false; quitEverything = false; }
+	GameSelectReturnData(bool gameIsSelected, bool isGameSelectedIsMario3, bool shouldQuit) { gameSelected = gameIsSelected; gameSelectedIsMario3 = isGameSelectedIsMario3; quitEverything = shouldQuit; }
+
+	bool gameSelected;
+	bool gameSelectedIsMario3;
+	bool quitEverything;
+};
+
+// ---------------------------------------------------------------------- //
+
 struct Rect2D
 {
 	Rect2D(float startX, float startY, float startWidth, float startHeight)
