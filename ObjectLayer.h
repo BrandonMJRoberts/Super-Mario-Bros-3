@@ -10,9 +10,18 @@
 #include "Game_Maths.h"
 
 #include "SpawnPoint_SMB3.h"
+#include "Commons.h"
 
 class BaseObject;
 class InteractableLayer;
+
+struct CollisionReturnData final
+{
+	CollisionReturnData(bool occured, FACING dir) { collisionOccured = occured; directionOfCollision = dir; }
+
+	bool   collisionOccured;
+	FACING directionOfCollision;
+};
 
 class ObjectLayer final
 {
@@ -26,6 +35,8 @@ public:
 
 	Vector2D GetInitialSpawnPoint() const;
 	Vector2D GetSpawnPoint(unsigned int spawnPointIndex) const;
+
+	CollisionReturnData CheckCollision(const Vector2D testPosition);
 
 private:
 	bool LoadInDataFromFile(std::string filePath);

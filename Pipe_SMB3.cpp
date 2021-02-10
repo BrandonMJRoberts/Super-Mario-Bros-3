@@ -153,7 +153,7 @@ BaseObject* Pipe::Clone(std::string dataLineForClone)
 		pipeIsVertical = false;
 
 	if (mThisSpriteSheet)
-		return new Pipe(newPosition, false, mRenderer, mThisSpriteSheet->GetFilePath(), mSpritesOnWidth, mSpritesOnHeight, mCollisionBox.x, mCollisionBox.y, mTimePerFrame, int(dimensions.x), int(dimensions.y), amountOfEnds, containsEnemy, PIPE_TYPE(pipeType), FACING(pipeFacingDirection), filePathToLoadInto, thisStageEntranceID, stageEntranceIDToGoTo, newPipeIsVertical);
+		return new Pipe(newPosition, false, mRenderer, mThisSpriteSheet->GetFilePath(), mSpritesOnWidth, mSpritesOnHeight, dimensions.x, dimensions.y, mTimePerFrame, int(dimensions.x), int(dimensions.y), amountOfEnds, containsEnemy, PIPE_TYPE(pipeType), FACING(pipeFacingDirection), filePathToLoadInto, thisStageEntranceID, stageEntranceIDToGoTo, newPipeIsVertical);
 	else
 		return nullptr;
 }
@@ -487,6 +487,29 @@ void Pipe::RenderPortionSelected(bool flippedInY, bool flippedInX)
 				mThisSpriteSheet->Render(mSourceRect, mDestRect, SDL_FLIP_NONE, 0.0f);
 			}
 		}
+	}
+}
+
+// ----------------------------------------------------------------------------------------- //
+
+Vector2D Pipe::GetCurrentPosition() const
+{
+	// Check to see which direction this pipe is facing and then adjust to where the bottom left of the pipe should be
+	switch (mPipeFacingDirection)
+	{
+	default:
+	case FACING::UP:
+		return Vector2D(mCurrentPosition.x, mCurrentPosition.y + mCollisionBox.y - 1.0f);
+	break;
+
+	case FACING::LEFT:
+	case FACING::DOWN:
+		return mCurrentPosition;
+	break;
+
+	case FACING::RIGHT:
+		return Vector2D(mCurrentPosition.x - mCollisionBox.x, mCurrentPosition.y + mCollisionBox.y - 1.0f);
+	break;
 	}
 }
 

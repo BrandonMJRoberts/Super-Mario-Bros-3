@@ -24,14 +24,15 @@ public:
 	void         SetIsSpawnedInLevel(const bool newVal) { mIsCurrentlySpawnedInLevel = newVal; }
 
 	Vector2D     GetSpawnPosition()               const { return mSpawnPosition; }
-	Vector2D     GetCurrentPosition()             const { return mCurrentPosition; }
+	virtual Vector2D     GetCurrentPosition()             const { return mCurrentPosition; }
 	
 	void         SetInstanceLocked(const bool newVal)   { mIsInstanceLocked = newVal; }
 	bool         GetIsInstanceLocked()            const { return mIsInstanceLocked; }
 
 	void         SetPositionToSpawn()                   { mCurrentPosition = mSpawnPosition; }
 
-	virtual void ResetUpdatedStaticVariables() { ; }
+	virtual void     ResetUpdatedStaticVariables() { ; }
+	virtual const Vector2D GetCollisionBox() const { return Vector2D(); }
 
 protected:
 

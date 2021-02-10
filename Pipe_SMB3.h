@@ -35,6 +35,8 @@ public:
 
 	void        ResetUpdatedStaticVariables() override { mUpdatedStaticVariables = false; }
 
+	Vector2D    GetCurrentPosition() const override;
+
 private:
 	void        RenderPortionSelected(bool flippedInY = false, bool flippedInX = false);
 

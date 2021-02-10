@@ -300,21 +300,21 @@ void ObjectLayer::InstantiateNameConversions()
 	// Setup the conversions from a string to a base default data type
 
 	// Collectables
-	mNameToObjectConversion["COIN"]                = new Coin_SMB3(Vector2D(), false, mRenderer, "SDL_Mario_Project/Objects/Coin.png", 6, 1, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, false, COIN_ANIMATION_SPEED);
+	mNameToObjectConversion["COIN"]                = new Coin_SMB3(Vector2D(), false, mRenderer, "SDL_Mario_Project/Objects/Coin.png", 6, 1, 1.0f, 1.0f, false, COIN_ANIMATION_SPEED);
 
 	// Block objects
-	mNameToObjectConversion["BRICK_BLOCK"]         = new BrickBlock(Vector2D(), false, mRenderer, "SDL_Mario_Project/Objects/BrickBlock.png", 4, 1, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, BRICK_BLOCK_ANIMATION_SPEED, 1, POWER_UP_TYPE::MUSHROOM, false, nullptr, nullptr, true);
-	mNameToObjectConversion["INVISIBLE_BLOCK"]     = new InvisibleBlock(Vector2D(), false, mRenderer, "SDL_Mario_Project/Objects/InvisibleBlock.png", 2, 1, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.0f, 1, POWER_UP_TYPE::NONE, false, (CollectableObject*)mNameToObjectConversion["COIN"], nullptr);
-	mNameToObjectConversion["QUESTION_MARK_BLOCK"] = new QuestionMarkBlock(Vector2D(), false, mRenderer, "SDL_Mario_Project/Objects/QuestionMarkBlock.png", 5, 1, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, QUESTION_MARK_BLOCK_ANIMATION_SPEED, 1, POWER_UP_TYPE::NONE, false, (CollectableObject*)mNameToObjectConversion["COIN"], nullptr);
+	mNameToObjectConversion["BRICK_BLOCK"]         = new BrickBlock(Vector2D(), false, mRenderer, "SDL_Mario_Project/Objects/BrickBlock.png", 4, 1, 1.0f, 1.0f, BRICK_BLOCK_ANIMATION_SPEED, 1, POWER_UP_TYPE::MUSHROOM, false, nullptr, nullptr, true);
+	mNameToObjectConversion["INVISIBLE_BLOCK"]     = new InvisibleBlock(Vector2D(), false, mRenderer, "SDL_Mario_Project/Objects/InvisibleBlock.png", 2, 1, 1.0f, 1.0f, 0.0f, 1, POWER_UP_TYPE::NONE, false, (CollectableObject*)mNameToObjectConversion["COIN"], nullptr);
+	mNameToObjectConversion["QUESTION_MARK_BLOCK"] = new QuestionMarkBlock(Vector2D(), false, mRenderer, "SDL_Mario_Project/Objects/QuestionMarkBlock.png", 5, 1, 1.0f, 1.0f, QUESTION_MARK_BLOCK_ANIMATION_SPEED, 1, POWER_UP_TYPE::NONE, false, (CollectableObject*)mNameToObjectConversion["COIN"], nullptr);
 
-	mNameToObjectConversion["PIPE"]                = new Pipe(Vector2D(), false, mRenderer, "SDL_Mario_Project/Objects/Pipe.png", 8, 12, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.0f, 2, 2, false, false, PIPE_TYPE::DEFAULT_GREEN, FACING::UP, "", -1, -1);
+	mNameToObjectConversion["PIPE"]                = new Pipe(Vector2D(), false, mRenderer, "SDL_Mario_Project/Objects/Pipe.png", 8, 12, 2.0f, 2.0f, 0.0f, 2, 2, false, false, PIPE_TYPE::DEFAULT_GREEN, FACING::UP, "", -1, -1);
 
 	// Enemy Objects
-	mNameToObjectConversion["GOOMBA"]             = new Goomba(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Goomba/Goomba.png", 6, 3, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.15f, true, false, true);
-	mNameToObjectConversion["PARA_GOOMBA"]        = new ParaGoomba(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Goomba/Goomba.png", 1, 1, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, 0.3f, true, true, true);
+	mNameToObjectConversion["GOOMBA"]             = new Goomba(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Goomba/Goomba.png", 6, 3, 1.0f, 1.0f, 0.15f, true, false, true);
+	mNameToObjectConversion["PARA_GOOMBA"]        = new ParaGoomba(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Goomba/Goomba.png", 1, 1, 1.0f, 1.0f, 0.3f, true, true, true);
 
-	mNameToObjectConversion["KOOPA_TROOPER"]      = new KoopaTrooper(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Koopa Trooper/Koopa.png", 14, 3, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, KOOPA_ANIMATION_SPEED, true, false, true, 0);
-	mNameToObjectConversion["PARA_KOOPA_TROOPER"] = new KoopaTrooper(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Koopa Trooper/Koopa.png", 1, 1, RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES, KOOPA_ANIMATION_SPEED, true, true, true, 0);
+	mNameToObjectConversion["KOOPA_TROOPER"]      = new KoopaTrooper(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Koopa Trooper/Koopa.png", 14, 3, 1.0f, 1.0f, KOOPA_ANIMATION_SPEED, true, false, true, 0);
+	mNameToObjectConversion["PARA_KOOPA_TROOPER"] = new KoopaTrooper(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Koopa Trooper/Koopa.png", 1, 1, 1.0f, 1.0f, KOOPA_ANIMATION_SPEED, true, true, true, 0);
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //
@@ -331,6 +331,45 @@ void ObjectLayer::DestroyAllNameConversions()
 	mNameToObjectConversion.erase("PARA_GOOMBA");
 	mNameToObjectConversion.erase("KOOPA_TROOPER");
 	mNameToObjectConversion.erase("PARA_KOOPA_TROOPER");
+}
+
+// -------------------------------------------------------------------------------------------------------------------------- //
+
+CollisionReturnData ObjectLayer::CheckCollision(const Vector2D testPosition)
+{
+	Vector2D objectBottomLeftPos, objectCollisionBox;
+
+	// Loop through all objects to see if there has been a collision - Only one collision can occur at once
+	for (unsigned int i = 0; i < mSpawnedObjectsInLevel.size(); i++)
+	{
+		// First check the object exists
+		if (mSpawnedObjectsInLevel[i])
+		{
+			// Now check if it is within the space where the test position is
+			objectBottomLeftPos = mSpawnedObjectsInLevel[i]->GetCurrentPosition();
+			objectCollisionBox  = mSpawnedObjectsInLevel[i]->GetCollisionBox();
+
+			// Check to see if the X coords line up
+			if (testPosition.x >= objectBottomLeftPos.x && testPosition.x <= objectBottomLeftPos.x + objectCollisionBox.x)
+			{
+				// Now check that the Y coords line up
+				if (testPosition.y >= objectBottomLeftPos.y - objectCollisionBox.y && testPosition.y <= objectBottomLeftPos.y)
+				{
+					// Then we have a collision - so check which direction that this collision has occured from
+
+
+					return CollisionReturnData(true, FACING::UP);
+				}
+				else
+					continue;
+			}
+			else
+				continue;
+		}
+	}
+
+	// Return that there has been no collision
+	return CollisionReturnData(false, FACING::DOWN);
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //

@@ -171,7 +171,7 @@ GameSelectReturnData GameScreen_GameSelect::Update(float deltaTime, SDL_Event e)
 		if (!mCurrentlyScrolling)
 		{
 			case SDL_KEYDOWN:
-				if (mInIntro)
+				if (mInIntro && !mPressedToStart)
 				{
 					mPressedToStart = true;
 
