@@ -28,6 +28,8 @@ public:
 
 	void        ResetUpdatedStaticVariables() override { mUpdatedStaticVariables = false; }
 
+	bool        SetIsCollidedWith(TwoDimensionalCollision collisionData) override { Notify(SUBJECT_NOTIFICATION_TYPES::COIN_COLLECTED, ""); return true; }
+
 private:
 	void        UpdateStaticVariables(const float deltaTime);
 

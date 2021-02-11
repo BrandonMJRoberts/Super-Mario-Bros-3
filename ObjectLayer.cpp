@@ -12,19 +12,21 @@
 #include "Animation_Speeds.h"
 
 #include "InteractionLayer.h"
+#include "Observer.h"
 
 // -------------------------------------------------------------------------------------------------------------------------- //
 
 ObjectLayer::ObjectLayer(std::string        filePathToDataFile, 
 	                     SDL_Renderer*      renderer,
-						 InteractableLayer* interactionLayer)
+						 InteractableLayer* interactionLayer,
+						 Observer*           audioPlayerObserver)
 : mRenderer(renderer)
 , mInteractionLayer(interactionLayer)
 {
 	InstantiateNameConversions();
 
 	// Load in the data from the file
-	if (!LoadInDataFromFile(filePathToDataFile))
+	if (!LoadInDataFromFile(filePathToDataFile, audioPlayerObserver))
 	{
 		std::cout << "Failed to load in the objects for this level area: " << filePathToDataFile << std::endl;
 		return;
@@ -191,7 +193,7 @@ void ObjectLayer::UpdateSpawnedObjects(const float deltaTime, Vector2D gridRefer
 
 // -------------------------------------------------------------------------------------------------------------------------- //
 
-bool ObjectLayer::LoadInDataFromFile(std::string filePath)
+bool ObjectLayer::LoadInDataFromFile(std::string filePath, Observer* audioPlayerObserver)
 {
 	// First we need to open the file and then read in the data in in the correct format
 	std::ifstream dataFile(filePath);
@@ -249,6 +251,9 @@ bool ObjectLayer::LoadInDataFromFile(std::string filePath)
 
 			// Create a new instance of the object
 			mUnspawnedObjectsInLevel.push_back(mNameToObjectConversion[objectNameLine]->Clone(line));
+
+			// Add the audio observer to the object
+			mUnspawnedObjectsInLevel[mUnspawnedObjectsInLevel.size() - 1]->AddObserver(audioPlayerObserver);
 
 			// Check if the object should start spawned in the level
 			if (mUnspawnedObjectsInLevel[mUnspawnedObjectsInLevel.size() - 1] && mUnspawnedObjectsInLevel[mUnspawnedObjectsInLevel.size() - 1]->GetIsSpawnedInLevel())

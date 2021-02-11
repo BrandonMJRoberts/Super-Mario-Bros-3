@@ -40,7 +40,7 @@ GameScreenLevel_SMB3::GameScreenLevel_SMB3(SDL_Renderer* renderer
 		bool thisIsStartingArea = false;
 
 		// Now we have the file path and the amount of folders then we can setup the level areas
-		mAreas.push_back(new LevelAreas(entry.path().u8string().c_str(), thisIsStartingArea, renderer, mConversionFromCharToIntIndexMap));
+		mAreas.push_back(new LevelAreas(entry.path().u8string().c_str(), thisIsStartingArea, renderer, mConversionFromCharToIntIndexMap, (Observer*)audioPlayerRef));
 
 		// If this is the starting area then set this to be the current index
 		if (thisIsStartingArea)

@@ -10,7 +10,9 @@
 
 class InteractableLayer;
 
-class BaseObject abstract
+#include "Subject.h"
+
+class BaseObject abstract : public Subject
 {
 public:
 	BaseObject() = delete;

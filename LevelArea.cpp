@@ -5,12 +5,13 @@
 #include "ObjectLayer.h"
 
 #include "PlayableCharacter.h"
+#include "Observer.h"
 
 #include <iostream>
 
 // --------------------------------------------------------------------------------------------------------------------------- //
 
-LevelAreas::LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Renderer* renderer, std::map<char, unsigned int> ConversionFromCharToIntIndexMap)
+LevelAreas::LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Renderer* renderer, std::map<char, unsigned int> ConversionFromCharToIntIndexMap, Observer* audioPlayerRef)
 	: mLevelHeight(0)
 	, mLevelWidth(0)
 {
@@ -20,7 +21,7 @@ LevelAreas::LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Rende
 	// Will be implemented using three threads
 	mBackgroundLayer   = new BackgroundLayer(areaFilePath   + "/Background Layer.txt",     areaFilePath + "/BackgroundSprites.png",   ConversionFromCharToIntIndexMap, renderer, Vector2D());
 	mInteractableLayer = new InteractableLayer(areaFilePath + "/Interactable Layer.txt",   areaFilePath + "/InteractableSprites.png", ConversionFromCharToIntIndexMap, renderer, Vector2D());
-	mObjectLayer       = new ObjectLayer(areaFilePath       + "/Object Layer.txt",         renderer, mInteractableLayer);
+	mObjectLayer       = new ObjectLayer(areaFilePath       + "/Object Layer.txt",         renderer, mInteractableLayer, audioPlayerRef);
 	
 	// Create the ending section
 	if (mBackgroundLayer->GetLevelEndingType() >= 0)

@@ -11,12 +11,13 @@ class BackgroundLayer;
 class InteractableLayer;
 class ObjectLayer;
 class PlayableCharacter;
+class Observer;
 
 class LevelAreas final
 {
 public:
 	LevelAreas() = delete;
-	LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Renderer* renderer, std::map<char, unsigned int> ConversionFromCharToIntIndexMap);
+	LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Renderer* renderer, std::map<char, unsigned int> ConversionFromCharToIntIndexMap, Observer* audioPlayerRef);
 	~LevelAreas();
 
 	void Render(Vector2D gridReferencePoint);

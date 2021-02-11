@@ -14,12 +14,13 @@
 
 class BaseObject;
 class InteractableLayer;
+class Observer;
 
 class ObjectLayer final
 {
 public:
 	ObjectLayer() = delete;
-	ObjectLayer(std::string filePathToDataFile, SDL_Renderer* renderer, InteractableLayer* interactionLayer);
+	ObjectLayer(std::string filePathToDataFile, SDL_Renderer* renderer, InteractableLayer* interactionLayer, Observer* audioPlayerObserver);
 	~ObjectLayer();
 
 	void Render(const Vector2D gridReferencePoint);
@@ -31,7 +32,7 @@ public:
 	CollisionReturnData CheckCollision(const Vector2D testPosition, const Vector2D playerVelocity);
 
 private:
-	bool LoadInDataFromFile(std::string filePath);
+	bool LoadInDataFromFile(std::string filePath, Observer* audioPlayerObserver);
 	bool InPlayArea(const Vector2D testPosition, const Vector2D gridReferencePoint);
 
 	// Loops through all objects that have not been created and spawns them if needed
