@@ -12,7 +12,7 @@
 
 // ----------------------------------------------------------------------------- //
 
-GameScreen_WorldMap_SMB3::GameScreen_WorldMap_SMB3(SDL_Renderer* renderer, Audio_Player* audioPlayerRef) : GameScreen_SMB3(renderer, audioPlayerRef)
+GameScreen_WorldMap_SMB3::GameScreen_WorldMap_SMB3(SDL_Renderer* renderer, Audio_Player* audioPlayerRef, Observer* hudObserver) : GameScreen_SMB3(renderer, audioPlayerRef)
 {
 	// First setup the internal conversion system this program uses
 	SetupConversionTable();
@@ -46,6 +46,8 @@ GameScreen_WorldMap_SMB3::GameScreen_WorldMap_SMB3(SDL_Renderer* renderer, Audio
 
 	// Make the audio manager observe the player for movement notifications
 	mPlayer->AddObserver(audioPlayerRef);
+
+	AddObserver(hudObserver);
 
 	// Notify observers that we have completed setup of the world map, and that we need to play the music
 	Notify(SUBJECT_NOTIFICATION_TYPES::SETUP_WORLD_MAP,      std::to_string(GameManager_SMB3::GetInstance()->GetCurrentWorldIndex()));

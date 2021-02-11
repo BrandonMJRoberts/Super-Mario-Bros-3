@@ -17,7 +17,7 @@ class LevelAreas final
 {
 public:
 	LevelAreas() = delete;
-	LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Renderer* renderer, std::map<char, unsigned int> ConversionFromCharToIntIndexMap, Observer* audioPlayerRef);
+	LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Renderer* renderer, std::map<char, unsigned int> ConversionFromCharToIntIndexMap, Observer* audioPlayerRef, Observer* hudObserver);
 	~LevelAreas();
 
 	void Render(Vector2D gridReferencePoint);

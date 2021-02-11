@@ -22,11 +22,11 @@ GameScreenManager_SMB3::GameScreenManager_SMB3(SDL_Renderer* renderer) : mRender
 	// Create the audio player
 	mAudioPlayer = new Audio_Player();
 
-	// Default to being in the main menu
-	ChangeScreen(SCREENS_SMB3::WORLD_MAP);
-
 	// Create the new hud this high up as it is persistant accross all types of gamescreens - from the world map and into the levels themselves
 	mHUD = new HUD_Display(renderer);
+
+	// Default to being in the main menu
+	ChangeScreen(SCREENS_SMB3::WORLD_MAP);
 }
 
 // ------------------------------------------------------------------------ //
@@ -96,12 +96,12 @@ void GameScreenManager_SMB3::ChangeScreen(SCREENS_SMB3 newScreen, std::string fi
 	case SCREENS_SMB3::LEVEL:
 		mAudioPlayer->OnNotify(SUBJECT_NOTIFICATION_TYPES::ENTERING_LEVEL, "");
 
-		mCurrentScreen = (GameScreen_SMB3*)(new GameScreenLevel_SMB3(mRenderer, filePath.c_str(), true, *mHUD, LEVEL_TYPE::OVERWORLD, mAudioPlayer));
+		mCurrentScreen = (GameScreen_SMB3*)(new GameScreenLevel_SMB3(mRenderer, filePath.c_str(), true, *mHUD, LEVEL_TYPE::OVERWORLD, mAudioPlayer, mHUD));
 	break;
 
 	// Go to a world map
 	case SCREENS_SMB3::WORLD_MAP:
-		mCurrentScreen = (GameScreen_SMB3*)(new GameScreen_WorldMap_SMB3(mRenderer, mAudioPlayer));
+		mCurrentScreen = (GameScreen_SMB3*)(new GameScreen_WorldMap_SMB3(mRenderer, mAudioPlayer, mHUD));
 	break;
 
 	// Go back to the main menu

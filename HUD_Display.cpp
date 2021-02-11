@@ -19,15 +19,20 @@ HUD_Display::HUD_Display(SDL_Renderer* renderer) : Observer()
 	, mTimerCounterOffset(455, 621)
 	, mFirstEndCardOffset(500, 579)
 	, mBackgroundSpriteOffset(0, 550)
+
 	, mEndCards { END_CARD_TYPES::EMPTY, END_CARD_TYPES::EMPTY, END_CARD_TYPES::EMPTY }
+
 	, mTimeRemaming(0.0f)
 	, mCurrentWorldID(1)
 	, mCurrentEndCardCount(0)
 	, mPMeterFillAmount(0)
+
 	, mFontRenderer(nullptr)
 	, mLifeIcon(nullptr)
+
 	, mEndCardsSingleSpriteWidth(0)
 	, mEndCardsSingleSpriteHeight(0)
+
 	, mPlayingAsMario(true)
 	, mLivesRemaining(5)
 	, mCurrentScore(0)
@@ -239,7 +244,7 @@ void HUD_Display::Update(const float deltaTime)
 
 void HUD_Display::Reset()
 {
-	mTimeRemaming      = 0.0f;
+	mTimeRemaming      = 300.0f;
 	mCurrentScore      = 0;
 	mLivesRemaining    = 5;
 	mCurrentMoneyCount = 0;
@@ -293,6 +298,19 @@ void HUD_Display::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string 
 		dataLine >> newValue;
 		mPMeterFillAmount = newValue;
 	return;
+
+	case SUBJECT_NOTIFICATION_TYPES::COIN_COLLECTED:
+		mCurrentScore += 100;
+		mCurrentMoneyCount += 1;
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::SETUP_MAIN_LEVEL:
+		mTimeRemaming = 301.0f;
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::SETUP_WORLD_MAP:
+		mTimeRemaming = 0.0f;
+	break;
 	}
 }
 

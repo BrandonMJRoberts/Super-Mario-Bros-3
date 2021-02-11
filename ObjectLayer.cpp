@@ -19,14 +19,15 @@
 ObjectLayer::ObjectLayer(std::string        filePathToDataFile, 
 	                     SDL_Renderer*      renderer,
 						 InteractableLayer* interactionLayer,
-						 Observer*           audioPlayerObserver)
+						 Observer*          audioPlayerObserver,
+						 Observer*          hudObserver)
 : mRenderer(renderer)
 , mInteractionLayer(interactionLayer)
 {
 	InstantiateNameConversions();
 
 	// Load in the data from the file
-	if (!LoadInDataFromFile(filePathToDataFile, audioPlayerObserver))
+	if (!LoadInDataFromFile(filePathToDataFile, audioPlayerObserver, hudObserver))
 	{
 		std::cout << "Failed to load in the objects for this level area: " << filePathToDataFile << std::endl;
 		return;
@@ -193,7 +194,7 @@ void ObjectLayer::UpdateSpawnedObjects(const float deltaTime, Vector2D gridRefer
 
 // -------------------------------------------------------------------------------------------------------------------------- //
 
-bool ObjectLayer::LoadInDataFromFile(std::string filePath, Observer* audioPlayerObserver)
+bool ObjectLayer::LoadInDataFromFile(std::string filePath, Observer* audioPlayerObserver, Observer* hudObserver)
 {
 	// First we need to open the file and then read in the data in in the correct format
 	std::ifstream dataFile(filePath);
@@ -254,6 +255,7 @@ bool ObjectLayer::LoadInDataFromFile(std::string filePath, Observer* audioPlayer
 
 			// Add the audio observer to the object
 			mUnspawnedObjectsInLevel[mUnspawnedObjectsInLevel.size() - 1]->AddObserver(audioPlayerObserver);
+			mUnspawnedObjectsInLevel[mUnspawnedObjectsInLevel.size() - 1]->AddObserver(hudObserver);
 
 			// Check if the object should start spawned in the level
 			if (mUnspawnedObjectsInLevel[mUnspawnedObjectsInLevel.size() - 1] && mUnspawnedObjectsInLevel[mUnspawnedObjectsInLevel.size() - 1]->GetIsSpawnedInLevel())

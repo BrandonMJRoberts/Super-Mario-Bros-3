@@ -20,7 +20,7 @@ class ObjectLayer final
 {
 public:
 	ObjectLayer() = delete;
-	ObjectLayer(std::string filePathToDataFile, SDL_Renderer* renderer, InteractableLayer* interactionLayer, Observer* audioPlayerObserver);
+	ObjectLayer(std::string filePathToDataFile, SDL_Renderer* renderer, InteractableLayer* interactionLayer, Observer* audioPlayerObserver, Observer* hudObserver);
 	~ObjectLayer();
 
 	void Render(const Vector2D gridReferencePoint);
@@ -32,7 +32,7 @@ public:
 	CollisionReturnData CheckCollision(const Vector2D testPosition, const Vector2D playerVelocity);
 
 private:
-	bool LoadInDataFromFile(std::string filePath, Observer* audioPlayerObserver);
+	bool LoadInDataFromFile(std::string filePath, Observer* audioPlayerObserver, Observer* hudObserver);
 	bool InPlayArea(const Vector2D testPosition, const Vector2D gridReferencePoint);
 
 	// Loops through all objects that have not been created and spawns them if needed

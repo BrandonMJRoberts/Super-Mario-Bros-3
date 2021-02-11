@@ -14,7 +14,7 @@ class GameScreen_WorldMap_SMB3 final : public GameScreen_SMB3
 {
 public:
 	GameScreen_WorldMap_SMB3() = delete;
-	GameScreen_WorldMap_SMB3(SDL_Renderer* renderer, Audio_Player* audioPlayerRef);
+	GameScreen_WorldMap_SMB3(SDL_Renderer* renderer, Audio_Player* audioPlayerRef, Observer* hudObserver);
 	~GameScreen_WorldMap_SMB3();
 
 	void Render() override;

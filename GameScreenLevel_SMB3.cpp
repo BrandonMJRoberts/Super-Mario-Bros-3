@@ -22,13 +22,16 @@ GameScreenLevel_SMB3::GameScreenLevel_SMB3(SDL_Renderer* renderer
 	, const bool  playingAsMario
 	, Observer&   HUD_Observer
     , LEVEL_TYPE  levelType
-    , Audio_Player* audioPlayerRef)
+    , Audio_Player* audioPlayerRef
+    , Observer* hudObserver)
 
 	: GameScreen_SMB3(renderer, audioPlayerRef)
 	, mCurrentLevelAreaID(0)    // Default the level area to being zero in case there is not one named 'Overworld'
 	, mPlayer(nullptr)
 	, mFadeInOutTransition(nullptr)
 {
+	AddObserver(hudObserver);
+
 	// Setup the lookup table
 	InitialiseLookUpTable();
 
@@ -40,7 +43,7 @@ GameScreenLevel_SMB3::GameScreenLevel_SMB3(SDL_Renderer* renderer
 		bool thisIsStartingArea = false;
 
 		// Now we have the file path and the amount of folders then we can setup the level areas
-		mAreas.push_back(new LevelAreas(entry.path().u8string().c_str(), thisIsStartingArea, renderer, mConversionFromCharToIntIndexMap, (Observer*)audioPlayerRef));
+		mAreas.push_back(new LevelAreas(entry.path().u8string().c_str(), thisIsStartingArea, renderer, mConversionFromCharToIntIndexMap, (Observer*)audioPlayerRef, hudObserver));
 
 		// If this is the starting area then set this to be the current index
 		if (thisIsStartingArea)
