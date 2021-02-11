@@ -335,9 +335,10 @@ void ObjectLayer::DestroyAllNameConversions()
 
 // -------------------------------------------------------------------------------------------------------------------------- //
 
-CollisionReturnData ObjectLayer::CheckCollision(const Vector2D testPosition)
+CollisionReturnData ObjectLayer::CheckCollision(const Vector2D testPosition, const Vector2D playerVelocity)
 {
 	Vector2D objectBottomLeftPos, objectCollisionBox;
+	TwoDimensionalCollision collisionData = TwoDimensionalCollision();
 
 	// Loop through all objects to see if there has been a collision - Only one collision can occur at once
 	for (unsigned int i = 0; i < mSpawnedObjectsInLevel.size(); i++)
@@ -356,9 +357,27 @@ CollisionReturnData ObjectLayer::CheckCollision(const Vector2D testPosition)
 				if (testPosition.y >= objectBottomLeftPos.y - objectCollisionBox.y && testPosition.y <= objectBottomLeftPos.y)
 				{
 					// Then we have a collision - so check which direction that this collision has occured from
+					if (playerVelocity.y >= 0.0f)
+						collisionData.collisionDataPrimary = MOVEMENT_DIRECTION::DOWN;
+					else
+						collisionData.collisionDataPrimary = MOVEMENT_DIRECTION::UP;
+
+					if (playerVelocity.x > 0.0f)
+						collisionData.collisionDataSecondary = MOVEMENT_DIRECTION::LEFT;
+					else if(playerVelocity.x < 0.0f)
+						collisionData.collisionDataSecondary = MOVEMENT_DIRECTION::RIGHT;
 
 
-					return CollisionReturnData(true, FACING::UP);
+					// Notify the object that they have a collision upon them - they will return if the object needs to be detroyed or not
+					if (mSpawnedObjectsInLevel[i]->SetIsCollidedWith(collisionData))
+					{
+						delete mSpawnedObjectsInLevel[i];
+						mSpawnedObjectsInLevel[i] = nullptr;
+						mSpawnedObjectsInLevel.erase(mSpawnedObjectsInLevel.begin() + i);
+						continue;
+					}
+
+					return CollisionReturnData(true, collisionData);
 				}
 				else
 					continue;
@@ -369,7 +388,7 @@ CollisionReturnData ObjectLayer::CheckCollision(const Vector2D testPosition)
 	}
 
 	// Return that there has been no collision
-	return CollisionReturnData(false, FACING::DOWN);
+	return CollisionReturnData(false, TwoDimensionalCollision());
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //

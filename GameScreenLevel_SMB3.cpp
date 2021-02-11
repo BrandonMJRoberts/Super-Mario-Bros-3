@@ -133,9 +133,6 @@ ReturnDataFromGameScreen GameScreenLevel_SMB3::Update(const float deltaTime, SDL
 	break;
 	}
 
-	// Update the game manager
-//	GameManager_SMB3::GetInstance()->Update(deltaTime);
-
 	bool fadeComplete = true;
 	if (mFadeInOutTransition)
 		fadeComplete = mFadeInOutTransition->Update(deltaTime);

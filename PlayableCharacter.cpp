@@ -547,7 +547,7 @@ bool PlayableCharacter::HandleCollisionsWithInteractionLayer(InteractableLayer* 
 bool PlayableCharacter::HandleCollisionsWithInteractionObjectLayer(ObjectLayer* objectLayer, const Vector2D newPos)
 {
 	// Check to see if the position passed in is coliding with any object
-	if (objectLayer->CheckCollision(newPos).collisionOccured)
+	if (objectLayer->CheckCollision(newPos, mVelocity).collisionOccured)
 		return true;
 
 	return false;

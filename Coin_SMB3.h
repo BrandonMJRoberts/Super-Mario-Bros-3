@@ -15,8 +15,8 @@ public:
 		      const char* const  filePathToSpriteSheet, 
 		      const unsigned int amountOfSpritesOnWidth, 
 		      const unsigned int amountOfSpritesOnHeight,
-			  const unsigned int collisionBoxWidth,
-		      const unsigned int collisionBoxHeight,
+			  const double       collisionBoxWidth,
+		      const double       collisionBoxHeight,
 		      const bool         collectableCanMove,
 		      const float        timePerAnimationFrame);
 	~Coin_SMB3() override;

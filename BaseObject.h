@@ -2,6 +2,8 @@
 #define _BASE_OBJECT_H_
 
 #include "Game_Maths.h"
+#include "Commons.h"
+#include "Commons_SMB3.h"
 
 #include <iostream>
 #include <string.h>
@@ -33,6 +35,8 @@ public:
 
 	virtual void     ResetUpdatedStaticVariables() { ; }
 	virtual const Vector2D GetCollisionBox() const { return Vector2D(); }
+
+	virtual bool SetIsCollidedWith(TwoDimensionalCollision collisionData) { return false; }
 
 protected:
 

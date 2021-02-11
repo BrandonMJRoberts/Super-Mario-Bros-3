@@ -203,6 +203,27 @@ struct Area_Transition_Data final
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 
+struct TwoDimensionalCollision final
+{
+	TwoDimensionalCollision() { collisionDataPrimary = MOVEMENT_DIRECTION::NONE; collisionDataSecondary = MOVEMENT_DIRECTION::NONE; }
+	TwoDimensionalCollision(MOVEMENT_DIRECTION primaryCollision, MOVEMENT_DIRECTION secondaryCollision) { collisionDataPrimary = primaryCollision; collisionDataSecondary = secondaryCollision; }
+
+	MOVEMENT_DIRECTION collisionDataPrimary;
+	MOVEMENT_DIRECTION collisionDataSecondary;
+};
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+
+struct CollisionReturnData final
+{
+	CollisionReturnData(bool occured, TwoDimensionalCollision dir) { collisionOccured = occured; directionOfCollision = dir; }
+
+	bool   collisionOccured;
+	TwoDimensionalCollision directionOfCollision;
+};
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+
 // For the common functions they need to be encapsulated in a namespace to avoid re-definition errors
 namespace Commons_SMB3
 {
