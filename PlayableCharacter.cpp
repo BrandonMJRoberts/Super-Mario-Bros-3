@@ -701,8 +701,8 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 	// Check to see if they are jumping
 	if (mCurrentMovements & MovementBitField::JUMPING)
 	{
-		mCollisionBox.x = 1.0f;
-		mCollisionBoxOffset.x = 0.0f;
+		mCollisionBox.x = 0.83f;
+		mCollisionBoxOffset.x = 0.083f;
 
 		// See if this jump is a full speed jump
 		if (mCurrentMovements & MovementBitField::RUNNING && abs(mVelocity.x) >= kMaxHorizontalSpeedOverall)
@@ -729,8 +729,8 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 	if ((mCurrentMovements & MovementBitField::MOVING_RIGHT && mPriorFrameMovements & MovementBitField::MOVING_LEFT) ||
 		(mCurrentMovements & MovementBitField::MOVING_LEFT  && mPriorFrameMovements & MovementBitField::MOVING_RIGHT))
 	{
-		mCollisionBox.x = 1.0f;
-		mCollisionBoxOffset.x = 0.0f;
+		mCollisionBox.x = 0.83f;
+		mCollisionBoxOffset.x = 0.083f;
 
 		mStartFrame   = 6;
 		mEndFrame     = 6;
@@ -744,8 +744,8 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 	// Check for sprinting - must be going at least a certain speed in order to get this sprite 
 	if (mCurrentMovements & MovementBitField::RUNNING)
 	{
-		mCollisionBox.x = 1.0f;
-		mCollisionBoxOffset.x = 0.0f;
+		mCollisionBox.x = 0.83f;
+		mCollisionBoxOffset.x = 0.083f;
 
 		if (abs(mVelocity.x) >= kBaseMaxHorizontalSpeed)
 		{
@@ -774,8 +774,8 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 	// Check to see if we need to start walking
 	if (mCurrentMovements & MovementBitField::MOVING_RIGHT || mCurrentMovements & MovementBitField::MOVING_LEFT)
 	{
-		mCollisionBox.x = 1.0f;
-		mCollisionBoxOffset.x = 0.0f;
+		mCollisionBox.x = 0.83f;
+		mCollisionBoxOffset.x = 0.083f;
 
 		mStartFrame   = 0;
 		mEndFrame     = 1;
@@ -789,8 +789,8 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 	// If going down/up a pipe
 	if (mCurrentMovements & MovementBitField::ENTERING_PIPE_VERTICALLY)
 	{
-		mCollisionBox.x = 0.8f;
-		mCollisionBoxOffset.x = 0.0f;
+		mCollisionBox.x = 0.83f;
+		mCollisionBoxOffset.x = 0.083f;
 
 		mStartFrame   = 7;
 		mEndFrame     = 7;
