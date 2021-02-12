@@ -297,6 +297,9 @@
     <ClCompile Include="GameScreen_GameSelect.cpp">
       <Filter>Source Files\Game Select</Filter>
     </ClCompile>
+    <ClCompile Include="OneWayWalkway.cpp">
+      <Filter>Source Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="SDL2\SDL2.lib" />
@@ -481,6 +484,9 @@
     </ClInclude>
     <ClInclude Include="GameScreen_GameSelect.h">
       <Filter>Header Files\Game Select</Filter>
+    </ClInclude>
+    <ClInclude Include="OneWayWalkway.h">
+      <Filter>Header Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

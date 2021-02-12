@@ -178,6 +178,7 @@
     <ClCompile Include="Invisible_Block_SMB3.cpp" />
     <ClCompile Include="Koopa_Trooper_SMB3.cpp" />
     <ClCompile Include="LevelCompletionFlipTransition.cpp" />
+    <ClCompile Include="OneWayWalkway.cpp" />
     <ClCompile Include="Para_Goomba_SMB3.cpp" />
     <ClCompile Include="Para_Koopa_Trooper_SMB3.cpp" />
     <ClCompile Include="PhysicalObject.cpp" />
@@ -252,6 +253,7 @@
     <ClInclude Include="NodeMap_WorldMap.h" />
     <ClInclude Include="ObjectLayer.h" />
     <ClInclude Include="Observer.h" />
+    <ClInclude Include="OneWayWalkway.h" />
     <ClInclude Include="Para_Goomba_SMB3.h" />
     <ClInclude Include="Para_Koopa_Trooper_SMB3.h" />
     <ClInclude Include="PhysicalObject.h" />

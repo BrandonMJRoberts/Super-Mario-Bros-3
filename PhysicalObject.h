@@ -42,7 +42,7 @@ public:
 	virtual void        Render(const Vector2D renderReferencePoint) override { ; }
 	virtual bool        Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer) override;
 
-	const Vector2D      GetCollisionBox() const { return mCollisionBox; }
+	virtual const Vector2D      GetCollisionBox() const { return mCollisionBox; }
 
 	void                RenderSprite(const Vector2D renderReferencePoint, const unsigned int currentFrameID);
 

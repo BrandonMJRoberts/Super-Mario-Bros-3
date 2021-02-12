@@ -142,16 +142,11 @@ void ObjectLayer::CheckIfObjectsShouldSpawn(const Vector2D gridReferencePoint)
 bool ObjectLayer::InPlayArea(const Vector2D testPosition, const Vector2D gridReferencePoint)
 {
 	const double XDistance = abs(gridReferencePoint.x - testPosition.x);
-// 	const double YDistance = abs(gridReferencePoint.y - testPosition.y);
 
 	// First check if the X is valid
 	if (XDistance < SCREEN_WIDTH_GRID_SMB3)
 	{
-		// Now check if the Y is valid
-		//if (YDistance < SCREEN_HEIGHT_GRID_SMB3)
-		//{
-			return true;
-		//}
+		return true;
 	}
 
 	// Not in the bounds so return false.
@@ -322,6 +317,8 @@ void ObjectLayer::InstantiateNameConversions()
 
 	mNameToObjectConversion["KOOPA_TROOPER"]      = new KoopaTrooper(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Koopa Trooper/Koopa.png", 14, 3, 1.0f, 1.0f, KOOPA_ANIMATION_SPEED, true, false, true, 0);
 	mNameToObjectConversion["PARA_KOOPA_TROOPER"] = new KoopaTrooper(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Koopa Trooper/Koopa.png", 1, 1, 1.0f, 1.0f, KOOPA_ANIMATION_SPEED, true, true, true, 0);
+
+	mNameToObjectConversion["WALK_WAY"]           = new OneWayWalkway(Vector2D(), false, mRenderer, "", 1, 1, 1.0f, 0.1f, 0.0f);
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //
@@ -338,13 +335,14 @@ void ObjectLayer::DestroyAllNameConversions()
 	mNameToObjectConversion.erase("PARA_GOOMBA");
 	mNameToObjectConversion.erase("KOOPA_TROOPER");
 	mNameToObjectConversion.erase("PARA_KOOPA_TROOPER");
+	mNameToObjectConversion.erase("WALK_WAY");
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //
 
-CollisionReturnData ObjectLayer::CheckCollision(const Vector2D testPosition, const Vector2D playerVelocity)
+MovementPrevention ObjectLayer::CheckCollision(const Vector2D testPosition, const Vector2D playerVelocity)
 {
-	Vector2D objectBottomLeftPos, objectCollisionBox;
+	Vector2D                objectBottomLeftPos, objectCollisionBox;
 	TwoDimensionalCollision collisionData = TwoDimensionalCollision();
 
 	// Loop through all objects to see if there has been a collision - Only one collision can occur at once
@@ -375,8 +373,10 @@ CollisionReturnData ObjectLayer::CheckCollision(const Vector2D testPosition, con
 						collisionData.collisionDataSecondary = MOVEMENT_DIRECTION::RIGHT;
 
 
+					ObjectCollisionHandleData objectReturnData = mSpawnedObjectsInLevel[i]->SetIsCollidedWith(collisionData);
+
 					// Notify the object that they have a collision upon them - they will return if the object needs to be detroyed or not
-					if (mSpawnedObjectsInLevel[i]->SetIsCollidedWith(collisionData))
+					if (objectReturnData.shouldDeleteObject)
 					{
 						delete mSpawnedObjectsInLevel[i];
 						mSpawnedObjectsInLevel[i] = nullptr;
@@ -384,7 +384,8 @@ CollisionReturnData ObjectLayer::CheckCollision(const Vector2D testPosition, con
 						continue;
 					}
 
-					return CollisionReturnData(true, collisionData);
+					if(objectReturnData.dimensionalMovementBlocking.StopXMovement || objectReturnData.dimensionalMovementBlocking.StopYMovement)
+						return MovementPrevention(objectReturnData.dimensionalMovementBlocking.StopXMovement, objectReturnData.dimensionalMovementBlocking.StopYMovement);
 				}
 				else
 					continue;
@@ -395,7 +396,7 @@ CollisionReturnData ObjectLayer::CheckCollision(const Vector2D testPosition, con
 	}
 
 	// Return that there has been no collision
-	return CollisionReturnData(false, TwoDimensionalCollision());
+	return MovementPrevention(false, false);
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //

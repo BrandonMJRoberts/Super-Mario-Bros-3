@@ -17,5 +17,7 @@
 
 #include "Pipe_SMB3.h"
 
+#include "OneWayWalkway.h"
+
 
 #endif

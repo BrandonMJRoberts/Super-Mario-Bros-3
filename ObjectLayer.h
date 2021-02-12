@@ -29,7 +29,7 @@ public:
 	Vector2D GetInitialSpawnPoint() const;
 	Vector2D GetSpawnPoint(unsigned int spawnPointIndex) const;
 
-	CollisionReturnData CheckCollision(const Vector2D testPosition, const Vector2D playerVelocity);
+	MovementPrevention CheckCollision(const Vector2D testPosition, const Vector2D playerVelocity);
 
 private:
 	bool LoadInDataFromFile(std::string filePath, Observer* audioPlayerObserver, Observer* hudObserver);

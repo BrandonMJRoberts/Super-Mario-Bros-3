@@ -195,8 +195,8 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 bool PlayableCharacter::CheckXCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer, double& newXPosRef)
 {
 	// Check to see if we have hit the terrain on the X movement, and the objects in the level, and the screen constraints
-	if (HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1)  || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2) ||
-		HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1) || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2) || 
+	if (HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1)                || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2)                ||
+		HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1).StopXMovement || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2).StopXMovement ||
 		positionToCheck1.x < 0.0f ||
 		positionToCheck2.x < 0.0f ||
 		positionToCheck1.x > mLevelBounds.x ||
@@ -219,8 +219,8 @@ bool PlayableCharacter::CheckXCollision(const Vector2D positionToCheck1, const V
 bool PlayableCharacter::CheckYCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer, double& newYPosRef)
 {
 	// Check terrain collision
-	if (HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1) || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2) ||
- 		HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1) || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2) ||
+	if (HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1)                || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2)                ||
+ 		HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1).StopYMovement || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2).StopYMovement ||
 		positionToCheck1.y < 0.0f ||
 		positionToCheck2.y < 0.0f ||
 		positionToCheck1.y + mCollisionBox.y > mLevelBounds.y + 2 ||
@@ -233,6 +233,7 @@ bool PlayableCharacter::CheckYCollision(const Vector2D positionToCheck1, const V
 
 		return true;
 	}
+
 
 	return false;
 }
@@ -544,13 +545,9 @@ bool PlayableCharacter::HandleCollisionsWithInteractionLayer(InteractableLayer* 
 
 // ----------------------------------------------------- //
 
-bool PlayableCharacter::HandleCollisionsWithInteractionObjectLayer(ObjectLayer* objectLayer, const Vector2D newPos)
+MovementPrevention PlayableCharacter::HandleCollisionsWithInteractionObjectLayer(ObjectLayer* objectLayer, const Vector2D newPos)
 {
-	// Check to see if the position passed in is coliding with any object
-	if (objectLayer->CheckCollision(newPos, mVelocity).collisionOccured)
-		return true;
-
-	return false;
+	return (objectLayer->CheckCollision(newPos, mVelocity));
 }
 
 // ----------------------------------------------------- //

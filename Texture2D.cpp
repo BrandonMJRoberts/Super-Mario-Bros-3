@@ -33,6 +33,10 @@ bool Texture2D::LoadFromFile(std::string path)
 {
 	Free();
 
+	// Quick exit if nothing is passed in
+	if (path == "")
+		return false;
+
 	// Load the image
 	SDL_Surface* Surface = IMG_Load(path.c_str());
 	if (Surface != NULL && mRenderer != NULL)

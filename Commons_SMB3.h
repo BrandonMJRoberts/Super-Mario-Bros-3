@@ -203,9 +203,31 @@ struct Area_Transition_Data final
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 
+struct MovementPrevention
+{
+	MovementPrevention()                       { StopXMovement = true; StopYMovement = true; }
+	MovementPrevention(bool stopX, bool stopY) { StopXMovement = stopX; StopYMovement = stopY; }
+
+	bool StopYMovement;
+	bool StopXMovement;
+};
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+
+struct ObjectCollisionHandleData final
+{
+	ObjectCollisionHandleData()                                                          { shouldDeleteObject = false;        dimensionalMovementBlocking = MovementPrevention(); }
+	ObjectCollisionHandleData(bool deleteObject, bool stopMovementX, bool stopMovementY) { shouldDeleteObject = deleteObject; dimensionalMovementBlocking = MovementPrevention(stopMovementX, stopMovementY); }
+
+	bool               shouldDeleteObject;
+	MovementPrevention dimensionalMovementBlocking;
+};
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+
 struct TwoDimensionalCollision final
 {
-	TwoDimensionalCollision() { collisionDataPrimary = MOVEMENT_DIRECTION::NONE; collisionDataSecondary = MOVEMENT_DIRECTION::NONE; }
+	TwoDimensionalCollision()                                                                           { collisionDataPrimary = MOVEMENT_DIRECTION::NONE; collisionDataSecondary = MOVEMENT_DIRECTION::NONE; }
 	TwoDimensionalCollision(MOVEMENT_DIRECTION primaryCollision, MOVEMENT_DIRECTION secondaryCollision) { collisionDataPrimary = primaryCollision; collisionDataSecondary = secondaryCollision; }
 
 	MOVEMENT_DIRECTION collisionDataPrimary;
@@ -218,7 +240,7 @@ struct CollisionReturnData final
 {
 	CollisionReturnData(bool occured, TwoDimensionalCollision dir) { collisionOccured = occured; directionOfCollision = dir; }
 
-	bool   collisionOccured;
+	bool                    collisionOccured;
 	TwoDimensionalCollision directionOfCollision;
 };
 
