@@ -2,6 +2,12 @@
 
 #include <sstream>
 
+#include "Constants_SMB3.h"
+
+Texture2D* BrickBlock::mBlockBreakingAnimation = nullptr;
+
+unsigned int BrickBlock::mNumberOfBlocksRemaining = 0;
+
 unsigned int BrickBlock::mCurrentSpriteID = 0;
 unsigned int BrickBlock::mStartSpriteID   = 0;
 unsigned int BrickBlock::mEndSpriteID     = 3;
@@ -44,13 +50,35 @@ BrickBlock::BrickBlock(const Vector2D      spawnPosition,
 , maxObjectReleased)
 , mTimePerFrame(timePerFrame)
 , mCanTurnToCoin(canTurnToCoin)
+, mBlockColourID(0)
+, mBlockBreakingAnimationPlaying(false)
 {
 	mHitsBlockCanTake = 1;
+	mNumberOfBlocksRemaining++;
+
+	if (!mBlockBreakingAnimation)
+	{
+		mBlockBreakingAnimation = new Texture2D(renderer);
+		if(!mBlockBreakingAnimation->LoadFromFile("SDL_Mario_Project/Objects/BrickBlockBreakingAnimation.png"))
+		{
+			std::cout << "Failed to load in the sprite sheet for the brick block breaking" << std::endl;
+			return;
+		}
+	}
 }
 
 // -------------------------------------------------------------------------------------------------- //
 
-BrickBlock::~BrickBlock() { ; }
+BrickBlock::~BrickBlock() 
+{
+	mNumberOfBlocksRemaining--;
+
+	if (mNumberOfBlocksRemaining == 0)
+	{
+		delete mBlockBreakingAnimation;
+		mBlockBreakingAnimation = nullptr;
+	}
+}
 
 // -------------------------------------------------------------------------------------------------- //
 
@@ -109,6 +137,15 @@ bool BrickBlock::Update(const float deltaTime, const Vector2D playerPosition, In
 	if(!mUpdatedStaticVariables)
 		UpdateStaticVariables(deltaTime);
 
+	if (mBlockBreakingAnimationPlaying)
+	{
+		mCurrentPosition.x -= 0.5f * deltaTime;
+		mCurrentPosition.y -= 0.5f * deltaTime;
+	}
+
+	if (mHitsBlockCanTake == 0 && !mBlockBreakingAnimationPlaying)
+		return false;
+
 	return false;
 }
 
@@ -138,7 +175,49 @@ void BrickBlock::UpdateStaticVariables(const float deltaTime)
 
 void BrickBlock::Render(const Vector2D renderReferencePoint)
 {
-	RenderSprite(renderReferencePoint, mCurrentSpriteID);
+	if (mBlockBreakingAnimationPlaying)
+	{
+		int width = (int)mBlockBreakingAnimation->GetWidth() / 4, height = (int)mBlockBreakingAnimation->GetHeight();
+
+		Vector2D renderPos = Vector2D(mCurrentPosition.x - renderReferencePoint.x, mCurrentPosition.y - renderReferencePoint.y);
+
+		SDL_Rect portionOfSpriteSheet{ (int)(mBlockColourID % mSpritesOnWidth) * width,
+									   (int)(mBlockColourID / mSpritesOnWidth) * height,
+									   width,
+									   height };
+
+		SDL_Rect destRect{            int(renderPos.x * RESOLUTION_OF_SPRITES),
+									  int(renderPos.y * RESOLUTION_OF_SPRITES) - height + 1,
+									  width,
+									  height };
+
+		// First render the left side
+		mThisSpriteSheet->Render(portionOfSpriteSheet, destRect);
+
+		// Now render the right side
+		destRect.x -= 1.0f;
+		destRect.y -= 1.0f;
+
+		mThisSpriteSheet->Render(portionOfSpriteSheet, destRect);
+	}
+	else
+		RenderSprite(renderReferencePoint, mCurrentSpriteID);
+}
+
+// -------------------------------------------------------------------------------------------------- //
+
+ObjectCollisionHandleData BrickBlock::SetIsCollidedWith(TwoDimensionalCollision collisionData)
+{
+	if (collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::UP)
+	{
+		if(mHitsBlockCanTake > 0)
+			mHitsBlockCanTake--;
+
+		// Now trigger the block breaking animation
+		mBlockBreakingAnimationPlaying = true;
+	}
+
+	return ObjectCollisionHandleData();
 }
 
 // -------------------------------------------------------------------------------------------------- //

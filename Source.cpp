@@ -100,10 +100,14 @@ bool Update()
 	
 	Uint32 newTime = SDL_GetTicks();
 
-	if (GameIsMario3)
-		gameSceenManager_SMB3->Update((float)(newTime - gOldTime) / 1000.0f, e);
-	else
-		gameScreenManager->Update((float)(newTime - gOldTime) / 1000.0f, e);
+	// If there is a massive delay then ignore it to prevent lots of collision issues
+	if (float(newTime - gOldTime) / 1000.0f < 0.5f)
+	{
+		if (GameIsMario3)
+			gameSceenManager_SMB3->Update((float)(newTime - gOldTime) / 1000.0f, e);
+		else
+			gameScreenManager->Update((float)(newTime - gOldTime) / 1000.0f, e);
+	}
 
 	gOldTime = newTime;
 

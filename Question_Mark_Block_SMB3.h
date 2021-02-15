@@ -29,7 +29,7 @@ public:
 
 	void        ResetUpdatedStaticVariables() override { mUpdatedStaticVariables = false; }
 
-	ObjectCollisionHandleData SetIsCollidedWith(TwoDimensionalCollision collisionData);
+	ObjectCollisionHandleData SetIsCollidedWith(TwoDimensionalCollision collisionData) override;
 
 private:
 	void        UpdateStaticVariables(const float deltaTime);

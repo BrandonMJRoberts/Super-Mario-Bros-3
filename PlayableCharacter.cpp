@@ -167,8 +167,8 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 		// Going downwards
 		if (CheckYCollision(leftPos, rightPos, interactionLayer, objectLayer, potentialNewYPos))
 		{
-			//mCurrentMovements &= ~(MovementBitField::JUMPING);
-			//mCurrentMovements &= ~(MovementBitField::HOLDING_JUMP);
+			mCurrentMovements &= ~(MovementBitField::JUMPING);
+			mCurrentMovements &= ~(MovementBitField::HOLDING_JUMP);
 
 			if (!(mCurrentMovements & MovementBitField::JUMPING))
 			{
@@ -411,21 +411,21 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 				// Set that the player is jumping
 				mCurrentMovements |= MovementBitField::JUMPING;
 
-				//mJumpHeldCurrentBoost = kJumpHeldInitialBoost * std::max(float(abs(mVelocity.x) / kMaxHorizontalSpeedOverall), 0.1f);
+				mJumpHeldCurrentBoost = kJumpHeldInitialBoost * std::max(float(abs(mVelocity.x) / kMaxHorizontalSpeedOverall), 0.1f);
 
-				//mGrounded = false;
+				mGrounded = false;
 
 				// Give the minimum jump height of boost upwards
-				//mVelocity.y = mJumpInitialBoost;
+				mVelocity.y = mJumpInitialBoost;
 
-				//Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_JUMPED, "");
+				Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_JUMPED, "");
 			}
 
 			// Otherwise check if you are jumping and if so state that you are holding down jump
-			//if (mCurrentMovements & MovementBitField::JUMPING)
-			//{
-			//	mCurrentMovements |= MovementBitField::HOLDING_JUMP;
-			//}
+			if (mCurrentMovements & MovementBitField::JUMPING)
+			{
+				mCurrentMovements |= MovementBitField::HOLDING_JUMP;
+			}
 		break;
 
 		case SDLK_RSHIFT:
@@ -579,17 +579,17 @@ void PlayableCharacter::UpdatePhysics(const float deltaTime)
 	}
 
 	// If jumping and grounded then trigger a jump
-	if (mGrounded && (mCurrentMovements & MovementBitField::JUMPING))
-	{
-		mJumpHeldCurrentBoost = kJumpHeldInitialBoost * std::max(float(abs(mVelocity.x) / kMaxHorizontalSpeedOverall), 0.1f);
+	//if (mGrounded && (mCurrentMovements & MovementBitField::JUMPING))
+	//{
+	//	mJumpHeldCurrentBoost = kJumpHeldInitialBoost * std::max(float(abs(mVelocity.x) / kMaxHorizontalSpeedOverall), 0.1f);
 
-		mGrounded = false;
+	//	mGrounded = false;
 
 		// Give the minimum jump height of boost upwards
-		mVelocity.y += mJumpInitialBoost;
+	//	mVelocity.y += mJumpInitialBoost;
 
-		Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_JUMPED, "");
-	}
+	//	Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_JUMPED, "");
+	//}
 
 	// Jumping calculations - you only get the extra jump height if you are holding run, otherwise it is just the regular jump
 	if (mCurrentMovements & MovementBitField::HOLDING_JUMP && mCurrentMovements & MovementBitField::RUNNING)
