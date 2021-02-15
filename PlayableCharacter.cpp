@@ -57,6 +57,8 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , mWasFacingRight(true)
 , mGrounded(true)
 , mHasControl(true)
+
+, mJumpTimerLeway(0.0f)
 {
 	LoadInCorrectSpriteSheet();
 
@@ -130,6 +132,9 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 	if (!mHasControl)
 		return;
 
+	if(mJumpTimerLeway > 0.0f)
+		mJumpTimerLeway -= deltaTime;
+
 	// First handle input to see if the player wants to move in a direction
 	HandleMovementInput(e);
 
@@ -176,7 +181,7 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 				mCurrentMovements &= ~(MovementBitField::HOLDING_JUMP);
 			}
 
-			mGrounded = true;
+			mGrounded       = true;
 			collisionCount++;
 		}
 		else
@@ -230,13 +235,24 @@ bool PlayableCharacter::CheckXCollision(const Vector2D positionToCheck1, const V
 bool PlayableCharacter::CheckYCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer, double& newYPosRef)
 {
 	// Check terrain collision
-	if (HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1)                || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2)                ||
- 		HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1).StopYMovement || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2).StopYMovement ||
+	if (HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1) || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2) ||
 		positionToCheck1.y < 0.0f ||
 		positionToCheck2.y < 0.0f ||
 		positionToCheck1.y + mCollisionBox.y > mLevelBounds.y + 2 ||
 		positionToCheck2.y + mCollisionBox.y > mLevelBounds.y + 2)
 	{
+		newYPosRef = mRealGridPosition.y;
+
+		// Stop the player from moving
+		mVelocity.y = 0.0f;
+
+		return true;
+	}
+
+	if (HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1).StopYMovement || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2).StopYMovement)
+	{
+		mJumpTimerLeway = 0.1f;
+
 		newYPosRef = mRealGridPosition.y;
 
 		// Stop the player from moving
@@ -406,19 +422,22 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 		{
 		case SDLK_w:
 			// If grounded then set that the player is jumping
-			if (mGrounded)
+			if (!(mCurrentMovements & MovementBitField::JUMPING))
 			{
-				// Set that the player is jumping
-				mCurrentMovements |= MovementBitField::JUMPING;
+				if (mGrounded || mJumpTimerLeway > 0.0f)
+				{
+					// Set that the player is jumping
+					mCurrentMovements |= MovementBitField::JUMPING;
 
-				mJumpHeldCurrentBoost = kJumpHeldInitialBoost * std::max(float(abs(mVelocity.x) / kMaxHorizontalSpeedOverall), 0.1f);
+					mJumpHeldCurrentBoost = kJumpHeldInitialBoost * std::max(float(abs(mVelocity.x) / kMaxHorizontalSpeedOverall), 0.1f);
 
-				mGrounded = false;
+					mGrounded = false;
 
-				// Give the minimum jump height of boost upwards
-				mVelocity.y = mJumpInitialBoost;
+					// Give the minimum jump height of boost upwards
+					mVelocity.y = mJumpInitialBoost;
 
-				Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_JUMPED, "");
+					Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_JUMPED, "");
+				}
 			}
 
 			// Otherwise check if you are jumping and if so state that you are holding down jump
@@ -577,19 +596,6 @@ void PlayableCharacter::UpdatePhysics(const float deltaTime)
 		else if (mVelocity.x < 0.0f)
 			mVelocity.x += frictionReduction;
 	}
-
-	// If jumping and grounded then trigger a jump
-	//if (mGrounded && (mCurrentMovements & MovementBitField::JUMPING))
-	//{
-	//	mJumpHeldCurrentBoost = kJumpHeldInitialBoost * std::max(float(abs(mVelocity.x) / kMaxHorizontalSpeedOverall), 0.1f);
-
-	//	mGrounded = false;
-
-		// Give the minimum jump height of boost upwards
-	//	mVelocity.y += mJumpInitialBoost;
-
-	//	Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_JUMPED, "");
-	//}
 
 	// Jumping calculations - you only get the extra jump height if you are holding run, otherwise it is just the regular jump
 	if (mCurrentMovements & MovementBitField::HOLDING_JUMP && mCurrentMovements & MovementBitField::RUNNING)

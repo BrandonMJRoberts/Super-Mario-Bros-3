@@ -37,6 +37,8 @@ Goomba::Goomba(const Vector2D      spawnPosition,
 , canJump
 , startFacingLeft)
 , mTimePerFrame(timePerFrame)
+, mTimerTillDespawn(1.0f)
+, mHitsRemaining(1)
 {
 
 }
@@ -74,6 +76,14 @@ bool Goomba::Update(const float deltaTime, const Vector2D playerPosition, Intera
 {
 	if (!mUpdatedStaticVariables)
 		UpdateStaticVariables(deltaTime);
+
+	if (mHitsRemaining == 0)
+	{
+		mTimerTillDespawn -= deltaTime;
+
+		if (mTimerTillDespawn <= 0.0f)
+			return true;
+	}
 
 	return false;
 }
@@ -124,7 +134,42 @@ void Goomba::UpdateStaticVariables(const float deltaTime)
 
 void Goomba::Render(const Vector2D renderReferencePoint)
 {
-	RenderSprite(renderReferencePoint, mCurrentSpriteID);
+	if(mHitsRemaining == 0)
+		RenderSprite(renderReferencePoint, 2);
+	else
+		RenderSprite(renderReferencePoint, mCurrentSpriteID);
+
+}
+
+// ------------------------------------------------------------- //
+
+ObjectCollisionHandleData Goomba::SetIsCollidedWith(TwoDimensionalCollision collisionData)
+{
+	if(mHitsRemaining == 0)
+		return ObjectCollisionHandleData(false, false, false, false);
+
+	if (collisionData.playerPriorPosition.y < mCurrentPosition.y && collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::DOWN)
+	{
+		// Stop the goomba
+		mCanMove  = false;
+
+		if (mHitsRemaining > 0)
+		{
+			mHitsRemaining--;
+
+			// Set the correct sprite
+			//mCurrentSpriteID = 2;
+			//mEndSpriteID     = 2;
+			//mStartSpriteID   = 2;
+		}
+
+		return ObjectCollisionHandleData(false, false, true, false);
+	}
+
+	if(collisionData.collisionDataSecondary == MOVEMENT_DIRECTION::RIGHT || collisionData.collisionDataSecondary == MOVEMENT_DIRECTION::LEFT)
+		return ObjectCollisionHandleData(false, true, false, false);
+
+	return ObjectCollisionHandleData();
 }
 
 // ------------------------------------------------------------- //

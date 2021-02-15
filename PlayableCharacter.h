@@ -119,6 +119,8 @@ private:
 	unsigned int mCurrentMovements;
 	unsigned int mPriorFrameMovements;
 
+	float        mJumpTimerLeway;
+
 	POWER_UP_TYPE mPowerUpState;
 
 	bool         mIsAlive;
