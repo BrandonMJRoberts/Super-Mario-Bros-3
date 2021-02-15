@@ -214,7 +214,7 @@ void Audio_Player::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string
 		PauseMusic();
 		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/04 - Level Clear.wav");
 	break;
-
+	 
 	case SUBJECT_NOTIFICATION_TYPES::LOW_TIMER:
 		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/Hurry_up.wav");
 	break;

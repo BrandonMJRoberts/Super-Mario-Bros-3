@@ -45,6 +45,7 @@ private:
 	Vector2D      mCollisionBoxOffset;
 
 	static Texture2D*    mSurroundingSprite;
+	Vector2D             mSurroundingBoxPosition;
 
 	bool		  mCollected;
 	bool          mFlipFrameDirection;

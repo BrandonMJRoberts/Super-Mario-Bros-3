@@ -242,7 +242,7 @@ NEXT
 
 # LEVEL_END - Position
 LEVEL_END
-6 24
+168 23
 
 
 END

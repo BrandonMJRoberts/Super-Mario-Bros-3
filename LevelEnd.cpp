@@ -2,6 +2,8 @@
 
 #include <sstream>
 
+#include "Constants_SMB3.h"
+
 Texture2D* LevelEndObject::mSurroundingSprite      = nullptr;
 bool       LevelEndObject::mUpdatedStaticVariables = false;
 
@@ -25,6 +27,7 @@ LevelEndObject::LevelEndObject(const Vector2D      spawnPosition,
 	, mTimePerFrame(timePerFrame)
 	, mCollisionBoxOffset(0.25f, 0.25f)
 	, mFlipFrameDirection(false)
+	, mSurroundingBoxPosition(spawnPosition)
 {
 	if (mSurroundingSprite == nullptr)
 	{
@@ -32,8 +35,12 @@ LevelEndObject::LevelEndObject(const Vector2D      spawnPosition,
 		if (!mSurroundingSprite->LoadFromFile(filePathForSurroundingLines))
 		{
 			std::cout << "Failed to load in the surroundings for the end object" << std::endl;
+			return;
 		}
 	}
+
+	mSurroundingBoxPosition.x -= 0.3f;
+	mSurroundingBoxPosition.y += 0.3f;
 }
 
 // ---------------------------------------------------------------------------------------------------------------------------------------- //
@@ -65,6 +72,23 @@ BaseObject* LevelEndObject::Clone(std::string dataLine)
 void LevelEndObject::Render(Vector2D renderReferencePoint)
 {
 	RenderSprite(renderReferencePoint, mCurrentFrameID);
+
+	if (mSurroundingSprite)
+	{
+		Vector2D renderPos = Vector2D(mSurroundingBoxPosition.x - renderReferencePoint.x, mSurroundingBoxPosition.y - renderReferencePoint.y);
+
+		SDL_Rect portionOfSpriteSheet{ 0,
+									   0,
+									   mSurroundingSprite->GetWidth(),
+									   mSurroundingSprite->GetHeight() };
+
+		SDL_Rect destRect{            int(renderPos.x * RESOLUTION_OF_SPRITES),
+									  int(renderPos.y * RESOLUTION_OF_SPRITES) - mSurroundingSprite->GetHeight() + 1,
+									  mSurroundingSprite->GetWidth(),
+									  mSurroundingSprite->GetHeight() };
+
+		mSurroundingSprite->Render(portionOfSpriteSheet, destRect);
+	}
 }
 
 // ---------------------------------------------------------------------------------------------------------------------------------------- //
