@@ -29,6 +29,8 @@ public:
 
 	void        ResetUpdatedStaticVariables() override { mUpdatedStaticVariables = false; }
 
+	ObjectCollisionHandleData SetIsCollidedWith(TwoDimensionalCollision collisionData);
+
 private:
 	void        UpdateStaticVariables(const float deltaTime);
 
@@ -42,6 +44,11 @@ private:
 
 	static float                mTimeRemainingTillNextFrame;
 	const float				    mTimePerFrame;
+
+
+	float                       mStartBounceYPos;
+	bool                        mDoingBounceAnimation;
+	bool                        mHitPeakOfBounce;
 };
 
 #endif

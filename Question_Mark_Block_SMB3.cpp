@@ -41,6 +41,8 @@ QuestionMarkBlock::QuestionMarkBlock(const Vector2D           spawnPosition,
 , baseObjectReleased
 , maxObjectReleased)
 , mTimePerFrame(timePerFrame)
+, mDoingBounceAnimation(false)
+, mStartBounceYPos(0.0f)
 {
 	
 }
@@ -58,6 +60,33 @@ bool QuestionMarkBlock::Update(const float deltaTime, const Vector2D playerPosit
 {
 	if (!mUpdatedStaticVariables)
 		UpdateStaticVariables(deltaTime);
+
+	// Now handle the bounce animation
+	if (mDoingBounceAnimation)
+	{
+		// See if the block should bounce upwards
+		if (mHitPeakOfBounce)
+		{
+			// Move the block down
+			mCurrentPosition.y += 6.0f * deltaTime;
+
+			// Check to see if the animation should end
+			if (mCurrentPosition.y > mStartBounceYPos)
+			{
+				mCurrentPosition.y    = mStartBounceYPos;
+				mDoingBounceAnimation = false;
+			}
+		}
+		else
+		{
+			mCurrentPosition.y -= 6.0f * deltaTime;
+
+			if (mCurrentPosition.y < mStartBounceYPos - 0.4f)
+			{
+				mHitPeakOfBounce = true;
+			}
+		}
+	}
 
 	return false;
 }
@@ -113,7 +142,39 @@ void QuestionMarkBlock::UpdateStaticVariables(const float deltaTime)
 
 void QuestionMarkBlock::Render(const Vector2D renderReferencePoint)
 {
-	RenderSprite(renderReferencePoint, mCurrentSpriteID);
+	if(mHitsBlockCanTake == 0)
+		RenderSprite(renderReferencePoint, 4);
+	else
+		RenderSprite(renderReferencePoint, mCurrentSpriteID);
+}
+
+// ------------------------------------------------------------- //
+
+ObjectCollisionHandleData QuestionMarkBlock::SetIsCollidedWith(TwoDimensionalCollision collisionData)
+{
+	if (collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::UP)
+	{
+		if (mHitsBlockCanTake > 0)
+		{
+			mHitsBlockCanTake--;
+
+			// Now trigger the bounce animation
+			mDoingBounceAnimation = true;
+
+			mStartBounceYPos = mCurrentPosition.y;
+		}
+
+		// If was the last hit then release the object stored in it
+		if (mHitsBlockCanTake == 0)
+		{
+			if (mMinimumObjectReleased)
+			{
+
+			}
+		}
+	}
+
+	return ObjectCollisionHandleData();
 }
 
 // ------------------------------------------------------------- //
