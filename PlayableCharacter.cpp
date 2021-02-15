@@ -38,10 +38,10 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , mMaxHorizontalSpeed(kBaseMaxHorizontalSpeed)
 , kMaxHorizontalSpeedOverall(8.0f)
 
-, kFrictionMultiplier(7.0f)
+, kFrictionMultiplier(8.0f)
 
 , kJumpHeldAccelerationDepreciationRate(12.0f)
-, mJumpInitialBoost(-12.0f)
+, mJumpInitialBoost(-13.5f)
 , kJumpHeldInitialBoost(-17.0f)
 , mJumpHeldCurrentBoost(kJumpHeldInitialBoost)
 , mPSpeedAccumulatorRate(1.5f)
