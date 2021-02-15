@@ -56,6 +56,7 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , mRenderer(renderer)
 , mWasFacingRight(true)
 , mGrounded(true)
+, mHasControl(true)
 {
 	LoadInCorrectSpriteSheet();
 
@@ -126,6 +127,9 @@ void PlayableCharacter::Render()
 
 void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2D levelBounds, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
+	if (!mHasControl)
+		return;
+
 	// First handle input to see if the player wants to move in a direction
 	HandleMovementInput(e);
 

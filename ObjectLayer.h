@@ -31,6 +31,8 @@ public:
 
 	MovementPrevention CheckCollision(const Vector2D testPosition, const Vector2D playerVelocity);
 
+	bool GetLevelEndCollected() { return mLevelEndObjectCollected; }
+
 private:
 	bool LoadInDataFromFile(std::string filePath, Observer* audioPlayerObserver, Observer* hudObserver);
 	bool InPlayArea(const Vector2D testPosition, const Vector2D gridReferencePoint);

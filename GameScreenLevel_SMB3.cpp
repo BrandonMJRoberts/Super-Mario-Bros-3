@@ -128,7 +128,7 @@ ReturnDataFromGameScreen GameScreenLevel_SMB3::Update(const float deltaTime, SDL
 		switch (e.key.keysym.sym)
 		{
 		case SDLK_p:
-			return ReturnDataFromGameScreen(SCREENS_SMB3::WORLD_MAP, "COMPLETE");
+			return ReturnDataFromGameScreen(SCREENS_SMB3::WORLD_MAP, "NOT_COMPLETE");
 		}
 	break;
 	}

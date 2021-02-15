@@ -125,8 +125,15 @@ Area_Transition_Data LevelAreas::Update(const float deltaTime, SDL_Event e, Play
 		mInteractableLayer->Update(deltaTime);
 
 	if (mObjectLayer && player)
-		if(mObjectLayer->Update(deltaTime, e, player->GetRealGridPosition()))
-			return Area_Transition_Data{ 0, 0, true, true};
+	{
+		if (mObjectLayer->GetLevelEndCollected())
+			player->SetLevelOver();
+
+		if (mObjectLayer->Update(deltaTime, e, player->GetRealGridPosition()))
+		{
+			return Area_Transition_Data{ 0, 0, true, true };
+		}
+	}
 
 	switch (e.type)
 	{

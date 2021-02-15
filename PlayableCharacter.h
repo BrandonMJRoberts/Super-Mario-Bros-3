@@ -44,6 +44,8 @@ public:
 
 	void           SpawnIntoNewArea(const Vector2D newPos, const Vector2D newLevelBounds);
 
+	void           SetLevelOver() { mHasControl = false; }
+
 private:
 	void HandleMovementInput(SDL_Event e);
 
@@ -122,6 +124,7 @@ private:
 	bool         mIsAlive;
 	bool         mWasFacingRight;
 	bool         mGrounded;
+	bool         mHasControl;
 };
 
 
