@@ -26,7 +26,7 @@ public:
 	virtual void Move();
 	virtual void Jump();
 
-	ObjectCollisionHandleData SetIsCollidedWith(TwoDimensionalCollision collisionData) override { return ObjectCollisionHandleData(true, false, false); }
+	ObjectCollisionHandleData SetIsCollidedWith(TwoDimensionalCollision collisionData) override { return ObjectCollisionHandleData(true, false, false, false); }
 
 protected:
 	Vector2D    mVelocity; // velocity for the movement of the collectable

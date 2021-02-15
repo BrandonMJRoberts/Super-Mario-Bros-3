@@ -24,7 +24,7 @@ public:
 	~ObjectLayer();
 
 	void Render(const Vector2D gridReferencePoint);
-	void Update(const float deltaTime, SDL_Event e, Vector2D playerPosition);
+	bool Update(const float deltaTime, SDL_Event e, Vector2D playerPosition);
 
 	Vector2D GetInitialSpawnPoint() const;
 	Vector2D GetSpawnPoint(unsigned int spawnPointIndex) const;
@@ -54,6 +54,9 @@ private:
 	// Renderer
 	SDL_Renderer*                mRenderer;
 	InteractableLayer*           mInteractionLayer;
+
+	float                        mCountDownTillReturnToMap;
+	bool                         mLevelEndObjectCollected;
 
 };
 

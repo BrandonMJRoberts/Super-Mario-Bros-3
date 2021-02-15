@@ -28,7 +28,7 @@ GameScreen_GameSelect::GameScreen_GameSelect(SDL_Renderer* renderer)
 , mSingleSpriteHeightCoin(0)
 
 , mDelayBeforeGamesShow(1.1f)
-, kTimePerCoinFrame(0.12f)
+, kTimePerCoinFrame(0.1f)
 , mTimeTillAutoStart(5.0f)
 , mTimeRemainingTillCoinFrame(kTimePerCoinFrame)
 
@@ -185,19 +185,22 @@ GameSelectReturnData GameScreen_GameSelect::Update(float deltaTime, SDL_Event e)
 				{
 					case SDLK_a:
 					case SDLK_LEFT:
-						ScrollSelectedGame(false);
+						ScrollSelectedGame(mCurrentlySelectedGame - 1);
 					break;
 
 					case SDLK_RIGHT:
 					case SDLK_d:
-						ScrollSelectedGame(true);
+						ScrollSelectedGame(mCurrentlySelectedGame + 1);
 					break;
 
 					case SDLK_RETURN:
-						if (mCurrentlySelectedGame == 0)
-							return GameSelectReturnData(true, true, false);
-						else
-							return GameSelectReturnData(true, false, false);
+						if (!mInIntro)
+						{
+							if (mCurrentlySelectedGame == 0)
+								return GameSelectReturnData(true, true, false);
+							else if(mCurrentlySelectedGame == 1)
+								return GameSelectReturnData(true, false, false);
+						}
 					break;
 				}
 			break;
@@ -211,9 +214,12 @@ GameSelectReturnData GameScreen_GameSelect::Update(float deltaTime, SDL_Event e)
 
 void GameScreen_GameSelect::ScrollSelectedGame(const unsigned int optionScrollingTo)
 {
-	mCurrentlySelectedGame = optionScrollingTo;
+	if (optionScrollingTo >= 0 && optionScrollingTo <= 1)
+	{
+		mCurrentlySelectedGame = optionScrollingTo;
 
-	mCurrentlyScrolling = true;
+		mCurrentlyScrolling = true;
+	}
 }
 
 // ---------------------------------------------------------------------------------------------- //

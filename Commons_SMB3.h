@@ -197,8 +197,10 @@ enum class FADING_STATE
 
 struct Area_Transition_Data final
 {
-	int areaToGoTo;
+	int          areaToGoTo;
 	unsigned int spawnpointIDToGoTo;
+	bool         goToWorldMap;
+	bool         LevelComplete;
 };
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
@@ -216,10 +218,11 @@ struct MovementPrevention
 
 struct ObjectCollisionHandleData final
 {
-	ObjectCollisionHandleData()                                                          { shouldDeleteObject = false;        dimensionalMovementBlocking = MovementPrevention(); }
-	ObjectCollisionHandleData(bool deleteObject, bool stopMovementX, bool stopMovementY) { shouldDeleteObject = deleteObject; dimensionalMovementBlocking = MovementPrevention(stopMovementX, stopMovementY); }
+	ObjectCollisionHandleData() { shouldDeleteObject = false;        dimensionalMovementBlocking = MovementPrevention(); completedLevel = false; }
+	ObjectCollisionHandleData(bool deleteObject, bool stopMovementX, bool stopMovementY, bool LevelComplete) { shouldDeleteObject = deleteObject; dimensionalMovementBlocking = MovementPrevention(stopMovementX, stopMovementY); completedLevel = LevelComplete; }
 
 	bool               shouldDeleteObject;
+	bool               completedLevel;
 	MovementPrevention dimensionalMovementBlocking;
 };
 

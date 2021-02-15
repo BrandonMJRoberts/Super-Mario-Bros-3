@@ -243,3 +243,11 @@ bool NodeMap_WorldMap::GetPositionIsAClearedLevel(const Vector2D positionToCheck
 }
 
 // ----------------------------------------------------------------- //
+
+void NodeMap_WorldMap::SetLevelIsCleared(char levelID)
+{
+	if(GetValueIsLevel(levelID))
+		mClearedLevels.push_back(levelID);
+}
+
+// ----------------------------------------------------------------- //

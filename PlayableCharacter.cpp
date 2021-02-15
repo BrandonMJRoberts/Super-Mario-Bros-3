@@ -163,9 +163,16 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 		// Going downwards
 		if (CheckYCollision(leftPos, rightPos, interactionLayer, objectLayer, potentialNewYPos))
 		{
-			mGrounded          = true;
-			mCurrentMovements &= ~(MovementBitField::JUMPING);
-			mCurrentMovements &= ~(MovementBitField::HOLDING_JUMP);
+			//mCurrentMovements &= ~(MovementBitField::JUMPING);
+			//mCurrentMovements &= ~(MovementBitField::HOLDING_JUMP);
+
+			if (!(mCurrentMovements & MovementBitField::JUMPING))
+			{
+				mCurrentMovements &= ~(MovementBitField::JUMPING);
+				mCurrentMovements &= ~(MovementBitField::HOLDING_JUMP);
+			}
+
+			mGrounded = true;
 			collisionCount++;
 		}
 		else
@@ -373,8 +380,6 @@ void PlayableCharacter::CalculateNewPosition(const float deltaTime, const Vector
 	}
 
 	// ----------------------------------------------------------------------------------------------------------------------------------- //
-
-	//std::cout << "Y Pos: " << mRealGridPosition.y << "\tScreen Y: " << mScreenGridPosition.y  << std::endl;
 }
 
 // ----------------------------------------------------- //
@@ -395,6 +400,30 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 	case SDL_KEYDOWN:
 		switch (e.key.keysym.sym)
 		{
+		case SDLK_w:
+			// If grounded then set that the player is jumping
+			if (mGrounded)
+			{
+				// Set that the player is jumping
+				mCurrentMovements |= MovementBitField::JUMPING;
+
+				//mJumpHeldCurrentBoost = kJumpHeldInitialBoost * std::max(float(abs(mVelocity.x) / kMaxHorizontalSpeedOverall), 0.1f);
+
+				//mGrounded = false;
+
+				// Give the minimum jump height of boost upwards
+				//mVelocity.y = mJumpInitialBoost;
+
+				//Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_JUMPED, "");
+			}
+
+			// Otherwise check if you are jumping and if so state that you are holding down jump
+			//if (mCurrentMovements & MovementBitField::JUMPING)
+			//{
+			//	mCurrentMovements |= MovementBitField::HOLDING_JUMP;
+			//}
+		break;
+
 		case SDLK_RSHIFT:
 			// If not running
 			if (!(mCurrentMovements & MovementBitField::RUNNING))
@@ -422,29 +451,6 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 			mCurrentMovements |= MovementBitField::CROUCHING;
 
 			mAcceleration.y = multiplier * speed;
-		break;
-
-		case SDLK_w:
-			// If not jumping and grounded
-			if (mGrounded && !(mCurrentMovements & MovementBitField::JUMPING))
-			{
-				mCurrentMovements |= MovementBitField::JUMPING;
-
-				mJumpHeldCurrentBoost = kJumpHeldInitialBoost * std::max(float(abs(mVelocity.x) / kMaxHorizontalSpeedOverall), 0.1f);
-
-				mGrounded = false;
-
-				// Give the minimum jump height of boost upwards
-				mVelocity.y = mJumpInitialBoost;
-
-				Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_JUMPED, "");
-			}
-
-			// Otherwise check if you are jumping and if so state that you are holding down jump
-			if (mCurrentMovements & MovementBitField::JUMPING)
-			{
-				mCurrentMovements |= MovementBitField::HOLDING_JUMP;
-			}
 		break;
 		}
 	break;
@@ -568,6 +574,19 @@ void PlayableCharacter::UpdatePhysics(const float deltaTime)
 			mVelocity.x += frictionReduction;
 	}
 
+	// If jumping and grounded then trigger a jump
+	if (mGrounded && (mCurrentMovements & MovementBitField::JUMPING))
+	{
+		mJumpHeldCurrentBoost = kJumpHeldInitialBoost * std::max(float(abs(mVelocity.x) / kMaxHorizontalSpeedOverall), 0.1f);
+
+		mGrounded = false;
+
+		// Give the minimum jump height of boost upwards
+		mVelocity.y += mJumpInitialBoost;
+
+		Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_JUMPED, "");
+	}
+
 	// Jumping calculations - you only get the extra jump height if you are holding run, otherwise it is just the regular jump
 	if (mCurrentMovements & MovementBitField::HOLDING_JUMP && mCurrentMovements & MovementBitField::RUNNING)
 	{
@@ -609,13 +628,6 @@ void PlayableCharacter::UpdatePhysics(const float deltaTime)
 
 		if (mMaxHorizontalSpeed > kMaxHorizontalSpeedOverall)
 			mMaxHorizontalSpeed = kMaxHorizontalSpeedOverall;
-	}
-
-	// If we are grounded then stop all jump related things
-	if (mGrounded)
-	{
-		mCurrentMovements &= ~(MovementBitField::JUMPING);
-		mCurrentMovements &= ~(MovementBitField::HOLDING_JUMP);
 	}
 }
 

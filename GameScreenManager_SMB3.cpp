@@ -76,7 +76,8 @@ void GameScreenManager_SMB3::Update(const float deltaTime, SDL_Event e)
 
 // ------------------------------------------------------------------------ //
 
-void GameScreenManager_SMB3::ChangeScreen(SCREENS_SMB3 newScreen, std::string filePath)
+// Data passed in could be a filePath or some data on the previous level
+void GameScreenManager_SMB3::ChangeScreen(SCREENS_SMB3 newScreen, std::string dataPassedIn)
 {
 	// If the screen currently exists then delete it - but only if we are going to be creating a new one
 	if (newScreen != SCREENS_SMB3::SAME && mCurrentScreen)
@@ -96,12 +97,15 @@ void GameScreenManager_SMB3::ChangeScreen(SCREENS_SMB3 newScreen, std::string fi
 	case SCREENS_SMB3::LEVEL:
 		mAudioPlayer->OnNotify(SUBJECT_NOTIFICATION_TYPES::ENTERING_LEVEL, "");
 
-		mCurrentScreen = (GameScreen_SMB3*)(new GameScreenLevel_SMB3(mRenderer, filePath.c_str(), true, *mHUD, LEVEL_TYPE::OVERWORLD, mAudioPlayer, mHUD));
+		mCurrentScreen = (GameScreen_SMB3*)(new GameScreenLevel_SMB3(mRenderer, dataPassedIn.c_str(), true, *mHUD, LEVEL_TYPE::OVERWORLD, mAudioPlayer, mHUD));
 	break;
 
 	// Go to a world map
 	case SCREENS_SMB3::WORLD_MAP:
-		mCurrentScreen = (GameScreen_SMB3*)(new GameScreen_WorldMap_SMB3(mRenderer, mAudioPlayer, mHUD));
+		if(dataPassedIn == "COMPLETE")
+			mCurrentScreen = (GameScreen_SMB3*)(new GameScreen_WorldMap_SMB3(mRenderer, mAudioPlayer, mHUD, true));
+		else
+			mCurrentScreen = (GameScreen_SMB3*)(new GameScreen_WorldMap_SMB3(mRenderer, mAudioPlayer, mHUD, false));
 	break;
 
 	// Go back to the main menu

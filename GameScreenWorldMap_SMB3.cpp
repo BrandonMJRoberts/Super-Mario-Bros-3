@@ -12,7 +12,7 @@
 
 // ----------------------------------------------------------------------------- //
 
-GameScreen_WorldMap_SMB3::GameScreen_WorldMap_SMB3(SDL_Renderer* renderer, Audio_Player* audioPlayerRef, Observer* hudObserver) : GameScreen_SMB3(renderer, audioPlayerRef)
+GameScreen_WorldMap_SMB3::GameScreen_WorldMap_SMB3(SDL_Renderer* renderer, Audio_Player* audioPlayerRef, Observer* hudObserver, bool levelWasCompleted) : GameScreen_SMB3(renderer, audioPlayerRef)
 {
 	// First setup the internal conversion system this program uses
 	SetupConversionTable();
@@ -40,6 +40,12 @@ GameScreen_WorldMap_SMB3::GameScreen_WorldMap_SMB3(SDL_Renderer* renderer, Audio
 		                             5, 
 		                             4,
 									 0.25f);
+
+	// Now check to see if the level that was previously played was completed
+	if (levelWasCompleted && mNodeMap && mPlayer)
+	{
+		mNodeMap->SetLevelIsCleared(mNodeMap->GetSpecificDataPoint(mPlayer->GetGridPosition()));
+	}
 
 	// Now make sure we convert the cleared level's images to the cleared image
 	mBackground->SetClearedLevels(*mNodeMap, mConversionTable);

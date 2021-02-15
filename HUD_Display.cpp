@@ -305,7 +305,7 @@ void HUD_Display::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string 
 	break;
 
 	case SUBJECT_NOTIFICATION_TYPES::SETUP_MAIN_LEVEL:
-		mTimeRemaming = 301.0f;
+		mTimeRemaming = 300.9f;
 	break;
 
 	case SUBJECT_NOTIFICATION_TYPES::SETUP_WORLD_MAP:

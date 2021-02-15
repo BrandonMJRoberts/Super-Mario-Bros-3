@@ -122,16 +122,13 @@ void GameScreenLevel_SMB3::Render()
 
 ReturnDataFromGameScreen GameScreenLevel_SMB3::Update(const float deltaTime, SDL_Event e)
 {
-	// Now handle input
-	//HandleInput(deltaTime, e);
-
 	switch (e.type)
 	{
 	case SDL_KEYDOWN:
 		switch (e.key.keysym.sym)
 		{
 		case SDLK_p:
-			return ReturnDataFromGameScreen(SCREENS_SMB3::WORLD_MAP, "");
+			return ReturnDataFromGameScreen(SCREENS_SMB3::WORLD_MAP, "COMPLETE");
 		}
 	break;
 	}
@@ -150,6 +147,15 @@ ReturnDataFromGameScreen GameScreenLevel_SMB3::Update(const float deltaTime, SDL
 	if (mAreas.size() > mCurrentLevelAreaID)
 	{
 		Area_Transition_Data returnData = mAreas[mCurrentLevelAreaID]->Update(deltaTime, e, mPlayer);
+
+		// Check to see if the level has been completed
+		if (returnData.goToWorldMap)
+		{
+			if(returnData.LevelComplete)
+				return ReturnDataFromGameScreen(SCREENS_SMB3::WORLD_MAP, "COMPLETE");
+			else
+				return ReturnDataFromGameScreen(SCREENS_SMB3::WORLD_MAP, "NOT_COMPLETE");
+		}
 
 		// -1 means stay in the same area we currently are
 		if (returnData.areaToGoTo != -1)

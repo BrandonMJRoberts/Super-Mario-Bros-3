@@ -23,6 +23,8 @@ ObjectLayer::ObjectLayer(std::string        filePathToDataFile,
 						 Observer*          hudObserver)
 : mRenderer(renderer)
 , mInteractionLayer(interactionLayer)
+, mLevelEndObjectCollected(false)
+, mCountDownTillReturnToMap(4.0f)
 {
 	InstantiateNameConversions();
 
@@ -80,13 +82,23 @@ void ObjectLayer::Render(const Vector2D gridReferencePoint)
 
 // -------------------------------------------------------------------------------------------------------------------------- //
 
-void ObjectLayer::Update(const float deltaTime, SDL_Event e, Vector2D gridReferencePoint)
+bool ObjectLayer::Update(const float deltaTime, SDL_Event e, Vector2D gridReferencePoint)
 {
 	// Update the currently spawned objects
 	UpdateSpawnedObjects(deltaTime, gridReferencePoint);
 
 	// See if any of the object not currently spawned should spawn again
 	CheckIfObjectsShouldSpawn(gridReferencePoint);
+
+	if (mLevelEndObjectCollected)
+	{
+		mCountDownTillReturnToMap -= deltaTime;
+
+		if (mCountDownTillReturnToMap <= 0.0f)
+			return true;
+	}
+
+	return false;
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //
@@ -318,7 +330,9 @@ void ObjectLayer::InstantiateNameConversions()
 	mNameToObjectConversion["KOOPA_TROOPER"]      = new KoopaTrooper(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Koopa Trooper/Koopa.png", 14, 3, 1.0f, 1.0f, KOOPA_ANIMATION_SPEED, true, false, true, 0);
 	mNameToObjectConversion["PARA_KOOPA_TROOPER"] = new KoopaTrooper(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Koopa Trooper/Koopa.png", 1, 1, 1.0f, 1.0f, KOOPA_ANIMATION_SPEED, true, true, true, 0);
 
-	mNameToObjectConversion["WALK_WAY"]           = new OneWayWalkway(Vector2D(), false, mRenderer, "", 1, 1, 1.0f, 0.1f, 0.0f);
+	mNameToObjectConversion["WALK_WAY"]           = new OneWayWalkway(Vector2D(), false, mRenderer, "", 1, 1, 1.0f, 0.25f, 0.0f);
+
+	mNameToObjectConversion["LEVEL_END"]          = new LevelEndObject(Vector2D(), false, mRenderer, "SDL_Mario_Project/Objects/EndingObject.png", 3, 4, 1.0f, 1.0f, 0.1f, "SDL_Mario_Project/Objects/EndSurroundObject.png");
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //
@@ -326,16 +340,38 @@ void ObjectLayer::InstantiateNameConversions()
 void ObjectLayer::DestroyAllNameConversions()
 {
 	// Collectables
+	delete mNameToObjectConversion["COIN"];
 	mNameToObjectConversion.erase("COIN");
-	mNameToObjectConversion.erase("BRICK BLOCK");
+
+	delete mNameToObjectConversion["BRICK_BLOCK"];
+	mNameToObjectConversion.erase("BRICK_BLOCK");
+
+	delete mNameToObjectConversion["INVISIBLE_BLOCK"];
 	mNameToObjectConversion.erase("INVISIBLE_BLOCK");
+
+	delete mNameToObjectConversion["QUESTION_MARK_BLOCK"];
 	mNameToObjectConversion.erase("QUESTION_MARK_BLOCK");
+
+	delete mNameToObjectConversion["PIPE"];
 	mNameToObjectConversion.erase("PIPE");
+
+	delete mNameToObjectConversion["GOOMBA"];
 	mNameToObjectConversion.erase("GOOMBA");
+
+	delete mNameToObjectConversion["PARA_GOOMBA"];
 	mNameToObjectConversion.erase("PARA_GOOMBA");
+
+	delete mNameToObjectConversion["KOOPA_TROOPER"];
 	mNameToObjectConversion.erase("KOOPA_TROOPER");
+
+	delete mNameToObjectConversion["PARA_KOOPA_TROOPER"];
 	mNameToObjectConversion.erase("PARA_KOOPA_TROOPER");
+
+	delete mNameToObjectConversion["WALK_WAY"];
 	mNameToObjectConversion.erase("WALK_WAY");
+
+	delete mNameToObjectConversion["LEVEL_END"];
+	mNameToObjectConversion.erase("LEVEL_END");
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //
@@ -374,6 +410,11 @@ MovementPrevention ObjectLayer::CheckCollision(const Vector2D testPosition, cons
 
 
 					ObjectCollisionHandleData objectReturnData = mSpawnedObjectsInLevel[i]->SetIsCollidedWith(collisionData);
+
+					if (objectReturnData.completedLevel)
+					{
+						mLevelEndObjectCollected = true;
+					}
 
 					// Notify the object that they have a collision upon them - they will return if the object needs to be detroyed or not
 					if (objectReturnData.shouldDeleteObject)

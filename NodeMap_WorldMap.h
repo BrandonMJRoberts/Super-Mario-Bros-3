@@ -29,6 +29,8 @@ public:
 	bool        GetDataPointIsDot(const char value);
 	bool        GetPositionIsAClearedLevel(const Vector2D positionToCheck);
 
+	void        SetLevelIsCleared(char levelID);
+
 private:
 	void        LoadInDataFromFile(const std::string filePath);
 

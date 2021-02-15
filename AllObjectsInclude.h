@@ -19,5 +19,7 @@
 
 #include "OneWayWalkway.h"
 
+#include "LevelEnd.h"
+
 
 #endif

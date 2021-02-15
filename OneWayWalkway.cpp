@@ -16,7 +16,7 @@ OneWayWalkway::OneWayWalkway( const Vector2D      spawnPosition
 	: PhysicalObject(spawnPosition, startSpawnedInLevel, renderer, filePathToSpriteSheet, spritesOnWidth, spritesOnHeight, collisionBoxWidth, collsiionBoxHeight, timePerFrame)
 	, mTimePerframe(timePerFrame)
 	, mCurrentFrameID(0)
-	, mCollisionOffsetY(0.9f)
+	, mCollisionOffsetY(0.75f)
 {
 
 }
@@ -38,7 +38,7 @@ BaseObject* OneWayWalkway::Clone(std::string dataLine)
 
 	ssLine >> position.x >> position.y;
 
-	return new OneWayWalkway(position, true, mRenderer, "", 1, 1, 1.0f, 0.1f, 0.0f);
+	return new OneWayWalkway(position, true, mRenderer, "", 1, 1, 1.0f, mCollisionBox.y, 0.0f);
 }
 
 // ---------------------------------------------------------------------------- //
@@ -53,9 +53,9 @@ RenderData OneWayWalkway::GetRenderData()
 ObjectCollisionHandleData OneWayWalkway::SetIsCollidedWith(TwoDimensionalCollision collisionData)
 {
 	if(collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::DOWN)
-		return ObjectCollisionHandleData(false, false, true);
+		return ObjectCollisionHandleData(false, false, true, false);
 
-	return ObjectCollisionHandleData(false, false, false);
+	return ObjectCollisionHandleData(false, false, false, false);
 }
 
 // ---------------------------------------------------------------------------- //

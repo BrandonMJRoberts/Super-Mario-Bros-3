@@ -23,7 +23,7 @@ enum MovementBitField : unsigned int
 	HOLDING_JUMP = 32,
 	SWIMMING     = 64,
 
-	ENTERING_PIPE_VERTICALLY = 128,
+	ENTERING_PIPE_VERTICALLY = 128
 };
 
 // ---------------------------------------------------------------- //
