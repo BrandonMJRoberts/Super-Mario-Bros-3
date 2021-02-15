@@ -152,7 +152,7 @@ void QuestionMarkBlock::Render(const Vector2D renderReferencePoint)
 
 ObjectCollisionHandleData QuestionMarkBlock::SetIsCollidedWith(TwoDimensionalCollision collisionData)
 {
-	if (collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::UP)
+	if (collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::UP && collisionData.playerPriorPosition.y > mCurrentPosition.y)
 	{
 		if (mHitsBlockCanTake > 0)
 		{

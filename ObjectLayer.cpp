@@ -376,10 +376,12 @@ void ObjectLayer::DestroyAllNameConversions()
 
 // -------------------------------------------------------------------------------------------------------------------------- //
 
-MovementPrevention ObjectLayer::CheckCollision(const Vector2D testPosition, const Vector2D playerVelocity)
+MovementPrevention ObjectLayer::CheckCollision(const Vector2D testPosition, const Vector2D playerVelocity, const Vector2D playerCurrentPos)
 {
 	Vector2D                objectBottomLeftPos, objectCollisionBox;
 	TwoDimensionalCollision collisionData = TwoDimensionalCollision();
+
+	collisionData.playerPriorPosition     = playerCurrentPos;
 
 	// Loop through all objects to see if there has been a collision - Only one collision can occur at once
 	for (unsigned int i = 0; i < mSpawnedObjectsInLevel.size(); i++)

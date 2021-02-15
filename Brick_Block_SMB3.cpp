@@ -175,6 +175,7 @@ void BrickBlock::UpdateStaticVariables(const float deltaTime)
 
 void BrickBlock::Render(const Vector2D renderReferencePoint)
 {
+	/*
 	if (mBlockBreakingAnimationPlaying)
 	{
 		int width = (int)mBlockBreakingAnimation->GetWidth() / 4, height = (int)mBlockBreakingAnimation->GetHeight();
@@ -200,8 +201,9 @@ void BrickBlock::Render(const Vector2D renderReferencePoint)
 
 		mThisSpriteSheet->Render(portionOfSpriteSheet, destRect);
 	}
-	else
-		RenderSprite(renderReferencePoint, mCurrentSpriteID);
+	else*/
+	
+	RenderSprite(renderReferencePoint, mCurrentSpriteID);
 }
 
 // -------------------------------------------------------------------------------------------------- //

@@ -557,7 +557,7 @@ bool PlayableCharacter::HandleCollisionsWithInteractionLayer(InteractableLayer* 
 
 MovementPrevention PlayableCharacter::HandleCollisionsWithInteractionObjectLayer(ObjectLayer* objectLayer, const Vector2D newPos)
 {
-	return (objectLayer->CheckCollision(newPos, mVelocity));
+	return (objectLayer->CheckCollision(newPos, mVelocity, mRealGridPosition));
 }
 
 // ----------------------------------------------------- //

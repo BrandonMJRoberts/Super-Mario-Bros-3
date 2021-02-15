@@ -231,10 +231,11 @@ struct ObjectCollisionHandleData final
 struct TwoDimensionalCollision final
 {
 	TwoDimensionalCollision()                                                                           { collisionDataPrimary = MOVEMENT_DIRECTION::NONE; collisionDataSecondary = MOVEMENT_DIRECTION::NONE; }
-	TwoDimensionalCollision(MOVEMENT_DIRECTION primaryCollision, MOVEMENT_DIRECTION secondaryCollision) { collisionDataPrimary = primaryCollision; collisionDataSecondary = secondaryCollision; }
+	TwoDimensionalCollision(MOVEMENT_DIRECTION primaryCollision, MOVEMENT_DIRECTION secondaryCollision, Vector2D playerPriorPos) { collisionDataPrimary = primaryCollision; collisionDataSecondary = secondaryCollision; playerPriorPosition = playerPriorPos; }
 
 	MOVEMENT_DIRECTION collisionDataPrimary;
 	MOVEMENT_DIRECTION collisionDataSecondary;
+	Vector2D           playerPriorPosition;
 };
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
