@@ -207,22 +207,24 @@ struct Area_Transition_Data final
 
 struct MovementPrevention
 {
-	MovementPrevention()                       { StopXMovement = true; StopYMovement = true; }
-	MovementPrevention(bool stopX, bool stopY) { StopXMovement = stopX; StopYMovement = stopY; }
+	MovementPrevention() { StopXMovement = true; StopYMovement = true; givesJump = false; }
+	MovementPrevention(bool stopX, bool stopY, bool givesJump) { StopXMovement = stopX; StopYMovement = stopY; this->givesJump = givesJump; }
 
 	bool StopYMovement;
 	bool StopXMovement;
+	bool givesJump;
 };
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 
 struct ObjectCollisionHandleData final
 {
-	ObjectCollisionHandleData() { shouldDeleteObject = false;        dimensionalMovementBlocking = MovementPrevention(); completedLevel = false; }
-	ObjectCollisionHandleData(bool deleteObject, bool stopMovementX, bool stopMovementY, bool LevelComplete) { shouldDeleteObject = deleteObject; dimensionalMovementBlocking = MovementPrevention(stopMovementX, stopMovementY); completedLevel = LevelComplete; }
+	ObjectCollisionHandleData() { shouldDeleteObject = false;        dimensionalMovementBlocking = MovementPrevention(); completedLevel = false; this->givesJumpLeway = false; }
+	ObjectCollisionHandleData(bool deleteObject, bool stopMovementX, bool stopMovementY, bool LevelComplete, bool givesJumpLeway) { shouldDeleteObject = deleteObject; dimensionalMovementBlocking = MovementPrevention(stopMovementX, stopMovementY, givesJumpLeway); completedLevel = LevelComplete; this->givesJumpLeway = givesJumpLeway; }
 
 	bool               shouldDeleteObject;
 	bool               completedLevel;
+	bool               givesJumpLeway;
 	MovementPrevention dimensionalMovementBlocking;
 };
 

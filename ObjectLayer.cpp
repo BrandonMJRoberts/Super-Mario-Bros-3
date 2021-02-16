@@ -393,12 +393,20 @@ MovementPrevention ObjectLayer::CheckCollision(const Vector2D testPosition, cons
 			objectBottomLeftPos = mSpawnedObjectsInLevel[i]->GetCurrentPosition();
 			objectCollisionBox  = mSpawnedObjectsInLevel[i]->GetCollisionBox();
 
+			// X check
+			if (testPosition.x < objectBottomLeftPos.x || testPosition.x > objectBottomLeftPos.x + objectCollisionBox.x)
+				continue;
+
+			// Y check
+			if (testPosition.y < objectBottomLeftPos.y - objectCollisionBox.y || testPosition.y > objectBottomLeftPos.y)
+				continue;
+
 			// Check to see if the X coords line up
-			if (testPosition.x >= objectBottomLeftPos.x && testPosition.x <= objectBottomLeftPos.x + objectCollisionBox.x)
-			{
+			//if (testPosition.x >= objectBottomLeftPos.x && testPosition.x <= objectBottomLeftPos.x + objectCollisionBox.x)
+			//{
 				// Now check that the Y coords line up
-				if (testPosition.y >= objectBottomLeftPos.y - objectCollisionBox.y && testPosition.y <= objectBottomLeftPos.y)
-				{
+			//	if (testPosition.y >= objectBottomLeftPos.y - objectCollisionBox.y && testPosition.y <= objectBottomLeftPos.y)
+			//	{
 					// Then we have a collision - so check which direction that this collision has occured from
 					if (playerVelocity.y >= 0.0f)
 						collisionData.collisionDataPrimary = MOVEMENT_DIRECTION::DOWN;
@@ -428,18 +436,18 @@ MovementPrevention ObjectLayer::CheckCollision(const Vector2D testPosition, cons
 					}
 
 					if(objectReturnData.dimensionalMovementBlocking.StopXMovement || objectReturnData.dimensionalMovementBlocking.StopYMovement)
-						return MovementPrevention(objectReturnData.dimensionalMovementBlocking.StopXMovement, objectReturnData.dimensionalMovementBlocking.StopYMovement);
-				}
-				else
-					continue;
-			}
-			else
-				continue;
+						return MovementPrevention(objectReturnData.dimensionalMovementBlocking.StopXMovement, objectReturnData.dimensionalMovementBlocking.StopYMovement, objectReturnData.givesJumpLeway);
+				//}
+				//else
+				//	continue;
+			//}
+			//else
+			//	continue;
 		}
 	}
 
 	// Return that there has been no collision
-	return MovementPrevention(false, false);
+	return MovementPrevention(false, false, false);
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //

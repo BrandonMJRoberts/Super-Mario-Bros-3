@@ -146,9 +146,9 @@ void Goomba::Render(const Vector2D renderReferencePoint)
 ObjectCollisionHandleData Goomba::SetIsCollidedWith(TwoDimensionalCollision collisionData)
 {
 	if(mHitsRemaining == 0)
-		return ObjectCollisionHandleData(false, false, false, false);
+		return ObjectCollisionHandleData(false, false, false, false, false);
 
-	if (collisionData.playerPriorPosition.y < mCurrentPosition.y && collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::DOWN)
+	if (collisionData.playerPriorPosition.y < mCurrentPosition.y - mCollisionBox.y && collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::DOWN)
 	{
 		// Stop the goomba
 		mCanMove  = false;
@@ -156,18 +156,13 @@ ObjectCollisionHandleData Goomba::SetIsCollidedWith(TwoDimensionalCollision coll
 		if (mHitsRemaining > 0)
 		{
 			mHitsRemaining--;
-
-			// Set the correct sprite
-			//mCurrentSpriteID = 2;
-			//mEndSpriteID     = 2;
-			//mStartSpriteID   = 2;
 		}
 
-		return ObjectCollisionHandleData(false, false, true, false);
+		return ObjectCollisionHandleData(false, false, true, false, true);
 	}
 
 	if(collisionData.collisionDataSecondary == MOVEMENT_DIRECTION::RIGHT || collisionData.collisionDataSecondary == MOVEMENT_DIRECTION::LEFT)
-		return ObjectCollisionHandleData(false, true, false, false);
+		return ObjectCollisionHandleData(false, true, false, false, false);
 
 	return ObjectCollisionHandleData();
 }

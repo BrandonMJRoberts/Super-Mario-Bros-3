@@ -42,6 +42,8 @@ private:
 	bool         mPlayingAsMario;
 	bool         mPaused;
 
+	bool         mTimerCounting;
+
 	// Array to hold the three current end card types
 	END_CARD_TYPES mEndCards[3];
 

@@ -249,9 +249,12 @@ bool PlayableCharacter::CheckYCollision(const Vector2D positionToCheck1, const V
 		return true;
 	}
 
-	if (HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1).StopYMovement || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2).StopYMovement)
+	MovementPrevention returnData1 = HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1), returnData2 = HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2);
+
+	if (returnData1.StopYMovement || returnData2.StopYMovement)
 	{
-		mJumpTimerLeway = 0.1f;
+		if(returnData1.givesJump || returnData2.givesJump)
+			mJumpTimerLeway = 0.1f;
 
 		newYPosRef = mRealGridPosition.y;
 

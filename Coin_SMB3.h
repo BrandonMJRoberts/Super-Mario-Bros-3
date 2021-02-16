@@ -28,7 +28,7 @@ public:
 
 	void        ResetUpdatedStaticVariables() override { mUpdatedStaticVariables = false; }
 
-	ObjectCollisionHandleData        SetIsCollidedWith(TwoDimensionalCollision collisionData) override { Notify(SUBJECT_NOTIFICATION_TYPES::COIN_COLLECTED, ""); return ObjectCollisionHandleData(true, false, false, false); }
+	ObjectCollisionHandleData        SetIsCollidedWith(TwoDimensionalCollision collisionData) override { Notify(SUBJECT_NOTIFICATION_TYPES::COIN_COLLECTED, ""); return ObjectCollisionHandleData(true, false, false, false, false); }
 
 private:
 	void        UpdateStaticVariables(const float deltaTime);

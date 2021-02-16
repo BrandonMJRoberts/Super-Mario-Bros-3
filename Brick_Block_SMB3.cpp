@@ -210,7 +210,7 @@ void BrickBlock::Render(const Vector2D renderReferencePoint)
 
 ObjectCollisionHandleData BrickBlock::SetIsCollidedWith(TwoDimensionalCollision collisionData)
 {
-	if (collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::UP)
+	if (collisionData.playerPriorPosition.y > mCurrentPosition.y && collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::UP)
 	{
 		if(mHitsBlockCanTake > 0)
 			mHitsBlockCanTake--;

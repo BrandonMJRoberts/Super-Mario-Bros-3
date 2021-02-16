@@ -36,6 +36,7 @@ HUD_Display::HUD_Display(SDL_Renderer* renderer) : Observer()
 	, mPlayingAsMario(true)
 	, mLivesRemaining(5)
 	, mCurrentScore(0)
+	, mTimerCounting(true)
 {
 	// Now load in the sprite sheets needed
 	LoadInSprites(renderer);
@@ -232,11 +233,13 @@ void HUD_Display::Render()
 
 void HUD_Display::Update(const float deltaTime)
 {
-	if (mTimeRemaming > 0.0f)
-		mTimeRemaming -= deltaTime;
-	else
-		mTimeRemaming = 0.0f;
-
+	if (mTimerCounting)
+	{
+		if (mTimeRemaming > 0.0f)
+			mTimeRemaming -= deltaTime;
+		else
+			mTimeRemaming = 0.0f;
+	}
 
 }
 
@@ -244,7 +247,7 @@ void HUD_Display::Update(const float deltaTime)
 
 void HUD_Display::Reset()
 {
-	mTimeRemaming      = 300.0f;
+	mTimeRemaming      = 300.9f;
 	mCurrentScore      = 0;
 	mLivesRemaining    = 5;
 	mCurrentMoneyCount = 0;
@@ -310,6 +313,10 @@ void HUD_Display::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string 
 
 	case SUBJECT_NOTIFICATION_TYPES::SETUP_WORLD_MAP:
 		mTimeRemaming = 0.0f;
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::LEVEL_CLEAR:
+		mTimerCounting = false;
 	break;
 	}
 }

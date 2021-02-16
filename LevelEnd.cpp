@@ -179,7 +179,7 @@ ObjectCollisionHandleData LevelEndObject::SetIsCollidedWith(TwoDimensionalCollis
 
 	Notify(SUBJECT_NOTIFICATION_TYPES::LEVEL_CLEAR, "");
 
-	return ObjectCollisionHandleData(false, true, false, true);
+	return ObjectCollisionHandleData(false, true, false, true, false);
 }
 
 // ---------------------------------------------------------------------------------- //
