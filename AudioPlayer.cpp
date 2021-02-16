@@ -505,14 +505,7 @@ void Audio_Player::SetAudioVolume(int volume)
 
 void Audio_Player::Update()
 {
-	// Check if any of the SFX have stopped playing and should be removed from the list
-	for (unsigned int i = 0; i < mSFX.size(); i++)
-	{
-		if (!Mix_Playing(1))
-		{
-			RemoveAllSFX();
-		}
-	}
+
 }
 
 // ----------------------------------------------------- //

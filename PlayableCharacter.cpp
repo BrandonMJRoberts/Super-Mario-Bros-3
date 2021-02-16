@@ -34,17 +34,17 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , mCollisionBox(1.0f, 1.0f)
 , mCollisionBoxOffset(0.0f, 0.0f)
 
-, kBaseMaxHorizontalSpeed(6.0f)
+, kBaseMaxHorizontalSpeed(5.0f)
 , mMaxHorizontalSpeed(kBaseMaxHorizontalSpeed)
-, kMaxHorizontalSpeedOverall(8.0f)
+, kMaxHorizontalSpeedOverall(7.5f)
+, mPSpeedAccumulatorRate(2.0f)
 
-, kFrictionMultiplier(8.0f)
+, kFrictionMultiplier(9.0f)
 
-, kJumpHeldAccelerationDepreciationRate(12.0f)
-, mJumpInitialBoost(-13.5f)
+, kJumpHeldAccelerationDepreciationRate(16.0f)
+, mJumpInitialBoost(-14.0f)
 , kJumpHeldInitialBoost(-17.0f)
 , mJumpHeldCurrentBoost(kJumpHeldInitialBoost)
-, mPSpeedAccumulatorRate(1.5f)
 
 , mCurrentMovements(MovementBitField::NONE)
 
@@ -129,9 +129,11 @@ void PlayableCharacter::Render()
 
 void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2D levelBounds, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
+	// If the player has no control then just dont change anything
 	if (!mHasControl)
 		return;
 
+	// Update the jumping leway
 	if(mJumpTimerLeway > 0.0f)
 		mJumpTimerLeway -= deltaTime;
 
@@ -141,16 +143,24 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 	// Now update the player's physics
 	UpdatePhysics(deltaTime);
 
-	unsigned int collisionCount = 0;
+	// Check X first
+	bool collisionOnX = HandleXCollisions(deltaTime, interactionLayer, objectLayer);
+	bool collisionOnY = HandleYCollisions(deltaTime, interactionLayer, objectLayer);
 
-	// Position to pass into the calculate position function to determine if the screen should scroll or not
-	double potentialNewXPos = mRealGridPosition.x + (mVelocity.x * deltaTime);
-	double potentialNewYPos = mRealGridPosition.y + (mVelocity.y * deltaTime);
+	// If we are not prevented from moving in both directions then calculate where we are going to be next frame
+	CalculateNewPosition(deltaTime, collisionOnX, collisionOnY);
 
+	UpdateAnimations(deltaTime);
+}
+
+// ----------------------------------------------------- //
+
+bool PlayableCharacter::HandleXCollisions(const float deltaTime, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
+{
 	// Default to checking right - taking into consideration the position, the collision box width, collision box offset and the movement distance
 	Vector2D footPos = Vector2D(mRealGridPosition.x + mCollisionBox.x + mCollisionBoxOffset.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBoxOffset.y);
 	Vector2D headPos = Vector2D(mRealGridPosition.x + mCollisionBox.x + mCollisionBoxOffset.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBox.y - mCollisionBoxOffset.y);
-	
+
 	// Check if we are going left - if we are then check left
 	if (mVelocity.x < 0.0f)
 	{
@@ -159,18 +169,21 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 		headPos = Vector2D(mRealGridPosition.x + mCollisionBoxOffset.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBox.y - mCollisionBoxOffset.y);
 	}
 
-	if (CheckXCollision(footPos, headPos, interactionLayer, objectLayer, potentialNewXPos))
-		collisionCount++;
+	return (CheckXCollision(footPos, headPos, interactionLayer, objectLayer));
+}
 
+// ----------------------------------------------------- //
 
+bool PlayableCharacter::HandleYCollisions(const float deltaTime, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
+{
 	// Default to going downwards
 	Vector2D leftPos  = Vector2D(mRealGridPosition.x + mCollisionBoxOffset.x,                   mRealGridPosition.y - mCollisionBoxOffset.y + (mVelocity.y * deltaTime));
 	Vector2D rightPos = Vector2D(mRealGridPosition.x + mCollisionBoxOffset.x + mCollisionBox.x, mRealGridPosition.y - mCollisionBoxOffset.y + (mVelocity.y * deltaTime));
 
+	// Going downwards
 	if (mVelocity.y >= 0.0f)
 	{
-		// Going downwards
-		if (CheckYCollision(leftPos, rightPos, interactionLayer, objectLayer, potentialNewYPos))
+		if (CheckYCollision(leftPos, rightPos, interactionLayer, objectLayer))
 		{
 			mCurrentMovements &= ~(MovementBitField::JUMPING);
 			mCurrentMovements &= ~(MovementBitField::HOLDING_JUMP);
@@ -181,34 +194,28 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 				mCurrentMovements &= ~(MovementBitField::HOLDING_JUMP);
 			}
 
-			mGrounded       = true;
-			collisionCount++;
+			mGrounded = true;
+			return true;
 		}
 		else
 			mGrounded = false;
 	}
-	else
+	else // Going upwards
 	{
-		// Going upwards
 		leftPos  = Vector2D(mRealGridPosition.x + mCollisionBoxOffset.x,                   mRealGridPosition.y - mCollisionBox.y - mCollisionBoxOffset.y + (mVelocity.y * deltaTime));
 		rightPos = Vector2D(mRealGridPosition.x + mCollisionBoxOffset.x + mCollisionBox.x, mRealGridPosition.y - mCollisionBox.y - mCollisionBoxOffset.y + (mVelocity.y * deltaTime));
 
-		if (CheckYCollision(leftPos, rightPos, interactionLayer, objectLayer, potentialNewYPos))
-			collisionCount++;
-
 		mGrounded = false;
+
+		return (CheckYCollision(leftPos, rightPos, interactionLayer, objectLayer));
 	}
 
-	// If we are not prevented from moving in both directions then calculate where we are going to be next frame
-	if(collisionCount < 2)
-		CalculateNewPosition(deltaTime, Vector2D(potentialNewXPos, potentialNewYPos));
-
-	UpdateAnimations(deltaTime);
+	return false;
 }
 
 // ----------------------------------------------------- //
 
-bool PlayableCharacter::CheckXCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer, double& newXPosRef)
+bool PlayableCharacter::CheckXCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
 	// Check to see if we have hit the terrain on the X movement, and the objects in the level, and the screen constraints
 	if (HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1)                || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2)                ||
@@ -218,21 +225,17 @@ bool PlayableCharacter::CheckXCollision(const Vector2D positionToCheck1, const V
 		positionToCheck1.x > mLevelBounds.x ||
 		positionToCheck2.x > mLevelBounds.x)
 	{
-		// Then dont move to the new position
-		newXPosRef = mRealGridPosition.x;
-
-		// Stop the player from moving
-		mVelocity.x     = 0.0f;
-
+		// Return that there was a collision
 		return true;
 	}
 
+	// Return that there was not a collision
 	return false;
 }
 
 // ----------------------------------------------------- //
 
-bool PlayableCharacter::CheckYCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer, double& newYPosRef)
+bool PlayableCharacter::CheckYCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
 	// Check terrain collision
 	if (HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1) || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2) ||
@@ -241,11 +244,7 @@ bool PlayableCharacter::CheckYCollision(const Vector2D positionToCheck1, const V
 		positionToCheck1.y + mCollisionBox.y > mLevelBounds.y + 2 ||
 		positionToCheck2.y + mCollisionBox.y > mLevelBounds.y + 2)
 	{
-		newYPosRef = mRealGridPosition.y;
-
-		// Stop the player from moving
-		mVelocity.y = 0.0f;
-
+		// Return that there was a collision
 		return true;
 	}
 
@@ -256,15 +255,11 @@ bool PlayableCharacter::CheckYCollision(const Vector2D positionToCheck1, const V
 		if(returnData1.givesJump || returnData2.givesJump)
 			mJumpTimerLeway = 0.1f;
 
-		newYPosRef = mRealGridPosition.y;
-
-		// Stop the player from moving
-		mVelocity.y = 0.0f;
-
+		// Return that there was a collision
 		return true;
 	}
 
-
+	// Return that there was not a collision
 	return false;
 }
 
@@ -303,12 +298,13 @@ void PlayableCharacter::CalculateScreenBoundsPosition(const Vector2D spawnPoint)
 
 // ----------------------------------------------------- //
 
-void PlayableCharacter::CalculateNewPosition(const float deltaTime, const Vector2D newPos)
+void PlayableCharacter::CalculateNewPosition(const float deltaTime, bool xCollisionOccured, bool yCollisionOccured)
 {
 	// Calculate the new potential positions
 	Vector2D movementDistance = (mVelocity * deltaTime);
 
-	Vector2D newRealGridPos   = newPos;
+	// Calculate the new potential positions
+	Vector2D newRealGridPos   = mRealGridPosition   + movementDistance;
 	Vector2D newScreenGridPos = mScreenGridPosition + movementDistance;
 
 	// First cap the new positions to their relative bounds - starting with the y axis
@@ -333,32 +329,67 @@ void PlayableCharacter::CalculateNewPosition(const float deltaTime, const Vector
 	else if (newRealGridPos.x >= mLevelBounds.x + 1)
 		newRealGridPos.x = mLevelBounds.x + 1;
 
-	// First update the real grid position of the player so that when the player moves their actual point in the world moves as well
-	mRealGridPosition = newRealGridPos;
-
 	// ----------------------------------------------------------------------------------------------------------------------------------- //
 
-	// If we want to scroll the screen then scroll - X axis
-	if (newScreenGridPos.x > (PLAYABLE_SCREEN_AREA_WIDTH  - (PLAYABLE_SCREEN_AREA_WIDTH / 2.0f)) + 1 && movementDistance.x > 0.0f)
+	// Update the players position is the collision has not occured
+	if (!xCollisionOccured)
 	{
-		// If moving in the correct direction then scroll the screen
-		mRenderRefencePoint.x += movementDistance.x;
-	}
-	else if (newScreenGridPos.x < ((PLAYABLE_SCREEN_AREA_WIDTH / 2.0f) - 1) && movementDistance.x < 0.0f)
-	{
-		mRenderRefencePoint.x += movementDistance.x;
-	}
-	else // If we are within this leway area then don't scroll the screen
-	{
-		// Allow the player to move freely
-		mScreenGridPosition.x = newScreenGridPos.x;
-	}
+		mRealGridPosition.x = newRealGridPos.x;
 
-	if (mRealGridPosition.x + (PLAYABLE_SCREEN_AREA_WIDTH / 2) - 1 > mLevelBounds.x ||
-		mRealGridPosition.x - (PLAYABLE_SCREEN_AREA_WIDTH / 2) + 1 < 0.0f)
-	{
-		mScreenGridPosition.x = newScreenGridPos.x;
+		// If we want to scroll the screen then scroll - X axis
+		if (newScreenGridPos.x > (PLAYABLE_SCREEN_AREA_WIDTH - (PLAYABLE_SCREEN_AREA_WIDTH / 2.0f)) + 1 && movementDistance.x > 0.0f)
+		{
+			// If moving in the correct direction then scroll the screen
+			mRenderRefencePoint.x += movementDistance.x;
+		}
+		else if (newScreenGridPos.x < ((PLAYABLE_SCREEN_AREA_WIDTH / 2.0f) - 1) && movementDistance.x < 0.0f)
+		{
+			mRenderRefencePoint.x += movementDistance.x;
+		}
+		else // If we are within this leway area then don't scroll the screen
+		{
+			// Allow the player to move freely
+			mScreenGridPosition.x = newScreenGridPos.x;
+		}
+
+		if (mRealGridPosition.x + (PLAYABLE_SCREEN_AREA_WIDTH / 2) - 1 > mLevelBounds.x ||
+			mRealGridPosition.x - (PLAYABLE_SCREEN_AREA_WIDTH / 2) + 1 < 0.0f)
+		{
+			mScreenGridPosition.x = newScreenGridPos.x;
+		}
 	}
+	else
+		mVelocity.x = 0.0f;
+
+	if (!yCollisionOccured)
+	{
+		mRealGridPosition.y = newRealGridPos.y;
+
+		// If we want to scroll the screen then scroll - Y axis
+		if (newScreenGridPos.y > PLAYABLE_SCREEN_AREA_HEIGHT - (PLAYABLE_SCREEN_AREA_HEIGHT / 2.0f) + 2 && movementDistance.y > 0.0f)
+		{
+			mRenderRefencePoint.y += movementDistance.y;
+		}
+		else if (newScreenGridPos.y < (PLAYABLE_SCREEN_AREA_HEIGHT / 2.0f) && movementDistance.y < 0.0f)
+		{
+			mRenderRefencePoint.y += movementDistance.y;
+		}
+		else
+		{
+			// Allow the player to move freely
+			mScreenGridPosition.y = newScreenGridPos.y;
+		}
+
+		if (mRealGridPosition.y + (PLAYABLE_SCREEN_AREA_HEIGHT / 2.0f) > mLevelBounds.y ||
+			mRealGridPosition.y - (PLAYABLE_SCREEN_AREA_HEIGHT / 2.0f) < 0.0f)
+		{
+			mScreenGridPosition.y = newScreenGridPos.y;
+		}
+	}
+	else
+		mVelocity.y = 0.0f;
+
+	// ----------------------------------------------------------------------------------------------------------------------------------- //
 
 	// Cap the render reference point
 	if (mRenderRefencePoint.x < 0.0f)
@@ -371,27 +402,6 @@ void PlayableCharacter::CalculateNewPosition(const float deltaTime, const Vector
 	}
 
 	// ----------------------------------------------------------------------------------------------------------------------------------- //
-
-	// If we want to scroll the screen then scroll - Y axis
-	if (newScreenGridPos.y > PLAYABLE_SCREEN_AREA_HEIGHT - (PLAYABLE_SCREEN_AREA_HEIGHT / 2.0f) + 2 && movementDistance.y > 0.0f)
-	{
-		mRenderRefencePoint.y += movementDistance.y;
-	}
-	else if (newScreenGridPos.y < (PLAYABLE_SCREEN_AREA_HEIGHT / 2.0f) && movementDistance.y < 0.0f)
-	{
-		mRenderRefencePoint.y += movementDistance.y;
-	}
-	else
-	{
-		// Allow the player to move freely
-		mScreenGridPosition.y = newScreenGridPos.y;
-	}
-
-	if (mRealGridPosition.y + (PLAYABLE_SCREEN_AREA_HEIGHT / 2.0f) > mLevelBounds.y ||
-		mRealGridPosition.y - (PLAYABLE_SCREEN_AREA_HEIGHT / 2.0f) < 0.0f)
-	{
-		mScreenGridPosition.y = newScreenGridPos.y;
-	}
 
 	if (mRenderRefencePoint.y < 0.0f)
 	{
@@ -425,22 +435,19 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 		{
 		case SDLK_w:
 			// If grounded then set that the player is jumping
-			if (!(mCurrentMovements & MovementBitField::JUMPING))
+			if (mGrounded || !(mCurrentMovements & MovementBitField::JUMPING) || mJumpTimerLeway > 0.0f)
 			{
-				if (mGrounded || mJumpTimerLeway > 0.0f)
-				{
-					// Set that the player is jumping
-					mCurrentMovements |= MovementBitField::JUMPING;
+				// Set that the player is jumping
+				mCurrentMovements |= MovementBitField::JUMPING;
 
-					mJumpHeldCurrentBoost = kJumpHeldInitialBoost * std::max(float(abs(mVelocity.x) / kMaxHorizontalSpeedOverall), 0.1f);
+				mJumpHeldCurrentBoost = kJumpHeldInitialBoost * std::max(float(abs(mVelocity.x) / kMaxHorizontalSpeedOverall), 0.1f);
 
-					mGrounded = false;
+				mGrounded = false;
 
-					// Give the minimum jump height of boost upwards
-					mVelocity.y = mJumpInitialBoost;
+				// Give the minimum jump height of boost upwards
+				mVelocity.y = mJumpInitialBoost;
 
-					Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_JUMPED, "");
-				}
+				Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_JUMPED, "");
 			}
 
 			// Otherwise check if you are jumping and if so state that you are holding down jump

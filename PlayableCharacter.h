@@ -49,7 +49,7 @@ public:
 private:
 	void HandleMovementInput(SDL_Event e);
 
-	void CalculateNewPosition(const float deltaTime, const Vector2D newPos);
+	void CalculateNewPosition(const float deltaTime, bool xCollisionOccured, bool yCollisionOccured);
 	void CalculateInitialRenderReferencePoint();
 
 	void CalculateScreenBoundsPosition(const Vector2D spawnPoint);
@@ -57,8 +57,8 @@ private:
 	bool HandleCollisionsWithInteractionLayer(InteractableLayer* interactionLayer, const Vector2D newPos);
 	MovementPrevention HandleCollisionsWithInteractionObjectLayer(ObjectLayer* objectLayer, const Vector2D newPos);
 
-	bool CheckXCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer, double& newXPosRef);
-	bool CheckYCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer, double& newYPosRef);
+	bool CheckXCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer);
+	bool CheckYCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer);
 
 	void UpdatePhysics(const float deltaTime);
 
@@ -74,6 +74,9 @@ private:
 	void UpdateAnimationsTanookiMario();
 	void UpdateAnimationsLeafMario();
 	void UpdateAnimationsStarMario();
+
+	bool HandleXCollisions(const float deltaTime, InteractableLayer* interactionLayer, ObjectLayer* objectLayer);
+	bool HandleYCollisions(const float deltaTime, InteractableLayer* interactionLayer, ObjectLayer* objectLayer);
 
 	Vector2D   mRealGridPosition;   // The player's position in the collision world
 	Vector2D   mScreenGridPosition; // Player's screen position
