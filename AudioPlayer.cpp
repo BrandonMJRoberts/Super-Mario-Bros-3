@@ -14,6 +14,12 @@ Audio_Player::Audio_Player()
 {
 	// Default the volume to not be deafening
 	SetAudioVolume(48);
+
+	Mix_AllocateChannels(16);
+
+	// Set the callback for when a channel finishes
+	AudioCallback::SetAudioPlayer(this);
+	Mix_ChannelFinished(AudioCallback::ChannelFinishedCallback);
 }
 
 
@@ -346,8 +352,27 @@ void Audio_Player::PlaySFXTrack(const char* newFilePath)
 		return;
 	}
 
-	// Set the SFX to be playing 
-	Mix_PlayChannel(1, mSFX[mSFX.size() - 1], 0);
+	// Find which channels are open
+	std::vector<unsigned int> openChannels{ 1, 2, 3, 4, 5, 6, 7, 8 };
+
+	// Find an empty channel and play it
+	for (unsigned int i = 0; i < mFilledChannels.size(); i++)
+	{
+		for (unsigned int j = 0; j < openChannels.size(); j++)
+		{
+			if (mFilledChannels[i] == openChannels[j])
+			{
+				openChannels.erase(openChannels.begin() + j);
+				break;
+			}
+		}
+	}
+
+	// play the audio
+	Mix_PlayChannel(openChannels[0], mSFX[mSFX.size() - 1], 0);
+
+	// Add this channel to the list of channels being played on
+	mFilledChannels.push_back(openChannels[0]);
 }
 
 // ----------------------------------------------------- //
@@ -405,6 +430,8 @@ void Audio_Player::PauseAllSFX()
 {
 	Mix_Pause(1);
 	Mix_Pause(2);
+	Mix_Pause(3);
+	Mix_Pause(4);
 }
 
 // ----------------------------------------------------- //
@@ -413,6 +440,8 @@ void Audio_Player::ResumeAllSFX()
 {
 	Mix_Resume(1);
 	Mix_Resume(2);
+	Mix_Resume(3);
+	Mix_Resume(4);
 }
 
 // ----------------------------------------------------- //
@@ -483,6 +512,42 @@ void Audio_Player::Update()
 		{
 			RemoveAllSFX();
 		}
+	}
+}
+
+// ----------------------------------------------------- //
+
+void Audio_Player::SetChannelFinished(int channel)
+{
+	// Loop through and see if this channel is in our vector
+	for (unsigned int i = 0; i < mFilledChannels.size(); i++)
+	{
+		if (mFilledChannels[i] == channel)
+		{
+			mFilledChannels.erase(mFilledChannels.begin() + i);
+			return;
+		}
+	}
+}
+
+// ----------------------------------------------------- //
+
+namespace AudioCallback
+{
+	namespace
+	{
+		Audio_Player* nAudioplayer;
+	}
+
+	void SetAudioPlayer(Audio_Player* audioPlayer)
+	{
+		nAudioplayer = audioPlayer;
+	}
+
+	void ChannelFinishedCallback(int channelID)
+	{
+		if (nAudioplayer)
+			nAudioplayer->SetChannelFinished(channelID);
 	}
 }
 

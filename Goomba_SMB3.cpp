@@ -158,6 +158,8 @@ ObjectCollisionHandleData Goomba::SetIsCollidedWith(TwoDimensionalCollision coll
 			mHitsRemaining--;
 		}
 
+		Notify(SUBJECT_NOTIFICATION_TYPES::JUMPED_OFF_ENEMY, "");
+
 		return ObjectCollisionHandleData(false, false, true, false, true);
 	}
 

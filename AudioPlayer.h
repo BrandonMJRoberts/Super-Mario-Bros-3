@@ -19,6 +19,8 @@ public:
 
 	void Update();
 
+	void SetChannelFinished(int channelID);
+
 private:
 	void SetWorldMapMusicTrack(const char* newFilePath);
 	void SetMainLevelMusicTrack(const char* newFilePath);
@@ -47,7 +49,21 @@ private:
 	Mix_Music*              mSubAreaMusic;
 
 	// Vector to hold the SFX
-	std::vector<Mix_Chunk*> mSFX;
+	std::vector<Mix_Chunk*>   mSFX;
+
+	std::vector<unsigned int> mFilledChannels;
 };
+
+#endif
+
+#ifndef _AUDIO_PLAYER_NAMESPACE_H_
+#define _AUDIO_PLAYER_NAMESPACE_H_
+
+namespace AudioCallback
+{
+	void SetAudioPlayer(Audio_Player* audioPlayer);
+
+	void ChannelFinishedCallback(int channelID);
+}
 
 #endif
