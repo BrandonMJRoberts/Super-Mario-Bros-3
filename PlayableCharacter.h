@@ -49,10 +49,12 @@ public:
 private:
 	void HandleMovementInput(SDL_Event e);
 
-	void CalculateNewPosition(const float deltaTime, bool xCollisionOccured, bool yCollisionOccured);
+	void CalculateNewPosition(const float deltaTime, CollisionPositionalData xCollisionOccured, CollisionPositionalData yCollisionOccured);
 	void CalculateInitialRenderReferencePoint();
 
 	void CalculateScreenBoundsPosition(const Vector2D spawnPoint);
+
+	void CalculateNewScreenPosAndRenderPos(Vector2D movementDistance, const CollisionPositionalData xCollisionOccured, const CollisionPositionalData yCollisionOccured);
 
 	bool HandleCollisionsWithInteractionLayer(InteractableLayer* interactionLayer, const Vector2D newPos);
 	MovementPrevention HandleCollisionsWithInteractionObjectLayer(ObjectLayer* objectLayer, const Vector2D newPos);
@@ -75,8 +77,8 @@ private:
 	void UpdateAnimationsLeafMario();
 	void UpdateAnimationsStarMario();
 
-	bool HandleXCollisions(const float deltaTime, InteractableLayer* interactionLayer, ObjectLayer* objectLayer);
-	bool HandleYCollisions(const float deltaTime, InteractableLayer* interactionLayer, ObjectLayer* objectLayer);
+	CollisionPositionalData HandleXCollisions(const float deltaTime, InteractableLayer* interactionLayer, ObjectLayer* objectLayer);
+	CollisionPositionalData HandleYCollisions(const float deltaTime, InteractableLayer* interactionLayer, ObjectLayer* objectLayer);
 
 	Vector2D   mRealGridPosition;   // The player's position in the collision world
 	Vector2D   mScreenGridPosition; // Player's screen position

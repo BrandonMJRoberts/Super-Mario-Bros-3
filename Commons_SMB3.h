@@ -205,6 +205,31 @@ struct Area_Transition_Data final
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 
+struct CollisionPositionalData
+{
+	CollisionPositionalData() 
+	{ 
+		collisionOccured                     = false; 
+		collisionRealPositionLeftOrTop       = Vector2D(); 
+		collisionRealPositionRightOrBottom   = Vector2D(); 
+	}
+
+	CollisionPositionalData(const bool collisionOccured, const Vector2D collisionRealPositionLeftOrTop, const Vector2D collisionRealPositionRightOrBottom)
+	{ 
+		this->collisionOccured                     = collisionOccured; 
+		this->collisionRealPositionLeftOrTop       = collisionRealPositionLeftOrTop;
+		this->collisionRealPositionRightOrBottom   = collisionRealPositionRightOrBottom;
+	}
+
+	Vector2D collisionRealPositionLeftOrTop;
+	Vector2D collisionRealPositionRightOrBottom;
+
+	bool     collisionOccured;
+
+};
+
+// -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
+
 struct MovementPrevention
 {
 	MovementPrevention() { StopXMovement = true; StopYMovement = true; givesJump = false; }
