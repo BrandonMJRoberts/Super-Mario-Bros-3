@@ -40,7 +40,7 @@ Goomba::Goomba(const Vector2D      spawnPosition,
 , mTimerTillDespawn(1.0f)
 , mHitsRemaining(1)
 {
-
+	mVelocity.x = -MOVEMENT_SPEED;
 }
 
 // ------------------------------------------------------------- //
@@ -74,9 +74,11 @@ BaseObject* Goomba::Clone(std::string data)
 
 bool Goomba::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer)
 {
+	// Animation updates
 	if (!mUpdatedStaticVariables)
 		UpdateStaticVariables(deltaTime);
 
+	// Handleing despawning and animations
 	if (mHitsRemaining == 0)
 	{
 		mTimerTillDespawn -= deltaTime;
@@ -85,6 +87,13 @@ bool Goomba::Update(const float deltaTime, const Vector2D playerPosition, Intera
 			return true;
 	}
 
+	ApplyGravity(deltaTime);
+
+	if (mCanMove)
+		HandleMovement(deltaTime, interactionLayer);
+	else
+		mVelocity.x = 0.0f;
+
 	return false;
 }
 
@@ -92,7 +101,11 @@ bool Goomba::Update(const float deltaTime, const Vector2D playerPosition, Intera
 
 void Goomba::Move()
 {
-
+	// Now move the goomba in its current facing direction
+	if (mFacingLeft)
+		mVelocity.x = -MOVEMENT_SPEED;
+	else
+		mVelocity.x = MOVEMENT_SPEED;
 }
 
 // ------------------------------------------------------------- //
@@ -145,8 +158,11 @@ void Goomba::Render(const Vector2D renderReferencePoint)
 
 ObjectCollisionHandleData Goomba::SetIsCollidedWith(TwoDimensionalCollision collisionData)
 {
-	if(mHitsRemaining == 0)
+	if (mHitsRemaining == 0)
+	{
 		return ObjectCollisionHandleData(false, false, false, false, false);
+		mCanMove = false;
+	}
 
 	if (collisionData.playerPriorPosition.y < mCurrentPosition.y - mCollisionBox.y && collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::DOWN)
 	{
@@ -157,6 +173,9 @@ ObjectCollisionHandleData Goomba::SetIsCollidedWith(TwoDimensionalCollision coll
 		{
 			mHitsRemaining--;
 		}
+
+		if(mHitsRemaining == 0)
+			mCanMove = false;
 
 		Notify(SUBJECT_NOTIFICATION_TYPES::JUMPED_OFF_ENEMY, "");
 

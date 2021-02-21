@@ -232,7 +232,7 @@ struct CollisionPositionalData
 
 struct MovementPrevention
 {
-	MovementPrevention() { StopXMovement = true; StopYMovement = true; givesJump = false; }
+	MovementPrevention()                                       { StopXMovement = true; StopYMovement = true; givesJump = false; }
 	MovementPrevention(bool stopX, bool stopY, bool givesJump) { StopXMovement = stopX; StopYMovement = stopY; this->givesJump = givesJump; }
 
 	bool StopYMovement;

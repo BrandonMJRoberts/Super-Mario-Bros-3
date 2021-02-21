@@ -90,6 +90,7 @@ bool ObjectLayer::Update(const float deltaTime, SDL_Event e, Vector2D gridRefere
 	// See if any of the object not currently spawned should spawn again
 	CheckIfObjectsShouldSpawn(gridReferencePoint);
 
+	// Now check to see if the level has finished
 	if (mLevelEndObjectCollected)
 	{
 		mCountDownTillReturnToMap -= deltaTime;
@@ -172,6 +173,7 @@ void ObjectLayer::UpdateSpawnedObjects(const float deltaTime, Vector2D gridRefer
 	// Loop through all spawned objects and check if they need to be unspawned ('destroyed')
 	for (unsigned int i = 0; i < mSpawnedObjectsInLevel.size(); i++)
 	{
+		// Check to see if the object exists
 		if (mSpawnedObjectsInLevel[i])
 		{
 			// If they return true then they need to be unspawned / destroyed
@@ -192,8 +194,10 @@ void ObjectLayer::UpdateSpawnedObjects(const float deltaTime, Vector2D gridRefer
 	// Now reset the bool making sure that the animation update only gets called once per frame
 	for (unsigned int i = 0; i < mSpawnedObjectsInLevel.size(); i++)
 	{
+		// Check to see if the object exists
 		if (mSpawnedObjectsInLevel[i])
 		{
+			// Set all spawned objects to have reset their class specific animation values
 			mSpawnedObjectsInLevel[i]->ResetUpdatedStaticVariables();
 		}
 	}
@@ -327,8 +331,8 @@ void ObjectLayer::InstantiateNameConversions()
 	mNameToObjectConversion["GOOMBA"]             = new Goomba(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Goomba/Goomba.png", 6, 3, 1.0f, 1.0f, 0.15f, true, false, true);
 	mNameToObjectConversion["PARA_GOOMBA"]        = new ParaGoomba(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Goomba/Goomba.png", 1, 1, 1.0f, 1.0f, 0.3f, true, true, true);
 
-	mNameToObjectConversion["KOOPA_TROOPER"]      = new KoopaTrooper(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Koopa Trooper/Koopa.png", 14, 3, 1.0f, 1.0f, KOOPA_ANIMATION_SPEED, true, false, true, 0);
-	mNameToObjectConversion["PARA_KOOPA_TROOPER"] = new KoopaTrooper(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Koopa Trooper/Koopa.png", 1, 1, 1.0f, 1.0f, KOOPA_ANIMATION_SPEED, true, true, true, 0);
+	mNameToObjectConversion["KOOPA_TROOPER"]      = new KoopaTrooper(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Koopa Trooper/Koopa.png", 14, 3, 1.0f, 1.0f, KOOPA_WALK_ANIMATION_SPEED, true, false, true, 0);
+	mNameToObjectConversion["PARA_KOOPA_TROOPER"] = new KoopaTrooper(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Koopa Trooper/Koopa.png", 1, 1, 1.0f, 1.0f, KOOPA_WALK_ANIMATION_SPEED, true, true, true, 0);
 
 	mNameToObjectConversion["WALK_WAY"]           = new OneWayWalkway(Vector2D(), false, mRenderer, "", 1, 1, 1.0f, 0.25f, 0.0f);
 
@@ -401,48 +405,36 @@ MovementPrevention ObjectLayer::CheckCollision(const Vector2D testPosition, cons
 			if (testPosition.y < objectBottomLeftPos.y - objectCollisionBox.y || testPosition.y > objectBottomLeftPos.y)
 				continue;
 
-			// Check to see if the X coords line up
-			//if (testPosition.x >= objectBottomLeftPos.x && testPosition.x <= objectBottomLeftPos.x + objectCollisionBox.x)
-			//{
-				// Now check that the Y coords line up
-			//	if (testPosition.y >= objectBottomLeftPos.y - objectCollisionBox.y && testPosition.y <= objectBottomLeftPos.y)
-			//	{
-					// Then we have a collision - so check which direction that this collision has occured from
-					if (playerVelocity.y >= 0.0f)
-						collisionData.collisionDataPrimary = MOVEMENT_DIRECTION::DOWN;
-					else
-						collisionData.collisionDataPrimary = MOVEMENT_DIRECTION::UP;
+				// Then we have a collision - so check which direction that this collision has occured from
+				if (playerVelocity.y >= 0.0f)
+					collisionData.collisionDataPrimary = MOVEMENT_DIRECTION::DOWN;
+				else
+					collisionData.collisionDataPrimary = MOVEMENT_DIRECTION::UP;
 
-					if (playerVelocity.x > 0.0f)
-						collisionData.collisionDataSecondary = MOVEMENT_DIRECTION::LEFT;
-					else if(playerVelocity.x < 0.0f)
-						collisionData.collisionDataSecondary = MOVEMENT_DIRECTION::RIGHT;
+				if (playerVelocity.x > 0.0f)
+					collisionData.collisionDataSecondary = MOVEMENT_DIRECTION::LEFT;
+				else if(playerVelocity.x < 0.0f)
+					collisionData.collisionDataSecondary = MOVEMENT_DIRECTION::RIGHT;
 
 
-					ObjectCollisionHandleData objectReturnData = mSpawnedObjectsInLevel[i]->SetIsCollidedWith(collisionData);
+				ObjectCollisionHandleData objectReturnData = mSpawnedObjectsInLevel[i]->SetIsCollidedWith(collisionData);
 
-					if (objectReturnData.completedLevel)
-					{
-						mLevelEndObjectCollected = true;
-					}
+				if (objectReturnData.completedLevel)
+				{
+					mLevelEndObjectCollected = true;
+				}
 
-					// Notify the object that they have a collision upon them - they will return if the object needs to be detroyed or not
-					if (objectReturnData.shouldDeleteObject)
-					{
-						delete mSpawnedObjectsInLevel[i];
-						mSpawnedObjectsInLevel[i] = nullptr;
-						mSpawnedObjectsInLevel.erase(mSpawnedObjectsInLevel.begin() + i);
-						continue;
-					}
+				// Notify the object that they have a collision upon them - they will return if the object needs to be detroyed or not
+				if (objectReturnData.shouldDeleteObject)
+				{
+					delete mSpawnedObjectsInLevel[i];
+					mSpawnedObjectsInLevel[i] = nullptr;
+					mSpawnedObjectsInLevel.erase(mSpawnedObjectsInLevel.begin() + i);
+					continue;
+				}
 
-					if(objectReturnData.dimensionalMovementBlocking.StopXMovement || objectReturnData.dimensionalMovementBlocking.StopYMovement)
-						return MovementPrevention(objectReturnData.dimensionalMovementBlocking.StopXMovement, objectReturnData.dimensionalMovementBlocking.StopYMovement, objectReturnData.givesJumpLeway);
-				//}
-				//else
-				//	continue;
-			//}
-			//else
-			//	continue;
+				if(objectReturnData.dimensionalMovementBlocking.StopXMovement || objectReturnData.dimensionalMovementBlocking.StopYMovement)
+					return MovementPrevention(objectReturnData.dimensionalMovementBlocking.StopXMovement, objectReturnData.dimensionalMovementBlocking.StopYMovement, objectReturnData.givesJumpLeway);
 		}
 	}
 

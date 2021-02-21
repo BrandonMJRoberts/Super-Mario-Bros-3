@@ -28,6 +28,8 @@ public:
 
 	void        ResetUpdatedStaticVariables() override { mUpdatedStaticVariables = false; }
 
+	ObjectCollisionHandleData SetIsCollidedWith(TwoDimensionalCollision collisionData) override;
+
 private:
 	void        UpdateStaticVariables(const float deltaTime);
 
@@ -42,7 +44,11 @@ private:
 	static unsigned int         mStartSpriteID;
 
 	static float                mTimeRemainingTillNextFrame;
-	const float					mTimePerFrame;
+	float					    mTimePerFrame;
+
+	unsigned int                mHitsRemaining;
+	float                       mTimeTillConversion;
+	const float                 kTimeOnFloor;
 };
 
 #endif

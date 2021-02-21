@@ -8,9 +8,9 @@
 #include <iostream>
 #include <string.h>
 
-class InteractableLayer;
-
 #include "Subject.h"
+
+class InteractableLayer;
 
 class BaseObject abstract : public Subject
 {
@@ -41,7 +41,6 @@ public:
 	virtual ObjectCollisionHandleData SetIsCollidedWith(TwoDimensionalCollision collisionData) { return ObjectCollisionHandleData(); }
 
 protected:
-
 	Vector2D            mCurrentPosition;
 	Vector2D	        mSpawnPosition;
 

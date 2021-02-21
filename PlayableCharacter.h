@@ -14,16 +14,16 @@ class ObjectLayer;
 enum MovementBitField : unsigned int
 {
 	NONE         = 0,
-	MOVING_RIGHT = 1,
-	MOVING_LEFT  = 2,
-	CROUCHING    = 4,
+	MOVING_RIGHT = 1 << 0,
+	MOVING_LEFT  = 1 << 1,
+	CROUCHING    = 1 << 2,
 
-	RUNNING      = 8,
-	JUMPING      = 16,
-	HOLDING_JUMP = 32,
-	SWIMMING     = 64,
+	RUNNING      = 1 << 3,
+	JUMPING      = 1 << 4,
+	HOLDING_JUMP = 1 << 5,
+	SWIMMING     = 1 << 6,
 
-	ENTERING_PIPE_VERTICALLY = 128
+	ENTERING_PIPE_VERTICALLY = 1 << 7
 };
 
 // ---------------------------------------------------------------- //
@@ -112,6 +112,8 @@ private:
 	const float  kBaseMaxHorizontalSpeed;
 	const float  kMaxHorizontalSpeedOverall;
 	float        mMaxHorizontalSpeed;
+
+	const float  kMaxYVelocity;
 
 	const float  mPSpeedAccumulatorRate;
 

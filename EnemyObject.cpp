@@ -4,7 +4,7 @@
 
 EnemyObject::EnemyObject(const Vector2D      spawnPosition,
 					     const bool          startSpawnedInLevel,
-						 SDL_Renderer* renderer,
+						 SDL_Renderer*       renderer,
 						 const std::string   filePathToSpriteSheet,
 						 const unsigned int  spritesOnWidth,
 						 const unsigned int  spritesOnHeight,
@@ -24,10 +24,8 @@ EnemyObject::EnemyObject(const Vector2D      spawnPosition,
 , collisionBoxHeight
 , timePerFrame)
 
-, mVelocity(0, 0)
 , mCanJump(canJump)
 , mCanMove(canMove)
-, mFacingLeft(startFacingLeft)
 {
 
 }

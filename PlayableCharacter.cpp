@@ -52,10 +52,12 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , mTimeTillNextFrame(timePerFrame)
 , mPriorFrameMovements(0)
 
+, kMaxYVelocity(60.0f)
+
 , mPowerUpState(POWER_UP_TYPE::NONE)
 , mRenderer(renderer)
 , mWasFacingRight(true)
-, mGrounded(true)
+, mGrounded(false)
 , mHasControl(true)
 
 , mJumpTimerLeway(0.0f)
@@ -186,7 +188,7 @@ CollisionPositionalData PlayableCharacter::HandleYCollisions(const float deltaTi
 	{
 		if (CheckYCollision(leftPos, rightPos, interactionLayer, objectLayer))
 		{
-			mCurrentMovements &= ~(MovementBitField::JUMPING);
+			//mCurrentMovements &= ~(MovementBitField::JUMPING);
 			mCurrentMovements &= ~(MovementBitField::HOLDING_JUMP);
 
 			if (!(mCurrentMovements & MovementBitField::JUMPING))
@@ -195,7 +197,7 @@ CollisionPositionalData PlayableCharacter::HandleYCollisions(const float deltaTi
 				mCurrentMovements &= ~(MovementBitField::HOLDING_JUMP);
 			}
 
-			mGrounded = true;
+			mGrounded       = true;
 			return CollisionPositionalData(true, leftPos, rightPos);
 		}
 		else
@@ -245,6 +247,9 @@ bool PlayableCharacter::CheckYCollision(const Vector2D positionToCheck1, const V
 		positionToCheck1.y + mCollisionBox.y > mLevelBounds.y + 2 ||
 		positionToCheck2.y + mCollisionBox.y > mLevelBounds.y + 2)
 	{
+		if (mVelocity.y >= 0.0f)
+			mGrounded = true;
+
 		// Return that there was a collision
 		return true;
 	}
@@ -253,8 +258,11 @@ bool PlayableCharacter::CheckYCollision(const Vector2D positionToCheck1, const V
 
 	if (returnData1.StopYMovement || returnData2.StopYMovement)
 	{
-		if(returnData1.givesJump || returnData2.givesJump)
+		if (returnData1.givesJump || returnData2.givesJump)
+		{
 			mJumpTimerLeway = 0.1f;
+			mGrounded       = true;
+		}
 
 		// Return that there was a collision
 		return true;
@@ -388,8 +396,8 @@ void PlayableCharacter::CalculateNewScreenPosAndRenderPos(Vector2D movementDista
 	if (yCollision.collisionOccured)
 	{
 		// Now we need to set the screen position to be in the correct position
-		if (movementDistance.y > 0.05f && mVelocity.y >= 0.0f)
-			mScreenGridPosition.y += (movementDistance.y / 16.0f);
+	//	if (movementDistance.y > 0.05f && mVelocity.y >= 0.0f)
+	//		mScreenGridPosition.y -= (movementDistance.y / 16.0f);
 
 		mVelocity.y = 0.0f;
 	}
@@ -413,6 +421,8 @@ void PlayableCharacter::CalculateNewScreenPosAndRenderPos(Vector2D movementDista
 		{
 			mScreenGridPosition.y = newScreenGridPos.y;
 		}
+
+		mGrounded = false;
 	}
 
 	// ------------------------------------------------------------------------------------------- //
@@ -461,21 +471,8 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 		switch (e.key.keysym.sym)
 		{
 		case SDLK_w:
-			// If grounded then set that the player is jumping
-			if (mGrounded || !(mCurrentMovements & MovementBitField::JUMPING) || mJumpTimerLeway > 0.0f)
-			{
-				// Set that the player is jumping
-				mCurrentMovements |= MovementBitField::JUMPING;
 
-				mJumpHeldCurrentBoost = kJumpHeldInitialBoost * std::max(float(abs(mVelocity.x) / kMaxHorizontalSpeedOverall), 0.1f);
-
-				mGrounded = false;
-
-				// Give the minimum jump height of boost upwards
-				mVelocity.y = mJumpInitialBoost;
-
-				Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_JUMPED, "");
-			}
+			mCurrentMovements |= MovementBitField::JUMPING;
 
 			// Otherwise check if you are jumping and if so state that you are holding down jump
 			if (mCurrentMovements & MovementBitField::JUMPING)
@@ -546,9 +543,9 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 		break;
 
 		case SDLK_w:
-			//mCurrentMovements &= ~(MovementBitField::JUMPING);
-
 			// Not holding jump anymore
+
+			mCurrentMovements &= ~(MovementBitField::JUMPING);
 			mCurrentMovements &= ~(MovementBitField::HOLDING_JUMP);
 
 			// If you release jump whilst jumping you cannot continue the extra boost after the release
@@ -558,6 +555,21 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 		break;
 		}
 	break;
+	}
+
+	// If grounded then set that the player is jumping
+	if (mCurrentMovements & MovementBitField::JUMPING && (mGrounded || mJumpTimerLeway > 0.0f))
+	{
+		mJumpHeldCurrentBoost = kJumpHeldInitialBoost * std::max(float(abs(mVelocity.x) / kMaxHorizontalSpeedOverall), 0.1f);
+
+		mGrounded = false;
+
+		// Give the minimum jump height of boost upwards
+		mVelocity.y = mJumpInitialBoost;
+
+		mJumpTimerLeway = 0.0f;
+
+		Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_JUMPED, "");
 	}
 }
 
@@ -676,6 +688,11 @@ void PlayableCharacter::UpdatePhysics(const float deltaTime)
 		if (mMaxHorizontalSpeed > kMaxHorizontalSpeedOverall)
 			mMaxHorizontalSpeed = kMaxHorizontalSpeedOverall;
 	}
+
+	if (mVelocity.y > kMaxYVelocity)
+		mVelocity.y = kMaxYVelocity;
+	else if (mVelocity.y < -kMaxYVelocity)
+		mVelocity.y = -kMaxYVelocity;
 }
 
 // ----------------------------------------------------- //
@@ -739,6 +756,8 @@ void PlayableCharacter::UpdateAnimations(const float deltaTime)
 
 void PlayableCharacter::UpdateAnimationsSmallMario()
 {
+	// ------------------------------------------------------------------------------------------------------------------
+
 	// Check to see if the player has stopped moving
 	if (mCurrentMovements == 0)
 	{
@@ -754,26 +773,42 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 		return;
 	}
 
-	// Check to see if they are jumping
-	if (mCurrentMovements & MovementBitField::JUMPING)
+	// ------------------------------------------------------------------------------------------------------------------
+
+	// Check for sprinting - must be going at least a certain speed in order to get this sprite 
+	if (mCurrentMovements & MovementBitField::RUNNING)
 	{
-		mCollisionBox.x = 0.83f;
+		mCollisionBox.x       = 0.83f;
 		mCollisionBoxOffset.x = 0.083f;
 
-		// See if this jump is a full speed jump
-		if (mCurrentMovements & MovementBitField::RUNNING && abs(mVelocity.x) >= kMaxHorizontalSpeedOverall)
+		// If running and jumping then set the correct sprites
+		if (mCurrentMovements & MovementBitField::JUMPING)
 		{
 			// Full sprint jump
 			mStartFrame   = 5;
 			mEndFrame     = 5;
 			mCurrentFrame = mStartFrame;
 		}
-		else
+		else // Regular run
 		{
-			// Regular jump
-			mStartFrame   = 2;
-			mEndFrame     = 2;
-			mCurrentFrame = mStartFrame;
+			if (abs(mVelocity.x) >= kBaseMaxHorizontalSpeed)
+			{
+				mStartFrame   = 3;
+				mEndFrame     = 4;
+				mCurrentFrame = mStartFrame;
+			}
+			else if (mVelocity.x != 0.0f)
+			{
+				mStartFrame   = 0;
+				mEndFrame     = 1;
+				mCurrentFrame = mStartFrame;
+			}
+			else
+			{
+				mStartFrame   = 0;
+				mEndFrame     = 0;
+				mCurrentFrame = mStartFrame;
+			}
 		}
 
 		mPriorFrameMovements = mCurrentMovements;
@@ -781,15 +816,16 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 		return;
 	}
 
-	// If turning around sharply
-	if ((mCurrentMovements & MovementBitField::MOVING_RIGHT && mPriorFrameMovements & MovementBitField::MOVING_LEFT) ||
-		(mCurrentMovements & MovementBitField::MOVING_LEFT  && mPriorFrameMovements & MovementBitField::MOVING_RIGHT))
-	{
-		mCollisionBox.x = 0.83f;
-		mCollisionBoxOffset.x = 0.083f;
+	// ------------------------------------------------------------------------------------------------------------------
 
-		mStartFrame   = 6;
-		mEndFrame     = 6;
+	// Check to see if they are jumping
+	if (!mGrounded && (mCurrentMovements & MovementBitField::JUMPING))
+	{
+		mCollisionBox.x       = 0.83f;
+		mCollisionBoxOffset.x = 0.083f;
+			
+		mStartFrame = 2;
+		mEndFrame = 2;
 		mCurrentFrame = mStartFrame;
 
 		mPriorFrameMovements = mCurrentMovements;
@@ -797,35 +833,7 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 		return;
 	}
 
-	// Check for sprinting - must be going at least a certain speed in order to get this sprite 
-	if (mCurrentMovements & MovementBitField::RUNNING)
-	{
-		mCollisionBox.x = 0.83f;
-		mCollisionBoxOffset.x = 0.083f;
-
-		if (abs(mVelocity.x) >= kBaseMaxHorizontalSpeed)
-		{
-			mStartFrame   = 3;
-			mEndFrame     = 4;
-			mCurrentFrame = mStartFrame;
-		}
-		else if(mVelocity.x != 0.0f)
-		{
-			mStartFrame   = 0;
-			mEndFrame     = 1;
-			mCurrentFrame = mStartFrame;
-		}
-		else
-		{
-			mStartFrame   = 0;
-			mEndFrame     = 0;
-			mCurrentFrame = mStartFrame;
-		}
-
-		mPriorFrameMovements = mCurrentMovements;
-
-		return;
-	}
+	// ------------------------------------------------------------------------------------------------------------------
 
 	// Check to see if we need to start walking
 	if (mCurrentMovements & MovementBitField::MOVING_RIGHT || mCurrentMovements & MovementBitField::MOVING_LEFT)
@@ -833,14 +841,16 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 		mCollisionBox.x = 0.83f;
 		mCollisionBoxOffset.x = 0.083f;
 
-		mStartFrame   = 0;
-		mEndFrame     = 1;
+		mStartFrame = 0;
+		mEndFrame = 1;
 		mCurrentFrame = mStartFrame;
 
 		mPriorFrameMovements = mCurrentMovements;
 
 		return;
 	}
+
+	// ------------------------------------------------------------------------------------------------------------------
 
 	// If going down/up a pipe
 	if (mCurrentMovements & MovementBitField::ENTERING_PIPE_VERTICALLY)
@@ -848,14 +858,16 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 		mCollisionBox.x = 0.83f;
 		mCollisionBoxOffset.x = 0.083f;
 
-		mStartFrame   = 7;
-		mEndFrame     = 7;
+		mStartFrame = 7;
+		mEndFrame = 7;
 		mCurrentFrame = mStartFrame;
 
 		mPriorFrameMovements = mCurrentMovements;
 
 		return;
 	}
+
+	// ------------------------------------------------------------------------------------------------------------------
 }
 
 // ----------------------------------------------------- //

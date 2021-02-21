@@ -8,6 +8,8 @@
 
 class InteractableLayer;
 
+#define MOVEMENT_SPEED 1.0f
+
 // ------------------------------------------------------------------------------------------------- //
 
 struct RenderData
@@ -50,10 +52,12 @@ public:
 
 protected:
 	void                 UpdateStaticVariables(const float deltaTime);
-
 	virtual RenderData   GetRenderData() = 0;
 
-	bool                 CheckCollisionsWithInteractionLayer(InteractableLayer* interactionLayer, const float deltaTime);
+	void HandleMovement(const float deltaTime, InteractableLayer* interactableLayer);
+
+	// Gravity application
+	void ApplyGravity(const float deltaTime);
 
 	// Non-instance specific data
 	static std::vector<Texture2D*>   mSpriteSheets;
@@ -61,7 +65,6 @@ protected:
 	static SDL_Renderer*             mRenderer;
 
 	Vector2D                         mVelocity;
-	Vector2D                         mAcceleration;
 
 	unsigned int					 mSingleSpriteWidth;
 	unsigned int					 mSingleSpriteHeight;
@@ -71,6 +74,20 @@ protected:
 
 	Texture2D*						 mThisSpriteSheet;
 	const Vector2D					 mCollisionBox;
+
+	bool mFacingLeft;
+
+private:
+	// Handlers
+	bool HandleXCollision(const float deltaTime, InteractableLayer* interactionLayer);
+	bool HandleYCollision(const float deltaTime, InteractableLayer* interactionLayer);
+
+	// Actual checks in each axis
+	bool CheckXCollision(const Vector2D headPos, const Vector2D footPos, InteractableLayer* interactionLayer);
+	bool CheckYCollision(const Vector2D leftPos, const Vector2D rightPos, InteractableLayer* interactionLayer);
+
+	// Actual interaction layer check
+	bool CheckCollisionsWithInteractionLayer(InteractableLayer* interactionLayer, const Vector2D positionToCheck);
 };
 
 #endif // !Physical Object

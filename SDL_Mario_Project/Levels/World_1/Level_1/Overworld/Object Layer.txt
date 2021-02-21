@@ -21,7 +21,7 @@ NEXT
 
 # KOOPA_TROOPER_RED - Position - Start facing direction - Is red or green
 KOOPA_TROOPER
-36 24 L R
+36 23 L R
 131 24 L R
 NEXT
 
@@ -95,7 +95,7 @@ NEXT
 
 # SPAWN_POINT - Position - Entrance ID (0 is for the starting spawn)
 SPAWN_POINT
-1 25 0
+1 25.95 0
 144 24 1
 NEXT
 

@@ -3,6 +3,8 @@
 
 #include "PhysicalObject.h"
 
+#include "Constants_SMB3.h"
+
 class EnemyObject abstract : public PhysicalObject
 {
 public:
@@ -30,11 +32,8 @@ public:
 	virtual void Attack();
 
 protected:
-	Vector2D mVelocity;
-
 	bool mCanJump;
 	bool mCanMove;
-	bool mFacingLeft;
 };
 
 #endif // !_ENEMY_OBJECT_H_
