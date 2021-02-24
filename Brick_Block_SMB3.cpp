@@ -175,34 +175,6 @@ void BrickBlock::UpdateStaticVariables(const float deltaTime)
 
 void BrickBlock::Render(const Vector2D renderReferencePoint)
 {
-	/*
-	if (mBlockBreakingAnimationPlaying)
-	{
-		int width = (int)mBlockBreakingAnimation->GetWidth() / 4, height = (int)mBlockBreakingAnimation->GetHeight();
-
-		Vector2D renderPos = Vector2D(mCurrentPosition.x - renderReferencePoint.x, mCurrentPosition.y - renderReferencePoint.y);
-
-		SDL_Rect portionOfSpriteSheet{ (int)(mBlockColourID % mSpritesOnWidth) * width,
-									   (int)(mBlockColourID / mSpritesOnWidth) * height,
-									   width,
-									   height };
-
-		SDL_Rect destRect{            int(renderPos.x * RESOLUTION_OF_SPRITES),
-									  int(renderPos.y * RESOLUTION_OF_SPRITES) - height + 1,
-									  width,
-									  height };
-
-		// First render the left side
-		mThisSpriteSheet->Render(portionOfSpriteSheet, destRect);
-
-		// Now render the right side
-		destRect.x -= 1.0f;
-		destRect.y -= 1.0f;
-
-		mThisSpriteSheet->Render(portionOfSpriteSheet, destRect);
-	}
-	else*/
-	
 	RenderSprite(renderReferencePoint, mCurrentSpriteID);
 }
 

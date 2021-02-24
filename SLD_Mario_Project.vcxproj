@@ -179,6 +179,7 @@
     <ClCompile Include="Koopa_Trooper_SMB3.cpp" />
     <ClCompile Include="LevelCompletionFlipTransition.cpp" />
     <ClCompile Include="LevelEnd.cpp" />
+    <ClCompile Include="NoteBlock.cpp" />
     <ClCompile Include="OneWayWalkway.cpp" />
     <ClCompile Include="Para_Goomba_SMB3.cpp" />
     <ClCompile Include="Para_Koopa_Trooper_SMB3.cpp" />
@@ -253,6 +254,7 @@
     <ClInclude Include="LevelCompletionFlipTransition.h" />
     <ClInclude Include="LevelEnd.h" />
     <ClInclude Include="NodeMap_WorldMap.h" />
+    <ClInclude Include="Note_Block.h" />
     <ClInclude Include="ObjectLayer.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="OneWayWalkway.h" />

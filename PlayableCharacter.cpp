@@ -50,7 +50,7 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 
 , mTimePerFrame(timePerFrame)
 , mTimeTillNextFrame(timePerFrame)
-, mPriorFrameMovements(0)
+, mAnimationCurrentState(MovementBitField::NONE)
 
 , kMaxYVelocity(60.0f)
 
@@ -69,6 +69,13 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 
 	// Now calculate the starting render reference point
 	CalculateInitialRenderReferencePoint();
+
+	// Set the collision box
+	mCollisionBox.x       = 0.83f;
+	mCollisionBoxOffset.x = 0.083f;
+
+	mCollisionBox.y       = 0.83;
+	mCollisionBoxOffset.y = -0.17;
 }
 
 // ----------------------------------------------------- //
@@ -189,6 +196,8 @@ CollisionPositionalData PlayableCharacter::HandleYCollisions(const float deltaTi
 		if (CheckYCollision(leftPos, rightPos, interactionLayer, objectLayer))
 		{
 			//mCurrentMovements &= ~(MovementBitField::JUMPING);
+
+			//mPriorFrameMovements = mCurrentMovements;
 			mCurrentMovements &= ~(MovementBitField::HOLDING_JUMP);
 
 			if (!(mCurrentMovements & MovementBitField::JUMPING))
@@ -248,7 +257,9 @@ bool PlayableCharacter::CheckYCollision(const Vector2D positionToCheck1, const V
 		positionToCheck2.y + mCollisionBox.y > mLevelBounds.y + 2)
 	{
 		if (mVelocity.y >= 0.0f)
+		{
 			mGrounded = true;
+		}
 
 		// Return that there was a collision
 		return true;
@@ -461,9 +472,7 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 
 	// If the player is currently running then set the speed to be correct
 	if (mCurrentMovements & MovementBitField::RUNNING)
-	{
 		multiplier = 1.1f;
-	}
 
 	switch (e.type)
 	{
@@ -471,43 +480,57 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 		switch (e.key.keysym.sym)
 		{
 		case SDLK_w:
-
-			mCurrentMovements |= MovementBitField::JUMPING;
-
-			// Otherwise check if you are jumping and if so state that you are holding down jump
-			if (mCurrentMovements & MovementBitField::JUMPING)
+			if (!(mCurrentMovements & MovementBitField::JUMPING))
 			{
-				mCurrentMovements |= MovementBitField::HOLDING_JUMP;
+				HandleChangeInAnimations(MovementBitField::JUMPING, true);
+				mCurrentMovements |= MovementBitField::JUMPING;
+			}
+
+			if (!(mCurrentMovements & MovementBitField::HOLDING_JUMP))
+			{
+				// Otherwise check if you are jumping and if so state that you are holding down jump
+				if (mCurrentMovements & MovementBitField::JUMPING)
+					mCurrentMovements |= MovementBitField::HOLDING_JUMP;
 			}
 		break;
 
 		case SDLK_RSHIFT:
-			// If not running
+			// Store that the player is now running
 			if (!(mCurrentMovements & MovementBitField::RUNNING))
 			{
-				// Store that the player is now running
+				HandleChangeInAnimations(MovementBitField::RUNNING, true);
 				mCurrentMovements |= MovementBitField::RUNNING;
 			}
 		break;
 
 		case SDLK_d:
-			mWasFacingRight = false;
-
-			mCurrentMovements |= MovementBitField::MOVING_RIGHT;
-
-			mAcceleration.x = multiplier * speed;
+			if (!(mCurrentMovements & MovementBitField::MOVING_RIGHT))
+			{
+				mWasFacingRight = false;
+				HandleChangeInAnimations(MovementBitField::MOVING_RIGHT, true);
+				mCurrentMovements |= MovementBitField::MOVING_RIGHT;
+				mAcceleration.x = multiplier * speed;
+			}
 		break;
 
 		case SDLK_a:
-			mCurrentMovements |= MovementBitField::MOVING_LEFT;
 
-			mAcceleration.x = -multiplier * speed;
+			if (!(mCurrentMovements & MovementBitField::MOVING_LEFT))
+			{
+				HandleChangeInAnimations(MovementBitField::MOVING_LEFT, true);
+				mCurrentMovements |= MovementBitField::MOVING_LEFT;
+				mAcceleration.x = -multiplier * speed;
+			}
 		break;
 
 		case SDLK_s:
-			mCurrentMovements |= MovementBitField::CROUCHING;
+			if (!(mCurrentMovements & MovementBitField::CROUCHING))
+			{
+				HandleChangeInAnimations(MovementBitField::CROUCHING, true);
+				mCurrentMovements |= MovementBitField::CROUCHING;
+			}
 
-			mAcceleration.y = multiplier * speed;
+			//mAcceleration.y = multiplier * speed;
 		break;
 		}
 	break;
@@ -516,42 +539,62 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 		switch (e.key.keysym.sym)
 		{
 		case SDLK_RSHIFT:
-			// Set the player to not be running
-			mCurrentMovements &= ~(MovementBitField::RUNNING);
 
-			mMaxHorizontalSpeed = kBaseMaxHorizontalSpeed;
+			if (mCurrentMovements & MovementBitField::RUNNING)
+			{
+				// Set the player to not be running
+				HandleChangeInAnimations(MovementBitField::RUNNING, false);
+				mCurrentMovements &= ~(MovementBitField::RUNNING);
+
+				mMaxHorizontalSpeed = kBaseMaxHorizontalSpeed;
+			}
 		break;
 
 		case SDLK_d:
-			mWasFacingRight = true;
+			if (mCurrentMovements & MovementBitField::MOVING_RIGHT)
+			{
+				mWasFacingRight = true;
 
-			mCurrentMovements &= ~(MovementBitField::MOVING_RIGHT);
+				HandleChangeInAnimations(MovementBitField::MOVING_RIGHT, false);
+				mCurrentMovements &= ~(MovementBitField::MOVING_RIGHT);
 
-			mAcceleration.x = 0.0f;
+				mAcceleration.x = 0.0f;
+			}
 		break;
 
 		case SDLK_a:
-			mWasFacingRight = false;
+			if (mCurrentMovements & MovementBitField::MOVING_LEFT)
+			{
+				mWasFacingRight = false;
 
-			mCurrentMovements &= ~(MovementBitField::MOVING_LEFT);
+				HandleChangeInAnimations(MovementBitField::MOVING_LEFT, false);
+				mCurrentMovements &= ~(MovementBitField::MOVING_LEFT);
 
-			mAcceleration.x = 0.0f;
+				mAcceleration.x = 0.0f;
+			}
 		break;
 
 		case SDLK_s:
-			mCurrentMovements &= ~(MovementBitField::CROUCHING);
+			if (mCurrentMovements & MovementBitField::CROUCHING)
+			{
+				HandleChangeInAnimations(MovementBitField::CROUCHING, false);
+				mCurrentMovements &= ~(MovementBitField::CROUCHING);
+			}
 		break;
 
 		case SDLK_w:
+
 			// Not holding jump anymore
+			if (mCurrentMovements & MovementBitField::JUMPING)
+			{
+				mCurrentMovements &= ~(MovementBitField::JUMPING);
+				mCurrentMovements &= ~(MovementBitField::HOLDING_JUMP);
 
-			mCurrentMovements &= ~(MovementBitField::JUMPING);
-			mCurrentMovements &= ~(MovementBitField::HOLDING_JUMP);
+				// If you release jump whilst jumping you cannot continue the extra boost after the release
+				mJumpHeldCurrentBoost = 0.0f;
 
-			// If you release jump whilst jumping you cannot continue the extra boost after the release
-			mJumpHeldCurrentBoost = 0.0f;
-
-			mAcceleration.y = 0.0f;
+				mAcceleration.y = 0.0f;
+			}
 		break;
 		}
 	break;
@@ -570,6 +613,61 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 		mJumpTimerLeway = 0.0f;
 
 		Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_JUMPED, "");
+	}
+
+	if (mGrounded 
+		&& !(mCurrentMovements & MovementBitField::JUMPING) 
+		&& (mAnimationCurrentState == MovementBitField::JUMPING))
+	{
+		HandleChangeInAnimations(MovementBitField::JUMPING, false);
+	}
+
+	if (mCurrentMovements == 0 
+		&& mAnimationCurrentState != MovementBitField::JUMPING)
+	{
+		HandleChangeInAnimations(MovementBitField::NONE, true);
+	}
+}
+
+// ----------------------------------------------------- //
+
+void PlayableCharacter::HandleChangeInAnimations(MovementBitField newMovement, bool goingInto)
+{
+	// Now check to see if we should change animation
+	switch (mPowerUpState)
+	{
+	default:
+	case POWER_UP_TYPE::NONE:
+		UpdateAnimationsSmallMario(newMovement, goingInto);
+	break;
+
+	case POWER_UP_TYPE::MUSHROOM:
+		UpdateAnimationsLargeMario(newMovement, goingInto);
+	break;
+
+	case POWER_UP_TYPE::FIRE_FLOWER:
+		UpdateAnimationsFireMario(newMovement, goingInto);
+	break;
+
+	case POWER_UP_TYPE::TANOOKI_SUIT:
+		UpdateAnimationsTanookiMario(newMovement, goingInto);
+	break;
+
+	case POWER_UP_TYPE::FROG_SUIT:
+		UpdateAnimationsFrogMario(newMovement, goingInto);
+	break;
+
+	case POWER_UP_TYPE::HAMMER_SUIT:
+		UpdateAnimationsHammerMario(newMovement, goingInto);
+	break;
+
+	case POWER_UP_TYPE::STAR:
+		UpdateAnimationsStarMario(newMovement, goingInto);
+	break;
+
+	case POWER_UP_TYPE::SUPER_LEAF:
+		UpdateAnimationsLeafMario(newMovement, goingInto);
+	break;
 	}
 }
 
@@ -705,89 +803,182 @@ void PlayableCharacter::UpdateAnimations(const float deltaTime)
 	if (mTimeTillNextFrame <= 0.0f)
 	{
 		mCurrentFrame++;
-		mTimeTillNextFrame = mTimePerFrame;
 
 		if (mCurrentFrame > mEndFrame)
-			mCurrentFrame = mStartFrame;
-	}
-
-	// Now check to see if we should change animation
-	if (mPriorFrameMovements != mCurrentMovements)
-	{
-		switch (mPowerUpState)
 		{
-		default:
-		case POWER_UP_TYPE::NONE:
-			UpdateAnimationsSmallMario();
-		break;
-
-		case POWER_UP_TYPE::MUSHROOM:
-			UpdateAnimationsLargeMario();
-		break;
-
-		case POWER_UP_TYPE::FIRE_FLOWER:
-			UpdateAnimationsFireMario();
-		break;
-
-		case POWER_UP_TYPE::TANOOKI_SUIT:
-			UpdateAnimationsTanookiMario();
-		break;
-
-		case POWER_UP_TYPE::FROG_SUIT:
-			UpdateAnimationsFrogMario();
-		break;
-
-		case POWER_UP_TYPE::HAMMER_SUIT:
-			UpdateAnimationsHammerMario();
-		break;
-
-		case POWER_UP_TYPE::STAR:
-			UpdateAnimationsStarMario();
-		break;
-
-		case POWER_UP_TYPE::SUPER_LEAF:
-			UpdateAnimationsLeafMario();
-		break;
+			mCurrentFrame = mStartFrame;
 		}
+
+		mTimeTillNextFrame = mTimePerFrame;
 	}
 }
 
 // ----------------------------------------------------- //
 
-void PlayableCharacter::UpdateAnimationsSmallMario()
+void PlayableCharacter::UpdateAnimationsSmallMario(MovementBitField newMovement, bool goingInto)
 {
-	// ------------------------------------------------------------------------------------------------------------------
-
-	// Check to see if the player has stopped moving
-	if (mCurrentMovements == 0)
+	// Switch through the states to see what we are going into
+	switch (newMovement)
 	{
-		mStartFrame   = 0;
-		mEndFrame     = 0;
-		mCurrentFrame = 0;
+	case MovementBitField::HOLDING_JUMP:
+	default:
+		
+	break;
 
-		mPriorFrameMovements = mCurrentMovements;
+	case MovementBitField::JUMPING:
+		if (goingInto)
+		{
+			// if the player is running then go into the sprint jump animation
+			if (mCurrentMovements & MovementBitField::RUNNING)
+			{
+				mStartFrame = 5;
+				mEndFrame   = 5;
+				mCurrentFrame = mStartFrame;
 
-		mCollisionBox.x       = 0.83f;
-		mCollisionBoxOffset.x = 0.083f;
+				mAnimationCurrentState = MovementBitField::JUMPING;
+			}
+			else
+			{
+				// As jumping overrides everything else animation wise just go into the jumping state
+				mStartFrame = 2;
+				mEndFrame   = 2;
+				mCurrentFrame = mStartFrame;
 
-		return;
+				mAnimationCurrentState = MovementBitField::JUMPING;
+			}
+		}
+		else // Coming out of the jumping state, so check to see what state we should go into
+		{
+			if (mGrounded)
+			{
+				if (mCurrentMovements & MovementBitField::RUNNING)
+				{
+					if(mAnimationCurrentState == MovementBitField::JUMPING)
+						UpdateAnimationsSmallMario(MovementBitField::RUNNING, true);
+				}
+				else if(mCurrentMovements & MovementBitField::MOVING_LEFT)
+					UpdateAnimationsSmallMario(MovementBitField::MOVING_LEFT, true);
+				else if(mCurrentMovements & MovementBitField::MOVING_RIGHT)
+					UpdateAnimationsSmallMario(MovementBitField::MOVING_RIGHT, true);
+				else
+					UpdateAnimationsSmallMario(MovementBitField::NONE, true);
+			}
+		}
+	break;
+
+	case MovementBitField::MOVING_RIGHT:
+		if (goingInto)
+		{
+			// Go into this state if not jumping 
+			if (!(mCurrentMovements & MovementBitField::JUMPING))
+			{
+				mAnimationCurrentState = MovementBitField::MOVING_RIGHT;
+				mStartFrame = 0;
+				mEndFrame = 1;
+				mCurrentFrame = mStartFrame;
+			}
+		}
+		else
+		{
+			if (mCurrentMovements & MovementBitField::JUMPING)
+			{
+				UpdateAnimationsSmallMario(MovementBitField::JUMPING, true);
+			}
+			else
+			{
+				UpdateAnimationsSmallMario(MovementBitField::NONE, true);
+			}
+		}
+	break;
+
+	case MovementBitField::MOVING_LEFT:
+		if (goingInto)
+		{
+			// Go into this state if not jumping 
+			if (!(mCurrentMovements & MovementBitField::JUMPING))
+			{
+				mAnimationCurrentState = MovementBitField::MOVING_LEFT;
+
+				mStartFrame   = 0;
+				mEndFrame     = 1;
+				mCurrentFrame = mStartFrame;
+			}
+		}
+		else
+		{
+			if (mCurrentMovements & MovementBitField::JUMPING)
+			{
+				UpdateAnimationsSmallMario(MovementBitField::JUMPING, true);
+			}
+			else
+			{
+				UpdateAnimationsSmallMario(MovementBitField::NONE, true);
+			}
+		}
+	break;
+
+	case MovementBitField::ENTERING_PIPE_VERTICALLY:
+	case MovementBitField::CROUCHING:
+	break;
+
+	case MovementBitField::NONE:
+		// If doing absolutly nothing then stop movements
+		if (mCurrentMovements == 0)
+		{
+			mAnimationCurrentState = MovementBitField::NONE;
+
+			mEndFrame     = 0;
+			mStartFrame   = 0;
+			mCurrentFrame = mStartFrame;
+		}
+	break;
+
+	case MovementBitField::RUNNING:
+		if (goingInto)
+		{
+			if (!(mCurrentMovements & MovementBitField::JUMPING) && (mCurrentMovements & MovementBitField::MOVING_LEFT || mCurrentMovements & MovementBitField::MOVING_RIGHT))
+			{
+				mAnimationCurrentState = MovementBitField::RUNNING;
+
+				mStartFrame = 3;
+				mEndFrame   = 4;
+				mCurrentFrame = mStartFrame;
+			}
+		}
+		else
+		{
+			// If still moving left or right then fall back into that animation state
+			if (mCurrentMovements & MovementBitField::MOVING_LEFT)
+			{
+				UpdateAnimationsSmallMario(MovementBitField::MOVING_LEFT, true);
+			}
+			else if (mCurrentMovements & MovementBitField::MOVING_RIGHT)
+			{
+				UpdateAnimationsSmallMario(MovementBitField::MOVING_RIGHT, true);
+			}
+		}
+	break;
+
+	case MovementBitField::SWIMMING:
+	break;
 	}
 
+	// Reset the animation
+	//mCurrentFrame = mStartFrame;
+
+
+	/*
 	// ------------------------------------------------------------------------------------------------------------------
 
-	// Check for sprinting - must be going at least a certain speed in order to get this sprite 
+	// If the player was not running last frame, and they are this frame then go in here
 	if (mCurrentMovements & MovementBitField::RUNNING)
 	{
-		mCollisionBox.x       = 0.83f;
-		mCollisionBoxOffset.x = 0.083f;
-
 		// If running and jumping then set the correct sprites
-		if (mCurrentMovements & MovementBitField::JUMPING)
+		if (!mGrounded)
 		{
 			// Full sprint jump
 			mStartFrame   = 5;
 			mEndFrame     = 5;
-			mCurrentFrame = mStartFrame;
 		}
 		else // Regular run
 		{
@@ -795,59 +986,54 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 			{
 				mStartFrame   = 3;
 				mEndFrame     = 4;
-				mCurrentFrame = mStartFrame;
 			}
 			else if (mVelocity.x != 0.0f)
 			{
 				mStartFrame   = 0;
 				mEndFrame     = 1;
-				mCurrentFrame = mStartFrame;
 			}
 			else
 			{
 				mStartFrame   = 0;
 				mEndFrame     = 0;
-				mCurrentFrame = mStartFrame;
 			}
 		}
 
-		mPriorFrameMovements = mCurrentMovements;
+		mCurrentFrame = mStartFrame;
 
-		return;
+		mPriorFrameMovements |= MovementBitField::RUNNING;
 	}
 
 	// ------------------------------------------------------------------------------------------------------------------
 
-	// Check to see if they are jumping
-	if (!mGrounded && (mCurrentMovements & MovementBitField::JUMPING))
+	// If you have changed walking direction then set that they are walking
+	if (mCurrentMovements & MovementBitField::MOVING_RIGHT ||
+		mCurrentMovements & MovementBitField::MOVING_LEFT)
 	{
-		mCollisionBox.x       = 0.83f;
-		mCollisionBoxOffset.x = 0.083f;
-			
+		mStartFrame   = 0;
+		mEndFrame     = 1;
+
+		if (!(mCurrentMovements & MovementBitField::JUMPING))
+		{
+			if (mCurrentMovements & MovementBitField::MOVING_RIGHT)
+				mPriorFrameMovements |= MovementBitField::MOVING_RIGHT;
+			else if (mCurrentMovements & MovementBitField::MOVING_LEFT)
+				mPriorFrameMovements |= MovementBitField::MOVING_LEFT;
+		}
+
+		mCurrentFrame = mStartFrame;
+	}
+
+	// ------------------------------------------------------------------------------------------------------------------
+
+	if (mCurrentMovements & MovementBitField::JUMPING)
+	{
 		mStartFrame = 2;
-		mEndFrame = 2;
+		mEndFrame   = 2;
+
+		mPriorFrameMovements |= MovementBitField::JUMPING;
+
 		mCurrentFrame = mStartFrame;
-
-		mPriorFrameMovements = mCurrentMovements;
-
-		return;
-	}
-
-	// ------------------------------------------------------------------------------------------------------------------
-
-	// Check to see if we need to start walking
-	if (mCurrentMovements & MovementBitField::MOVING_RIGHT || mCurrentMovements & MovementBitField::MOVING_LEFT)
-	{
-		mCollisionBox.x = 0.83f;
-		mCollisionBoxOffset.x = 0.083f;
-
-		mStartFrame = 0;
-		mEndFrame = 1;
-		mCurrentFrame = mStartFrame;
-
-		mPriorFrameMovements = mCurrentMovements;
-
-		return;
 	}
 
 	// ------------------------------------------------------------------------------------------------------------------
@@ -855,66 +1041,74 @@ void PlayableCharacter::UpdateAnimationsSmallMario()
 	// If going down/up a pipe
 	if (mCurrentMovements & MovementBitField::ENTERING_PIPE_VERTICALLY)
 	{
-		mCollisionBox.x = 0.83f;
-		mCollisionBoxOffset.x = 0.083f;
+		mStartFrame   = 7;
+		mEndFrame     = 7;
 
-		mStartFrame = 7;
-		mEndFrame = 7;
+		mPriorFrameMovements |= MovementBitField::ENTERING_PIPE_VERTICALLY;
+
 		mCurrentFrame = mStartFrame;
-
-		mPriorFrameMovements = mCurrentMovements;
-
-		return;
 	}
 
 	// ------------------------------------------------------------------------------------------------------------------
+
+	// If you were moving and now you are not then set this
+	if (mCurrentMovements == 0)
+	{
+		mStartFrame   = 0;
+		mEndFrame     = 0;
+
+		mPriorFrameMovements = 0;
+
+		mCurrentFrame = mStartFrame;
+	}
+	*/
 }
 
 // ----------------------------------------------------- //
 
-void PlayableCharacter::UpdateAnimationsLargeMario()
+void PlayableCharacter::UpdateAnimationsLargeMario(MovementBitField newMovement, bool goingInto)
 {
 
 }
 
 // ----------------------------------------------------- //
 
-void PlayableCharacter::UpdateAnimationsFrogMario()
+void PlayableCharacter::UpdateAnimationsFrogMario(MovementBitField newMovement, bool goingInto)
 {
 
 }
 
 // ----------------------------------------------------- //
 
-void PlayableCharacter::UpdateAnimationsHammerMario()
+void PlayableCharacter::UpdateAnimationsHammerMario(MovementBitField newMovement, bool goingInto)
 {
 
 }
 
 // ----------------------------------------------------- //
 
-void PlayableCharacter::UpdateAnimationsFireMario()
+void PlayableCharacter::UpdateAnimationsFireMario(MovementBitField newMovement, bool goingInto)
 {
 
 }
 
 // ----------------------------------------------------- //
 
-void PlayableCharacter::UpdateAnimationsTanookiMario()
+void PlayableCharacter::UpdateAnimationsTanookiMario(MovementBitField newMovement, bool goingInto)
 {
 
 }
 
 // ----------------------------------------------------- //
 
-void PlayableCharacter::UpdateAnimationsLeafMario()
+void PlayableCharacter::UpdateAnimationsLeafMario(MovementBitField newMovement, bool goingInto)
 {
 
 }
 
 // ----------------------------------------------------- //
 
-void PlayableCharacter::UpdateAnimationsStarMario()
+void PlayableCharacter::UpdateAnimationsStarMario(MovementBitField newMovement, bool goingInto)
 {
 
 }

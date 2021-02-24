@@ -68,17 +68,19 @@ private:
 
 	void LoadInCorrectSpriteSheet();
 
-	void UpdateAnimationsSmallMario();
-	void UpdateAnimationsLargeMario();
-	void UpdateAnimationsFrogMario();
-	void UpdateAnimationsHammerMario();
-	void UpdateAnimationsFireMario();
-	void UpdateAnimationsTanookiMario();
-	void UpdateAnimationsLeafMario();
-	void UpdateAnimationsStarMario();
+	void UpdateAnimationsSmallMario(MovementBitField newMovement, bool goingInto);
+	void UpdateAnimationsLargeMario(MovementBitField newMovement, bool goingInto);
+	void UpdateAnimationsFrogMario(MovementBitField newMovement, bool goingInto);
+	void UpdateAnimationsHammerMario(MovementBitField newMovement, bool goingInto);
+	void UpdateAnimationsFireMario(MovementBitField newMovement, bool goingInto);
+	void UpdateAnimationsTanookiMario(MovementBitField newMovement, bool goingInto);
+	void UpdateAnimationsLeafMario(MovementBitField newMovement, bool goingInto);
+	void UpdateAnimationsStarMario(MovementBitField newMovement, bool goingInto);
 
 	CollisionPositionalData HandleXCollisions(const float deltaTime, InteractableLayer* interactionLayer, ObjectLayer* objectLayer);
 	CollisionPositionalData HandleYCollisions(const float deltaTime, InteractableLayer* interactionLayer, ObjectLayer* objectLayer);
+
+	void HandleChangeInAnimations(MovementBitField newMovement, bool goingInto);
 
 	Vector2D   mRealGridPosition;   // The player's position in the collision world
 	Vector2D   mScreenGridPosition; // Player's screen position
@@ -124,9 +126,10 @@ private:
 	float        mJumpHeldCurrentBoost;
 
 	unsigned int mCurrentMovements;
-	unsigned int mPriorFrameMovements;
 
 	float        mJumpTimerLeway;
+
+	MovementBitField mAnimationCurrentState;
 
 	POWER_UP_TYPE mPowerUpState;
 

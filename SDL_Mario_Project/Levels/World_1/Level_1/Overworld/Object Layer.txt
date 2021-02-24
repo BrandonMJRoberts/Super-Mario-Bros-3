@@ -95,7 +95,7 @@ NEXT
 
 # SPAWN_POINT - Position - Entrance ID (0 is for the starting spawn)
 SPAWN_POINT
-1 25.95 0
+1 25.9 0
 144 24 1
 NEXT
 

@@ -4,94 +4,98 @@
 
 # SPAWN_POINT - Position - Entrance ID (0 is for the starting spawn)
 SPAWN_POINT
-
-1 25 0     # Default spawnpoint
-74 10 1    # Back in from pipe
+1 24.95 0
+74 9.95 1
+NEXT
 
 # ------------------------------------------------------------------ #
 
 #PIPE - Left of mouth position (vec2) - Width (uint) - Height (uint) - Pipe type (uint) - Pipe Facing Direction (0 = Left, 1 = Right, 2 = Up, 3 = Down) - file directory for loading in level (string) - stage entrance ID (0 is for the start point in the overworld) - Enemy contained within pipe - Amount of ends (2 = double ended, 0 = no ends) - Stage ID to go to (int) - Pipe is vertical (bool)
 PIPE
-25 8 2 4 1 1 NONE -1 GOOMBA T
+22 19 4 2 1 0 NONE -1 GOOMBA 2 -1 F
 
-43 8 2 6 1 1 NONE -1 GOOMBA T
-40 6 2 5 1 0 NONE -1 NONE F
+38 19 6 2 1 0 NONE -1 GOOMBA 2 -1 F
+40 21 2 5 1 2 NONE -1 NONE 1 -1 T
 
-60 6 2 4 1 0 NONE -1 NONE F
+60 21 2 4 1 2 NONE -1 NONE 1 -1 T
 
-74 9 2 2 1 0 "Levels/World 1/Level 2/Pipe" 0 FIRE_PIHRANNA_GREEN F
+74 18 2 2 1 2 "Levels/World_1/Level_2/Pipe" 0 FIRE_PIHRANNA_GREEN 1 0 T
 
-110 4 2 3 1 0 NONE -1 FIRE_PIHRANNA_GREEN F
+110 23 2 3 1 2 NONE -1 FIRE_PIHRANNA_GREEN 1 -1 T
 
-119 4 2 3 1 0 NONE -1 NONE F
+119 23 2 3 1 2 NONE -1 NONE 1 -1 T
 
-129 3 2 4 1 0 NONE -1 FIRE_PIHRANNA_GREEN F
-
-39 7 2 3 1 1 NONE -1 GOOMBA T
+129 24 2 4 1 2 NONE -1 FIRE_PIHRANNA_GREEN 1 -1 T
+NEXT
 
 # ------------------------------------------------------------------ #
 
 # BRICK_BLOCK - Position - Turns to coin on P-Switch - item contained
 BRICK_BLOCK
-74 3 F P-SWITCH
-75 3 T NONE
+74 24 F P-SWITCH
+75 24 T NONE
+NEXT
 
 # ------------------------------------------------------------------ #
 
 # QUESTIONMARK_BLOCK - Position - Item to drop - Quantity - Scalable - Scales to
 QUESTION_MARK_BLOCK
 
-36 5 MUSHROOM 1 T LEAF F
-133 5 COIN 1 F NONE F
-
+36  22 MUSHROOM 1 T LEAF F
+133 21 COIN     1 F NONE F
+NEXT
 
 # ------------------------------------------------------------------ #
 
 # COIN - Position
 COIN
-66 8
-67 8
+66 19
+67 19
 
-68 5
-69 5
-70 5
+68 22
+69 22
+70 22
 
-70 9
-71 9
-72 9
+70 19
+71 19
+72 19
+NEXT
 
 # ------------------------------------------------------------------ #
 
 # NOTE_BLOCK - Position - Item to drop
 NOTE_BLOCK
-93 9 LEAF
-96 9 NONE
+93  18 LEAF
+96  18 NONE
 
-113 6 NONE
-116 7 NONE
-119 8 STAR
+113 216 NONE
+116 20 NONE
+119 19 STAR
+NEXT
 
 # ------------------------------------------------------------------ #
 
 # GOOMBA - Position - Start facing direction
 GOOMBA
-32 2 L
+32 25 L
 
-82 4 L
-84 8 L
+82 23 L
+84 19 L
 
-108 3 L
-106 5 L
+108 24 L
+106 22 L
 
-126 2 L
+126 25 L
+NEXT
 
 # ------------------------------------------------------------------ #
 
 # PARA_GOOMBA - Position - Start facing direction
 PARA_GOOMBA
-57 5 L F
-97 6 L T
-157 1 L F
+57  22 L
+97  21 L
+157 26 L
+NEXT
 
 # ------------------------------------------------------------------ #
 

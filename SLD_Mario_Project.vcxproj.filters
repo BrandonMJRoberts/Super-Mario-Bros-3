@@ -303,6 +303,9 @@
     <ClCompile Include="LevelEnd.cpp">
       <Filter>Source Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
     </ClCompile>
+    <ClCompile Include="NoteBlock.cpp">
+      <Filter>Source Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="SDL2\SDL2.lib" />
@@ -492,6 +495,9 @@
       <Filter>Header Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
     </ClInclude>
     <ClInclude Include="LevelEnd.h">
+      <Filter>Header Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="Note_Block.h">
       <Filter>Header Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
     </ClInclude>
   </ItemGroup>

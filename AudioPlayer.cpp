@@ -497,6 +497,10 @@ void Audio_Player::SetAudioVolume(int volume)
 	Mix_Volume(2, volume);
 	Mix_Volume(3, volume);
 	Mix_Volume(4, volume);
+	Mix_Volume(5, volume);
+	Mix_Volume(6, volume);
+	Mix_Volume(7, volume);
+	Mix_Volume(8, volume);
 
 	Mix_VolumeMusic(volume);
 }

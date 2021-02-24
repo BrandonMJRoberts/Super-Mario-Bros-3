@@ -264,14 +264,21 @@ bool ObjectLayer::LoadInDataFromFile(std::string filePath, Observer* audioPlayer
 			// Create a new instance of the object
 			mUnspawnedObjectsInLevel.push_back(mNameToObjectConversion[objectNameLine]->Clone(line));
 
-			// Add the audio observer to the object
-			mUnspawnedObjectsInLevel[mUnspawnedObjectsInLevel.size() - 1]->AddObserver(audioPlayerObserver);
-			mUnspawnedObjectsInLevel[mUnspawnedObjectsInLevel.size() - 1]->AddObserver(hudObserver);
-
-			// Check if the object should start spawned in the level
-			if (mUnspawnedObjectsInLevel[mUnspawnedObjectsInLevel.size() - 1] && mUnspawnedObjectsInLevel[mUnspawnedObjectsInLevel.size() - 1]->GetIsSpawnedInLevel())
+			if (mUnspawnedObjectsInLevel[mUnspawnedObjectsInLevel.size() - 1])
 			{
-				mSpawnedObjectsInLevel.push_back(mUnspawnedObjectsInLevel[mUnspawnedObjectsInLevel.size() - 1]);
+				// Add the audio observer to the object
+				mUnspawnedObjectsInLevel[mUnspawnedObjectsInLevel.size() - 1]->AddObserver(audioPlayerObserver);
+				mUnspawnedObjectsInLevel[mUnspawnedObjectsInLevel.size() - 1]->AddObserver(hudObserver);
+
+				// Check if the object should start spawned in the level
+				if (mUnspawnedObjectsInLevel[mUnspawnedObjectsInLevel.size() - 1] && mUnspawnedObjectsInLevel[mUnspawnedObjectsInLevel.size() - 1]->GetIsSpawnedInLevel())
+				{
+					mSpawnedObjectsInLevel.push_back(mUnspawnedObjectsInLevel[mUnspawnedObjectsInLevel.size() - 1]);
+					mUnspawnedObjectsInLevel.pop_back();
+				}
+			}
+			else
+			{
 				mUnspawnedObjectsInLevel.pop_back();
 			}
 			continue;
@@ -337,6 +344,8 @@ void ObjectLayer::InstantiateNameConversions()
 	mNameToObjectConversion["WALK_WAY"]           = new OneWayWalkway(Vector2D(), false, mRenderer, "", 1, 1, 1.0f, 0.25f, 0.0f);
 
 	mNameToObjectConversion["LEVEL_END"]          = new LevelEndObject(Vector2D(), false, mRenderer, "SDL_Mario_Project/Objects/EndingObject.png", 3, 4, 1.0f, 1.0f, 0.1f, "SDL_Mario_Project/Objects/EndSurroundObject.png");
+
+	mNameToObjectConversion["NOTE_BLOCK"]         = new NoteBlock(Vector2D(), false, mRenderer, "SDL_Mario_Project/Objects/NoteBlock.png", 3, 1, 1.0f, 1.0f, 0.1f, -1, POWER_UP_TYPE::NONE, false, nullptr, nullptr);
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //
@@ -376,6 +385,9 @@ void ObjectLayer::DestroyAllNameConversions()
 
 	delete mNameToObjectConversion["LEVEL_END"];
 	mNameToObjectConversion.erase("LEVEL_END");
+
+	delete mNameToObjectConversion["NOTE_BLOCK"];
+	mNameToObjectConversion.erase("NOTE_BLOCK");
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //

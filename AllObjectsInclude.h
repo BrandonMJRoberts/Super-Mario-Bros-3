@@ -14,12 +14,12 @@
 #include "Brick_Block_SMB3.h"
 #include "Invisible_Block_SMB3.h"
 #include "Question_Mark_Block_SMB3.h"
+#include "Note_Block.h"
 
 #include "Pipe_SMB3.h"
 
 #include "OneWayWalkway.h"
 
 #include "LevelEnd.h"
-
 
 #endif
