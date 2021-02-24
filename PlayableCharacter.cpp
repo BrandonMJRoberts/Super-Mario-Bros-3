@@ -856,10 +856,16 @@ void PlayableCharacter::UpdateAnimationsSmallMario(MovementBitField newMovement,
 					if(mAnimationCurrentState == MovementBitField::JUMPING)
 						UpdateAnimationsSmallMario(MovementBitField::RUNNING, true);
 				}
-				else if(mCurrentMovements & MovementBitField::MOVING_LEFT)
+				else if (mCurrentMovements & MovementBitField::MOVING_LEFT)
+				{
+					mAnimationCurrentState = MovementBitField::NONE;
 					UpdateAnimationsSmallMario(MovementBitField::MOVING_LEFT, true);
-				else if(mCurrentMovements & MovementBitField::MOVING_RIGHT)
+				}
+				else if (mCurrentMovements & MovementBitField::MOVING_RIGHT)
+				{
+					mAnimationCurrentState = MovementBitField::NONE;
 					UpdateAnimationsSmallMario(MovementBitField::MOVING_RIGHT, true);
+				}
 				else
 					UpdateAnimationsSmallMario(MovementBitField::NONE, true);
 			}
@@ -870,7 +876,7 @@ void PlayableCharacter::UpdateAnimationsSmallMario(MovementBitField newMovement,
 		if (goingInto)
 		{
 			// Go into this state if not jumping 
-			if (!(mCurrentMovements & MovementBitField::JUMPING))
+			if (!(mCurrentMovements & MovementBitField::JUMPING) && mAnimationCurrentState != MovementBitField::JUMPING)
 			{
 				mAnimationCurrentState = MovementBitField::MOVING_RIGHT;
 				mStartFrame = 0;
@@ -895,7 +901,7 @@ void PlayableCharacter::UpdateAnimationsSmallMario(MovementBitField newMovement,
 		if (goingInto)
 		{
 			// Go into this state if not jumping 
-			if (!(mCurrentMovements & MovementBitField::JUMPING))
+			if (!(mCurrentMovements & MovementBitField::JUMPING) && mAnimationCurrentState != MovementBitField::JUMPING)
 			{
 				mAnimationCurrentState = MovementBitField::MOVING_LEFT;
 
