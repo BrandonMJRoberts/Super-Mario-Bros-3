@@ -195,9 +195,6 @@ CollisionPositionalData PlayableCharacter::HandleYCollisions(const float deltaTi
 	{
 		if (CheckYCollision(leftPos, rightPos, interactionLayer, objectLayer))
 		{
-			//mCurrentMovements &= ~(MovementBitField::JUMPING);
-
-			//mPriorFrameMovements = mCurrentMovements;
 			mCurrentMovements &= ~(MovementBitField::HOLDING_JUMP);
 
 			if (!(mCurrentMovements & MovementBitField::JUMPING))
@@ -676,7 +673,7 @@ void PlayableCharacter::HandleChangeInAnimations(MovementBitField newMovement, b
 void PlayableCharacter::CalculateInitialRenderReferencePoint()
 {
 	// Starting with the Y axis
-	if (mRealGridPosition.y - (PLAYABLE_SCREEN_AREA_HEIGHT / 2) <= 0.0f)
+	if (mRealGridPosition.y - PLAYABLE_SCREEN_AREA_HEIGHT <= 0.0f)
 	{
 		// Set the correct reference point
 		mRenderRefencePoint.y = 0.0f;
@@ -968,106 +965,6 @@ void PlayableCharacter::UpdateAnimationsSmallMario(MovementBitField newMovement,
 	case MovementBitField::SWIMMING:
 	break;
 	}
-
-	// Reset the animation
-	//mCurrentFrame = mStartFrame;
-
-
-	/*
-	// ------------------------------------------------------------------------------------------------------------------
-
-	// If the player was not running last frame, and they are this frame then go in here
-	if (mCurrentMovements & MovementBitField::RUNNING)
-	{
-		// If running and jumping then set the correct sprites
-		if (!mGrounded)
-		{
-			// Full sprint jump
-			mStartFrame   = 5;
-			mEndFrame     = 5;
-		}
-		else // Regular run
-		{
-			if (abs(mVelocity.x) >= kBaseMaxHorizontalSpeed)
-			{
-				mStartFrame   = 3;
-				mEndFrame     = 4;
-			}
-			else if (mVelocity.x != 0.0f)
-			{
-				mStartFrame   = 0;
-				mEndFrame     = 1;
-			}
-			else
-			{
-				mStartFrame   = 0;
-				mEndFrame     = 0;
-			}
-		}
-
-		mCurrentFrame = mStartFrame;
-
-		mPriorFrameMovements |= MovementBitField::RUNNING;
-	}
-
-	// ------------------------------------------------------------------------------------------------------------------
-
-	// If you have changed walking direction then set that they are walking
-	if (mCurrentMovements & MovementBitField::MOVING_RIGHT ||
-		mCurrentMovements & MovementBitField::MOVING_LEFT)
-	{
-		mStartFrame   = 0;
-		mEndFrame     = 1;
-
-		if (!(mCurrentMovements & MovementBitField::JUMPING))
-		{
-			if (mCurrentMovements & MovementBitField::MOVING_RIGHT)
-				mPriorFrameMovements |= MovementBitField::MOVING_RIGHT;
-			else if (mCurrentMovements & MovementBitField::MOVING_LEFT)
-				mPriorFrameMovements |= MovementBitField::MOVING_LEFT;
-		}
-
-		mCurrentFrame = mStartFrame;
-	}
-
-	// ------------------------------------------------------------------------------------------------------------------
-
-	if (mCurrentMovements & MovementBitField::JUMPING)
-	{
-		mStartFrame = 2;
-		mEndFrame   = 2;
-
-		mPriorFrameMovements |= MovementBitField::JUMPING;
-
-		mCurrentFrame = mStartFrame;
-	}
-
-	// ------------------------------------------------------------------------------------------------------------------
-
-	// If going down/up a pipe
-	if (mCurrentMovements & MovementBitField::ENTERING_PIPE_VERTICALLY)
-	{
-		mStartFrame   = 7;
-		mEndFrame     = 7;
-
-		mPriorFrameMovements |= MovementBitField::ENTERING_PIPE_VERTICALLY;
-
-		mCurrentFrame = mStartFrame;
-	}
-
-	// ------------------------------------------------------------------------------------------------------------------
-
-	// If you were moving and now you are not then set this
-	if (mCurrentMovements == 0)
-	{
-		mStartFrame   = 0;
-		mEndFrame     = 0;
-
-		mPriorFrameMovements = 0;
-
-		mCurrentFrame = mStartFrame;
-	}
-	*/
 }
 
 // ----------------------------------------------------- //

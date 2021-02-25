@@ -1,10 +1,18 @@
 # Interactable Layer
-
-16 # Width
-27 # Height
+# Width
+16
+# Height
+27
+# Amount of sprites in file
+1
+# Amount of sprites on sprite sheet width
+1
+# Amount of sprites on sprite sheet height
+1
 
 # Definitions
-UNBREAKABLE_BLOCK_3 # ID 0
+# ID 0
+UNBREAKABLE_BLOCK_3
 
 ----------------
 ----------------

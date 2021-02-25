@@ -341,21 +341,10 @@ void Audio_Player::SetMainLevelMusicTrack(const char* newFilePath)
 
 void Audio_Player::PlaySFXTrack(const char* newFilePath)
 {
-	// Load in the track
-	mSFX.push_back(Mix_LoadWAV(newFilePath));
-
-	// Check it exists
-	if (mSFX[mSFX.size() - 1] == nullptr)
-	{
-		std::cout << "Failed to load an SFX track! " << std::endl;
-		mSFX.pop_back();
-		return;
-	}
-
 	// Find which channels are open
 	std::vector<unsigned int> openChannels{ 1, 2, 3, 4, 5, 6, 7, 8 };
 
-	// Find an empty channel and play it
+	// Find which channels are open
 	for (unsigned int i = 0; i < mFilledChannels.size(); i++)
 	{
 		for (unsigned int j = 0; j < openChannels.size(); j++)
@@ -368,11 +357,26 @@ void Audio_Player::PlaySFXTrack(const char* newFilePath)
 		}
 	}
 
-	// play the audio
-	Mix_PlayChannel(openChannels[0], mSFX[mSFX.size() - 1], 0);
+	// If there is a free channel to play a sound on then play it there
+	if (openChannels.size() > 0)
+	{
+		// Load in the track
+		mSFX.push_back(Mix_LoadWAV(newFilePath));
 
-	// Add this channel to the list of channels being played on
-	mFilledChannels.push_back(openChannels[0]);
+		// Check it exists
+		if (mSFX[mSFX.size() - 1] == nullptr)
+		{
+			std::cout << "Failed to load an SFX track! " << std::endl;
+			mSFX.pop_back();
+			return;
+		}
+
+		// play the audio
+		Mix_PlayChannel(openChannels[0], mSFX[mSFX.size() - 1], 0);
+
+		// Add this channel to the list of channels being played on
+		mFilledChannels.push_back(openChannels[0]);
+	}
 }
 
 // ----------------------------------------------------- //
@@ -432,6 +436,10 @@ void Audio_Player::PauseAllSFX()
 	Mix_Pause(2);
 	Mix_Pause(3);
 	Mix_Pause(4);
+	Mix_Pause(5);
+	Mix_Pause(6);
+	Mix_Pause(7);
+	Mix_Pause(8);
 }
 
 // ----------------------------------------------------- //
@@ -442,6 +450,10 @@ void Audio_Player::ResumeAllSFX()
 	Mix_Resume(2);
 	Mix_Resume(3);
 	Mix_Resume(4);
+	Mix_Resume(5);
+	Mix_Resume(6);
+	Mix_Resume(7);
+	Mix_Resume(8);
 }
 
 // ----------------------------------------------------- //
@@ -509,13 +521,53 @@ void Audio_Player::SetAudioVolume(int volume)
 
 void Audio_Player::Update()
 {
+	// Loop through all SFX and check to see if they are in use
+	Mix_Chunk* sfx;
+	unsigned int index = 0;
 
+	std::vector<unsigned int> sfxIndexesBeingPlayed;
+
+	for (unsigned int i = 0; i < 8; i++)
+	{
+		// Get the SFX being played on this chunk
+		sfx = Mix_GetChunk(i);
+
+		for (unsigned int j = 0; j < mSFX.size(); j++)
+		{
+			if (mSFX[j] == sfx)
+			{
+				sfxIndexesBeingPlayed.push_back(j);
+				break;
+			}
+		}
+	}
+
+	// Now we have the indexes that are being played, remove all othersoffset
+	unsigned int offset = 0;
+	for (unsigned int i = 0; i < mSFX.size(); i++)
+	{
+		for (unsigned int j = 0; j < sfxIndexesBeingPlayed.size(); j++)
+		{
+			if (i == sfxIndexesBeingPlayed[j])
+				break;
+			else
+			{
+				mSFX.erase(mSFX.begin() + (sfxIndexesBeingPlayed[j] - offset));
+				offset++;
+				continue;
+			}
+		}
+	}
 }
 
 // ----------------------------------------------------- //
 
 void Audio_Player::SetChannelFinished(int channel)
 {
+	// Get the SFX that was playing on the channel
+	Mix_Chunk* sfx = Mix_GetChunk(channel);
+	Mix_FreeChunk(sfx);
+
 	// Loop through and see if this channel is in our vector
 	for (unsigned int i = 0; i < mFilledChannels.size(); i++)
 	{

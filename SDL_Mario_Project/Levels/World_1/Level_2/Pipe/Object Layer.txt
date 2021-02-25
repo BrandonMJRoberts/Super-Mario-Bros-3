@@ -2,44 +2,50 @@
 
 # ----------------------------------------------------------------------------- #
 
-# COIN - Position
+# COIN - POSITION (vec2)
 COIN
-6 1
-6 2
-6 3
-6 4
-6 5
+6 26
+6 25
+6 24
+6 23
+6 22
 
-7 1
-7 2
-7 3
-7 4
-7 5
+7 26
+7 25
+7 24
+7 23
+7 22
 
-8 1
-8 2
-8 3
-8 4
-8 5
+8 26
+8 25
+8 24
+8 23
+8 22
 
-9 1
-9 2
-9 3
-9 4
-9 5
+9 26
+9 25
+9 24
+9 23
+9 22
+NEXT
 
 # ----------------------------------------------------------------------------- #
 
-#PIPE - Left of mouth position (vec2) - Width (uint) - Height (uint) - Pipe type (uint) - Pipe Facing Direction (0 = Up, 1 = Right, 2 = Down, 3 = Left) - directory for loading in level (string) - stage entrance ID (0 is for the start point in the overworld) - Enemy contained within pipe - Double Ended (Bool)
+#PIPE - Left of mouth position (vec2) - Width (uint) - Height (uint) - Pipe type (uint) - Pipe Facing Direction (0 = Left, 1 = Right, 2 = Up, 3 = Down) - file directory for loading in level (string) - stage entrance ID (0 is for the start point in the overworld) - Enemy contained within pipe - Amount of ends (2 = double ended, 0 = no ends) - Stage ID to go to (int) - Pipe is vertical (bool)
 PIPE
-1 2 2 2 0 1 "Levels/World 1/Level 2/Overworld" 1 NONE F
 
-7 21 2 2 0 2 NONE -1 NONE F
+7 6 2 2 2 3 NONE 0 NONE 1 -1 F
+
+1 25 2 2 2 1 "Levels/World_1/Level_2/Overworld" -1 NONE 1 1 F
+
+NEXT
 
 # ----------------------------------------------------------------------------- #
 
-# SPAWN_POINT - Position - ID to go to
-7 20 0
+# SPAWN_POINT - Position - ID
+SPAWN_POINT
+7 7 0
+NEXT
 
 # ----------------------------------------------------------------------------- #
 

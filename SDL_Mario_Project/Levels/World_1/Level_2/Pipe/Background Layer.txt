@@ -1,6 +1,14 @@
-# Background file
-16 # Width
-27 # Height
+# Background Layer
+# Width
+16
+# Height
+27
+# Ending type
+-2
+# Amount of sprites on sprite sheet width
+2
+# Amount of sprites on sprite sheet height
+1
 
 # 0 is the black background sprite
 # 1 is the blue block 
