@@ -8,7 +8,6 @@
 
 #include <vector>
 
-
 class Audio_Player : public Observer
 {
 public:

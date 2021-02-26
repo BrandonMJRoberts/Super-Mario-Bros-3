@@ -349,14 +349,6 @@ void Audio_Player::PlaySFXTrack(const char* newFilePath)
 		// Load in the track
 		mSFX.push_back(Mix_LoadWAV(newFilePath));
 
-		// Check it exists
-		if (mSFX[mSFX.size() - 1] == nullptr)
-		{
-			std::cout << "Failed to load an SFX track! " << std::endl;
-			mSFX.pop_back();
-			return;
-		}
-
 		// play the audio
 		Mix_PlayChannel(openChannels[openChannels.size() - 1], mSFX[mSFX.size() - 1], 0);
 
@@ -508,10 +500,10 @@ void Audio_Player::Update()
 
 	std::vector<unsigned int> sfxIndexesBeingPlayed;
 
-	for (unsigned int i = 0; i < 8; i++)
+	for (unsigned int i = 0; i < openChannels.size(); i++)
 	{
 		// Get the SFX being played on this chunk
-		sfx = Mix_GetChunk(i);
+		sfx = Mix_GetChunk(openChannels[i]);
 
 		for (unsigned int j = 0; j < mSFX.size(); j++)
 		{
@@ -523,18 +515,19 @@ void Audio_Player::Update()
 		}
 	}
 
-	// Now we have the indexes that are being played, remove all othersoffset
+	// Now we have the indexes that are being played, remove all others offset
 	unsigned int offset = 0;
-	for (unsigned int i = 0; i < mSFX.size(); i++)
+	for (unsigned int indexBeingPlayed = 0; indexBeingPlayed < sfxIndexesBeingPlayed.size(); indexBeingPlayed++)
 	{
-		for (unsigned int j = 0; j < sfxIndexesBeingPlayed.size(); j++)
+		for (unsigned int sfxVectorIndex = 0; sfxVectorIndex < mSFX.size(); sfxVectorIndex++)
 		{
-			if (i == sfxIndexesBeingPlayed[j])
-				break;
+			if (sfxVectorIndex == sfxIndexesBeingPlayed[indexBeingPlayed])
+			{
+				mSFX.erase(mSFX.begin() + sfxIndexesBeingPlayed[indexBeingPlayed] - offset);
+				offset++;
+			}
 			else
 			{
-				mSFX.erase(mSFX.begin() + (sfxIndexesBeingPlayed[j] - offset));
-				offset++;
 				continue;
 			}
 		}

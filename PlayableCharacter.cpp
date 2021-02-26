@@ -352,7 +352,7 @@ void PlayableCharacter::CalculateNewPosition(const float deltaTime, CollisionPos
 	}
 	else
 	{
-		if (xCollision.collisionWithInteractionLayer && (!yCollision.collisionOccured || mVelocity.y >= 0.0f))
+		if (xCollision.collisionWithInteractionLayer)
 		{
 			// We have the guarentee that this collision will obey grid lines
 			if (mVelocity.x > 0.0f)
@@ -365,7 +365,8 @@ void PlayableCharacter::CalculateNewPosition(const float deltaTime, CollisionPos
 			}
 		}
 
-		mVelocity.x = 0.0f;
+		if(!yCollision.collisionOccured)
+			mVelocity.x = 0.0f;
 	}
 
 	if(!yCollision.collisionOccured)
