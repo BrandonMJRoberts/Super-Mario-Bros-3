@@ -1,96 +1,40 @@
-# Object layer file
+# Object Layer
+# There is only two objects in this area - Coins and Pipes
+# So in this file are the definitions for them
+# All positional data is referenced from the top left being 0,0
 
 # ---------------------------------------------------------------------------- #
 
-# COIN - Position
+# COIN - POSITION (vec2)
 COIN
-
-# Coins along the ground
-
-11 4
-12 5
-13 4
+13 3
+14 2
+15 2
+16 3
+16 4
+15 5
 14 5
-15 4
-16 5
-17 4
-
-21 5
-22 4
-23 5
-24 4
-25 5
-26 4
-27 5
-
-30 4
-31 5
-32 4
-33 5
-34 4
-35 5
-36 4
-
-39 5
-40 4
-41 5
-42 4
-43 5
-44 4
-45 5
-
-48 4
-49 5
-50 4
-51 5
-52 4
-53 5
-54 4
-
-# Floating coins in a circle
-
-38 12
-39 12
-40 12
-
-37 13
-38 13
-40 13
-41 13
-
-36 14 
-37 14
-41 14
-42 14
-
-36 15
-42 15
-
-36 16
-37 16
-41 16
-42 16
-
-37 17
-38 17
-40 17
-41 17
-
-38 18
-39 18
-40 18
+16 6
+16 7
+15 8
+14 8
+13 7
+NEXT
 
 # ---------------------------------------------------------------------------- #
 
-# PIPE - Left of mouth position (vec2) - Width (uint) - Height (uint) - Pipe type (uint) - Pipe Facing Direction (0 = Up, 1 = Right, 2 = Down, 3 = Left) - directory for loading in level (string) - stage entrance ID (0 is for the 		start point in the overworld) - Enemy contained	within pipe - Double Ended (Bool)
+#PIPE - Left of mouth position (vec2) - Width (uint) - Height (uint) - Pipe type (uint) - Pipe Facing Direction (0 = Left, 1 = Right, 2 = Up, 3 = Down) - file directory for loading in level (string) - stage entrance ID (0 is for the start point in the overworld) - Enemy contained within pipe - Amount of ends (2 = double ended, 0 = no ends) - Stage ID to go to (int) - Pipe is vertical (bool)
 PIPE
-53 3 2 4 1 0 "Levels/World 1/Level 2/Overworld" 1 NONE F
+22 0 2 2 2 3 Levels/World-1/Level-1/Overworld 0 NONE 1 -1 T
+8  0 2 2 2 3 NONE                            -1 NONE 1 1 T
+NEXT
 
 # ---------------------------------------------------------------------------- #
 
-# INVISIBLE_BLOCK - Position - Item to drop - Quantity
-INVISIBLE_BLOCK
-39 15 ONE_UP 1
+# SPAWN_POINT - Position - ID
+SPAWN_POINT
+8 3 0
+NEXT
 
 # ---------------------------------------------------------------------------- #
 

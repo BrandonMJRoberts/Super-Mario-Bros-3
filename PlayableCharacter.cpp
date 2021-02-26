@@ -74,8 +74,8 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 	mCollisionBox.x       = 0.83f;
 	mCollisionBoxOffset.x = 0.083f;
 
-	mCollisionBox.y       = 0.83;
-	mCollisionBoxOffset.y = -0.17;
+	mCollisionBox.y       = 0.83f;
+	mCollisionBoxOffset.y = 0.083f;
 }
 
 // ----------------------------------------------------- //
@@ -94,13 +94,13 @@ void PlayableCharacter::Render()
 	{
 		// First calculate what we should render - which sprite
 		SDL_Rect portionOfSpriteSheet {int((mCurrentFrame % mNumberOfSpritesOnWidth) * mSingleSpriteWidth),
-									   int((mCurrentFrame / mNumberOfSpritesOnWidth)* mSingleSpriteHeight),
+									   int((mCurrentFrame / mNumberOfSpritesOnWidth) * mSingleSpriteHeight),
 			                           int(mSingleSpriteWidth), 
 			                           int(mSingleSpriteHeight) };
 
 		// Now calculate where we should render it
 		SDL_Rect destRect {int(mScreenGridPosition.x * RESOLUTION_OF_SPRITES), 
-			               int(mScreenGridPosition.y * RESOLUTION_OF_SPRITES) - int(float(RESOLUTION_OF_SPRITES) * mCollisionBox.y) + 2, // Render in the position, moved up the height of the sprite + 1 to make it look like he is running on the ground
+			               int(mScreenGridPosition.y * RESOLUTION_OF_SPRITES) - int(float(RESOLUTION_OF_SPRITES) * mCollisionBox.y), // Render in the position, moved up the height of the sprite + 2 to make it look like he is running on the ground
 			               int(mSingleSpriteWidth), 
 			               int(mSingleSpriteHeight) };
 
@@ -168,18 +168,22 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 CollisionPositionalData PlayableCharacter::HandleXCollisions(const float deltaTime, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
 	// Default to checking right - taking into consideration the position, the collision box width, collision box offset and the movement distance
-	Vector2D footPos = Vector2D(mRealGridPosition.x + mCollisionBox.x + mCollisionBoxOffset.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBoxOffset.y);
-	Vector2D headPos = Vector2D(mRealGridPosition.x + mCollisionBox.x + mCollisionBoxOffset.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBox.y - mCollisionBoxOffset.y);
+	Vector2D footPos = Vector2D(mRealGridPosition.x + mCollisionBox.x + mCollisionBoxOffset.x + (mVelocity.x * deltaTime), mRealGridPosition.y + mCollisionBoxOffset.y);
+	Vector2D headPos = Vector2D(mRealGridPosition.x + mCollisionBox.x + mCollisionBoxOffset.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBox.y + mCollisionBoxOffset.y);
 
 	// Check if we are going left - if we are then check left
 	if (mVelocity.x < 0.0f)
 	{
 		// Going left
-		footPos = Vector2D(mRealGridPosition.x + mCollisionBoxOffset.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBoxOffset.y);
+		footPos = Vector2D(mRealGridPosition.x + mCollisionBoxOffset.x + (mVelocity.x * deltaTime), mRealGridPosition.y + mCollisionBoxOffset.y);
 		headPos = Vector2D(mRealGridPosition.x + mCollisionBoxOffset.x + (mVelocity.x * deltaTime), mRealGridPosition.y - mCollisionBox.y - mCollisionBoxOffset.y);
 	}
 
-	return (CollisionPositionalData(CheckXCollision(footPos, headPos, interactionLayer, objectLayer), headPos, footPos));
+	CollisionPositionalData returnData            = CheckXCollision(footPos, headPos, interactionLayer, objectLayer);
+	returnData.collisionRealPositionLeftOrTop     = headPos;
+	returnData.collisionRealPositionRightOrBottom = footPos;
+
+	return returnData;
 }
 
 // ----------------------------------------------------- //
@@ -187,13 +191,15 @@ CollisionPositionalData PlayableCharacter::HandleXCollisions(const float deltaTi
 CollisionPositionalData PlayableCharacter::HandleYCollisions(const float deltaTime, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
 	// Default to going downwards
-	Vector2D leftPos  = Vector2D(mRealGridPosition.x + mCollisionBoxOffset.x,                   mRealGridPosition.y - mCollisionBoxOffset.y + (mVelocity.y * deltaTime));
-	Vector2D rightPos = Vector2D(mRealGridPosition.x + mCollisionBoxOffset.x + mCollisionBox.x, mRealGridPosition.y - mCollisionBoxOffset.y + (mVelocity.y * deltaTime));
+	Vector2D leftPos  = Vector2D(mRealGridPosition.x + mCollisionBoxOffset.x,                   mRealGridPosition.y + mCollisionBoxOffset.y + (mVelocity.y * deltaTime));
+	Vector2D rightPos = Vector2D(mRealGridPosition.x + mCollisionBoxOffset.x + mCollisionBox.x, mRealGridPosition.y + mCollisionBoxOffset.y + (mVelocity.y * deltaTime));
 
 	// Going downwards
 	if (mVelocity.y >= 0.0f)
 	{
-		if (CheckYCollision(leftPos, rightPos, interactionLayer, objectLayer))
+		CollisionPositionalData returnData = CheckYCollision(leftPos, rightPos, interactionLayer, objectLayer);
+
+		if (returnData.collisionOccured)
 		{
 			mCurrentMovements &= ~(MovementBitField::HOLDING_JUMP);
 
@@ -204,19 +210,21 @@ CollisionPositionalData PlayableCharacter::HandleYCollisions(const float deltaTi
 			}
 
 			mGrounded       = true;
-			return CollisionPositionalData(true, leftPos, rightPos);
+			return CollisionPositionalData(returnData.collisionOccured, leftPos, rightPos, returnData.collisionWithInteractionLayer, returnData.collisionWithObjectLayer);
 		}
 		else
 			mGrounded = false;
 	}
 	else // Going upwards
 	{
-		leftPos  = Vector2D(mRealGridPosition.x + mCollisionBoxOffset.x,                   mRealGridPosition.y - mCollisionBox.y - mCollisionBoxOffset.y + (mVelocity.y * deltaTime));
-		rightPos = Vector2D(mRealGridPosition.x + mCollisionBoxOffset.x + mCollisionBox.x, mRealGridPosition.y - mCollisionBox.y - mCollisionBoxOffset.y + (mVelocity.y * deltaTime));
+		leftPos  = Vector2D(mRealGridPosition.x + mCollisionBoxOffset.x,                   mRealGridPosition.y - mCollisionBox.y + mCollisionBoxOffset.y + (mVelocity.y * deltaTime));
+		rightPos = Vector2D(mRealGridPosition.x + mCollisionBoxOffset.x + mCollisionBox.x, mRealGridPosition.y - mCollisionBox.y + mCollisionBoxOffset.y + (mVelocity.y * deltaTime));
 
 		mGrounded = false;
 
-		return (CollisionPositionalData(CheckYCollision(leftPos, rightPos, interactionLayer, objectLayer), leftPos, rightPos));
+		CollisionPositionalData returnData = CheckYCollision(leftPos, rightPos, interactionLayer, objectLayer);
+
+		return (CollisionPositionalData(returnData.collisionOccured, leftPos, rightPos, returnData.collisionWithInteractionLayer, returnData.collisionWithObjectLayer));
 	}
 
 	return CollisionPositionalData();
@@ -224,27 +232,31 @@ CollisionPositionalData PlayableCharacter::HandleYCollisions(const float deltaTi
 
 // ----------------------------------------------------- //
 
-bool PlayableCharacter::CheckXCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
+CollisionPositionalData PlayableCharacter::CheckXCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
 	// Check to see if we have hit the terrain on the X movement, and the objects in the level, and the screen constraints
-	if (HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1)                || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2)                ||
-		HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1).StopXMovement || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2).StopXMovement ||
+	if (HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1)                || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2) ||
 		positionToCheck1.x < 0.0f ||
 		positionToCheck2.x < 0.0f ||
 		positionToCheck1.x > mLevelBounds.x ||
 		positionToCheck2.x > mLevelBounds.x)
 	{
 		// Return that there was a collision
-		return true;
+		return CollisionPositionalData(true, Vector2D(), Vector2D(), true, false);
+	}
+
+	if (HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1).StopXMovement || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2).StopXMovement)
+	{
+		return CollisionPositionalData(true, Vector2D(), Vector2D(), false, true);
 	}
 
 	// Return that there was not a collision
-	return false;
+	return CollisionPositionalData();
 }
 
 // ----------------------------------------------------- //
 
-bool PlayableCharacter::CheckYCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
+CollisionPositionalData PlayableCharacter::CheckYCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
 	// Check terrain collision
 	if (HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1) || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2) ||
@@ -259,7 +271,7 @@ bool PlayableCharacter::CheckYCollision(const Vector2D positionToCheck1, const V
 		}
 
 		// Return that there was a collision
-		return true;
+		return CollisionPositionalData(true, Vector2D(), Vector2D(), true, false);
 	}
 
 	MovementPrevention returnData1 = HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1), returnData2 = HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2);
@@ -273,11 +285,11 @@ bool PlayableCharacter::CheckYCollision(const Vector2D positionToCheck1, const V
 		}
 
 		// Return that there was a collision
-		return true;
+		return CollisionPositionalData(true, Vector2D(), Vector2D(), false, true);
 	}
 
 	// Return that there was not a collision
-	return false;
+	return CollisionPositionalData();
 }
 
 // ----------------------------------------------------- //
@@ -285,11 +297,11 @@ bool PlayableCharacter::CheckYCollision(const Vector2D positionToCheck1, const V
 void PlayableCharacter::CalculateScreenBoundsPosition(const Vector2D currentPos)
 {
 	// If the player is near a boundary then they need specific positioning - starting with the Y axis
-	if (currentPos.y + (PLAYABLE_SCREEN_AREA_HEIGHT / 2) > mLevelBounds.y)
+	if (currentPos.y + (PLAYABLE_SCREEN_AREA_HEIGHT / 2.0f) > mLevelBounds.y)
 	{
 		mScreenGridPosition.y = (BACKGROUND_SPRITE_RENDER_HEIGHT - 1.0) - (mLevelBounds.y - currentPos.y);
 	}
-	else if (currentPos.y - (PLAYABLE_SCREEN_AREA_HEIGHT / 2) < 0.0f)
+	else if (currentPos.y - (PLAYABLE_SCREEN_AREA_HEIGHT / 2.0f) < 0.0f)
 	{
 		mScreenGridPosition.y = currentPos.y;
 	}
@@ -299,17 +311,17 @@ void PlayableCharacter::CalculateScreenBoundsPosition(const Vector2D currentPos)
 	}
 
 	// Now for the X axis
-	if (currentPos.x + (PLAYABLE_SCREEN_AREA_WIDTH / 2) > mLevelBounds.x)
+	if (currentPos.x + (PLAYABLE_SCREEN_AREA_WIDTH / 2.0f) > mLevelBounds.x)
 	{
 		mScreenGridPosition.x = mLevelBounds.x - currentPos.x;
 	}
-	else if (currentPos.x - (PLAYABLE_SCREEN_AREA_WIDTH / 2) < 0.0f)
+	else if (currentPos.x - (PLAYABLE_SCREEN_AREA_WIDTH / 2.0f) < 0.0f)
 	{
 		mScreenGridPosition.x = currentPos.x;
 	}
 	else
 	{
-		mScreenGridPosition.x = LEVEL_BOUNDING_AREA_WIDTH / 2;
+		mScreenGridPosition.x = LEVEL_BOUNDING_AREA_WIDTH / 2.0f;
 	}
 }
 
@@ -318,6 +330,8 @@ void PlayableCharacter::CalculateScreenBoundsPosition(const Vector2D currentPos)
 void PlayableCharacter::CalculateNewPosition(const float deltaTime, CollisionPositionalData xCollision, CollisionPositionalData yCollision)
 {
 	Vector2D movementDistance = (mVelocity * deltaTime);                // Distance potentially moved
+
+	// First calculate the new position in the world based on collisions
 	Vector2D newRealGridPos   = mRealGridPosition   + movementDistance; // Real position in the world according to this movement
 
 	// Check for bounds
@@ -336,11 +350,45 @@ void PlayableCharacter::CalculateNewPosition(const float deltaTime, CollisionPos
 		// No collision so move the player in that direction
 		mRealGridPosition.x = newRealGridPos.x;
 	}
+	else
+	{
+		if (xCollision.collisionWithInteractionLayer && (!yCollision.collisionOccured || mVelocity.y >= 0.0f))
+		{
+			// We have the guarentee that this collision will obey grid lines
+			if (mVelocity.x > 0.0f)
+			{
+				mRealGridPosition.x = int(mRealGridPosition.x) + mCollisionBoxOffset.x;
+			}
+			else if(mVelocity.x < 0.0f)
+			{ 
+				mRealGridPosition.x = int(mRealGridPosition.x + movementDistance.x) + 1.0;
+			}
+		}
+
+		mVelocity.x = 0.0f;
+	}
 
 	if(!yCollision.collisionOccured)
 	{
 		// No collision so move freely to the new position
 		mRealGridPosition.y = newRealGridPos.y;
+	}
+	else
+	{
+		// Check what the collision was with
+		if (yCollision.collisionWithInteractionLayer)
+		{
+			if (mVelocity.y >= 0.0f)
+			{
+				mRealGridPosition.y = int(mRealGridPosition.y) + 0.9;
+			}
+
+			mVelocity.y = 0.0f;
+		}
+		else if (yCollision.collisionWithObjectLayer)
+		{
+			mVelocity.y = 0.0f;
+		}
 	}
 
 	std::cout << "Real X: " << mRealGridPosition.x << "\tReal Y :" << mRealGridPosition.y << std::endl;
@@ -375,7 +423,7 @@ void PlayableCharacter::CalculateNewScreenPosAndRenderPos(Vector2D movementDista
 	// Check for a collision in the X axis
 	if (xCollision.collisionOccured)
 	{
-		mVelocity.x = 0.0f;
+		mScreenGridPosition.x = ConvertRealPositionIntoScreenPos(mRealGridPosition).x;
 	}
 	else // No collision occured
 	{
@@ -403,11 +451,7 @@ void PlayableCharacter::CalculateNewScreenPosAndRenderPos(Vector2D movementDista
 	// Check for Y collision
 	if (yCollision.collisionOccured)
 	{
-		// Now we need to set the screen position to be in the correct position
-	//	if (movementDistance.y > 0.05f && mVelocity.y >= 0.0f)
-	//		mScreenGridPosition.y -= (movementDistance.y / 16.0f);
-
-		mVelocity.y = 0.0f;
+		mScreenGridPosition.y = ConvertRealPositionIntoScreenPos(mRealGridPosition).y;
 	}
 	else
 	{
@@ -424,7 +468,7 @@ void PlayableCharacter::CalculateNewScreenPosAndRenderPos(Vector2D movementDista
 		}
 
 		// Now check to see if we are at the top or the bottom portions of the level
-		if (mRealGridPosition.y + (PLAYABLE_SCREEN_AREA_HEIGHT / 2.0f) > mLevelBounds.y ||
+		if ((mRealGridPosition.y + (PLAYABLE_SCREEN_AREA_HEIGHT / 2.0f) > mLevelBounds.y) ||
 			mRealGridPosition.y - (PLAYABLE_SCREEN_AREA_HEIGHT / 2.0f) < 0.0f)
 		{
 			mScreenGridPosition.y = newScreenGridPos.y;
@@ -438,7 +482,12 @@ void PlayableCharacter::CalculateNewScreenPosAndRenderPos(Vector2D movementDista
 	// Cap the render reference point to the correct bounds
 
 	// X checks
-	if (mRenderRefencePoint.x < 0.0f)
+	if (   mRenderRefencePoint.x < 0.0f
+		&& mRenderRefencePoint.x > mLevelBounds.x - BACKGROUND_SPRITE_RENDER_WIDTH)
+	{
+		mRenderRefencePoint.x = (mLevelBounds.x / 2.0f) - (PLAYABLE_SCREEN_AREA_WIDTH / 2.0f);
+	}
+	else if (mRenderRefencePoint.x < 0.0f)
 	{
 		mRenderRefencePoint.x = 0.0f;
 	}
@@ -448,7 +497,12 @@ void PlayableCharacter::CalculateNewScreenPosAndRenderPos(Vector2D movementDista
 	}
 
 	// Y checks
-	if (mRenderRefencePoint.y < 0.0f)
+	if (mRenderRefencePoint.y < 0.0f
+		&& mRenderRefencePoint.y > mLevelBounds.y - BACKGROUND_SPRITE_RENDER_HEIGHT + 1)
+	{
+		mRenderRefencePoint.y = (mLevelBounds.y / 2.0f) - (PLAYABLE_SCREEN_AREA_HEIGHT / 2.0f);
+	}
+	else if (mRenderRefencePoint.y < 0.0f)
 	{
 		mRenderRefencePoint.y = 0.0f;
 	}
@@ -458,6 +512,14 @@ void PlayableCharacter::CalculateNewScreenPosAndRenderPos(Vector2D movementDista
 	}
 
 	// ----------------------------------------------------------------------------------------------------------------------------------- //
+}
+
+// ----------------------------------------------------- //
+
+Vector2D PlayableCharacter::ConvertRealPositionIntoScreenPos(Vector2D realPos)
+{
+	// This function returns the screen position of a position relative to the screen position in the world
+	return (realPos - mRenderRefencePoint);
 }
 
 // ----------------------------------------------------- //
@@ -673,23 +735,33 @@ void PlayableCharacter::HandleChangeInAnimations(MovementBitField newMovement, b
 void PlayableCharacter::CalculateInitialRenderReferencePoint()
 {
 	// Starting with the Y axis
-	if (mRealGridPosition.y - PLAYABLE_SCREEN_AREA_HEIGHT <= 0.0f)
+	if (mRealGridPosition.y - (PLAYABLE_SCREEN_AREA_HEIGHT / 2.0f) <= 0.0f
+		&& mRealGridPosition.y + ((PLAYABLE_SCREEN_AREA_HEIGHT / 2.0f) + 3) >= mLevelBounds.y)
+	{
+		mRenderRefencePoint.y = mLevelBounds.y / 2.0f;
+	}
+	else if (mRealGridPosition.y - (PLAYABLE_SCREEN_AREA_HEIGHT / 2.0f) <= 0.0f)
 	{
 		// Set the correct reference point
 		mRenderRefencePoint.y = 0.0f;
 	}
-	else if (mRealGridPosition.y + ((PLAYABLE_SCREEN_AREA_HEIGHT / 2) + 3) >= mLevelBounds.y)
+	else if (mRealGridPosition.y + ((PLAYABLE_SCREEN_AREA_HEIGHT / 2.0f) + 3) >= mLevelBounds.y)
 	{
 		// Set the correct reference point
 		mRenderRefencePoint.y = mLevelBounds.y - (BACKGROUND_SPRITE_RENDER_HEIGHT - 1);
 	}
 
 	// Now for the X-axis
-	if (mRealGridPosition.x - (PLAYABLE_SCREEN_AREA_WIDTH / 2) < 0.0f)
+	if (   mRealGridPosition.x - (PLAYABLE_SCREEN_AREA_WIDTH / 2.0f) < 0.0f 
+		&& mRealGridPosition.x + (PLAYABLE_SCREEN_AREA_WIDTH / 2.0f) >= mLevelBounds.x)
+	{
+		mRenderRefencePoint.x = mLevelBounds.x / 2.0f;
+	}
+	else if (mRealGridPosition.x - (PLAYABLE_SCREEN_AREA_WIDTH / 2.0f) < 0.0f)
 	{
 		mRenderRefencePoint.x = 0.0f;
 	}
-	else if (mRealGridPosition.x + (PLAYABLE_SCREEN_AREA_WIDTH / 2) >= mLevelBounds.x)
+	else if (mRealGridPosition.x + (PLAYABLE_SCREEN_AREA_WIDTH / 2.0f) >= mLevelBounds.x)
 	{
 		mRenderRefencePoint.x = mLevelBounds.x - PLAYABLE_SCREEN_AREA_WIDTH;
 	}

@@ -51,7 +51,7 @@ private:
 	// Vector to hold the SFX
 	std::vector<Mix_Chunk*>   mSFX;
 
-	std::vector<unsigned int> mFilledChannels;
+	std::vector<unsigned int> openChannels;
 };
 
 #endif

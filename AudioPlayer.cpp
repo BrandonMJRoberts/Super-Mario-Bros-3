@@ -12,6 +12,8 @@ Audio_Player::Audio_Player()
 	, mMainLevelMusic(nullptr)
 	, mSubAreaMusic(nullptr)
 {
+	openChannels = { 1,2,3,4,5,6,7,8 };
+
 	// Default the volume to not be deafening
 	SetAudioVolume(48);
 
@@ -341,22 +343,6 @@ void Audio_Player::SetMainLevelMusicTrack(const char* newFilePath)
 
 void Audio_Player::PlaySFXTrack(const char* newFilePath)
 {
-	// Find which channels are open
-	std::vector<unsigned int> openChannels{ 1, 2, 3, 4, 5, 6, 7, 8 };
-
-	// Find which channels are open
-	for (unsigned int i = 0; i < mFilledChannels.size(); i++)
-	{
-		for (unsigned int j = 0; j < openChannels.size(); j++)
-		{
-			if (mFilledChannels[i] == openChannels[j])
-			{
-				openChannels.erase(openChannels.begin() + j);
-				break;
-			}
-		}
-	}
-
 	// If there is a free channel to play a sound on then play it there
 	if (openChannels.size() > 0)
 	{
@@ -372,10 +358,9 @@ void Audio_Player::PlaySFXTrack(const char* newFilePath)
 		}
 
 		// play the audio
-		Mix_PlayChannel(openChannels[0], mSFX[mSFX.size() - 1], 0);
+		Mix_PlayChannel(openChannels[openChannels.size() - 1], mSFX[mSFX.size() - 1], 0);
 
-		// Add this channel to the list of channels being played on
-		mFilledChannels.push_back(openChannels[0]);
+		openChannels.pop_back();
 	}
 }
 
@@ -505,14 +490,10 @@ void Audio_Player::PlaySubAreaMusic()
 
 void Audio_Player::SetAudioVolume(int volume)
 {
-	Mix_Volume(1, volume);
-	Mix_Volume(2, volume);
-	Mix_Volume(3, volume);
-	Mix_Volume(4, volume);
-	Mix_Volume(5, volume);
-	Mix_Volume(6, volume);
-	Mix_Volume(7, volume);
-	Mix_Volume(8, volume);
+	for (unsigned int i = 0; i < openChannels.size(); i++)
+	{
+		Mix_Volume(openChannels[i], volume);
+	}
 
 	Mix_VolumeMusic(volume);
 }
@@ -568,15 +549,17 @@ void Audio_Player::SetChannelFinished(int channel)
 	Mix_Chunk* sfx = Mix_GetChunk(channel);
 	Mix_FreeChunk(sfx);
 
+	openChannels.push_back(channel);
+
 	// Loop through and see if this channel is in our vector
-	for (unsigned int i = 0; i < mFilledChannels.size(); i++)
-	{
-		if (mFilledChannels[i] == channel)
-		{
-			mFilledChannels.erase(mFilledChannels.begin() + i);
-			return;
-		}
-	}
+	////for (unsigned int i = 0; i < mFilledChannels.size(); i++)
+	//{
+	//	if (mFilledChannels[i] == channel)
+	//	{
+	//		mFilledChannels.erase(mFilledChannels.begin() + i);
+	//		return;
+	//	}
+	//}
 }
 
 // ----------------------------------------------------- //

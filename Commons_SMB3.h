@@ -212,20 +212,25 @@ struct CollisionPositionalData
 		collisionOccured                     = false; 
 		collisionRealPositionLeftOrTop       = Vector2D(); 
 		collisionRealPositionRightOrBottom   = Vector2D(); 
+		collisionWithInteractionLayer        = false;
+		collisionWithObjectLayer             = false;
 	}
 
-	CollisionPositionalData(const bool collisionOccured, const Vector2D collisionRealPositionLeftOrTop, const Vector2D collisionRealPositionRightOrBottom)
+	CollisionPositionalData(const bool collisionOccured, const Vector2D collisionRealPositionLeftOrTop, const Vector2D collisionRealPositionRightOrBottom, const bool collisionWithInteractionLayer, bool collisionWithObjectLayer)
 	{ 
 		this->collisionOccured                     = collisionOccured; 
 		this->collisionRealPositionLeftOrTop       = collisionRealPositionLeftOrTop;
 		this->collisionRealPositionRightOrBottom   = collisionRealPositionRightOrBottom;
+		this->collisionWithInteractionLayer        = collisionWithInteractionLayer;
+		this->collisionWithObjectLayer             = collisionWithObjectLayer;
 	}
 
 	Vector2D collisionRealPositionLeftOrTop;
 	Vector2D collisionRealPositionRightOrBottom;
 
 	bool     collisionOccured;
-
+	bool     collisionWithInteractionLayer;
+	bool     collisionWithObjectLayer;
 };
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
