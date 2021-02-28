@@ -9,7 +9,7 @@
 
 #include "Observer.h"
 
-#include "FadeInOutTransition.h"
+#include "VisualTransitionHandler.h"
 
 #include <SDL.h>
 #include <filesystem>
@@ -23,17 +23,26 @@ GameScreenLevel_SMB3::GameScreenLevel_SMB3(SDL_Renderer* renderer
 	, Observer&   HUD_Observer
     , LEVEL_TYPE  levelType
     , Audio_Player* audioPlayerRef
-    , Observer* hudObserver)
+    , Observer*     hudObserver)
 
 	: GameScreen_SMB3(renderer, audioPlayerRef)
 	, mCurrentLevelAreaID(0)    // Default the level area to being zero in case there is not one named 'Overworld'
 	, mPlayer(nullptr)
-	, mFadeInOutTransition(nullptr)
+	, mTransitionHandler(nullptr)
 {
 	AddObserver(hudObserver);
 
 	// Setup the lookup table
 	InitialiseLookUpTable();
+
+	// Create the transition handler
+	mTransitionHandler = new VisualTransitionHandler(nullptr, renderer);
+
+	if(mTransitionHandler)
+		AddObserver(mTransitionHandler);
+
+	// Setup the vector of observes
+	std::vector<Observer*> observers = { (Observer*)audioPlayerRef, hudObserver, mTransitionHandler};
 
 	// First loop through all folders contained within the file path presented, each folder is a different level area
 	// To do this you use the std::filesystem include
@@ -43,7 +52,7 @@ GameScreenLevel_SMB3::GameScreenLevel_SMB3(SDL_Renderer* renderer
 		bool thisIsStartingArea = false;
 
 		// Now we have the file path and the amount of folders then we can setup the level areas
-		mAreas.push_back(new LevelAreas(entry.path().u8string().c_str(), thisIsStartingArea, renderer, mConversionFromCharToIntIndexMap, (Observer*)audioPlayerRef, hudObserver));
+		mAreas.push_back(new LevelAreas(entry.path().u8string().c_str(), thisIsStartingArea, renderer, mConversionFromCharToIntIndexMap, observers));
 
 		// If this is the starting area then set this to be the current index
 		if (thisIsStartingArea)
@@ -71,15 +80,13 @@ GameScreenLevel_SMB3::GameScreenLevel_SMB3(SDL_Renderer* renderer
 		mPlayer->AddObserver((Observer*)audioPlayerRef);
 	}
 
-	Notify(SUBJECT_NOTIFICATION_TYPES::PLAY_MAIN_LEVEL_MUSIC, "");
-
-	mFadeInOutTransition = new FadeInOutTransition(Vector2D(), 0.0f, "SDL_Mario_Project/Transitions/BlackFadeImage.png", renderer, FADING_STATE::IN, 200.0f);
-
-	if (!mFadeInOutTransition)
+	// Add the current player to the handler
+	if (mTransitionHandler)
 	{
-		std::cout << "Failed to create the fade in/out transition" << std::endl;
-		return;
+		mTransitionHandler->SetCurrentPlayer(mPlayer);
 	}
+
+	Notify(SUBJECT_NOTIFICATION_TYPES::PLAY_MAIN_LEVEL_MUSIC, "");
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //
@@ -94,8 +101,8 @@ GameScreenLevel_SMB3::~GameScreenLevel_SMB3()
 	delete mPlayer;
 	mPlayer = nullptr;
 
-	delete mFadeInOutTransition;
-	mFadeInOutTransition = nullptr;
+	delete mTransitionHandler;
+	mTransitionHandler = nullptr;
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //
@@ -114,8 +121,8 @@ void GameScreenLevel_SMB3::Render()
 	if (mPlayer)
 		mPlayer->Render();
 
-	if(mFadeInOutTransition)
-		mFadeInOutTransition->Render();
+	if(mTransitionHandler)
+		mTransitionHandler->Render();
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //
@@ -133,15 +140,11 @@ ReturnDataFromGameScreen GameScreenLevel_SMB3::Update(const float deltaTime, SDL
 	break;
 	}
 
-	bool fadeComplete = true;
-	if (mFadeInOutTransition)
-		fadeComplete = mFadeInOutTransition->Update(deltaTime);
+	if(mTransitionHandler)
+		mTransitionHandler->Update(deltaTime);
 
-	if (fadeComplete)
-	{
-		if (mPlayer)
-			mPlayer->Update(deltaTime, e, mAreas[mCurrentLevelAreaID]->GetLevelBounds(), mAreas[mCurrentLevelAreaID]->GetInteractionLayer(), mAreas[mCurrentLevelAreaID]->GetObjectLayer());
-	}
+	if (mPlayer)
+		mPlayer->Update(deltaTime, e, mAreas[mCurrentLevelAreaID]->GetLevelBounds(), mAreas[mCurrentLevelAreaID]->GetInteractionLayer(), mAreas[mCurrentLevelAreaID]->GetObjectLayer());
 
 	// Update the area we are currently in if it exists
 	if (mAreas.size() > mCurrentLevelAreaID)

@@ -11,23 +11,6 @@ class ObjectLayer;
 
 // ---------------------------------------------------------------- //
 
-enum MovementBitField : unsigned int
-{
-	NONE         = 0,
-	MOVING_RIGHT = 1 << 0,
-	MOVING_LEFT  = 1 << 1,
-	CROUCHING    = 1 << 2,
-
-	RUNNING      = 1 << 3,
-	JUMPING      = 1 << 4,
-	HOLDING_JUMP = 1 << 5,
-	SWIMMING     = 1 << 6,
-
-	ENTERING_PIPE_VERTICALLY = 1 << 7
-};
-
-// ---------------------------------------------------------------- //
-
 class PlayableCharacter final : public Subject
 {
 public:
@@ -45,6 +28,8 @@ public:
 	void           SpawnIntoNewArea(const Vector2D newPos, const Vector2D newLevelBounds);
 
 	void           SetLevelOver() { mHasControl = false; }
+
+	void           SetEnteringPipe(MOVEMENT_DIRECTION direction);
 
 private:
 	void HandleMovementInput(SDL_Event e);
@@ -68,19 +53,19 @@ private:
 
 	void LoadInCorrectSpriteSheet();
 
-	void UpdateAnimationsSmallMario(MovementBitField newMovement, bool goingInto);
-	void UpdateAnimationsLargeMario(MovementBitField newMovement, bool goingInto);
-	void UpdateAnimationsFrogMario(MovementBitField newMovement, bool goingInto);
-	void UpdateAnimationsHammerMario(MovementBitField newMovement, bool goingInto);
-	void UpdateAnimationsFireMario(MovementBitField newMovement, bool goingInto);
-	void UpdateAnimationsTanookiMario(MovementBitField newMovement, bool goingInto);
-	void UpdateAnimationsLeafMario(MovementBitField newMovement, bool goingInto);
-	void UpdateAnimationsStarMario(MovementBitField newMovement, bool goingInto);
+	void UpdateAnimationsSmallMario(PlayerMovementBitField newMovement, bool goingInto);
+	void UpdateAnimationsLargeMario(PlayerMovementBitField newMovement, bool goingInto);
+	void UpdateAnimationsFrogMario(PlayerMovementBitField newMovement, bool goingInto);
+	void UpdateAnimationsHammerMario(PlayerMovementBitField newMovement, bool goingInto);
+	void UpdateAnimationsFireMario(PlayerMovementBitField newMovement, bool goingInto);
+	void UpdateAnimationsTanookiMario(PlayerMovementBitField newMovement, bool goingInto);
+	void UpdateAnimationsLeafMario(PlayerMovementBitField newMovement, bool goingInto);
+	void UpdateAnimationsStarMario(PlayerMovementBitField newMovement, bool goingInto);
 
 	CollisionPositionalData HandleXCollisions(const float deltaTime, InteractableLayer* interactionLayer, ObjectLayer* objectLayer);
 	CollisionPositionalData HandleYCollisions(const float deltaTime, InteractableLayer* interactionLayer, ObjectLayer* objectLayer);
 
-	void HandleChangeInAnimations(MovementBitField newMovement, bool goingInto);
+	void HandleChangeInAnimations(PlayerMovementBitField newMovement, bool goingInto);
 
 	Vector2D ConvertRealPositionIntoScreenPos(Vector2D realPos);
 
@@ -131,7 +116,7 @@ private:
 
 	float        mJumpTimerLeway;
 
-	MovementBitField mAnimationCurrentState;
+	PlayerMovementBitField mAnimationCurrentState;
 
 	POWER_UP_TYPE mPowerUpState;
 

@@ -156,7 +156,7 @@ void Goomba::Render(const Vector2D renderReferencePoint)
 
 // ------------------------------------------------------------- //
 
-ObjectCollisionHandleData Goomba::SetIsCollidedWith(TwoDimensionalCollision collisionData)
+ObjectCollisionHandleData Goomba::SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerMovements)
 {
 	if (mHitsRemaining == 0)
 	{

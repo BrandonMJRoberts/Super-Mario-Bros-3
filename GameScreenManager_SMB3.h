@@ -7,7 +7,6 @@
 #include "GameScreen_SMB3.h"
 #include "AudioPlayer.h"
 
-
 class HUD_Display;
 
 // -------------------------------------------------------------------------------------- //
@@ -31,7 +30,6 @@ private:
 	ReturnDataFromGameScreen mReturnDataPlaceHolder;
 
 	HUD_Display*             mHUD;
-
 	Audio_Player*            mAudioPlayer;
 };
 

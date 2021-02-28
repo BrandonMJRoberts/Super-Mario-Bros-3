@@ -7,6 +7,8 @@
 
 #include "Commons_SMB3.h"
 
+#include <vector>
+
 class BackgroundLayer;
 class InteractableLayer;
 class ObjectLayer;
@@ -17,7 +19,7 @@ class LevelAreas final
 {
 public:
 	LevelAreas() = delete;
-	LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Renderer* renderer, std::map<char, unsigned int> ConversionFromCharToIntIndexMap, Observer* audioPlayerRef, Observer* hudObserver);
+	LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Renderer* renderer, std::map<char, unsigned int> ConversionFromCharToIntIndexMap, std::vector<Observer*> observers);
 	~LevelAreas();
 
 	void Render(Vector2D gridReferencePoint);

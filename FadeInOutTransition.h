@@ -13,6 +13,8 @@ public:
 	void Render() override;
 	bool Update(const float deltaTime) override;
 
+	void SetFadingState(FADING_STATE newState) { mFadingState = newState; }
+
 private:
 
 	const float  mAlphaFadeSpeed;

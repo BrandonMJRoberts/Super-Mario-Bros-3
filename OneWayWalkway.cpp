@@ -50,7 +50,7 @@ RenderData OneWayWalkway::GetRenderData()
 
 // ---------------------------------------------------------------------------- //
 
-ObjectCollisionHandleData OneWayWalkway::SetIsCollidedWith(TwoDimensionalCollision collisionData)
+ObjectCollisionHandleData OneWayWalkway::SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerMovements)
 {
 	if(collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::DOWN)
 		return ObjectCollisionHandleData(false, false, true, false, false);

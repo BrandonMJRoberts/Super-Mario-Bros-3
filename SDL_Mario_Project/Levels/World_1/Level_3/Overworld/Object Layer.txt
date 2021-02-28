@@ -3,245 +3,245 @@
 # -------------------------------------------------------------------------------------------------- #
 
 # GOOMBA - Position - Start facing direction
-GOOMBA
-14 26 L
-33 26 L
-52 25 L
-55 25 L
-NEXT
+#GOOMBA
+#14 26 L
+#33 26 L
+#52 25 L
+#55 25 L
+#NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
 # PARA_GOOMBA - Position - Start facing direction
-PARA_GOOMBA
-59 25 L
-NEXT
+#PARA_GOOMBA
+#59 25 L
+#NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
 # KOOPA_TROOPER_RED - Position - Start facing direction - Is red or green
-KOOPA_TROOPER
-36 23 L R
-131 24 L R
-NEXT
+#KOOPA_TROOPER
+#36 23 L R
+#131 24 L R
+#NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
 # KOOPA_TROOPER - Position - Start facing direction - Is red or green
-KOOPA_TROOPER
-92 26 L G
-NEXT
+#KOOPA_TROOPER
+#92 26 L G
+#NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
 # PARA_KOOPA_TROOPER_GREEN - Position - Start facing direction - is Red or green
-PARA_KOOPA_TROOPER
-83 20 L G
-86 20 L G
-89 20 L G
-NEXT
+#PARA_KOOPA_TROOPER
+#83 20 L G
+#86 20 L G
+#89 20 L G
+#NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
 # COIN - Position
-COIN
-66 21
-68 19
-70 17
-72 15
-74 13
+#COIN
+#66 21
+#68 19
+#70 17
+#72 15
+#74 13
 
-83 7
-84 7
-85 7
+#83 7
+#84 7
+#85 7
 
-92 9
-93 9
+#92 9
+#93 9
 
-96 10
-97 10
-98 10
-99 10
+#96 10
+#97 10
+#98 10
+#99 10
 
-101 9
-102 9
-103 9
-104 9
+#101 9
+#102 9
+#103 9
+#104 9
 
-106 11
+#106 11
 
-108 9
+#108 9
 
-110 10
+#110 10
 
-113 8
+#113 8
 
-115 8
-NEXT
+#115 8
+#NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
-#PIPE - Left of mouth position (vec2) - Width (uint) - Height (uint) - Pipe type (uint) - Pipe Facing Direction (0 = Left, 1 = Right, 2 = Up, 3 = Down) - file directory for loading in level (string) - stage entrance ID (0 is for the start point in the overworld) - Enemy contained within pipe - Amount of ends (2 = double ended, 0 = no ends) - Stage ID to go to (int) - Pipe is vertical (bool)
-PIPE
-22  24 2 3  1 2 NONE                       -1 FIRE_PIRHANNA_RED   1 -1 T
-112 25 2 2  1 2 NONE                       -1 PIRHANNA_GREEN      1 -1 T
-116 24 2 3  1 2 NONE                       -1 FIRE_PIHRANNA_GREEN 1 -1 T
-140 8  2 12 1 2 Levels/World-1/Level-1/Pipe 1 NONE                1  0 T
-140 23 2 3  1 2 NONE                       -1 NONE                0 -1 T
-144 25 2 2  1 2 NONE                       -1 NONE                1 -1 T
-NEXT
+#PIPE - Left of mouth position (vec2) - Width (uint) - Height (uint) - Pipe type (uint) - Pipe Facing Direction (0 = Left, 1 = Right, 2 = Up, 3 = Down) - file directory for loading in level (string) - stage entrance ID (0 is for the start point in the overworld) - Enemy contained within pipe - Amount of ends (2 = double ended, 0 = no ends) -# Stage ID to go to (int) - Pipe is vertical (bool)
+#PIPE
+#22  24 2 3  1 2 NONE                       -1 FIRE_PIRHANNA_RED   1 -1 T
+#112 25 2 2  1 2 NONE                       -1 PIRHANNA_GREEN      1 -1 T
+#116 24 2 3  1 2 NONE                       -1 FIRE_PIHRANNA_GREEN 1 -1 T
+#140 8  2 12 1 2 Levels/World-1/Level-1/Pipe 1 NONE                1  0 T
+#140 23 2 3  1 2 NONE                       -1 NONE                0 -1 T
+#144 25 2 2  1 2 NONE                       -1 NONE                1 -1 T
+#NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
 # SPAWN_POINT - Position - Entrance ID (0 is for the starting spawn)
-SPAWN_POINT
-1 25.9 0
-144 24 1
-NEXT
+#SPAWN_POINT
+#1 25.9 0
+#144 24 1
+#NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
 # QUESTIONMARK_BLOCK - Position - Item to drop - Quantity - Scalable - Scales to
-QUESTION_MARK_BLOCK
-11 23 COIN 1 F NONE
-12 23 COIN 1 F NONE
+#QUESTION_MARK_BLOCK
+#11 23 COIN 1 F NONE
+#12 23 COIN 1 F NONE
 
-14 20 COIN 1 F NONE
-15 20 MUSHROOM 1 T LEAF
+#14 20 COIN 1 F NONE
+#15 20 MUSHROOM 1 T LEAF
 
-26 21 COIN 1 F NONE
+#26 21 COIN 1 F NONE
 
-41 25 COIN 1 F NONE
-43 23 COIN 1 F NONE
+#41 25 COIN 1 F NONE
+#43 23 COIN 1 F NONE
 
-92 24 MUSHROOM 1 T LEAF
-NEXT
+#92 24 MUSHROOM 1 T LEAF
+#NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
 # BRICK_BLOCK - Position - Turns to coin on P-Switch - item contained
-BRICK_BLOCK
-122 26 T NONE
+#BRICK_BLOCK
+#122 26 T NONE
 
-123 26 T NONE
-123 25 T NONE
+#123 26 T NONE
+#123 25 T NONE
 
-124 26 T NONE
-124 25 T NONE
-124 24 T NONE
+#124 26 T NONE
+#124 25 T NONE
+#124 24 T NONE
 
-125 26 T NONE
-125 25 T NONE
-125 24 T NONE
+#125 26 T NONE
+#125 25 T NONE
+#125 24 T NONE
 
-126 26 T NONE
-126 25 T NONE
-126 24 T NONE
+#126 26 T NONE
+#126 25 T NONE
+#126 24 T NONE
 
-127 26 T NONE
-127 25 T NONE
-127 24 F P-SWITCH
+#127 26 T NONE
+#127 25 T NONE
+#127 24 F P-SWITCH
 
-128 26 T NONE
+#128 26 T NONE
 
-131 26 T NONE
-131 25 T NONE
+#131 26 T NONE
+#131 25 T NONE
 
-132 26 T NONE
-NEXT
+#132 26 T NONE
+#NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
 # INVISIBLE_BLOCK - Position - Item to drop
-INVISIBLE_BLOCK
-90 10 LIFE
-NEXT
+#INVISIBLE_BLOCK
+#90 10 LIFE
+#NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
 # WALK_WAY - Position
-WALK_WAY
+#WALK_WAY
 
 # First red
-15 24
-16 24
-17 24
+#15 24
+#16 24
+#17 24
 
 # blue behind first red
-17 22
-18 22
-19 22
+#17 22
+#18 22
+#19 22
 
-First green
-25 24
-26 24
-27 24
-28 24
-29 24
+#First green
+#25 24
+#26 24
+#27 24
+#28 24
+#29 24
 
 # Red behind green
-29 22
-30 22
-31 22
-32 22
+#29 22
+#30 22
+#31 22
+#32 22
 
 # white behind red
-32 20
-33 20
-34 20
-35 20
+#32 20
+#33 20
+#34 20
+#35 20
 
 # Green in front
-32 25
-33 25
-34 25
-35 25
-36 25
-37 25
+#32 25
+#33 25
+#34 25
+#35 25
+#36 25
+#37 25
 
 # Next blue
-83 21 
-84 21
-85 21
-86 21
-87 21
-88 21
-89 21
+#83 21 
+#84 21
+#85 21
+#86 21
+#87 21
+#88 21
+#89 21
 
 # Red in front of blue
-81 23
-82 23
-83 23
-84 23
-85 23
-86 23
-87 23
+#81 23
+#82 23
+#83 23
+#84 23
+#85 23
+#86 23
+#87 23
 
 # Green in front of all
-79 25
-80 25 
-81 25
-82 25
-83 25
-84 25
-85 25
+#79 25
+#80 25 
+#81 25
+#82 25
+#83 25
+#84 25
+#85 25
 
 # Red towards the end
-133 24
-134 24 
-135 24
+#133 24
+#134 24 
+#135 24#
 
 # Green behind
-135 29
-136 29
-137 29
-NEXT
+#135 29
+#136 29
+#137 29
+#NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
 # LEVEL_END - Position
-LEVEL_END
-168 23
+#LEVEL_END
+#168 23
 
 
 END

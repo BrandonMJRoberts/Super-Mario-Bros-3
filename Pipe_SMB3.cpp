@@ -487,7 +487,10 @@ Vector2D Pipe::GetCurrentPosition() const
 	{
 	default:
 	case FACING::UP:
-		return Vector2D(mCurrentPosition.x, mCurrentPosition.y + mCollisionBox.y - 1.0f);
+		if(mAmountOfEnds != 0)
+			return Vector2D(mCurrentPosition.x, mCurrentPosition.y + mCollisionBox.y - 1.0f);
+		else
+			return Vector2D(mCurrentPosition.x, mCurrentPosition.y + mCollisionBox.y);
 	break;
 
 	case FACING::LEFT:
@@ -503,5 +506,51 @@ Vector2D Pipe::GetCurrentPosition() const
 	break;
 	}
 }
+
+// ----------------------------------------------------------------------------------------- //
+
+ObjectCollisionHandleData Pipe::SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerMovements)
+{
+	// Now check to see if we have a file path to load into, if not just exit without doing anything cool
+	//if (mFilePathToLoadTo != "")
+	//{
+		// Must be loading into somewhere so check to see if the collision matches the conditions for this to occur
+		switch (mPipeFacingDirection)
+		{
+		default:
+		case FACING::UP:
+
+			// So we need to be stood on top of the pipe and be pressing down
+			if (   collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::DOWN 
+				&& collisionData.playerPriorPosition.x > GetCurrentPosition().x
+				&& collisionData.playerPriorPosition.x < GetCurrentPosition().x + (mCollisionBox.x / 2.0f)
+				&& playerMovements & PlayerMovementBitField::CROUCHING) // And we need to check to see if the player is centred on the pipe
+			{
+				// Notify all observers that this is happening
+				Notify(SUBJECT_NOTIFICATION_TYPES::ENTERING_PIPE, std::to_string(mStageEntranceIDToGoTo) + " DOWN");
+
+				return ObjectCollisionHandleData();
+			}
+		break;
+		
+		case FACING::DOWN:
+
+		break;
+
+		case FACING::LEFT:
+
+		break;
+
+		case FACING::RIGHT:
+
+		break;
+		}
+
+		return ObjectCollisionHandleData();
+
+	//}
+	//else
+	//	return ObjectCollisionHandleData();
+} 
 
 // ----------------------------------------------------------------------------------------- //

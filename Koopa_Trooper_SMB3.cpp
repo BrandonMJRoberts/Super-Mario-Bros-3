@@ -149,7 +149,7 @@ void KoopaTrooper::Render(const Vector2D renderReferencePoint)
 
 // ------------------------------------------------------------- //
 
-ObjectCollisionHandleData KoopaTrooper::SetIsCollidedWith(TwoDimensionalCollision collisionData)
+ObjectCollisionHandleData KoopaTrooper::SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerMovements)
 {
 	if (mHitsRemaining == 0)
 	{

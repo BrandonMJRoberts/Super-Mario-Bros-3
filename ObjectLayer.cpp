@@ -19,8 +19,7 @@
 ObjectLayer::ObjectLayer(std::string        filePathToDataFile, 
 	                     SDL_Renderer*      renderer,
 						 InteractableLayer* interactionLayer,
-						 Observer*          audioPlayerObserver,
-						 Observer*          hudObserver)
+						 std::vector<Observer*> observers)
 : mRenderer(renderer)
 , mInteractionLayer(interactionLayer)
 , mLevelEndObjectCollected(false)
@@ -29,7 +28,7 @@ ObjectLayer::ObjectLayer(std::string        filePathToDataFile,
 	InstantiateNameConversions();
 
 	// Load in the data from the file
-	if (!LoadInDataFromFile(filePathToDataFile, audioPlayerObserver, hudObserver))
+	if (!LoadInDataFromFile(filePathToDataFile, observers))
 	{
 		std::cout << "Failed to load in the objects for this level area: " << filePathToDataFile << std::endl;
 		return;
@@ -205,7 +204,7 @@ void ObjectLayer::UpdateSpawnedObjects(const float deltaTime, Vector2D gridRefer
 
 // -------------------------------------------------------------------------------------------------------------------------- //
 
-bool ObjectLayer::LoadInDataFromFile(std::string filePath, Observer* audioPlayerObserver, Observer* hudObserver)
+bool ObjectLayer::LoadInDataFromFile(std::string filePath, std::vector<Observer*> observers)
 {
 	// First we need to open the file and then read in the data in in the correct format
 	std::ifstream dataFile(filePath);
@@ -267,9 +266,10 @@ bool ObjectLayer::LoadInDataFromFile(std::string filePath, Observer* audioPlayer
 			if (mUnspawnedObjectsInLevel[mUnspawnedObjectsInLevel.size() - 1])
 			{
 				// Add the audio observer to the object
-				mUnspawnedObjectsInLevel[mUnspawnedObjectsInLevel.size() - 1]->AddObserver(audioPlayerObserver);
-				mUnspawnedObjectsInLevel[mUnspawnedObjectsInLevel.size() - 1]->AddObserver(hudObserver);
-
+				for (unsigned int i = 0; i < observers.size(); i++)
+				{
+					mUnspawnedObjectsInLevel[mUnspawnedObjectsInLevel.size() - 1]->AddObserver(observers[i]);
+				}
 				// Check if the object should start spawned in the level
 				if (mUnspawnedObjectsInLevel[mUnspawnedObjectsInLevel.size() - 1] && mUnspawnedObjectsInLevel[mUnspawnedObjectsInLevel.size() - 1]->GetIsSpawnedInLevel())
 				{
@@ -392,7 +392,7 @@ void ObjectLayer::DestroyAllNameConversions()
 
 // -------------------------------------------------------------------------------------------------------------------------- //
 
-MovementPrevention ObjectLayer::CheckCollision(const Vector2D testPosition, const Vector2D playerVelocity, const Vector2D playerCurrentPos)
+MovementPrevention ObjectLayer::CheckCollision(const Vector2D testPosition, const Vector2D playerVelocity, const Vector2D playerCurrentPos, const unsigned int playerCurrentMovements)
 {
 	Vector2D                objectBottomLeftPos, objectCollisionBox;
 	TwoDimensionalCollision collisionData = TwoDimensionalCollision();
@@ -417,36 +417,41 @@ MovementPrevention ObjectLayer::CheckCollision(const Vector2D testPosition, cons
 			if (testPosition.y < objectBottomLeftPos.y - objectCollisionBox.y || testPosition.y > objectBottomLeftPos.y)
 				continue;
 
-				// Then we have a collision - so check which direction that this collision has occured from
-				if (playerVelocity.y >= 0.0f)
-					collisionData.collisionDataPrimary = MOVEMENT_DIRECTION::DOWN;
-				else
-					collisionData.collisionDataPrimary = MOVEMENT_DIRECTION::UP;
+			// Then we have a collision - so check which direction that this collision has occured from
+			if (playerVelocity.y >= 0.0f)
+				collisionData.collisionDataPrimary = MOVEMENT_DIRECTION::DOWN;
+			else
+				collisionData.collisionDataPrimary = MOVEMENT_DIRECTION::UP;
 
-				if (playerVelocity.x > 0.0f)
-					collisionData.collisionDataSecondary = MOVEMENT_DIRECTION::LEFT;
-				else if(playerVelocity.x < 0.0f)
-					collisionData.collisionDataSecondary = MOVEMENT_DIRECTION::RIGHT;
+			if (playerVelocity.x > 0.0f)
+				collisionData.collisionDataSecondary = MOVEMENT_DIRECTION::LEFT;
+			else if (playerVelocity.x < 0.0f)
+				collisionData.collisionDataSecondary = MOVEMENT_DIRECTION::RIGHT;
+			else
+				collisionData.collisionDataSecondary = MOVEMENT_DIRECTION::NONE;
 
+			ObjectCollisionHandleData objectReturnData = mSpawnedObjectsInLevel[i]->SetIsCollidedWith(collisionData, playerCurrentMovements);
 
-				ObjectCollisionHandleData objectReturnData = mSpawnedObjectsInLevel[i]->SetIsCollidedWith(collisionData);
+			if (objectReturnData.completedLevel)
+			{
+				mLevelEndObjectCollected = true;
+			}
 
-				if (objectReturnData.completedLevel)
-				{
-					mLevelEndObjectCollected = true;
-				}
+			// Notify the object that they have a collision upon them - they will return if the object needs to be detroyed or not
+			if (objectReturnData.shouldDeleteObject)
+			{
+				delete mSpawnedObjectsInLevel[i];
+				mSpawnedObjectsInLevel[i] = nullptr;
+				mSpawnedObjectsInLevel.erase(mSpawnedObjectsInLevel.begin() + i);
+				continue;
+			}
 
-				// Notify the object that they have a collision upon them - they will return if the object needs to be detroyed or not
-				if (objectReturnData.shouldDeleteObject)
-				{
-					delete mSpawnedObjectsInLevel[i];
-					mSpawnedObjectsInLevel[i] = nullptr;
-					mSpawnedObjectsInLevel.erase(mSpawnedObjectsInLevel.begin() + i);
-					continue;
-				}
-
-				if(objectReturnData.dimensionalMovementBlocking.StopXMovement || objectReturnData.dimensionalMovementBlocking.StopYMovement)
-					return MovementPrevention(objectReturnData.dimensionalMovementBlocking.StopXMovement, objectReturnData.dimensionalMovementBlocking.StopYMovement, objectReturnData.givesJumpLeway);
+			if (objectReturnData.movementPrevention.StopXMovement || objectReturnData.movementPrevention.StopYMovement)
+			{
+				return MovementPrevention(  objectReturnData.movementPrevention.StopXMovement,
+						                    objectReturnData.movementPrevention.StopYMovement,
+						                    objectReturnData.givesJumpLeway);
+			}
 		}
 	}
 

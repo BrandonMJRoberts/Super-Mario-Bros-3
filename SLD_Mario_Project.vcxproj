@@ -215,6 +215,7 @@
     <ClCompile Include="TextRenderer.cpp" />
     <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="Transition.cpp" />
+    <ClCompile Include="VisualTransitionHandler.cpp" />
     <ClCompile Include="WorldMapMario.cpp" />
     <ClCompile Include="WorldMapSpawnMarioTransition.cpp" />
   </ItemGroup>
@@ -285,6 +286,7 @@
     <ClInclude Include="TextRenderer.h" />
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="Transition.h" />
+    <ClInclude Include="VisualTransitionHandler.h" />
     <ClInclude Include="WorldMapMario.h" />
     <ClInclude Include="WorldMapSpawnMarioTransition.h" />
   </ItemGroup>

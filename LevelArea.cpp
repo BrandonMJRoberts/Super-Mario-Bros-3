@@ -11,7 +11,7 @@
 
 // --------------------------------------------------------------------------------------------------------------------------- //
 
-LevelAreas::LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Renderer* renderer, std::map<char, unsigned int> ConversionFromCharToIntIndexMap, Observer* audioPlayerRef, Observer* hudObserver)
+LevelAreas::LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Renderer* renderer, std::map<char, unsigned int> ConversionFromCharToIntIndexMap, std::vector<Observer*> observers)
 	: mLevelHeight(0)
 	, mLevelWidth(0)
 {
@@ -21,7 +21,7 @@ LevelAreas::LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Rende
 	// Will be implemented using three threads
 	mBackgroundLayer   = new BackgroundLayer(areaFilePath   + "/Background Layer.txt",     areaFilePath + "/BackgroundSprites.png",   ConversionFromCharToIntIndexMap, renderer, Vector2D());
 	mInteractableLayer = new InteractableLayer(areaFilePath + "/Interactable Layer.txt",   areaFilePath + "/InteractableSprites.png", ConversionFromCharToIntIndexMap, renderer, Vector2D());
-	mObjectLayer       = new ObjectLayer(areaFilePath       + "/Object Layer.txt",         renderer, mInteractableLayer, audioPlayerRef, hudObserver);
+	mObjectLayer       = new ObjectLayer(areaFilePath       + "/Object Layer.txt",         renderer, mInteractableLayer, observers);
 	
 	// Create the ending section
 	if (mBackgroundLayer->GetLevelEndingType() >= 0)

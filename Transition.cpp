@@ -12,7 +12,11 @@ Transition::Transition() : kFrameTime(0.0f), mSpriteSheet(nullptr), mTimeTillFra
 
 // --------------------------------------------------------------------------- //
 
-Transition::Transition(const Vector2D startPos, const float frameTime, const char* filePathForSpriteSheet, SDL_Renderer* renderer) : kFrameTime(frameTime), mPosition(startPos), mSpriteSheet(nullptr), mTimeTillFrame(frameTime)
+Transition::Transition(const Vector2D startPos, const float frameTime, const char* filePathForSpriteSheet, SDL_Renderer* renderer) 
+	: kFrameTime(frameTime), 
+	mPosition(startPos), 
+	mSpriteSheet(nullptr), 
+	mTimeTillFrame(frameTime)
 {
 	mSpriteSheet = new Texture2D(renderer);
 	if (!mSpriteSheet->LoadFromFile(filePathForSpriteSheet))

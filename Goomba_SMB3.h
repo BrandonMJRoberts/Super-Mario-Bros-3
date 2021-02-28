@@ -32,7 +32,7 @@ public:
 
 	void         ResetUpdatedStaticVariables() override { mUpdatedStaticVariables = false; }
 
-	ObjectCollisionHandleData SetIsCollidedWith(TwoDimensionalCollision collisionData) override;
+	ObjectCollisionHandleData SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerMovements) override;
 private:
 	void         UpdateStaticVariables(const float deltaTime);
 

@@ -142,6 +142,12 @@
     <Filter Include="Source Files\Game Select">
       <UniqueIdentifier>{e9d36dd6-ac27-4320-b377-fd5fc32b1f33}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Mario Bros 3\Scene Transitions">
+      <UniqueIdentifier>{d318001d-89d5-457a-9e4a-203a53eb1689}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scene Transitions">
+      <UniqueIdentifier>{f02e18d0-bc05-4fac-95d3-5258f1a34153}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -305,6 +311,9 @@
     </ClCompile>
     <ClCompile Include="NoteBlock.cpp">
       <Filter>Source Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualTransitionHandler.cpp">
+      <Filter>Source Files\Scene Transitions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -499,6 +508,9 @@
     </ClInclude>
     <ClInclude Include="Note_Block.h">
       <Filter>Header Files\Mario Bros 3\Objects\Spawnable Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="VisualTransitionHandler.h">
+      <Filter>Header Files\Mario Bros 3\Scene Transitions</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

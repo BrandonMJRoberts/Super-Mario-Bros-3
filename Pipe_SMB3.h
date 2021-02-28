@@ -37,6 +37,8 @@ public:
 
 	Vector2D    GetCurrentPosition() const override;
 
+	ObjectCollisionHandleData SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerMovements) override;
+
 private:
 	void        RenderPortionSelected(bool flippedInY = false, bool flippedInX = false);
 

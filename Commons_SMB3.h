@@ -5,6 +5,23 @@
 
 // ------------------------------------------------ //
 
+enum PlayerMovementBitField : unsigned int
+{
+	NONE         = 0,
+	MOVING_RIGHT = 1 << 0,
+	MOVING_LEFT  = 1 << 1,
+	CROUCHING    = 1 << 2,
+
+	RUNNING      = 1 << 3,
+	JUMPING      = 1 << 4,
+	HOLDING_JUMP = 1 << 5,
+	SWIMMING     = 1 << 6,
+
+	ENTERING_PIPE_VERTICALLY = 1 << 7
+};
+
+// ------------------------------------------------ //
+
 enum class POWER_UP_TYPE : char
 {
 	MUSHROOM     = 0x00,
@@ -147,7 +164,9 @@ enum class SUBJECT_NOTIFICATION_TYPES
 	USE_WARP_WISTLE,
 
 	GAME_SELECT_COIN_SFX,
-	PLAY_GAME_SELECT_MUSIC
+	PLAY_GAME_SELECT_MUSIC,
+
+	EXIT_PIPE
 };
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
@@ -237,7 +256,7 @@ struct CollisionPositionalData
 
 struct MovementPrevention
 {
-	MovementPrevention()                                       { StopXMovement = true; StopYMovement = true; givesJump = false; }
+	MovementPrevention()                                       { StopXMovement = true;  StopYMovement = true;        givesJump = false; }
 	MovementPrevention(bool stopX, bool stopY, bool givesJump) { StopXMovement = stopX; StopYMovement = stopY; this->givesJump = givesJump; }
 
 	bool StopYMovement;
@@ -249,13 +268,29 @@ struct MovementPrevention
 
 struct ObjectCollisionHandleData final
 {
-	ObjectCollisionHandleData() { shouldDeleteObject = false;        dimensionalMovementBlocking = MovementPrevention(); completedLevel = false; this->givesJumpLeway = false; }
-	ObjectCollisionHandleData(bool deleteObject, bool stopMovementX, bool stopMovementY, bool LevelComplete, bool givesJumpLeway) { shouldDeleteObject = deleteObject; dimensionalMovementBlocking = MovementPrevention(stopMovementX, stopMovementY, givesJumpLeway); completedLevel = LevelComplete; this->givesJumpLeway = givesJumpLeway; }
+	ObjectCollisionHandleData() 
+	{ 
+		shouldDeleteObject           = false;        
+		movementPrevention           = MovementPrevention();
+		completedLevel               = false; 
+		this->givesJumpLeway         = false; 
+	}
+
+	ObjectCollisionHandleData(bool deleteObject, bool stopMovementX, bool stopMovementY, bool LevelComplete, bool givesJumpLeway) 
+	{ 
+		shouldDeleteObject          = deleteObject; 
+		movementPrevention          = MovementPrevention(stopMovementX, stopMovementY, givesJumpLeway);
+		completedLevel              = LevelComplete; 
+		this->givesJumpLeway        = givesJumpLeway; 
+
+	}
 
 	bool               shouldDeleteObject;
+
 	bool               completedLevel;
+
 	bool               givesJumpLeway;
-	MovementPrevention dimensionalMovementBlocking;
+	MovementPrevention movementPrevention;
 };
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //

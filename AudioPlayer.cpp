@@ -15,7 +15,7 @@ Audio_Player::Audio_Player()
 	openChannels = { 1,2,3,4,5,6,7,8 };
 
 	// Default the volume to not be deafening
-	SetAudioVolume(48);
+	SetAudioVolume(0);
 
 	Mix_AllocateChannels(16);
 
@@ -517,18 +517,22 @@ void Audio_Player::Update()
 
 	// Now we have the indexes that are being played, remove all others offset
 	unsigned int offset = 0;
-	for (unsigned int indexBeingPlayed = 0; indexBeingPlayed < sfxIndexesBeingPlayed.size(); indexBeingPlayed++)
+
+	if (sfxIndexesBeingPlayed.size() > 0)
 	{
-		for (unsigned int sfxVectorIndex = 0; sfxVectorIndex < mSFX.size(); sfxVectorIndex++)
+		for (unsigned int indexBeingPlayed = sfxIndexesBeingPlayed.size(); indexBeingPlayed > 0; indexBeingPlayed--)
 		{
-			if (sfxVectorIndex == sfxIndexesBeingPlayed[indexBeingPlayed])
+			for (unsigned int sfxVectorIndex = 0; sfxVectorIndex < mSFX.size(); sfxVectorIndex++)
 			{
-				mSFX.erase(mSFX.begin() + sfxIndexesBeingPlayed[indexBeingPlayed] - offset);
-				offset++;
-			}
-			else
-			{
-				continue;
+				if (sfxVectorIndex == sfxIndexesBeingPlayed[indexBeingPlayed - 1])
+				{
+					mSFX.erase(mSFX.begin() + sfxIndexesBeingPlayed[indexBeingPlayed - 1] - offset);
+					offset++;
+				}
+				else
+				{
+					continue;
+				}
 			}
 		}
 	}

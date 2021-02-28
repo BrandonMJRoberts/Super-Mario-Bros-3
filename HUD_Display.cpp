@@ -318,6 +318,14 @@ void HUD_Display::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string 
 	case SUBJECT_NOTIFICATION_TYPES::LEVEL_CLEAR:
 		mTimerCounting = false;
 	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::ENTERING_PIPE:
+		mPaused = true;
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::EXIT_PIPE:
+		mPaused = false;
+	break;
 	}
 }
 

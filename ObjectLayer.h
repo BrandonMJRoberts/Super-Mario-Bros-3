@@ -20,7 +20,7 @@ class ObjectLayer final
 {
 public:
 	ObjectLayer() = delete;
-	ObjectLayer(std::string filePathToDataFile, SDL_Renderer* renderer, InteractableLayer* interactionLayer, Observer* audioPlayerObserver, Observer* hudObserver);
+	ObjectLayer(std::string filePathToDataFile, SDL_Renderer* renderer, InteractableLayer* interactionLayer, std::vector<Observer*> observers);
 	~ObjectLayer();
 
 	void Render(const Vector2D gridReferencePoint);
@@ -29,12 +29,12 @@ public:
 	Vector2D GetInitialSpawnPoint() const;
 	Vector2D GetSpawnPoint(unsigned int spawnPointIndex) const;
 
-	MovementPrevention CheckCollision(const Vector2D testPosition, const Vector2D playerVelocity, const Vector2D playerCurrentPos);
+	MovementPrevention CheckCollision(const Vector2D testPosition, const Vector2D playerVelocity, const Vector2D playerCurrentPos, const unsigned int playerCurrentMovements);
 
 	bool GetLevelEndCollected() { return mLevelEndObjectCollected; }
 
 private:
-	bool LoadInDataFromFile(std::string filePath, Observer* audioPlayerObserver, Observer* hudObserver);
+	bool LoadInDataFromFile(std::string filePath, std::vector<Observer*> observers);
 	bool InPlayArea(const Vector2D testPosition, const Vector2D gridReferencePoint);
 
 	// Loops through all objects that have not been created and spawns them if needed

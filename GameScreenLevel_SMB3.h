@@ -12,7 +12,8 @@ class  Texture2D;
 class  LevelAreas;
 class  PlayableCharacter;
 class  Observer;
-class  Transition;
+//class  Transition;
+class  VisualTransitionHandler;
 
 // ----------------------------------------------------------------------------------------------------------- //
 
@@ -42,7 +43,9 @@ private:
 
 	PlayableCharacter*       mPlayer;
 
-	Transition*              mFadeInOutTransition;
+	//Transition*              mFadeInOutTransition;
+
+	VisualTransitionHandler* mTransitionHandler;
 };
 
 // ----------------------------------------------------------------------------------------------------------- //

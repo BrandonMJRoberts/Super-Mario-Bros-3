@@ -149,7 +149,7 @@ void LevelEndObject::UpdateStaticVariables(const float deltaTime)
 
 // ---------------------------------------------------------------------------------- //
 
-ObjectCollisionHandleData LevelEndObject::SetIsCollidedWith(TwoDimensionalCollision collisionData)
+ObjectCollisionHandleData LevelEndObject::SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerMovements)
 {
 	mCollected = true;
 
