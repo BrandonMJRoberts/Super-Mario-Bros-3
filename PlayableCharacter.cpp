@@ -340,8 +340,8 @@ void PlayableCharacter::CalculateNewPosition(const float deltaTime, CollisionPos
 	else if (newRealGridPos.y >= mLevelBounds.y + 2)
 		newRealGridPos.y = mLevelBounds.y + 2;
 
-	if (newRealGridPos.x <= -1.0f)
-		newRealGridPos.x = -1.0f;
+	if (newRealGridPos.x <= 0.0f)
+		newRealGridPos.x = 0.0f;
 	else if (newRealGridPos.x >= mLevelBounds.x + 1)
 		newRealGridPos.x = mLevelBounds.x + 1;
 

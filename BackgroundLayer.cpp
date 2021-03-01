@@ -225,8 +225,8 @@ void BackgroundLayer::Render(Vector2D gridReferencePoint)
 	// If there is a sprite sheet then we can render
 	if (mSpriteSheet)
 	{
-		int      xLerp                = int(((int)gridReferencePoint.x - gridReferencePoint.x) * RESOLUTION_OF_SPRITES);
-		int      yLerp                = int(((int)gridReferencePoint.y - gridReferencePoint.y) * RESOLUTION_OF_SPRITES);
+		int      xLerp                = int((int(gridReferencePoint.x) - gridReferencePoint.x) * RESOLUTION_OF_SPRITES);
+		int      yLerp                = int((int(gridReferencePoint.y) - gridReferencePoint.y) * RESOLUTION_OF_SPRITES);
 
 		SDL_Rect portionOfSpriteSheet {0, 0, 
 			                           RESOLUTION_OF_SPRITES, RESOLUTION_OF_SPRITES};
@@ -245,11 +245,15 @@ void BackgroundLayer::Render(Vector2D gridReferencePoint)
 				continue;
 			}
 
-			for (int col = int(gridReferencePoint.x - mOffsetFromTopLeft.x); col < (gridReferencePoint.x + BACKGROUND_SPRITE_RENDER_WIDTH) - mOffsetFromTopLeft.x; col++)
+			for (int col = int(gridReferencePoint.x) - int(mOffsetFromTopLeft.x); col < int(gridReferencePoint.x) + BACKGROUND_SPRITE_RENDER_WIDTH - int(mOffsetFromTopLeft.x); col++)
 			{
 				// Error checking
 				if (col >= (int)mLevelWidth || col < 0)
 				{
+					// Quick out so we are not rendering something completly needlessly
+					if (col < -(BACKGROUND_SPRITE_RENDER_WIDTH + 2) || col > (mLevelWidth + BACKGROUND_SPRITE_RENDER_WIDTH + 2))
+						return;
+
 					// Make sure to add the offset on even if we are not rendering this column
 					destRect.x += RESOLUTION_OF_SPRITES;
 					continue;

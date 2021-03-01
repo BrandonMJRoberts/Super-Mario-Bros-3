@@ -3,7 +3,7 @@
 
 # Now state the character representing the level and then the file path to load into for this level
 # Start with the actual level definitions
-0 SDL_Mario_Project/Levels/World_1/Level_2
+0 SDL_Mario_Project/Levels/World_1/Level_1
 1 SDL_Mario_Project/Levels/World_1/Level_2
 2 SDL_Mario_Project/Levels/World_1/Level_3
 3 SDL_Mario_Project/Levels/World_1/Level_4

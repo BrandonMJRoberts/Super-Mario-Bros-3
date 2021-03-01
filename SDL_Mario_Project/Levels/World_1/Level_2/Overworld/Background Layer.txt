@@ -1,6 +1,6 @@
 # Background Layer
 # Width, With the end section at the end not included
-156 
+156
 # Height
 27
 # Ending Type

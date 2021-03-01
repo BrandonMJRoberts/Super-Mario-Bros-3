@@ -27,7 +27,7 @@ LevelAreas::LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Rende
 	if (mBackgroundLayer->GetLevelEndingType() >= 0)
 	{
 		std::string filePath = "SDL_Mario_Project/Levels/LevelEndingSections/Section" + std::to_string(mBackgroundLayer->GetLevelEndingType());
-		mEndingSection       = new BackgroundLayer(filePath + "/Background Layer.txt", filePath + "/BackgroundSprites.png", ConversionFromCharToIntIndexMap, renderer, Vector2D(mBackgroundLayer->GetLevelWidth() - 1, 0));
+		mEndingSection       = new BackgroundLayer(filePath + "/Background Layer.txt", filePath + "/BackgroundSprites.png", ConversionFromCharToIntIndexMap, renderer, Vector2D(mBackgroundLayer->GetLevelWidth() - 2, 0));
 	}
 	else
 	{
