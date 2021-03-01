@@ -12,12 +12,12 @@ Audio_Player::Audio_Player()
 	, mMainLevelMusic(nullptr)
 	, mSubAreaMusic(nullptr)
 {
-	openChannels = { 1,2,3,4,5,6,7,8 };
+	openChannels = { 0,1,2,3,4,5,6,7 };
 
 	// Default the volume to not be deafening
-	SetAudioVolume(0);
+	SetAudioVolume(40);
 
-	Mix_AllocateChannels(16);
+	Mix_AllocateChannels(8);
 
 	// Set the callback for when a channel finishes
 	AudioCallback::SetAudioPlayer(this);
