@@ -15,7 +15,7 @@ Audio_Player::Audio_Player()
 	openChannels = { 0,1,2,3,4,5,6,7 };
 
 	// Default the volume to not be deafening
-	SetAudioVolume(0);
+	SetAudioVolume(40);
 
 	Mix_AllocateChannels(8);
 
@@ -191,7 +191,7 @@ void Audio_Player::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string
 	break;
 
 	case SUBJECT_NOTIFICATION_TYPES::ENTERING_PIPE:
-		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/23 - Warp Pipe.mp3");
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/23 - Warp Pipe.wav");
 	break;
 
 	case SUBJECT_NOTIFICATION_TYPES::FIRE_FIREBALL:

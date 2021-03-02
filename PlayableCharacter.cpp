@@ -36,7 +36,7 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 
 , kBaseMaxHorizontalSpeed(5.0f)
 , mMaxHorizontalSpeed(8.5f)
-, kForcedMovementSpeed(kBaseMaxHorizontalSpeed)
+, kForcedMovementSpeed(1.8f)
 
 , kFrictionMultiplier(9.0f)
 
