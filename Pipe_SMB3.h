@@ -22,9 +22,9 @@ public:
 		const bool			containsAnEnemy,
 		const PIPE_TYPE     pipeType,
 		const FACING        facingDirection,
-		const std::string   filePathToLoadTo,
+		const int           levelAreaIDToGoTo,
 		const unsigned int  thisStageEntranceID,
-		const unsigned int  stageIDToGoTo,
+		const int           stageIDToGoTo,
 		const bool          pipeIsVertical = true);
 	~Pipe() override;
 
@@ -68,12 +68,11 @@ private:
 	const unsigned int			mHeight;
 
 	const unsigned int          mStageEntranceID;
-	const unsigned int          mStageEntranceIDToGoTo;
+	const int                   mStageEntranceIDToGoTo;
+	int                         mLevelAreaToGoTo;
 
 	SDL_Rect                    mSourceRect;
 	SDL_Rect                    mDestRect;
-
-	const std::string           mFilePathToLoadTo;
 
 	const PIPE_TYPE				mPipeType;
 	const FACING                mPipeFacingDirection;

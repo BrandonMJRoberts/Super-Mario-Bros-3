@@ -100,7 +100,35 @@ std::string LevelAreas::CalculateNameOfArea(std::string areaFilePath)
 
 // --------------------------------------------------------------------------------------------------------------------------- //
 
-void LevelAreas::Render(Vector2D gridReferencePoint)
+void LevelAreas::RenderBackground(Vector2D gridReferencePoint)
+{
+	// Render in this order: Background, Ending, interaction, object
+	if (mBackgroundLayer)
+		mBackgroundLayer->Render(gridReferencePoint);
+
+	if (mEndingSection)
+		mEndingSection->Render(gridReferencePoint);
+}
+
+// --------------------------------------------------------------------------------------------------------------------------- //
+
+void LevelAreas::RenderGround(Vector2D gridReferencePoint)
+{
+	if (mInteractableLayer)
+		mInteractableLayer->Render(gridReferencePoint);
+}
+
+// --------------------------------------------------------------------------------------------------------------------------- //
+
+void LevelAreas::RenderObjects(Vector2D gridReferencePoint)
+{
+	if (mObjectLayer)
+		mObjectLayer->Render(gridReferencePoint);
+}
+
+// --------------------------------------------------------------------------------------------------------------------------- //
+
+void LevelAreas::RenderAll(Vector2D gridReferencePoint)
 {
 	// Render in this order: Background, Ending, interaction, object
 	if (mBackgroundLayer)

@@ -23,13 +23,22 @@ public:
 	void Update(const float deltaTime);
 	void Render();
 
+	Area_Transition_Data GetTransitionData();
+
+	bool GetIsPipeTransition() const { return mDoingPipeTransition; }
+
 private:
-	PlayableCharacter* mPlayerReference;
+	PlayableCharacter*   mPlayerReference;
 
-	FadeInOutTransition*        mFadeInOutTransition;
+	FadeInOutTransition* mFadeInOutTransition;
 
-	bool               mFadingOut;
-	bool               mFadingIn;
+	float                mTimeRemainingForPipeTransition;
+	unsigned int         mLevelAreaToGoTo;
+	unsigned int         mSpawnPointToGoTo;
+
+	bool                 mFadingOut;
+	bool                 mFadingIn;
+	bool                 mDoingPipeTransition;
 };
 
 #endif

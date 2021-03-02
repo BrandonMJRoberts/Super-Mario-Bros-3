@@ -19,8 +19,8 @@
 PIPE_AREA_UNBREAKABLE_BLOCK_LIGHT_BLUE
 
 # Now we just need to define the map as we did in the background layer, with '-' for spaces not covered by anything in this file
--------000000000000000000-------
--------000------------000-------
+-------0--000000000000--0-------
+-------0----------------0-------
 -------0----------------0-------
 -------0----------------0-------
 -------0-------------000--------

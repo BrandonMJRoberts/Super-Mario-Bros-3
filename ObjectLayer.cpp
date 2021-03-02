@@ -332,7 +332,7 @@ void ObjectLayer::InstantiateNameConversions()
 	mNameToObjectConversion["INVISIBLE_BLOCK"]     = new InvisibleBlock(Vector2D(), false, mRenderer, "SDL_Mario_Project/Objects/InvisibleBlock.png", 2, 1, 1.0f, 1.0f, 0.0f, 1, POWER_UP_TYPE::NONE, false, (CollectableObject*)mNameToObjectConversion["COIN"], nullptr);
 	mNameToObjectConversion["QUESTION_MARK_BLOCK"] = new QuestionMarkBlock(Vector2D(), false, mRenderer, "SDL_Mario_Project/Objects/QuestionMarkBlock.png", 5, 1, 1.0f, 1.0f, QUESTION_MARK_BLOCK_ANIMATION_SPEED, 1, POWER_UP_TYPE::NONE, false, (CollectableObject*)mNameToObjectConversion["COIN"], nullptr);
 
-	mNameToObjectConversion["PIPE"]                = new Pipe(Vector2D(), false, mRenderer, "SDL_Mario_Project/Objects/Pipe.png", 8, 12, 2.0f, 2.0f, 0.0f, 2, 2, false, false, PIPE_TYPE::DEFAULT_GREEN, FACING::UP, "", -1, -1);
+	mNameToObjectConversion["PIPE"]                = new Pipe(Vector2D(), false, mRenderer, "SDL_Mario_Project/Objects/Pipe.png", 8, 12, 2.0f, 2.0f, 0.0f, 2, 2, false, false, PIPE_TYPE::DEFAULT_GREEN, FACING::UP, -1, -1, -1);
 
 	// Enemy Objects
 	mNameToObjectConversion["GOOMBA"]             = new Goomba(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Goomba/Goomba.png", 6, 3, 1.0f, 1.0f, 0.15f, true, false, true);

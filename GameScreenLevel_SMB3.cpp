@@ -110,19 +110,35 @@ GameScreenLevel_SMB3::~GameScreenLevel_SMB3()
 void GameScreenLevel_SMB3::Render()
 {
 	// Render the current area we are in
-	if (mAreas.size() > mCurrentLevelAreaID)
-		mAreas[mCurrentLevelAreaID]->Render(mPlayer->GetRenderReferencePoint());
+	if (mAreas.size() > mCurrentLevelAreaID && mPlayer)
+	{
+		Vector2D refPoint = mPlayer->GetRenderReferencePoint();
+
+		if (mTransitionHandler->GetIsPipeTransition() || mPlayer->GetIsExitingPipe())
+		{
+			mAreas[mCurrentLevelAreaID]->RenderBackground(refPoint);
+			mAreas[mCurrentLevelAreaID]->RenderGround(refPoint);
+
+			// Render the player
+			mPlayer->Render();
+
+			mAreas[mCurrentLevelAreaID]->RenderObjects(refPoint);
+		}
+		else
+		{
+			mAreas[mCurrentLevelAreaID]->RenderAll(refPoint);
+
+			// Render the player
+			mPlayer->Render();
+		}
+
+		if (mTransitionHandler)
+			mTransitionHandler->Render();
+	}
 	else
 	{
 		std::cout << "Render Error: The current area does not exist." << std::endl;
 	}
-
-	// Render the player
-	if (mPlayer)
-		mPlayer->Render();
-
-	if(mTransitionHandler)
-		mTransitionHandler->Render();
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //
@@ -160,19 +176,14 @@ ReturnDataFromGameScreen GameScreenLevel_SMB3::Update(const float deltaTime, SDL
 				return ReturnDataFromGameScreen(SCREENS_SMB3::WORLD_MAP, "NOT_COMPLETE");
 		}
 
-		// -1 means stay in the same area we currently are
-		if (returnData.areaToGoTo != -1)
-		{
-			mCurrentLevelAreaID = returnData.areaToGoTo;
+		// Handle the area transition
+		TransitionToNewArea(returnData, false);
 
-			mPlayer->SpawnIntoNewArea(mAreas[mCurrentLevelAreaID]->GetSpawnPointPosition(returnData.spawnpointIDToGoTo), mAreas[mCurrentLevelAreaID]->GetLevelBounds());
+		// Now check with the transition handler to see if it wants the scene to swap
+		returnData = mTransitionHandler->GetTransitionData();
 
-			// Notify the change of music
-			if (mCurrentLevelAreaID == 0)
-				Notify(SUBJECT_NOTIFICATION_TYPES::PLAY_MAIN_LEVEL_MUSIC, "");
-			else
-				Notify(SUBJECT_NOTIFICATION_TYPES::PLAY_SUB_AREA_MUSIC, "");
-		}
+		// Handle the area transition
+		TransitionToNewArea(returnData, true);
 	}
 	else
 	{
@@ -181,6 +192,26 @@ ReturnDataFromGameScreen GameScreenLevel_SMB3::Update(const float deltaTime, SDL
 	}
 
 	return ReturnDataFromGameScreen();
+}
+
+// --------------------------------------------------------------------------------------------------------------------------- //
+
+void GameScreenLevel_SMB3::TransitionToNewArea(Area_Transition_Data data, bool pipeTransition)
+{
+	// -1 means stay in the same area we currently are
+	if (data.areaToGoTo != -1)
+	{
+		mCurrentLevelAreaID = data.areaToGoTo;
+
+		if(mPlayer)
+			mPlayer->SpawnIntoNewArea(mAreas[mCurrentLevelAreaID]->GetSpawnPointPosition(data.spawnpointIDToGoTo), mAreas[mCurrentLevelAreaID]->GetLevelBounds(), pipeTransition);
+
+		// Notify the change of music
+		if (mCurrentLevelAreaID == 0)
+			Notify(SUBJECT_NOTIFICATION_TYPES::PLAY_MAIN_LEVEL_MUSIC, "");
+		else
+			Notify(SUBJECT_NOTIFICATION_TYPES::PLAY_SUB_AREA_MUSIC, "");
+	}
 }
 
 // --------------------------------------------------------------------------------------------------------------------------- //

@@ -28,6 +28,8 @@ public:
 	ReturnDataFromGameScreen Update(const float deltaTime, SDL_Event e) override;
 
 private:
+	void TransitionToNewArea(Area_Transition_Data data, bool pipeTransition);
+
 	void InitialiseLookUpTable();
 	void HandleInput(const float deltaTime, SDL_Event e);
 

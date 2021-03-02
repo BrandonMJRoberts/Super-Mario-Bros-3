@@ -22,7 +22,12 @@ public:
 	LevelAreas(std::string areaFilePath, bool& isStartingArea, SDL_Renderer* renderer, std::map<char, unsigned int> ConversionFromCharToIntIndexMap, std::vector<Observer*> observers);
 	~LevelAreas();
 
-	void Render(Vector2D gridReferencePoint);
+	void RenderAll(Vector2D gridReferencePoint);
+
+	void RenderBackground(Vector2D gridReferencePoint);
+	void RenderGround(Vector2D gridReferencePoint);
+	void RenderObjects(Vector2D gridReferencePoint);
+
 	Area_Transition_Data Update(const float deltaTime, SDL_Event e, PlayableCharacter* player);
 
 	unsigned int GetLevelWidth()  const { return mLevelWidth; }

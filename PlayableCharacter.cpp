@@ -35,9 +35,8 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , mCollisionBoxOffset(0.0f, 0.0f)
 
 , kBaseMaxHorizontalSpeed(5.0f)
-, mMaxHorizontalSpeed(kBaseMaxHorizontalSpeed)
-, kMaxHorizontalSpeedOverall(7.5f)
-, mPSpeedAccumulatorRate(2.0f)
+, mMaxHorizontalSpeed(8.5f)
+, kForcedMovementSpeed(kBaseMaxHorizontalSpeed)
 
 , kFrictionMultiplier(9.0f)
 
@@ -51,6 +50,7 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , mTimePerFrame(timePerFrame)
 , mTimeTillNextFrame(timePerFrame)
 , mAnimationCurrentState(PlayerMovementBitField::NONE)
+, mForcedMovementDirection(MOVEMENT_DIRECTION::DOWN)
 
 , kMaxYVelocity(60.0f)
 
@@ -61,6 +61,9 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , mHasControl(true)
 
 , mJumpTimerLeway(0.0f)
+, mForcedMovementDistanceTravelled(0.0f)
+
+, mExitingPipe(false)
 {
 	LoadInCorrectSpriteSheet();
 
@@ -140,7 +143,11 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 {
 	// If the player has no control then just dont change anything
 	if (!mHasControl)
+	{
+		ForcedMovementUpdate(deltaTime);
+
 		return;
+	}
 
 	// Update the jumping leway
 	if(mJumpTimerLeway > 0.0f)
@@ -161,6 +168,85 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 
 	// Update the player's animations
 	UpdateAnimations(deltaTime);
+}
+
+// ----------------------------------------------------- //
+
+void PlayableCharacter::ForcedMovementUpdate(const float deltaTime)
+{
+	if (mForceMovementInDirectionSet)
+	{
+		double movementDistance = double(kForcedMovementSpeed) * double(deltaTime);
+
+		mForcedMovementDistanceTravelled += movementDistance;
+
+		switch (mForcedMovementDirection)
+		{
+		case MOVEMENT_DIRECTION::DOWN:
+			mScreenGridPosition.y += movementDistance;
+
+			if (mForcedMovementDistanceTravelled > (mCollisionBox.y * 1.2f))
+			{
+				mForceMovementInDirectionSet     = false;
+				mForcedMovementDistanceTravelled = 0.0f;
+
+				if (mExitingPipe)
+				{
+					mHasControl = true;
+					mExitingPipe = false;
+				}
+			}
+		break;
+
+		case MOVEMENT_DIRECTION::UP:
+			mScreenGridPosition.y -= movementDistance;
+
+			if (mForcedMovementDistanceTravelled > (mCollisionBox.y * 1.2f))
+			{
+				mForceMovementInDirectionSet     = false;
+				mForcedMovementDistanceTravelled = 0.0f;
+
+				if (mExitingPipe)
+				{
+					mExitingPipe = false;
+					mHasControl  = true;
+				}
+			}
+		break;
+
+		case MOVEMENT_DIRECTION::RIGHT:
+			mScreenGridPosition.x += movementDistance;
+
+			if (mForcedMovementDistanceTravelled > (mCollisionBox.x * 1.2f))
+			{
+				mForceMovementInDirectionSet     = false;
+				mForcedMovementDistanceTravelled = 0.0f;
+
+				if (mExitingPipe)
+				{
+					mHasControl = true;
+					mExitingPipe = false;
+				}
+			}
+		break;
+
+		case MOVEMENT_DIRECTION::LEFT:
+			mScreenGridPosition.x -= movementDistance;
+
+			if (mForcedMovementDistanceTravelled > (mCollisionBox.x * 1.2f))
+			{
+				mForceMovementInDirectionSet     = false;
+				mForcedMovementDistanceTravelled = 0.0f;
+
+				if (mExitingPipe)
+				{
+					mHasControl = true;
+					mExitingPipe = false;
+				}
+			}
+		break;
+		}
+	}
 }
 
 // ----------------------------------------------------- //
@@ -329,7 +415,8 @@ void PlayableCharacter::CalculateScreenBoundsPosition(const Vector2D currentPos)
 
 void PlayableCharacter::CalculateNewPosition(const float deltaTime, CollisionPositionalData xCollision, CollisionPositionalData yCollision)
 {
-	Vector2D movementDistance = (mVelocity * deltaTime);                // Distance potentially moved
+	// Distance potentially moved
+	Vector2D movementDistance = (mVelocity * deltaTime);                
 
 	// First calculate the new position in the world based on collisions
 	Vector2D newRealGridPos   = mRealGridPosition   + movementDistance; // Real position in the world according to this movement
@@ -342,8 +429,8 @@ void PlayableCharacter::CalculateNewPosition(const float deltaTime, CollisionPos
 
 	if (newRealGridPos.x <= 0.0f)
 		newRealGridPos.x = 0.0f;
-	else if (newRealGridPos.x >= mLevelBounds.x + 1)
-		newRealGridPos.x = mLevelBounds.x + 1;
+	else if (newRealGridPos.x >= mLevelBounds.x - 1)
+		newRealGridPos.x = mLevelBounds.x - 1;
 
 	// Now for the Y
 	if (!yCollision.collisionOccured)
@@ -385,7 +472,7 @@ void PlayableCharacter::CalculateNewPosition(const float deltaTime, CollisionPos
 		}
 	}
 
-	std::cout << "Real X: " << mRealGridPosition.x << "\tReal Y :" << mRealGridPosition.y << std::endl;
+	//std::cout << "Real X: " << mRealGridPosition.x << "\tReal Y :" << mRealGridPosition.y << std::endl;
 
 	// ----------------------------------------------------------------------------------------------------------------------------------- //
 
@@ -523,10 +610,6 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 	double speed      = 15.0f;
 	double multiplier = 1.0f;
 
-	// If the player is currently running then set the speed to be correct
-	if (mCurrentMovements & PlayerMovementBitField::RUNNING)
-		multiplier = 1.1f;
-
 	switch (e.type)
 	{
 	case SDL_KEYDOWN:
@@ -536,6 +619,10 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 			if (!(mCurrentMovements & PlayerMovementBitField::JUMPING))
 			{
 				HandleChangeInAnimations(PlayerMovementBitField::JUMPING, true);
+
+				// Set the extra boost to be relative to the x speed the player is going
+				mJumpHeldCurrentBoost = kJumpHeldInitialBoost * std::max(float(abs(mVelocity.x) / mMaxHorizontalSpeed), 0.1f);
+
 				mCurrentMovements |= PlayerMovementBitField::JUMPING;
 			}
 
@@ -583,8 +670,6 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 				HandleChangeInAnimations(PlayerMovementBitField::CROUCHING, true);
 				mCurrentMovements |= PlayerMovementBitField::CROUCHING;
 			}
-
-			//mAcceleration.y = multiplier * speed;
 		break;
 		}
 	break;
@@ -599,8 +684,6 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 				// Set the player to not be running
 				HandleChangeInAnimations(PlayerMovementBitField::RUNNING, false);
 				mCurrentMovements &= ~(PlayerMovementBitField::RUNNING);
-
-				mMaxHorizontalSpeed = kBaseMaxHorizontalSpeed;
 			}
 		break;
 
@@ -657,8 +740,6 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 	// If grounded then set that the player is jumping
 	if (mCurrentMovements & PlayerMovementBitField::JUMPING && (mGrounded || mJumpTimerLeway > 0.0f))
 	{
-		mJumpHeldCurrentBoost = kJumpHeldInitialBoost * std::max(float(abs(mVelocity.x) / kMaxHorizontalSpeedOverall), 0.1f);
-
 		mGrounded = false;
 
 		// Give the minimum jump height of boost upwards
@@ -760,11 +841,15 @@ void PlayableCharacter::CalculateInitialRenderReferencePoint()
 	{
 		mRenderRefencePoint.x = mLevelBounds.x - PLAYABLE_SCREEN_AREA_WIDTH;
 	}
+	else
+	{
+		mRenderRefencePoint.x = mRealGridPosition.x - (PLAYABLE_SCREEN_AREA_WIDTH / 2.0f) + 0.5f;
+	}
 }
 
 // ----------------------------------------------------- //
 
-void PlayableCharacter::SpawnIntoNewArea(const Vector2D newPos, const Vector2D newLevelBounds)
+void PlayableCharacter::SpawnIntoNewArea(const Vector2D newPos, const Vector2D newLevelBounds, bool pipeTransition)
 {
 	mRealGridPosition = newPos; 
 
@@ -774,6 +859,45 @@ void PlayableCharacter::SpawnIntoNewArea(const Vector2D newPos, const Vector2D n
 
 	// Now calculate the starting render reference point
 	CalculateInitialRenderReferencePoint();
+
+	if (pipeTransition)
+	{
+		mForceMovementInDirectionSet     = true;
+		mForcedMovementDistanceTravelled = 0.0f;
+
+		switch (mForcedMovementDirection)
+		{
+		default:
+		case MOVEMENT_DIRECTION::DOWN:
+			mScreenGridPosition.y -= (mCollisionBox.y * 1.2f);
+		break;
+
+		case MOVEMENT_DIRECTION::UP:
+			mScreenGridPosition.y += (mCollisionBox.y * 1.2f);
+		break;
+
+		case MOVEMENT_DIRECTION::LEFT:
+			mScreenGridPosition.x += (mCollisionBox.x * 1.2f);
+		break;
+
+		case MOVEMENT_DIRECTION::RIGHT:
+			mScreenGridPosition.x -= (mCollisionBox.x * 1.2f);
+		break;
+		}
+
+		SetEnteringPipe(mForcedMovementDirection);
+
+		mExitingPipe = true;
+	}
+	else
+	{
+		mHasControl = true;
+	}
+	
+	mCurrentMovements                = 0;
+
+	mVelocity     = Vector2D();
+	mAcceleration = Vector2D();
 }
 
 // ----------------------------------------------------- //
@@ -811,11 +935,11 @@ void PlayableCharacter::UpdatePhysics(const float deltaTime)
 	// Jumping calculations - you only get the extra jump height if you are holding run, otherwise it is just the regular jump
 	if (mCurrentMovements & PlayerMovementBitField::HOLDING_JUMP && mCurrentMovements & PlayerMovementBitField::RUNNING)
 	{
-		// If holding down jump then keep mario going up until a point
-		mAcceleration.y = mJumpHeldCurrentBoost;
-
 		// Reduce the current extra being added onto the jump
 		mJumpHeldCurrentBoost += (kJumpHeldAccelerationDepreciationRate * deltaTime);
+
+		// If holding down jump then keep mario going up until a point
+		mAcceleration.y = mJumpHeldCurrentBoost;
 
 		// Bounds check
 		if (mJumpHeldCurrentBoost >= 0.0f)
@@ -826,16 +950,22 @@ void PlayableCharacter::UpdatePhysics(const float deltaTime)
 	mVelocity += Vector2D(mAcceleration.x * deltaTime, (mAcceleration.y + GRAVITY) * deltaTime);
 
 	// If walking
-	if (!(mCurrentMovements & PlayerMovementBitField::RUNNING))
+	if (mCurrentMovements & PlayerMovementBitField::RUNNING)
+	{
+		if (mVelocity.x > mMaxHorizontalSpeed)
+			mVelocity.x = mMaxHorizontalSpeed;
+		else if (mVelocity.x < -mMaxHorizontalSpeed)
+			mVelocity.x = -mMaxHorizontalSpeed;
+	}
+	else
 	{
 		// Cap the velocity to the max speed if it exceeds it
 		if (mVelocity.x > kBaseMaxHorizontalSpeed)
 			mVelocity.x = kBaseMaxHorizontalSpeed;
-		else if(mVelocity.x < -kBaseMaxHorizontalSpeed)
+		else if (mVelocity.x < -kBaseMaxHorizontalSpeed)
 			mVelocity.x = -kBaseMaxHorizontalSpeed;
-	}
-	else
-	{
+
+		/*
 		// Cap the velocity to the max speed if it exceeds it
 		if (abs(mVelocity.x) > mMaxHorizontalSpeed)
 		{
@@ -846,15 +976,19 @@ void PlayableCharacter::UpdatePhysics(const float deltaTime)
 			else
 				mVelocity.x = -mMaxHorizontalSpeed;
 		}
+		*/
 
-		if (mMaxHorizontalSpeed > kMaxHorizontalSpeedOverall)
-			mMaxHorizontalSpeed = kMaxHorizontalSpeedOverall;
+		//if (mMaxHorizontalSpeed > kMaxHorizontalSpeedOverall)
+		//	mMaxHorizontalSpeed = kMaxHorizontalSpeedOverall;
+
 	}
 
 	if (mVelocity.y > kMaxYVelocity)
 		mVelocity.y = kMaxYVelocity;
 	else if (mVelocity.y < -kMaxYVelocity)
 		mVelocity.y = -kMaxYVelocity;
+
+	std::cout << "X: " << mVelocity.x << "\t Y :" << mVelocity.y << std::endl;
 }
 
 // ----------------------------------------------------- //
@@ -1194,7 +1328,35 @@ void PlayableCharacter::LoadInCorrectSpriteSheet()
 
 void PlayableCharacter::SetEnteringPipe(MOVEMENT_DIRECTION direction)
 {
+	mExitingPipe = false;
+
+	// Take control from the player and make the character animate correctly, and move in the correct direction properly
 	mHasControl = false;
+
+	// Remove all movements
+	mCurrentMovements = 0;
+
+	// Set animations
+	switch (direction)
+	{
+	case MOVEMENT_DIRECTION::DOWN:
+	case MOVEMENT_DIRECTION::UP:
+		HandleChangeInAnimations(PlayerMovementBitField::ENTERING_PIPE_VERTICALLY, true);
+	break;
+
+	case MOVEMENT_DIRECTION::RIGHT:
+		HandleChangeInAnimations(PlayerMovementBitField::MOVING_RIGHT, true);
+	break;
+
+	case MOVEMENT_DIRECTION::LEFT:
+		HandleChangeInAnimations(PlayerMovementBitField::MOVING_LEFT, true);
+	break;
+	}
+
+	// Set that we are forcing movement
+	mForceMovementInDirectionSet = true;
+
+	mForcedMovementDirection = direction;
 }
 
 // ----------------------------------------------------- //

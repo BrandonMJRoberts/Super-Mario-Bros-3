@@ -29,9 +29,9 @@ Pipe::Pipe(const Vector2D      spawnPosition,
 	const bool			containsAnEnemy,
 	const PIPE_TYPE     pipeType,
 	const FACING        facingDirection,
-	const std::string   filePathToLoadTo,
+	const int           levelAreaIDToGoTo,
 	const unsigned int  thisStageEntranceID,
-	const unsigned int  stageIDToGoTo,
+	const int           stageIDToGoTo,
 	const bool          pipeIsVertical)
 
 : PhysicalObject(spawnPosition
@@ -51,7 +51,7 @@ Pipe::Pipe(const Vector2D      spawnPosition,
 , mContainsAnEnemy(containsAnEnemy)
 , mPipeType(pipeType)
 , mPipeFacingDirection(facingDirection)
-, mFilePathToLoadTo(filePathToLoadTo)
+, mLevelAreaToGoTo(levelAreaIDToGoTo)
 , mStageEntranceID(thisStageEntranceID)
 , mStageEntranceIDToGoTo(stageIDToGoTo)
 , mPipeIsVertical(pipeIsVertical)
@@ -134,17 +134,13 @@ BaseObject* Pipe::Clone(std::string dataLineForClone)
 	Vector2D newPosition, dimensions;
 
 	unsigned int pipeType, pipeFacingDirection, amountOfEnds;
-	int          thisStageEntranceID, stageEntranceIDToGoTo;
-	std::string  filePathToLoadInto;
+	int          thisStageEntranceID, stageEntranceIDToGoTo, levelAreaIDToGoTo;
 	char         newPipeIsVertical;
 	bool         pipeIsDoubleEnded = false, containsEnemy = false, pipeIsVertical = true;
 
 	std::string enemyContainedWithinPipe;
 
-	streamData >> newPosition.x >> newPosition.y >> dimensions.x >> dimensions.y >> pipeType >> pipeFacingDirection >> filePathToLoadInto >> thisStageEntranceID >> enemyContainedWithinPipe >> amountOfEnds >> stageEntranceIDToGoTo >> newPipeIsVertical;
-
-	if (filePathToLoadInto == "NONE")
-		filePathToLoadInto = "";
+	streamData >> newPosition.x >> newPosition.y >> dimensions.x >> dimensions.y >> pipeType >> pipeFacingDirection >> levelAreaIDToGoTo >> thisStageEntranceID >> enemyContainedWithinPipe >> amountOfEnds >> stageEntranceIDToGoTo >> newPipeIsVertical;
 
 	if (enemyContainedWithinPipe != "")
 		containsEnemy = true;
@@ -153,7 +149,7 @@ BaseObject* Pipe::Clone(std::string dataLineForClone)
 		pipeIsVertical = false;
 
 	if (mThisSpriteSheet)
-		return new Pipe(newPosition, false, mRenderer, mThisSpriteSheet->GetFilePath(), mSpritesOnWidth, mSpritesOnHeight, dimensions.x, dimensions.y, mTimePerFrame, int(dimensions.x), int(dimensions.y), amountOfEnds, containsEnemy, PIPE_TYPE(pipeType), FACING(pipeFacingDirection), filePathToLoadInto, thisStageEntranceID, stageEntranceIDToGoTo, pipeIsVertical);
+		return new Pipe(newPosition, false, mRenderer, mThisSpriteSheet->GetFilePath(), mSpritesOnWidth, mSpritesOnHeight, dimensions.x, dimensions.y, mTimePerFrame, int(dimensions.x), int(dimensions.y), amountOfEnds, containsEnemy, PIPE_TYPE(pipeType), FACING(pipeFacingDirection), levelAreaIDToGoTo, thisStageEntranceID, stageEntranceIDToGoTo, pipeIsVertical);
 	else
 		return nullptr;
 }
@@ -512,8 +508,8 @@ Vector2D Pipe::GetCurrentPosition() const
 ObjectCollisionHandleData Pipe::SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerMovements)
 {
 	// Now check to see if we have a file path to load into, if not just exit without doing anything cool
-	//if (mFilePathToLoadTo != "")
-	//{
+	if (mLevelAreaToGoTo != -1)
+	{
 		// Must be loading into somewhere so check to see if the collision matches the conditions for this to occur
 		switch (mPipeFacingDirection)
 		{
@@ -524,33 +520,63 @@ ObjectCollisionHandleData Pipe::SetIsCollidedWith(TwoDimensionalCollision collis
 			if (   collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::DOWN 
 				&& collisionData.playerPriorPosition.x > GetCurrentPosition().x
 				&& collisionData.playerPriorPosition.x < GetCurrentPosition().x + (mCollisionBox.x / 2.0f)
-				&& playerMovements & PlayerMovementBitField::CROUCHING) // And we need to check to see if the player is centred on the pipe
+				&& playerMovements & PlayerMovementBitField::CROUCHING)
 			{
 				// Notify all observers that this is happening
-				Notify(SUBJECT_NOTIFICATION_TYPES::ENTERING_PIPE, std::to_string(mStageEntranceIDToGoTo) + " DOWN");
+				Notify(SUBJECT_NOTIFICATION_TYPES::ENTERING_PIPE, std::to_string(mLevelAreaToGoTo) + " " + std::to_string(mStageEntranceIDToGoTo) + " DOWN");
 
 				return ObjectCollisionHandleData();
 			}
 		break;
 		
 		case FACING::DOWN:
+			// If the pipe is facing down then we need the player to be below the pipe pressing up to enter the pipe
+			if (   collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::UP
+				&& collisionData.playerPriorPosition.x > GetCurrentPosition().x
+				&& collisionData.playerPriorPosition.x < GetCurrentPosition().x + (mCollisionBox.x / 2.0f)
+				&& playerMovements & PlayerMovementBitField::JUMPING)
+			{
+				// Notify all observers that this is happening
+				Notify(SUBJECT_NOTIFICATION_TYPES::ENTERING_PIPE, std::to_string(mLevelAreaToGoTo) + " " + std::to_string(mStageEntranceIDToGoTo) + " UP");
 
+				return ObjectCollisionHandleData();
+			}
 		break;
 
 		case FACING::LEFT:
+			// If entering a pipe that is facing left then the player must be going to the right
+			if (   collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::LEFT
+				&& collisionData.playerPriorPosition.y > GetCurrentPosition().y
+				&& collisionData.playerPriorPosition.y < GetCurrentPosition().y + (mCollisionBox.y / 2.0f)
+				&& playerMovements & PlayerMovementBitField::MOVING_RIGHT)
+			{
+				// Notify all observers that this is happening
+				Notify(SUBJECT_NOTIFICATION_TYPES::ENTERING_PIPE, std::to_string(mLevelAreaToGoTo) + " " + std::to_string(mStageEntranceIDToGoTo) + " RIGHT");
 
+				return ObjectCollisionHandleData();
+			}
 		break;
 
 		case FACING::RIGHT:
+			// If entering a pipe that is facing right then the player must be going to the left
+			if (   collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::RIGHT
+				&& collisionData.playerPriorPosition.y > GetCurrentPosition().y
+				&& collisionData.playerPriorPosition.y < GetCurrentPosition().y + (mCollisionBox.y / 2.0f)
+				&& playerMovements & PlayerMovementBitField::MOVING_LEFT)
+			{
+				// Notify all observers that this is happening
+				Notify(SUBJECT_NOTIFICATION_TYPES::ENTERING_PIPE, std::to_string(mLevelAreaToGoTo) + " " + std::to_string(mStageEntranceIDToGoTo) + " LEFT");
 
+				return ObjectCollisionHandleData();
+			}
 		break;
 		}
 
 		return ObjectCollisionHandleData();
 
-	//}
-	//else
-	//	return ObjectCollisionHandleData();
+	}
+	else
+		return ObjectCollisionHandleData();
 } 
 
 // ----------------------------------------------------------------------------------------- //

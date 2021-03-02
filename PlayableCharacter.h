@@ -25,14 +25,18 @@ public:
 
 	const Vector2D GetRenderReferencePoint() const { return mRenderRefencePoint; }
 
-	void           SpawnIntoNewArea(const Vector2D newPos, const Vector2D newLevelBounds);
+	void           SpawnIntoNewArea(const Vector2D newPos, const Vector2D newLevelBounds, bool pipeTransition);
 
 	void           SetLevelOver() { mHasControl = false; }
 
 	void           SetEnteringPipe(MOVEMENT_DIRECTION direction);
 
+	bool           GetIsExitingPipe() const { return mExitingPipe; }
+
 private:
 	void HandleMovementInput(SDL_Event e);
+
+	void ForcedMovementUpdate(const float deltaTime);
 
 	void CalculateNewPosition(const float deltaTime, CollisionPositionalData xCollisionOccured, CollisionPositionalData yCollisionOccured);
 	void CalculateInitialRenderReferencePoint();
@@ -99,12 +103,9 @@ private:
 	const float  mTimePerFrame;
 
 	const float  kBaseMaxHorizontalSpeed;
-	const float  kMaxHorizontalSpeedOverall;
 	float        mMaxHorizontalSpeed;
 
 	const float  kMaxYVelocity;
-
-	const float  mPSpeedAccumulatorRate;
 
 	const float  kFrictionMultiplier;
 	const float  kJumpHeldAccelerationDepreciationRate;
@@ -120,10 +121,18 @@ private:
 
 	POWER_UP_TYPE mPowerUpState;
 
+	MOVEMENT_DIRECTION mForcedMovementDirection;
+	const float        kForcedMovementSpeed;
+	float              mForcedMovementDistanceTravelled;
+
 	bool         mIsAlive;
 	bool         mWasFacingRight;
 	bool         mGrounded;
 	bool         mHasControl;
+
+	bool         mForceMovementInDirectionSet;
+
+	bool         mExitingPipe;
 };
 
 

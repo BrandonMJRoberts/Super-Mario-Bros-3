@@ -3,7 +3,7 @@
 
 #include "BaseObject.h"
 
-class SpawnPoint final 
+class SpawnPoint  
 {
 public:
 	SpawnPoint() = delete;
