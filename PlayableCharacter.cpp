@@ -610,6 +610,20 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 	double speed      = 15.0f;
 	double multiplier = 1.0f;
 
+	if (mCurrentMovements & PlayerMovementBitField::RUNNING && abs(mVelocity.x) > kBaseMaxHorizontalSpeed)
+	{
+		multiplier = 0.7f;
+	}
+
+	if (mCurrentMovements & PlayerMovementBitField::MOVING_RIGHT)
+	{
+		mAcceleration.x = speed * multiplier;
+	}
+	else if (mCurrentMovements & PlayerMovementBitField::MOVING_LEFT)
+	{
+		mAcceleration.x = -speed * multiplier;
+	}
+
 	switch (e.type)
 	{
 	case SDL_KEYDOWN:
@@ -631,15 +645,6 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 				// Otherwise check if you are jumping and if so state that you are holding down jump
 				if (mCurrentMovements & PlayerMovementBitField::JUMPING)
 					mCurrentMovements |= PlayerMovementBitField::HOLDING_JUMP;
-			}
-		break;
-
-		case SDLK_RSHIFT:
-			// Store that the player is now running
-			if (!(mCurrentMovements & PlayerMovementBitField::RUNNING))
-			{
-				HandleChangeInAnimations(PlayerMovementBitField::RUNNING, true);
-				mCurrentMovements |= PlayerMovementBitField::RUNNING;
 			}
 		break;
 
@@ -669,6 +674,15 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 			{
 				HandleChangeInAnimations(PlayerMovementBitField::CROUCHING, true);
 				mCurrentMovements |= PlayerMovementBitField::CROUCHING;
+			}
+		break;
+
+		case SDLK_RSHIFT:
+			// Store that the player is now running
+			if (!(mCurrentMovements & PlayerMovementBitField::RUNNING))
+			{
+				HandleChangeInAnimations(PlayerMovementBitField::RUNNING, true);
+				mCurrentMovements |= PlayerMovementBitField::RUNNING;
 			}
 		break;
 		}
@@ -964,23 +978,6 @@ void PlayableCharacter::UpdatePhysics(const float deltaTime)
 			mVelocity.x = kBaseMaxHorizontalSpeed;
 		else if (mVelocity.x < -kBaseMaxHorizontalSpeed)
 			mVelocity.x = -kBaseMaxHorizontalSpeed;
-
-		/*
-		// Cap the velocity to the max speed if it exceeds it
-		if (abs(mVelocity.x) > mMaxHorizontalSpeed)
-		{
-			mMaxHorizontalSpeed += mPSpeedAccumulatorRate * deltaTime;
-
-			if (mVelocity.x > 0.0f)
-				mVelocity.x = mMaxHorizontalSpeed;
-			else
-				mVelocity.x = -mMaxHorizontalSpeed;
-		}
-		*/
-
-		//if (mMaxHorizontalSpeed > kMaxHorizontalSpeedOverall)
-		//	mMaxHorizontalSpeed = kMaxHorizontalSpeedOverall;
-
 	}
 
 	if (mVelocity.y > kMaxYVelocity)
