@@ -137,7 +137,10 @@ void PhysicalObject::RenderSprite(const Vector2D renderReferencePoint, const uns
 									 (int)mSingleSpriteWidth,
 									 (int)mSingleSpriteHeight };
 
-		mThisSpriteSheet->Render(portionOfSpriteSheet, destRect);
+		if(mVelocity.x > 0.0f)
+			mThisSpriteSheet->Render(portionOfSpriteSheet, destRect, SDL_FLIP_HORIZONTAL);
+		else 
+			mThisSpriteSheet->Render(portionOfSpriteSheet, destRect, SDL_FLIP_NONE);
 	}
 }
 
