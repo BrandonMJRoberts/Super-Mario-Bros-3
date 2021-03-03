@@ -2,11 +2,6 @@
 
 #include <sstream>
 
-unsigned int Goomba::mCurrentSpriteID(0);
-unsigned int Goomba::mStartSpriteID(0);
-unsigned int Goomba::mEndSpriteID(1);
-
-float        Goomba::mTimeRemainingTillNextFrame(0.0f);
 bool		 Goomba::mUpdatedStaticVariables(false);
 
 // ------------------------------------------------------------- //
@@ -39,6 +34,10 @@ Goomba::Goomba(const Vector2D      spawnPosition,
 , mTimePerFrame(timePerFrame)
 , mTimerTillDespawn(1.0f)
 , mHitsRemaining(1)
+, mCurrentSpriteID(0)
+, mStartSpriteID(0)
+, mEndSpriteID(1)
+, mTimeRemainingTillNextFrame(0.0f)
 {
 	mVelocity.x = -MOVEMENT_SPEED;
 }
@@ -156,8 +155,11 @@ void Goomba::Render(const Vector2D renderReferencePoint)
 
 // ------------------------------------------------------------- //
 
-ObjectCollisionHandleData Goomba::SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerMovements)
+ObjectCollisionHandleData Goomba::SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerMovements, const bool isPlayer)
 {
+	if (!isPlayer)
+		return ObjectCollisionHandleData();
+
 	if (mHitsRemaining == 0)
 	{
 		return ObjectCollisionHandleData(false, false, false, false, false);

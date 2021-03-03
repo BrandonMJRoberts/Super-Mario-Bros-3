@@ -150,8 +150,11 @@ void QuestionMarkBlock::Render(const Vector2D renderReferencePoint)
 
 // ------------------------------------------------------------- //
 
-ObjectCollisionHandleData QuestionMarkBlock::SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerMovements)
+ObjectCollisionHandleData QuestionMarkBlock::SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerMovements, const bool isPlayer)
 {
+	if (!isPlayer)
+		return ObjectCollisionHandleData();
+
 	if (collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::UP && collisionData.playerPriorPosition.y > mCurrentPosition.y)
 	{
 		if (mHitsBlockCanTake > 0)

@@ -505,8 +505,11 @@ Vector2D Pipe::GetCurrentPosition() const
 
 // ----------------------------------------------------------------------------------------- //
 
-ObjectCollisionHandleData Pipe::SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerMovements)
+ObjectCollisionHandleData Pipe::SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerMovements, const bool isPlayer)
 {
+	if (!isPlayer)
+		return ObjectCollisionHandleData();
+
 	// Now check to see if we have a file path to load into, if not just exit without doing anything cool
 	if (mLevelAreaToGoTo != -1)
 	{

@@ -31,6 +31,7 @@ PhysicalObject::PhysicalObject(const Vector2D spawnPosition
 , mCollisionBox(collisionBoxWidth, collsiionBoxHeight)
 , mFacingLeft(true)
 , mVelocity(0.0f, 0.0f)
+, mGrounded(false)
 {
 	if (!mRenderer)
 		mRenderer = renderer;
@@ -193,10 +194,12 @@ void PhysicalObject::HandleMovement(const float deltaTime, InteractableLayer* in
 	if (collisionData.StopYMovement)
 	{
 		mVelocity.y = 0.0f;
+		mGrounded   = true;
 	}
 	else
 	{
 		mCurrentPosition.y += (mVelocity.y * deltaTime);
+		mGrounded = false;
 	}
 
 	// See if the facing direction should flip
@@ -311,7 +314,7 @@ void PhysicalObject::ApplyGravity(const float deltaTime)
 
 MovementPrevention PhysicalObject::CheckForCollisionWithObjectLayer(ObjectLayer* objectLayer, const Vector2D positionToCheck)
 {
-	return (objectLayer->CheckCollision(positionToCheck, mVelocity, mCurrentPosition, 0));
+	return (objectLayer->CheckCollision(positionToCheck, mVelocity, mCurrentPosition, 0, false));
 }
 
 // ----------------------------------------------------------------------------------------------------- //

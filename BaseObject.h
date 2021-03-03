@@ -39,7 +39,7 @@ public:
 	virtual void     ResetUpdatedStaticVariables() { ; }
 	virtual const Vector2D GetCollisionBox() const { return Vector2D(); }
 
-	virtual ObjectCollisionHandleData SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerCurrentMovements) { return ObjectCollisionHandleData(); }
+	virtual ObjectCollisionHandleData SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerCurrentMovements, const bool isPlayer) { return ObjectCollisionHandleData(); }
 
 protected:
 	Vector2D            mCurrentPosition;

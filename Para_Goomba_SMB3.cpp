@@ -2,11 +2,6 @@
 
 #include <sstream>
 
-unsigned int ParaGoomba::mCurrentSpriteID(0);
-unsigned int ParaGoomba::mStartSpriteID(0);
-unsigned int ParaGoomba::mEndSpriteID(0);
-
-float        ParaGoomba::mTimeRemainingTillNextFrame(0.0f);
 bool		 ParaGoomba::mUpdatedStaticVariables(false);
 
 // ------------------------------------------------------------------------------------------------ //
@@ -37,8 +32,18 @@ ParaGoomba::ParaGoomba(const Vector2D      spawnPosition,
 , canJump
 , startFacingLeft)
 , mTimePerFrame(timePerFrame)
+, mJumpForce(3.0f)
+, mJumpsCompleted(0)
+, mJumpTimer(0.15f)
+, mCurrentSpriteID(3)
+, mStartSpriteID(3)
+, mEndSpriteID(4)
+, mTimeRemainingTillNextFrame(mTimePerFrame)
+, kTimePerJump(0.25f)
+, kTimePerJumpLoop(2.0f)
 {
-
+	mHitsRemaining = 2;
+	mTimeRemainingTillNextFrame = mTimePerFrame;
 }
 
 // ------------------------------------------------------------------------------------------------ //
@@ -56,9 +61,8 @@ BaseObject* ParaGoomba::Clone(std::string data)
 
 	Vector2D newPos;
 	char     facingDirectionChar;
-	char     colourChar;
 
-	streamLine >> newPos.x >> newPos.y >> facingDirectionChar >> colourChar;
+	streamLine >> newPos.x >> newPos.y >> facingDirectionChar;
 
 	bool startMovingLeft = true;
 	if (facingDirectionChar == 'R')
@@ -76,6 +80,35 @@ bool ParaGoomba::Update(const float deltaTime, const Vector2D playerPosition, In
 {
 	PhysicalObject::Update(deltaTime, playerPosition, interactionLayer, objectLayer);
 
+	// Animation updates
+	if (!mUpdatedStaticVariables)
+		UpdateStaticVariables(deltaTime);
+
+	// Handleing despawning and animations
+	if (mHitsRemaining == 0)
+	{
+		mTimerTillDespawn -= deltaTime;
+
+		if (mTimerTillDespawn <= 0.0f)
+			return true;
+	}
+
+	// Gravity
+	ApplyGravity(deltaTime);
+
+	if (mCanMove)
+		HandleMovement(deltaTime, interactionLayer, objectLayer);
+	else
+		mVelocity.x = 0.0f;
+
+	mJumpTimer -= deltaTime;
+
+	// Check for jumping
+	if (mCanJump && mGrounded && mJumpTimer <= 0.0f)
+	{
+		Jump();
+	}
+
 	return false;
 }
 
@@ -90,7 +123,28 @@ void ParaGoomba::Move()
 
 void ParaGoomba::Jump()
 {
+	mGrounded = false;
 
+	mVelocity.y -= mJumpForce;
+
+	mJumpsCompleted += 1;
+
+	if (mJumpsCompleted < 4)
+	{
+		mJumpTimer = kTimePerJump;
+
+		if (mJumpsCompleted == 3)
+			mJumpForce = 8.0f;
+		else
+		{
+			mJumpForce = 3.0f;
+		}
+	}
+	else
+	{
+		mJumpTimer      = kTimePerJumpLoop;
+		mJumpsCompleted = 0;
+	}
 }
 
 // ------------------------------------------------------------------------------------------------ //
@@ -126,6 +180,32 @@ void ParaGoomba::UpdateStaticVariables(const float deltaTime)
 void ParaGoomba::Render(const Vector2D renderReferencePoint)
 {
 	RenderSprite(renderReferencePoint, mCurrentSpriteID);
+}
+
+// ------------------------------------------------------------- //
+
+ObjectCollisionHandleData ParaGoomba::SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerMovements, const bool isPlayer)
+{
+	if (!isPlayer)
+		return ObjectCollisionHandleData();
+
+	if (mHitsRemaining > 0)
+	{
+		mHitsRemaining -= 1;
+	}
+	else
+	{
+		mCanMove = false;
+		mCanJump = false;
+
+		mEndSpriteID     = 5;
+		mStartSpriteID   = 5;
+
+		return ObjectCollisionHandleData(false, false, true, false, true);
+	}
+
+
+	return ObjectCollisionHandleData(false, false, true, false, true);
 }
 
 // ------------------------------------------------------------- //

@@ -149,8 +149,11 @@ void KoopaTrooper::Render(const Vector2D renderReferencePoint)
 
 // ------------------------------------------------------------- //
 
-ObjectCollisionHandleData KoopaTrooper::SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerMovements)
+ObjectCollisionHandleData KoopaTrooper::SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerMovements, const bool isPlayer)
 {
+	if (!isPlayer)
+		return ObjectCollisionHandleData();
+
 	if (mHitsRemaining == 0)
 	{
 		// Stop the shell from moving if it is jumped on whilst moving

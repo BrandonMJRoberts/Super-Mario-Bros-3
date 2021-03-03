@@ -13,33 +13,27 @@ NEXT
 # -------------------------------------------------------------------------------------------------- #
 
 # PARA_GOOMBA - Position - Start facing direction
-#PARA_GOOMBA
-#59 25 L
-#NEXT
-
-# -------------------------------------------------------------------------------------------------- #
-
-# KOOPA_TROOPER_RED - Position - Start facing direction - Is red or green
-KOOPA_TROOPER
-36 23 L R
-#131 24 L R
+PARA_GOOMBA
+59 25 L
 NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
 # KOOPA_TROOPER - Position - Start facing direction - Is red or green
 KOOPA_TROOPER
-92 26 L G
+36 23  L R
+92 26  L G
+131 24 L R
 NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 
 # PARA_KOOPA_TROOPER_GREEN - Position - Start facing direction - is Red or green
-#PARA_KOOPA_TROOPER
-#83 20 L G
-#86 20 L G
-#89 20 L G
-#NEXT
+PARA_KOOPA_TROOPER
+83 20 L G
+86 20 L G
+89 20 L G
+NEXT
 
 # -------------------------------------------------------------------------------------------------- #
 

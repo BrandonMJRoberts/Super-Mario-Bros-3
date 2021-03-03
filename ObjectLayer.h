@@ -29,7 +29,7 @@ public:
 	Vector2D GetInitialSpawnPoint() const;
 	Vector2D GetSpawnPoint(unsigned int spawnPointIndex) const;
 
-	MovementPrevention CheckCollision(const Vector2D testPosition, const Vector2D playerVelocity, const Vector2D playerCurrentPos, const unsigned int playerCurrentMovements);
+	MovementPrevention CheckCollision(const Vector2D testPosition, const Vector2D playerVelocity, const Vector2D playerCurrentPos, const unsigned int playerCurrentMovements, bool isPlayer);
 
 	bool GetLevelEndCollected() { return mLevelEndObjectCollected; }
 

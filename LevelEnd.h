@@ -28,7 +28,7 @@ public:
 	void Render(const Vector2D renderReferencePoint) override;
 	bool Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer, ObjectLayer* objectLayer) override;
 
-	ObjectCollisionHandleData SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerMovements) override;
+	ObjectCollisionHandleData SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerMovements, const bool isPlayer) override;
 
 private:
 	void          UpdateStaticVariables(const float deltaTime);

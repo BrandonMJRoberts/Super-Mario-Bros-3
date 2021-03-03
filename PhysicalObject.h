@@ -9,7 +9,7 @@
 class InteractableLayer;
 class ObjectLayer;
 
-#define MOVEMENT_SPEED 1.0f
+#define MOVEMENT_SPEED 1.1f
 
 // ------------------------------------------------------------------------------------------------- //
 
@@ -76,7 +76,8 @@ protected:
 	Texture2D*						 mThisSpriteSheet;
 	const Vector2D					 mCollisionBox;
 
-	bool mFacingLeft;
+	bool                             mFacingLeft;
+	bool                             mGrounded;
 
 private:
 	// Handlers

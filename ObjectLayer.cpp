@@ -336,7 +336,7 @@ void ObjectLayer::InstantiateNameConversions()
 
 	// Enemy Objects
 	mNameToObjectConversion["GOOMBA"]             = new Goomba(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Goomba/Goomba.png", 6, 3, 1.0f, 1.0f, 0.15f, true, false, true);
-	mNameToObjectConversion["PARA_GOOMBA"]        = new ParaGoomba(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Goomba/Goomba.png", 1, 1, 1.0f, 1.0f, 0.3f, true, true, true);
+	mNameToObjectConversion["PARA_GOOMBA"]        = new ParaGoomba(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Goomba/Goomba.png", 6, 3, 1.0f, 1.0f, 0.3f, true, true, true);
 
 	mNameToObjectConversion["KOOPA_TROOPER"]      = new KoopaTrooper(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Koopa Trooper/Koopa.png", 14, 3, 1.0f, 1.0f, KOOPA_WALK_ANIMATION_SPEED, true, false, true, 0);
 	mNameToObjectConversion["PARA_KOOPA_TROOPER"] = new KoopaTrooper(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Koopa Trooper/Koopa.png", 1, 1, 1.0f, 1.0f, KOOPA_WALK_ANIMATION_SPEED, true, true, true, 0);
@@ -392,12 +392,12 @@ void ObjectLayer::DestroyAllNameConversions()
 
 // -------------------------------------------------------------------------------------------------------------------------- //
 
-MovementPrevention ObjectLayer::CheckCollision(const Vector2D testPosition, const Vector2D playerVelocity, const Vector2D playerCurrentPos, const unsigned int playerCurrentMovements)
+MovementPrevention ObjectLayer::CheckCollision(const Vector2D testPosition, const Vector2D velocity, const Vector2D currentPos, const unsigned int currentMovements, bool isPlayer)
 {
 	Vector2D                objectBottomLeftPos, objectCollisionBox;
 	TwoDimensionalCollision collisionData = TwoDimensionalCollision();
 
-	collisionData.playerPriorPosition     = playerCurrentPos;
+	collisionData.playerPriorPosition     = currentPos;
 
 	// Loop through all objects to see if there has been a collision - Only one collision can occur at once
 	for (unsigned int i = 0; i < mSpawnedObjectsInLevel.size(); i++)
@@ -418,19 +418,20 @@ MovementPrevention ObjectLayer::CheckCollision(const Vector2D testPosition, cons
 				continue;
 
 			// Then we have a collision - so check which direction that this collision has occured from
-			if (playerVelocity.y >= 0.0f)
+			if (velocity.y >= 0.0f)
 				collisionData.collisionDataPrimary = MOVEMENT_DIRECTION::DOWN;
 			else
 				collisionData.collisionDataPrimary = MOVEMENT_DIRECTION::UP;
 
-			if (playerVelocity.x > 0.0f)
+			if (velocity.x > 0.0f)
 				collisionData.collisionDataSecondary = MOVEMENT_DIRECTION::LEFT;
-			else if (playerVelocity.x < 0.0f)
+			else if (velocity.x < 0.0f)
 				collisionData.collisionDataSecondary = MOVEMENT_DIRECTION::RIGHT;
 			else
 				collisionData.collisionDataSecondary = MOVEMENT_DIRECTION::NONE;
 
-			ObjectCollisionHandleData objectReturnData = mSpawnedObjectsInLevel[i]->SetIsCollidedWith(collisionData, playerCurrentMovements);
+			// Notify the object that it has been collided with
+			ObjectCollisionHandleData objectReturnData = mSpawnedObjectsInLevel[i]->SetIsCollidedWith(collisionData, currentMovements, isPlayer);
 
 			if (objectReturnData.completedLevel)
 			{

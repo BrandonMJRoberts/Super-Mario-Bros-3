@@ -22,7 +22,7 @@ public:
 
 	Vector2D     GetCurrentPosition()       const { return Vector2D(mCurrentPosition.x, mCurrentPosition.y - mCollisionOffsetY); }
 
-	ObjectCollisionHandleData         SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerMovements) override;
+	ObjectCollisionHandleData         SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerMovements, const bool isPlayer) override;
 
 private:
 	float        mTimePerframe;
