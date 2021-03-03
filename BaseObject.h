@@ -11,6 +11,7 @@
 #include "Subject.h"
 
 class InteractableLayer;
+class ObjectLayer;
 
 class BaseObject abstract : public Subject
 {
@@ -22,7 +23,7 @@ public:
 	virtual BaseObject* Clone(std::string dataForNewObject) = 0;
 
 	virtual void Render(const Vector2D renderReferencePoint);
-	virtual bool Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer);
+	virtual bool Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer, ObjectLayer* objectLayer);
 
 	bool         GetIsSpawnedInLevel() const            { return mIsCurrentlySpawnedInLevel; }
 	void         SetIsSpawnedInLevel(const bool newVal) { mIsCurrentlySpawnedInLevel = newVal; }

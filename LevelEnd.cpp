@@ -93,7 +93,7 @@ void LevelEndObject::Render(Vector2D renderReferencePoint)
 
 // ---------------------------------------------------------------------------------------------------------------------------------------- //
 
-bool LevelEndObject::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer)
+bool LevelEndObject::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
 	// Move the object upwards offscreen
 	if (mCollected)

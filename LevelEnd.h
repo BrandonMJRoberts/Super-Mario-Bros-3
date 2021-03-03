@@ -26,7 +26,7 @@ public:
 	RenderData GetRenderData() { return RenderData{ mCurrentFrameID, mStartFrameID, mEndFrameID, mTimeRemainingTillFrameChange, mTimePerFrame }; }
 
 	void Render(const Vector2D renderReferencePoint) override;
-	bool Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer) override;
+	bool Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer, ObjectLayer* objectLayer) override;
 
 	ObjectCollisionHandleData SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerMovements) override;
 

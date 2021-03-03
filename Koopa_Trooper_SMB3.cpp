@@ -94,7 +94,7 @@ BaseObject* KoopaTrooper::Clone(std::string dataLine)
 
 // ------------------------------------------------------------------------------ //
 
-bool KoopaTrooper::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer)
+bool KoopaTrooper::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
 	// Animation updates
 	if (!mUpdatedStaticVariables)
@@ -102,7 +102,7 @@ bool KoopaTrooper::Update(const float deltaTime, const Vector2D playerPosition, 
 
 	ApplyGravity(deltaTime);
 
-	HandleMovement(deltaTime, interactionLayer);
+	HandleMovement(deltaTime, interactionLayer, objectLayer);
 
 	if (mHitsRemaining == 0)
 	{

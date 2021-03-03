@@ -72,7 +72,7 @@ BaseObject* Goomba::Clone(std::string data)
 
 // ------------------------------------------------------------- //
 
-bool Goomba::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer)
+bool Goomba::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
 	// Animation updates
 	if (!mUpdatedStaticVariables)
@@ -90,7 +90,7 @@ bool Goomba::Update(const float deltaTime, const Vector2D playerPosition, Intera
 	ApplyGravity(deltaTime);
 
 	if (mCanMove)
-		HandleMovement(deltaTime, interactionLayer);
+		HandleMovement(deltaTime, interactionLayer, objectLayer);
 	else
 		mVelocity.x = 0.0f;
 

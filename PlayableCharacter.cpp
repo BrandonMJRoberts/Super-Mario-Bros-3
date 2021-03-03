@@ -178,7 +178,7 @@ void PlayableCharacter::ForcedMovementUpdate(const float deltaTime)
 	{
 		double movementDistance = double(kForcedMovementSpeed) * double(deltaTime);
 
-		mForcedMovementDistanceTravelled += movementDistance;
+		mForcedMovementDistanceTravelled += float(movementDistance);
 
 		switch (mForcedMovementDirection)
 		{

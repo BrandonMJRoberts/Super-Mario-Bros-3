@@ -25,7 +25,7 @@ public:
 
 	virtual BaseObject* Clone(std::string dataForNewObject) = 0;
 
-	virtual bool Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer) override;
+	virtual bool Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer, ObjectLayer* objectLayer) override;
 
 	virtual void Move();
 	virtual void Jump();

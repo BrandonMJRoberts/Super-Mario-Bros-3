@@ -132,7 +132,7 @@ BaseObject* BrickBlock::Clone(std::string dataForNewObject)
 
 // -------------------------------------------------------------------------------------------------- //
 
-bool BrickBlock::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer)
+bool BrickBlock::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
 	if(!mUpdatedStaticVariables)
 		UpdateStaticVariables(deltaTime);

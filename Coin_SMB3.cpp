@@ -73,7 +73,7 @@ void Coin_SMB3::Render(const Vector2D renderReferencePoint)
 
 // ---------------------------------------------------------------------------------- //
 
-bool Coin_SMB3::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer)
+bool Coin_SMB3::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
 	if(!mUpdatedStaticVariables)
 		UpdateStaticVariables(deltaTime);

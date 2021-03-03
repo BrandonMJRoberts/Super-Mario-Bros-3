@@ -1,6 +1,7 @@
 #include "BaseObject.h"
 
 #include "Texture2D.h"
+#include "ObjectLayer.h"
 
 // ------------------------------------------------------------------------ //
 
@@ -29,7 +30,7 @@ void BaseObject::Render(const Vector2D renderReferencePoint)
 
 // ------------------------------------------------------------------------ //
 
-bool BaseObject::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer)
+bool BaseObject::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
 	return false;
 }

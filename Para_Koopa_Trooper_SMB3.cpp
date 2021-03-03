@@ -70,7 +70,7 @@ BaseObject* ParaKoopaTrooper::Clone(std::string dataLine)
 
 // --------------------------------------------------------------------------------------------- //
 
-bool ParaKoopaTrooper::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer)
+bool ParaKoopaTrooper::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
 	if (!mUpdatedStaticVariables)
 		UpdateStaticVariables(deltaTime);

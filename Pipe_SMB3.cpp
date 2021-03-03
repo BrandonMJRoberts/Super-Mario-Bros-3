@@ -156,7 +156,7 @@ BaseObject* Pipe::Clone(std::string dataLineForClone)
 
 // ----------------------------------------------------------------------------------------- //
 
-bool Pipe::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer)
+bool Pipe::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
 	return false;
 }

@@ -72,9 +72,9 @@ BaseObject* ParaGoomba::Clone(std::string data)
 
 // ------------------------------------------------------------------------------------------------ //
 
-bool ParaGoomba::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer)
+bool ParaGoomba::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
-	PhysicalObject::Update(deltaTime, playerPosition, interactionLayer);
+	PhysicalObject::Update(deltaTime, playerPosition, interactionLayer, objectLayer);
 
 	return false;
 }

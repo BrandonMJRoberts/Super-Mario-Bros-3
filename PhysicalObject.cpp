@@ -3,6 +3,7 @@
 #include "Constants_SMB3.h"
 
 #include "InteractionLayer.h"
+#include "ObjectLayer.h"
 
 SDL_Renderer*			  PhysicalObject::mRenderer(nullptr);
 std::vector<Texture2D*>   PhysicalObject::mSpriteSheets;
@@ -142,7 +143,7 @@ void PhysicalObject::RenderSprite(const Vector2D renderReferencePoint, const uns
 
 // ----------------------------------------------------------------------------------------------------- //
 
-bool PhysicalObject::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer)
+bool PhysicalObject::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
 	// Animation update
 	if (GetHasUpdatedStaticVariables())
@@ -151,7 +152,7 @@ bool PhysicalObject::Update(const float deltaTime, const Vector2D playerPosition
 	}
 
 	// Check movement
-	HandleMovement(deltaTime, interactionLayer);
+	HandleMovement(deltaTime, interactionLayer, objectLayer);
 
 	return false;
 }
@@ -181,10 +182,10 @@ void PhysicalObject::UpdateStaticVariables(const float deltaTime)
 // ----------------------------------------------------------------------------------------------------- //
 
 // Overarching collision handler, call this from the child classess
-void PhysicalObject::HandleMovement(const float deltaTime, InteractableLayer* interactableLayer)
+void PhysicalObject::HandleMovement(const float deltaTime, InteractableLayer* interactableLayer, ObjectLayer* objectLayer)
 {
-	MovementPrevention collisionData = MovementPrevention(HandleXCollision(deltaTime, interactableLayer), HandleYCollision(deltaTime, interactableLayer), false);
-
+	MovementPrevention  collisionData = MovementPrevention(HandleXCollision(deltaTime, interactableLayer, objectLayer), HandleYCollision(deltaTime, interactableLayer, objectLayer), false);
+	
 	// Now handle the collision data correctly
 	if (collisionData.StopYMovement)
 	{
@@ -218,7 +219,7 @@ bool PhysicalObject::CheckCollisionsWithInteractionLayer(InteractableLayer* inte
 // ----------------------------------------------------------------------------------------------------- //
 
 // Overarching X collision handler
-bool PhysicalObject::HandleXCollision(const float deltaTime, InteractableLayer* interactionLayer)
+bool PhysicalObject::HandleXCollision(const float deltaTime, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
 	// Default to checking right - taking into consideration the position, the collision box width, collision box offset and the movement distance
 	Vector2D footPos = Vector2D(mCurrentPosition.x + mCollisionBox.x + (mVelocity.x * deltaTime), mCurrentPosition.y - 0.01);
@@ -232,13 +233,13 @@ bool PhysicalObject::HandleXCollision(const float deltaTime, InteractableLayer* 
 		headPos = Vector2D(mCurrentPosition.x + (mVelocity.x * deltaTime), mCurrentPosition.y - mCollisionBox.y - 0.01);
 	}
 
-	return (CheckXCollision(footPos, headPos, interactionLayer));
+	return (CheckXCollision(footPos, headPos, interactionLayer, objectLayer));
 }
 
 // ----------------------------------------------------------------------------------------------------- //
 
 // Overarching Y collision handler
-bool PhysicalObject::HandleYCollision(const float deltaTime, InteractableLayer* interactionLayer)
+bool PhysicalObject::HandleYCollision(const float deltaTime, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
 	// Default to going downwards
 	Vector2D leftPos  = Vector2D(mCurrentPosition.x,                   mCurrentPosition.y + (mVelocity.y * deltaTime));
@@ -247,7 +248,7 @@ bool PhysicalObject::HandleYCollision(const float deltaTime, InteractableLayer* 
 	// Going downwards
 	if (mVelocity.y >= 0.0f)
 	{
-		if (CheckYCollision(leftPos, rightPos, interactionLayer))
+		if (CheckYCollision(leftPos, rightPos, interactionLayer, objectLayer))
 		{
 			return true;
 		}
@@ -257,7 +258,7 @@ bool PhysicalObject::HandleYCollision(const float deltaTime, InteractableLayer* 
 		leftPos  = Vector2D(mCurrentPosition.x,                   mCurrentPosition.y - mCollisionBox.y + (mVelocity.y * deltaTime));
 		rightPos = Vector2D(mCurrentPosition.x + mCollisionBox.x, mCurrentPosition.y - mCollisionBox.y + (mVelocity.y * deltaTime));
 
-		return (CheckYCollision(leftPos, rightPos, interactionLayer));
+		return (CheckYCollision(leftPos, rightPos, interactionLayer, objectLayer));
 	}
 
 	return false;
@@ -265,16 +266,11 @@ bool PhysicalObject::HandleYCollision(const float deltaTime, InteractableLayer* 
 
 // ----------------------------------------------------------------------------------------------------- //
 
-bool PhysicalObject::CheckXCollision(const Vector2D headPos, const Vector2D footPos, InteractableLayer* interactionLayer)
+bool PhysicalObject::CheckXCollision(const Vector2D headPos, const Vector2D footPos, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
 	// Check for collisions
-	if (CheckCollisionsWithInteractionLayer(interactionLayer, headPos) || CheckCollisionsWithInteractionLayer(interactionLayer, footPos)) //||
-		//HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1).StopXMovement || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2).StopXMovement ||
-		//positionToCheck1.x < 0.0f ||
-		//positionToCheck2.x < 0.0f //||
-		//positionToCheck1.x > mLevelBounds.x ||
-		//positionToCheck2.x > mLevelBounds.x
-		//)
+	if (CheckCollisionsWithInteractionLayer(interactionLayer, headPos)          || CheckCollisionsWithInteractionLayer(interactionLayer, footPos) ||
+		CheckForCollisionWithObjectLayer(objectLayer, headPos).StopXMovement    || CheckForCollisionWithObjectLayer(objectLayer, footPos).StopXMovement)
 	{
 		// Return that there was a collision
 		return true;
@@ -286,29 +282,15 @@ bool PhysicalObject::CheckXCollision(const Vector2D headPos, const Vector2D foot
 
 // ----------------------------------------------------------------------------------------------------- //
 
-bool PhysicalObject::CheckYCollision(const Vector2D leftPos, const Vector2D rightPos, InteractableLayer* interactionLayer)
+bool PhysicalObject::CheckYCollision(const Vector2D leftPos, const Vector2D rightPos, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
 	// Check terrain collision
-	if (CheckCollisionsWithInteractionLayer(interactionLayer, leftPos) || CheckCollisionsWithInteractionLayer(interactionLayer, rightPos))// ||
-		//positionToCheck1.y < 0.0f ||
-		//positionToCheck2.y < 0.0f ||
-		//positionToCheck1.y + mCollisionBox.y > mLevelBounds.y + 2 ||
-		//positionToCheck2.y + mCollisionBox.y > mLevelBounds.y + 2)
+	if (CheckCollisionsWithInteractionLayer(interactionLayer, leftPos)          || CheckCollisionsWithInteractionLayer(interactionLayer, rightPos) ||
+		CheckForCollisionWithObjectLayer(objectLayer, leftPos).StopYMovement    || CheckForCollisionWithObjectLayer(objectLayer, rightPos).StopYMovement)
 	{
 		// Return that there was a collision
 		return true;
 	}
-
-	//MovementPrevention returnData1 = HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1), returnData2 = HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2);
-
-	//if (returnData1.StopYMovement || returnData2.StopYMovement)
-	//{
-	//	if (returnData1.givesJump || returnData2.givesJump)
-	//		mJumpTimerLeway = 0.1f;
-
-		// Return that there was a collision
-	//	return true;
-	//}
 
 	// Return that there was not a collision
 	return false;
@@ -321,3 +303,12 @@ void PhysicalObject::ApplyGravity(const float deltaTime)
 	// Apply gravity to the object
 	mVelocity.y += double(GRAVITY * deltaTime);
 }
+
+// ----------------------------------------------------------------------------------------------------- //
+
+MovementPrevention PhysicalObject::CheckForCollisionWithObjectLayer(ObjectLayer* objectLayer, const Vector2D positionToCheck)
+{
+	return (objectLayer->CheckCollision(positionToCheck, mVelocity, mCurrentPosition, 0));
+}
+
+// ----------------------------------------------------------------------------------------------------- //

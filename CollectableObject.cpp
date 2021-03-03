@@ -40,7 +40,7 @@ CollectableObject::~CollectableObject()
 
 // --------------------------------------------------------------------------------------------------- //
 
-bool CollectableObject::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer)
+bool CollectableObject::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
 	if (mCanMove)
 	{

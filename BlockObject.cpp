@@ -58,7 +58,7 @@ BlockObject::~BlockObject()
 
 // ------------------------------------------------------------- //
 
-bool BlockObject::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer)
+bool BlockObject::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
 	return true;
 }

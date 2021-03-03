@@ -23,7 +23,7 @@ public:
 
 	BaseObject* Clone(std::string dataLine) override;
 
-	bool Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer) override;
+	bool Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer, ObjectLayer* objectLayer) override;
 	void Render(const Vector2D renderReferencePoint) override;
 
 	void Move() override;
