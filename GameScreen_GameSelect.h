@@ -7,6 +7,8 @@
 #include "Commons_SMB3.h"
 #include "AudioPlayer.h"
 
+#include "FadeInOutTransition.h"
+
 class Texture2D;
 
 class GameScreen_GameSelect
@@ -19,37 +21,42 @@ public:
 	GameSelectReturnData Update(float deltaTime, SDL_Event e);
 
 private:
-	void ScrollSelectedGame(const unsigned int optionScrollingTo);
+	void UpdateSelectionSpritePosition();
 
-	SDL_Renderer*    mRenderer;
+	FadeInOutTransition* mFadeTransition;
 
-	Texture2D*       mMario3Game;
-	Texture2D*		 mMarioBrosGame;
-	Texture2D*		 mSelectionGameSprite;
+	SDL_Renderer*    mRenderer; // Renderer
 
-	Audio_Player*    mAudioPlayer;
+	// Sprites
+	Texture2D*       mMarioCoin;
+	Texture2D*		 mLuigiCoin;
+	Texture2D*		 mSelectionSprite;
 
-	Texture2D*		 mCoinSpriteSheet;
+	// Audio Player
+	Audio_Player*    mAudioPlayer; 
+
+	// Dimensions of the coins
 	unsigned int     mSingleSpriteWidthCoin;
 	unsigned int     mSingleSpriteHeightCoin;
 
+	// Coin animation data
 	const float      kTimePerCoinFrame;
 	float            mTimeRemainingTillCoinFrame;
 	unsigned int	 mCurrentFrameCoin;
 
-	float            mTimeTillAutoStart;
-	float			 mDelayBeforeGamesShow;
+	float            mTimeTillGameStarts;
 
-	const Vector2D   mLeftOptionPosition;
-	const Vector2D   mCentreOptionPosition;
-	const Vector2D   mRightOptionPosition;
-	const Vector2D   mSelectGamePosition;
-	const Vector2D	 mCoinPosition;
+	// Positions
+	const Vector2D   mMarioCoinPosition;
+	const Vector2D   mLuigiCoinPosition;
+	Vector2D         mSelectionSpriteCurrentPosition;
 
-	unsigned int     mCurrentlySelectedGame;
-	bool             mCurrentlyScrolling;
+	// Game loop variables
+	int              mCurrentlySelectedGame;
 
-	bool             mInIntro;
+	SDL_Rect         mDestRectMario, mSourceRectMario;
+	SDL_Rect         mDestRectLuigi, mSourceRectLuigi;
+
 	bool			 mPressedToStart;
 	bool			 mCoinLoopFinished;
 

@@ -13,7 +13,9 @@ public:
 	void Render() override;
 	bool Update(const float deltaTime) override;
 
-	void SetFadingState(FADING_STATE newState) { mFadingState = newState; }
+	void         SetFadingState(FADING_STATE newState) { mFadingState = newState; }
+
+	FADING_STATE GetFadingState()                const { return mFadingState; }
 
 private:
 

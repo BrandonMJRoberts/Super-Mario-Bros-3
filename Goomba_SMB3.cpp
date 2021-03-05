@@ -31,6 +31,7 @@ Goomba::Goomba(const Vector2D      spawnPosition,
 , canMove
 , canJump
 , startFacingLeft)
+
 , mTimePerFrame(timePerFrame)
 , mTimerTillDespawn(1.0f)
 , mHitsRemaining(1)

@@ -354,6 +354,11 @@ CollisionPositionalData PlayableCharacter::CheckYCollision(const Vector2D positi
 		if (mVelocity.y >= 0.0f)
 		{
 			mGrounded = true;
+
+			if (!(mCurrentMovements & PlayerMovementBitField::HOLDING_JUMP))
+			{
+				mCurrentMovements &= ~(PlayerMovementBitField::JUMPING);
+			}
 		}
 
 		// Return that there was a collision
@@ -368,6 +373,13 @@ CollisionPositionalData PlayableCharacter::CheckYCollision(const Vector2D positi
 		{
 			mJumpTimerLeway = 0.1f;
 			mGrounded       = true;
+			
+			mVelocity.y        = mJumpInitialBoost / 4.0f;
+			mCurrentMovements |= PlayerMovementBitField::JUMPING;
+		}
+		else if(!(mCurrentMovements & PlayerMovementBitField::HOLDING_JUMP))
+		{
+			mCurrentMovements &= ~(PlayerMovementBitField::JUMPING);
 		}
 
 		// Return that there was a collision
@@ -446,7 +458,8 @@ void PlayableCharacter::CalculateNewPosition(const float deltaTime, CollisionPos
 			mRealGridPosition.y = int(mRealGridPosition.y) + 0.9;
 		}
 
-		mVelocity.y = 0.0f;
+		if(mJumpTimerLeway <= 0.0f)
+			mVelocity.y = 0.0f;	
 	}
 
 	if(!xCollision.collisionOccured)

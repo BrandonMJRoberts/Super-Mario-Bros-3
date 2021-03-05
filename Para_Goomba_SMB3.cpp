@@ -31,8 +31,9 @@ ParaGoomba::ParaGoomba(const Vector2D      spawnPosition,
 , canMove
 , canJump
 , startFacingLeft)
+
 , mTimePerFrame(timePerFrame)
-, mJumpForce(3.0f)
+, mJumpForce(4.0f)
 , mJumpsCompleted(0)
 , mJumpTimer(0.15f)
 , mCurrentSpriteID(3)
@@ -40,7 +41,7 @@ ParaGoomba::ParaGoomba(const Vector2D      spawnPosition,
 , mEndSpriteID(4)
 , mTimeRemainingTillNextFrame(mTimePerFrame)
 , kTimePerJump(0.25f)
-, kTimePerJumpLoop(2.0f)
+, kTimePerJumpLoop(2.5f)
 {
 	mHitsRemaining = 2;
 	mTimeRemainingTillNextFrame = mTimePerFrame;
@@ -78,8 +79,6 @@ BaseObject* ParaGoomba::Clone(std::string data)
 
 bool ParaGoomba::Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
-	PhysicalObject::Update(deltaTime, playerPosition, interactionLayer, objectLayer);
-
 	// Animation updates
 	if (!mUpdatedStaticVariables)
 		UpdateStaticVariables(deltaTime);
@@ -125,20 +124,22 @@ void ParaGoomba::Jump()
 {
 	mGrounded = false;
 
-	mVelocity.y -= mJumpForce;
-
+	// Increase counter
 	mJumpsCompleted += 1;
 
-	if (mJumpsCompleted < 4)
+	if (mJumpsCompleted < 5)
 	{
-		mJumpTimer = kTimePerJump;
+		// Reset the timer
+		mJumpTimer       = kTimePerJump;
 
-		if (mJumpsCompleted == 3)
-			mJumpForce = 8.0f;
-		else
-		{
-			mJumpForce = 3.0f;
-		}
+		// Set the jump force
+		mJumpForce = 4.0f;
+
+		if(mJumpsCompleted == 3)
+			mJumpForce = 12.0f;
+
+		// Jump
+		mVelocity.y -= mJumpForce;
 	}
 	else
 	{
@@ -189,21 +190,25 @@ ObjectCollisionHandleData ParaGoomba::SetIsCollidedWith(TwoDimensionalCollision 
 	if (!isPlayer)
 		return ObjectCollisionHandleData();
 
-	if (mHitsRemaining > 0)
+	if (collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::DOWN)
 	{
-		mHitsRemaining -= 1;
+		if (mHitsRemaining > 0)
+		{
+			mHitsRemaining -= 1;
+
+			mCanJump = false;
+		}
+		else
+		{
+			mCanMove = false;
+
+			mCurrentSpriteID = 5;
+			mEndSpriteID = 5;
+			mStartSpriteID = 5;
+
+			return ObjectCollisionHandleData(false, false, true, false, true);
+		}
 	}
-	else
-	{
-		mCanMove = false;
-		mCanJump = false;
-
-		mEndSpriteID     = 5;
-		mStartSpriteID   = 5;
-
-		return ObjectCollisionHandleData(false, false, true, false, true);
-	}
-
 
 	return ObjectCollisionHandleData(false, false, true, false, true);
 }

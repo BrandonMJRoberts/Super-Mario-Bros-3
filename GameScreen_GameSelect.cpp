@@ -6,70 +6,86 @@
 // ---------------------------------------------------------------------------------------------- //
 
 GameScreen_GameSelect::GameScreen_GameSelect(SDL_Renderer* renderer) 
-: mMario3Game(nullptr)
-, mMarioBrosGame(nullptr)
-, mCoinSpriteSheet(nullptr)
-, mSelectionGameSprite(nullptr)
+: mMarioCoin(nullptr)
+, mLuigiCoin(nullptr)
+, mSelectionSprite(nullptr)
 
-, mSelectGamePosition(SCREEN_WIDTH_SMB3 / 2, 0)
 , mRenderer(renderer)
 
-, mLeftOptionPosition(0,         150)
-, mRightOptionPosition(double(SCREEN_WIDTH_SMB3 / 4.0f) * 3, 150)
-, mCentreOptionPosition(SCREEN_WIDTH_SMB3 / 2,               150)
-, mCoinPosition(SCREEN_WIDTH_SMB3 / 2,                       double(SCREEN_HEIGHT_SMB3 / 2) - 50.0f)
+, mMarioCoinPosition(SCREEN_WIDTH_SMB3 / 8, 250)
+, mLuigiCoinPosition((SCREEN_WIDTH_SMB3 / 8) * 5, 250)
+
+, mSelectionSpriteCurrentPosition(0, 0)
 
 , mCurrentlySelectedGame(0)
 , mCurrentFrameCoin(0)
-, mCurrentlyScrolling(false)
-, mInIntro(true)
 
 , mSingleSpriteWidthCoin(0)
 , mSingleSpriteHeightCoin(0)
 
-, mDelayBeforeGamesShow(1.1f)
 , kTimePerCoinFrame(0.1f)
-, mTimeTillAutoStart(5.0f)
 , mTimeRemainingTillCoinFrame(kTimePerCoinFrame)
 
 , mPressedToStart(false)
 , mCoinLoopFinished(false)
+
+, mFadeTransition(nullptr)
+, mAudioPlayer(nullptr)
+
+, mTimeTillGameStarts(2.0f)
 {
 	// Load in the sprites
-	mMario3Game          = new Texture2D(renderer);
-	mMarioBrosGame       = new Texture2D(renderer);
-	mSelectionGameSprite = new Texture2D(renderer);
-	mCoinSpriteSheet     = new Texture2D(renderer);
+	mMarioCoin           = new Texture2D(renderer);
+	mLuigiCoin           = new Texture2D(renderer);
+	mSelectionSprite     = new Texture2D(renderer);
 
-	mMario3Game->LoadFromFile("SDL_Mario_Project/Game Select/Super Mario 3.png");
-	mMarioBrosGame->LoadFromFile("SDL_Mario_Project/Game Select/Mario Bros.png");
-	mSelectionGameSprite->LoadFromFile("SDL_Mario_Project/Game Select/Select Game.png");
-	mCoinSpriteSheet->LoadFromFile("SDL_Mario_Project/Game Select/Coin.png");
+	mSelectionSprite->LoadFromFile("SDL_Mario_Project/Game Select/SelectionSprite.png");
+	mLuigiCoin->LoadFromFile("SDL_Mario_Project/Game Select/CoinLuigiFace.png");
+	mMarioCoin->LoadFromFile("SDL_Mario_Project/Game Select/CoinMarioFace.png");
 
-	if (mCoinSpriteSheet)
+	if (mMarioCoin)
 	{
-		mSingleSpriteWidthCoin  = mCoinSpriteSheet->GetWidth() / 4;
-		mSingleSpriteHeightCoin = mCoinSpriteSheet->GetHeight();
+		mSingleSpriteWidthCoin  = mMarioCoin->GetWidth() / 4;
+		mSingleSpriteHeightCoin = mMarioCoin->GetHeight();
 	}
 
-	mAudioPlayer = new Audio_Player();
+	mAudioPlayer    = new Audio_Player();
+
+	if (mAudioPlayer)
+		mAudioPlayer->OnNotify(SUBJECT_NOTIFICATION_TYPES::PLAY_GAME_SELECT_MUSIC, "");
+
+	mFadeTransition = new FadeInOutTransition(Vector2D(), 0.0f, "SDL_Mario_Project/Transitions/BlackFadeImage.png", renderer, FADING_STATE::IN, 200.0f);
+
+	mSourceRectMario = SDL_Rect{ 0, 0, (int)mSingleSpriteWidthCoin, (int)mSingleSpriteHeightCoin};
+	mSourceRectLuigi = SDL_Rect{ 0, 0, (int)mSingleSpriteWidthCoin, (int)mSingleSpriteHeightCoin };
+
+	mDestRectMario   = SDL_Rect{ (int)mMarioCoinPosition.x, (int)mMarioCoinPosition.y, (int)mSingleSpriteWidthCoin, (int)mSingleSpriteHeightCoin};
+	mDestRectLuigi   = SDL_Rect{ (int)mLuigiCoinPosition.x, (int)mLuigiCoinPosition.y, (int)mSingleSpriteWidthCoin, (int)mSingleSpriteHeightCoin };
+
+
+	mSelectionSpriteCurrentPosition.y = 150;
+
+	UpdateSelectionSpritePosition();
 }
 
 // ---------------------------------------------------------------------------------------------- //
 
 GameScreen_GameSelect::~GameScreen_GameSelect()
 {
-	delete mMario3Game;
-	mMario3Game = nullptr;
+	delete mMarioCoin;
+	mMarioCoin = nullptr;
 
-	delete mMarioBrosGame;
-	mMarioBrosGame = nullptr;
+	delete mLuigiCoin;
+	mLuigiCoin = nullptr;
 
-	delete mSelectionGameSprite;
-	mSelectionGameSprite = nullptr;
+	delete mSelectionSprite;
+	mSelectionSprite = nullptr;
 
-	delete mCoinSpriteSheet;
-	mCoinSpriteSheet = nullptr;
+	delete mAudioPlayer;
+	mAudioPlayer = nullptr;
+
+	delete mFadeTransition;
+	mFadeTransition = nullptr;
 
 	mRenderer = nullptr;
 }
@@ -80,31 +96,22 @@ void GameScreen_GameSelect::Render()
 {
 	SDL_RenderClear(mRenderer);
 
-	if (mInIntro)
+	if (mMarioCoin)
 	{
-		SDL_SetRenderDrawColor(mRenderer, 0x00, 0x00, 0x00, 0x00);
-
-		if (mCoinSpriteSheet)
-		{
-			SDL_Rect destRect{ int(mCoinPosition.x) - int(mSingleSpriteWidthCoin / 2), int(mCoinPosition.y) - int(mSingleSpriteHeightCoin / 2), (int)mSingleSpriteWidthCoin, (int)mSingleSpriteHeightCoin };
-			SDL_Rect sourceRect{ int(mCurrentFrameCoin * mSingleSpriteWidthCoin), 0, (int)mSingleSpriteWidthCoin, (int)mSingleSpriteHeightCoin };
-
-			mCoinSpriteSheet->Render(sourceRect, destRect, SDL_FLIP_NONE, 0.0f);
-		}
+		mMarioCoin->Render(mSourceRectMario, mDestRectMario, SDL_FLIP_NONE, 0.0f);
 	}
-	else
+
+	if (mLuigiCoin)
 	{
-		// First clear the screen
-		SDL_SetRenderDrawColor(mRenderer, 0x42, 0x71, 0xB5, 0x00);
+		mLuigiCoin->Render(mSourceRectLuigi, mDestRectLuigi, SDL_FLIP_NONE, 0.0f);
+	}
 
-			if (mMarioBrosGame)
-				mMarioBrosGame->Render(Vector2D(mLeftOptionPosition.x - (mMarioBrosGame->GetWidth() / 2), mLeftOptionPosition.y), SDL_FLIP_NONE, 0.0f);
+	if (mSelectionSprite)
+		mSelectionSprite->Render(mSelectionSpriteCurrentPosition, SDL_FLIP_NONE);
 
-			if (mMario3Game)
-				mMario3Game->Render(Vector2D(mCentreOptionPosition.x - (mMario3Game->GetWidth() / 2), mCentreOptionPosition.y), SDL_FLIP_NONE, 0.0f);
-
-			if (mSelectionGameSprite)
-				mSelectionGameSprite->Render(Vector2D(mSelectGamePosition.x - (mSelectionGameSprite->GetWidth() / 2), mSelectGamePosition.y), SDL_FLIP_NONE, 0.0f);
+	if (mFadeTransition)
+	{
+		mFadeTransition->Render();
 	}
 
 	SDL_RenderPresent(mRenderer);
@@ -114,97 +121,99 @@ void GameScreen_GameSelect::Render()
 
 GameSelectReturnData GameScreen_GameSelect::Update(float deltaTime, SDL_Event e)
 {
-	if (mInIntro)
+	if (!mFadeTransition)
+		return GameSelectReturnData();
+
+	if (mPressedToStart)
 	{
-		if (mPressedToStart)
+		if (!mCoinLoopFinished)
 		{
-			if (!mCoinLoopFinished)
+			mTimeRemainingTillCoinFrame -= deltaTime;
+
+			if (mTimeRemainingTillCoinFrame <= 0.0f)
 			{
-				mTimeRemainingTillCoinFrame -= deltaTime;
+				// Reset the time remaining
+				mTimeRemainingTillCoinFrame = kTimePerCoinFrame;
 
-				if (mTimeRemainingTillCoinFrame <= 0.0f)
-				{
-					mTimeRemainingTillCoinFrame = kTimePerCoinFrame;
-
+				// Increment the frame ID
+				if(mCurrentFrameCoin + 1 < 4)
 					mCurrentFrameCoin++;
+				else
+				{
+					mCurrentFrameCoin = 0;
+					mCoinLoopFinished = true;
 
-					if (mCurrentFrameCoin > 3)
-					{
-						mCurrentFrameCoin = 0;
-						mCoinLoopFinished = true;
-					}
+					if(mFadeTransition)
+						mFadeTransition->SetFadingState(FADING_STATE::OUT);
 				}
+
+				// Set the new sprite position
+				if (mCurrentlySelectedGame == 0)
+					mSourceRectMario.x = mSingleSpriteWidthCoin * mCurrentFrameCoin;
+				else
+					mSourceRectLuigi.x = mSingleSpriteWidthCoin * mCurrentFrameCoin;
 			}
 		}
 		else
 		{
-			mTimeTillAutoStart -= deltaTime;
+			mTimeTillGameStarts -= deltaTime;
 
-			if (mTimeTillAutoStart <= 0.0f)
+			if (mTimeTillGameStarts <= 0.0f)
 			{
-				mPressedToStart = true;
+				if (mCurrentlySelectedGame == 0)
+					return GameSelectReturnData(true, true, false);
 
-				if (mAudioPlayer)
-					mAudioPlayer->OnNotify(SUBJECT_NOTIFICATION_TYPES::GAME_SELECT_COIN_SFX, "");
-			}
-		}
-
-		if (mCoinLoopFinished)
-		{
-			mDelayBeforeGamesShow -= deltaTime;
-
-			if (mDelayBeforeGamesShow <= 0.0f)
-			{
-				mInIntro = false;
-
-				mAudioPlayer->OnNotify(SUBJECT_NOTIFICATION_TYPES::PLAY_GAME_SELECT_MUSIC, "");
+				return GameSelectReturnData(true, false, false);
 			}
 		}
 	}
 
-	switch (e.type)
+	// If the fade in is not complete then dont take any input from the user
+	if (mFadeTransition->GetFadingState() == FADING_STATE::NONE && !mPressedToStart)
 	{
+		// Handle to see if the player has done any input
+		switch (e.type)
+		{
 		case SDL_QUIT:
 			return GameSelectReturnData(false, false, true);
 		break;
 
-		if (!mCurrentlyScrolling)
-		{
-			case SDL_KEYDOWN:
-				if (mInIntro && !mPressedToStart)
-				{
-					mPressedToStart = true;
+		case SDL_KEYDOWN:
+			switch (e.key.keysym.sym)
+			{
+			case SDLK_RIGHT:
+			case SDLK_d:
+				if (mCurrentlySelectedGame == 0)
+					mCurrentlySelectedGame = 1;
 
-					if (mAudioPlayer)
-						mAudioPlayer->OnNotify(SUBJECT_NOTIFICATION_TYPES::GAME_SELECT_COIN_SFX, "");
-
-					return GameSelectReturnData();
-				}
-
-				switch (e.key.keysym.sym)
-				{
-					case SDLK_a:
-					case SDLK_LEFT:
-						ScrollSelectedGame(mCurrentlySelectedGame - 1);
-					break;
-
-					case SDLK_RIGHT:
-					case SDLK_d:
-						ScrollSelectedGame(mCurrentlySelectedGame + 1);
-					break;
-
-					case SDLK_RETURN:
-						if (!mInIntro)
-						{
-							if (mCurrentlySelectedGame == 0)
-								return GameSelectReturnData(true, true, false);
-							else if(mCurrentlySelectedGame == 1)
-								return GameSelectReturnData(true, false, false);
-						}
-					break;
-				}
+				UpdateSelectionSpritePosition();
 			break;
+
+			case SDLK_LEFT:
+			case SDLK_a:
+				if (mCurrentlySelectedGame == 1)
+					mCurrentlySelectedGame = 0;
+
+				UpdateSelectionSpritePosition();
+			break;
+
+			case SDLK_RETURN:
+				if(mAudioPlayer)
+					mAudioPlayer->OnNotify(SUBJECT_NOTIFICATION_TYPES::GAME_SELECT_COIN_SFX, "");
+
+				mPressedToStart = true;
+			break;
+
+			case SDLK_ESCAPE:
+				return GameSelectReturnData(false, false, true);
+			break;
+			}
+		break;
 		}
+	}
+	else
+	{
+		mFadeTransition->Update(deltaTime);
 	}
 
 	return GameSelectReturnData();
@@ -212,13 +221,15 @@ GameSelectReturnData GameScreen_GameSelect::Update(float deltaTime, SDL_Event e)
 
 // ---------------------------------------------------------------------------------------------- //
 
-void GameScreen_GameSelect::ScrollSelectedGame(const unsigned int optionScrollingTo)
+void GameScreen_GameSelect::UpdateSelectionSpritePosition()
 {
-	if (optionScrollingTo >= 0 && optionScrollingTo <= 1)
+	if (mCurrentlySelectedGame == 0)
 	{
-		mCurrentlySelectedGame = optionScrollingTo;
-
-		mCurrentlyScrolling = true;
+		mSelectionSpriteCurrentPosition.x = mMarioCoinPosition.x + (mSingleSpriteWidthCoin / 4);
+	}
+	else
+	{
+		mSelectionSpriteCurrentPosition.x = mLuigiCoinPosition.x + (mSingleSpriteWidthCoin / 4);
 	}
 }
 
