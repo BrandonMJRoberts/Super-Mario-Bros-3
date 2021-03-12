@@ -3,43 +3,67 @@
 #include "Constants.h"
 #include "Texture2D.h"
 
+#include "LevelMap.h"
+
 // --------------------------------------------------------------------------------------------------------- //
 
-Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D startingPosition)
+Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D startingPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, LevelMap* levelMap, const float collisionCircleRadius)
+	: mJumpForce(CHARACTER_INITIAL_JUMP_FORCE)
+	, mCollisionRadius(collisionCircleRadius)
+	, mRenderer(renderer)
+	, mVelocity(0, 0)
+	, mPosition(startingPosition)
+	, kSpritesOnWidth(spritesOnWidth)
+	, kSpritesOnHeight(spritesOnHeight)
+	, mLevelMap(levelMap)
+	, mPlayerMovementData(0)
+	, mCollisionBox(0.0f, 0.0f)
 {
-	mRenderer = renderer;
-
 	mTexture = new Texture2D(renderer);
 	if (!mTexture->LoadFromFile(imagePath))
 	{
 		std::cout << "Failed to load the character sprite." << std::endl;
 	}
+}
 
-	// Default to facing to the right
-	mFacingDirection = FACING::RIGHT;
+// --------------------------------------------------------------------------------------------------------- //
 
-	mMovingLeft  = false;
-	mMovingRight = false;
-
-	mJumping   = false;
-	mJumpForce = CHARACTER_INITIAL_JUMP_FORCE;
-	mCanJump   = false;
-
-	mCollisionRadius = 15.0f;
+Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D startingPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, LevelMap* levelMap, const Vector2D collisionBox)
+	: mJumpForce(CHARACTER_INITIAL_JUMP_FORCE)
+	, mCollisionBox(collisionBox)
+	, mRenderer(renderer)
+	, mVelocity(0, 0)
+	, mPosition(startingPosition)
+	, kSpritesOnWidth(spritesOnWidth)
+	, kSpritesOnHeight(spritesOnHeight)
+	, mLevelMap(levelMap)
+	, mCollisionRadius(0.0f)
+	, mPlayerMovementData(0)
+{
+	mTexture = new Texture2D(renderer);
+	if (!mTexture->LoadFromFile(imagePath))
+	{
+		std::cout << "Failed to load the character sprite." << std::endl;
+	}
 }
 
 // --------------------------------------------------------------------------------------------------------- //
 
 Character::~Character()
 {
-	mRenderer = NULL;
+	delete mTexture;
+	mTexture = nullptr;
+
+	mRenderer = nullptr;
+
+	mLevelMap = nullptr;
 }
 
 // --------------------------------------------------------------------------------------------------------- //
 
 void Character::Render()
 {
-	if(mFacingDirection == FACING::LEFT)
+	if(mVelocity.x < 0.0f)
 		mTexture->Render(mPosition, SDL_FLIP_HORIZONTAL, 0.0f);
 	else
 		mTexture->Render(mPosition, SDL_FLIP_NONE, 0.0f);
@@ -48,27 +72,44 @@ void Character::Render()
 
 // --------------------------------------------------------------------------------------------------------- //
 
+void Character::HandleInput(SDL_Event e)
+{
+	switch (e.type)
+	{
+	case SDL_KEYDOWN:
+		switch (e.key.keysym.sym)
+		{
+		case SDLK_d:
+			WalkRight();
+		break;
+
+		case SDLK_a:
+			WalkLeft();
+		break;
+
+		case SDLK_w:
+			if(!(mPlayerMovementData & PlayerMovementData::JUMPING_SMB1))
+				Jump();
+		break;
+		}
+	break;
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------- //
+
 void Character::Update(float deltaTime, SDL_Event e)
 {
-	if (mJumping)
-	{
-		Jump(deltaTime);
-	}
-	else
-	{
-		if (mPosition.y >= SCREEN_HEIGHT - 64)
-		{
-			mPosition.y = SCREEN_HEIGHT - 64;
-			mCanJump = true;
-		}
-		else if (mPosition.y < SCREEN_HEIGHT - 64)
-			AddGravity(deltaTime);
-	}
+	HandleInput(e);
 
-	if (mMovingLeft)
-		MoveLeft(deltaTime);
-	else if (mMovingRight)
-		MoveRight(deltaTime);
+	UpdatePhysics(deltaTime);
+}
+
+// --------------------------------------------------------------------------------------------------------- //
+
+void Character::UpdatePhysics(const float deltaTime)
+{
+
 }
 
 // --------------------------------------------------------------------------------------------------------- //
@@ -80,52 +121,35 @@ void Character::SetPosition(Vector2D position)
 
 // --------------------------------------------------------------------------------------------------------- //
 
-void Character::MoveLeft(float deltaTime)
+void Character::Jump()
 {
-	mFacingDirection = FACING::LEFT;
+	// Set that the player is now jumping
+	mPlayerMovementData |= PlayerMovementData::JUMPING_SMB1;
 
-	mPosition.x -= (CHARACTER_MOVEMENT_SPEED * deltaTime);
+	// Apply the jump force
+	mVelocity.y          = mJumpForce;
 }
 
 // --------------------------------------------------------------------------------------------------------- //
 
-void Character::MoveRight(float deltaTime)
+void Character::WalkRight()
 {
-	mFacingDirection = FACING::RIGHT;
+	// Set that the player is now jumping
+	mPlayerMovementData |= PlayerMovementData::WALKING_RIGHT_SMB1;
 
-	mPosition.x += (CHARACTER_MOVEMENT_SPEED * deltaTime);
+	// Apply the jump force
+	mVelocity.x = 3.0f;
 }
 
 // --------------------------------------------------------------------------------------------------------- //
 
-void Character::AddGravity(float deltaTime)
+void Character::WalkLeft()
 {
-	mPosition.y -= CHARACTER_GRAVITY * deltaTime;
-}
+	// Set that the player is now jumping
+	mPlayerMovementData |= PlayerMovementData::WALKING_LEFT_SMB1;
 
-// --------------------------------------------------------------------------------------------------------- //
-
-void Character::Jump(float deltaTime)
-{
-	if (!mJumping)
-	{
-		mJumpForce = CHARACTER_INITIAL_JUMP_FORCE;
-		mJumping   = true;
-		mCanJump   = false;
-	}
-	else
-	{
-		mPosition.y -= mJumpForce * deltaTime;
-
-		mJumpForce -= CHARACTER_JUMP_FORCE_DECREMENT * deltaTime;
-
-		if (mJumpForce <= 0.0f)
-		{
-			mJumping   = false;
-			mJumpForce = 0.0f;
-			mCanJump   = true;
-		}
-	}
+	// Apply the jump force
+	mVelocity.x = -3.0f;
 }
 
 // --------------------------------------------------------------------------------------------------------- //

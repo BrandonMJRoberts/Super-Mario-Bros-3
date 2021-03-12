@@ -168,12 +168,6 @@
     <ClCompile Include="Character.cpp">
       <Filter>Source Files\Mario Bros 1\Characters</Filter>
     </ClCompile>
-    <ClCompile Include="CharacterMario.cpp">
-      <Filter>Source Files\Mario Bros 1\Characters</Filter>
-    </ClCompile>
-    <ClCompile Include="CharacterLuigi.cpp">
-      <Filter>Source Files\Mario Bros 1\Characters</Filter>
-    </ClCompile>
     <ClCompile Include="Collisions.cpp">
       <Filter>Source Files\Mario Bros 1</Filter>
     </ClCompile>
@@ -315,6 +309,9 @@
     <ClCompile Include="VisualTransitionHandler.cpp">
       <Filter>Source Files\Scene Transitions</Filter>
     </ClCompile>
+    <ClCompile Include="LevelMap.cpp">
+      <Filter>Source Files\Mario Bros 1</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="SDL2\SDL2.lib" />
@@ -341,13 +338,7 @@
     <ClInclude Include="Constants.h">
       <Filter>Header Files\Mario Bros 1</Filter>
     </ClInclude>
-    <ClInclude Include="CharacterMario.h">
-      <Filter>Header Files\Mario Bros 1\Characters</Filter>
-    </ClInclude>
     <ClInclude Include="Character.h">
-      <Filter>Header Files\Mario Bros 1\Characters</Filter>
-    </ClInclude>
-    <ClInclude Include="CharacterLuigi.h">
       <Filter>Header Files\Mario Bros 1\Characters</Filter>
     </ClInclude>
     <ClInclude Include="Commons_SMB3.h">
@@ -511,6 +502,9 @@
     </ClInclude>
     <ClInclude Include="VisualTransitionHandler.h">
       <Filter>Header Files\Mario Bros 3\Scene Transitions</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelMap.h">
+      <Filter>Header Files\Mario Bros 1</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

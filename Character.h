@@ -6,45 +6,66 @@
 #include "Commons.h"
 #include "Game_Maths.h"
 
+class LevelMap;
+
+// ---------------------------------------------------------------------------- //
+
+enum PlayerMovementData
+{
+	NONE_SMB1           = 0,
+	WALKING_LEFT_SMB1   = 1 << 0,
+	WALKING_RIGHT_SMB1  = 1 << 1,
+	JUMPING_SMB1        = 1 << 2,
+	DEAD_SMB1           = 1 << 3
+};
+
+// ---------------------------------------------------------------------------- //
+
 class Texture2D;
 
-class Character abstract
+class Character final
 {
 public:
 	Character() = delete;
-	Character(SDL_Renderer* renderer, std::string imagePath, Vector2D startingPosition);
+	Character(SDL_Renderer* renderer, std::string imagePath, Vector2D startingPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, LevelMap* levelMap, const float collisionCircleRadius);
+	Character(SDL_Renderer* renderer, std::string imagePath, Vector2D startingPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, LevelMap* levelMap, const Vector2D collisionBox);
 	~Character();
 
-	virtual void Render();
-	virtual void Update(float deltaTime, SDL_Event e);
+	void          Render();
+	void          Update(float deltaTime, SDL_Event e);
 
-	void     SetPosition(Vector2D newPos);
-	Vector2D GetPosition() { return mPosition; }
+	void          SetPosition(Vector2D newPos);
+	Vector2D      GetPosition()        const { return mPosition; }
 
-	double GetCollisionRadius() { return mCollisionRadius; }
+	double        GetCollisionRadius() const { return mCollisionRadius; }
+	Vector2D      GetCollisionBox()    const { return mCollisionBox; }
 
 protected:
-	void MoveLeft(float deltaTime);
-	void MoveRight(float deltaTime);
+	void          Jump();
+	void          WalkRight();
+	void          WalkLeft();
 
-	void AddGravity(float deltaTime);
-	void Jump(float deltaTime);
+	void          HandleInput(SDL_Event e);
+	void          UpdatePhysics(const float deltaTime);
 
-	SDL_Renderer* mRenderer;
-	Vector2D      mPosition;
-	Texture2D*    mTexture;
+	// General data
+	SDL_Renderer*      mRenderer;
+	Vector2D           mPosition;
+	Texture2D*         mTexture;
+	float              mJumpForce;
 
-	bool    mMovingLeft;
-	bool    mMovingRight;
+	// Collision Data
+	Vector2D           mCollisionBox;
+	double             mCollisionRadius;
 
-	bool    mJumping;
-	bool    mCanJump;
-	float   mJumpForce;
+	Vector2D           mVelocity;
 
-	FACING  mFacingDirection;
+	const unsigned int kSpritesOnWidth;
+	const unsigned int kSpritesOnHeight;
 
-	double mCollisionRadius;
+	LevelMap*          mLevelMap;
 
+	unsigned int       mPlayerMovementData;
 };
 
 #endif _CHARACTER_H_

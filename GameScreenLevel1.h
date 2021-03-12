@@ -6,8 +6,8 @@
 #include <SDL.h>
 
 class Texture2D;
-class CharacterMario;
-class CharacterLuigi;
+class Character;
+class LevelMap;
 
 class GameScreenLevel1 final : public GameScreen
 {
@@ -17,12 +17,14 @@ public:
 
 	void Render() override;
 	void Update(float deltaTime, SDL_Event e) override;
-private:
-	Texture2D* mBackgroundTexture;
-	CharacterMario* mMario;
-	CharacterLuigi* mLuigi;
 
-	bool SetUpLevel();
+private:
+	Texture2D*      mBackgroundTexture;
+	Character*      mMario;
+	Character*      mLuigi;
+	LevelMap*       mLevelMap;
+
+	bool            SetUpLevel();
 };
 
 
