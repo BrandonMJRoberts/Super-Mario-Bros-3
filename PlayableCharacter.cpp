@@ -150,8 +150,8 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 	}
 
 	// Update the jumping leway
-	if(mJumpTimerLeway > 0.0f)
-		mJumpTimerLeway -= deltaTime;
+	//if(mJumpTimerLeway > 0.0f)
+	//	mJumpTimerLeway -= deltaTime;
 
 	// First handle input to see if the player wants to move in a direction
 	HandleMovementInput(e);
@@ -371,12 +371,15 @@ CollisionPositionalData PlayableCharacter::CheckYCollision(const Vector2D positi
 	{
 		if (returnData1.givesJump || returnData2.givesJump)
 		{
-			mJumpTimerLeway = 0.0f;
 			mGrounded       = false;
 			
 			// Give the slight jump boost 
 			mVelocity.y        = mJumpInitialBoost * 0.75;
-			mCurrentMovements |= PlayerMovementBitField::JUMPING;
+
+			if (mCurrentMovements & PlayerMovementBitField::JUMPING)
+				mCurrentMovements |= PlayerMovementBitField::HOLDING_JUMP;
+			else
+				mCurrentMovements |= PlayerMovementBitField::JUMPING;
 		}
 		else if(!(mCurrentMovements & PlayerMovementBitField::HOLDING_JUMP))
 		{
@@ -766,16 +769,23 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 	}
 
 	// If grounded then set that the player is jumping
-	if (mCurrentMovements & PlayerMovementBitField::JUMPING && (mGrounded || mJumpTimerLeway > 0.0f))
+	if (mCurrentMovements & PlayerMovementBitField::JUMPING && mGrounded)
 	{
-		mGrounded = false;
+		//if (mGrounded)
+		//{
+			mGrounded = false;
 
-		// Give the minimum jump height of boost upwards
-		mVelocity.y = mJumpInitialBoost;
+			// Give the minimum jump height of boost upwards
+			mVelocity.y = mJumpInitialBoost;
 
-		mJumpTimerLeway = 0.0f;
+			mJumpTimerLeway = 0.0f;
 
-		Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_JUMPED, "");
+			Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_JUMPED, "");
+		//}
+		//else if (mJumpTimerLeway > 0.0f)
+		//{
+		//	mCurrentMovements &= PlayerMovementBitField::HOLDING_JUMP;
+		//}
 	}
 
 	if (mGrounded 

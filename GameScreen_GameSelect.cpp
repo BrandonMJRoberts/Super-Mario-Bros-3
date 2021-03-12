@@ -32,7 +32,7 @@ GameScreen_GameSelect::GameScreen_GameSelect(SDL_Renderer* renderer)
 , mFadeTransition(nullptr)
 , mAudioPlayer(nullptr)
 
-, mTimeTillGameStarts(2.0f)
+, mTimeTillGameStarts(1.0f)
 {
 	// Load in the sprites
 	mMarioCoin           = new Texture2D(renderer);
@@ -54,7 +54,7 @@ GameScreen_GameSelect::GameScreen_GameSelect(SDL_Renderer* renderer)
 	if (mAudioPlayer)
 		mAudioPlayer->OnNotify(SUBJECT_NOTIFICATION_TYPES::PLAY_GAME_SELECT_MUSIC, "");
 
-	mFadeTransition = new FadeInOutTransition(Vector2D(), 0.0f, "SDL_Mario_Project/Transitions/BlackFadeImage.png", renderer, FADING_STATE::IN, 200.0f);
+	mFadeTransition = new FadeInOutTransition(Vector2D(), 0.0f, "SDL_Mario_Project/Transitions/BlackFadeImage.png", renderer, FADING_STATE::IN, 500.0f);
 
 	mSourceRectMario = SDL_Rect{ 0, 0, (int)mSingleSpriteWidthCoin, (int)mSingleSpriteHeightCoin};
 	mSourceRectLuigi = SDL_Rect{ 0, 0, (int)mSingleSpriteWidthCoin, (int)mSingleSpriteHeightCoin };
