@@ -291,8 +291,17 @@ bool InteractableLayer::GetIsCollision(unsigned int row, unsigned int col)
 	if (row < mLevelHeight && row >= 0 &&
 		col < mLevelWidth  && col >= 0)
 	{
-		return (mInteractionLayerDataStore[row][col] != 150);
+		// First get what the name of this colidable is
+		if (mInteractionLayerDataStore[row][col] == 150)
+			return false;
+
+
+		std::string nameOfCollision = mListOfObjectUsedInInteractionLayer[mInteractionLayerDataStore[row][col]];
+
+		return true;
 	}
 	else
 		return false;
 }
+
+// --------------------------------------------------------------------------------------------------------------------------- //

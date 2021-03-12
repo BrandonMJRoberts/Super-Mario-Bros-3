@@ -285,7 +285,7 @@ CollisionPositionalData PlayableCharacter::HandleYCollisions(const float deltaTi
 	{
 		CollisionPositionalData returnData = CheckYCollision(leftPos, rightPos, interactionLayer, objectLayer);
 
-		if (returnData.collisionOccured)
+		if (returnData.collisionOccured && mVelocity.y >= 0.0f)
 		{
 			mCurrentMovements &= ~(PlayerMovementBitField::HOLDING_JUMP);
 
@@ -371,10 +371,11 @@ CollisionPositionalData PlayableCharacter::CheckYCollision(const Vector2D positi
 	{
 		if (returnData1.givesJump || returnData2.givesJump)
 		{
-			mJumpTimerLeway = 0.1f;
-			mGrounded       = true;
+			mJumpTimerLeway = 0.0f;
+			mGrounded       = false;
 			
-			mVelocity.y        = mJumpInitialBoost / 4.0f;
+			// Give the slight jump boost 
+			mVelocity.y        = mJumpInitialBoost * 0.75;
 			mCurrentMovements |= PlayerMovementBitField::JUMPING;
 		}
 		else if(!(mCurrentMovements & PlayerMovementBitField::HOLDING_JUMP))
@@ -1150,6 +1151,12 @@ void PlayableCharacter::UpdateAnimationsSmallMario(PlayerMovementBitField newMov
 	case PlayerMovementBitField::RUNNING:
 		if (goingInto)
 		{
+			if (mGrounded && !(mCurrentMovements & PlayerMovementBitField::MOVING_LEFT || mCurrentMovements & PlayerMovementBitField::MOVING_RIGHT))
+			{
+				UpdateAnimationsSmallMario(PlayerMovementBitField::NONE, true);
+				break;
+			}
+
 			if (!(mCurrentMovements & PlayerMovementBitField::JUMPING) && (mCurrentMovements & PlayerMovementBitField::MOVING_LEFT || mCurrentMovements & PlayerMovementBitField::MOVING_RIGHT))
 			{
 				mAnimationCurrentState = PlayerMovementBitField::RUNNING;
