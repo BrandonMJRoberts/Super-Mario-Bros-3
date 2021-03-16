@@ -60,7 +60,7 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , mGrounded(false)
 , mHasControl(true)
 
-, mDeathAnimationTime(6.0f)
+, mDeathAnimationTime(4.5f)
 , mJumpLewayTimer(0.0f)
 , mForcedMovementDistanceTravelled(0.0f)
 
@@ -649,6 +649,9 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 
 	if (mCurrentMovements & PlayerMovementBitField::RUNNING && abs(mVelocity.x) > kBaseMaxHorizontalSpeed)
 	{
+		if(mAnimationCurrentState != PlayerMovementBitField::RUNNING)
+			HandleChangeInAnimations(PlayerMovementBitField::RUNNING, true);
+
 		multiplier = 0.7f;
 	}
 
@@ -1062,7 +1065,7 @@ void PlayableCharacter::UpdateAnimationsSmallMario(PlayerMovementBitField newMov
 		if (goingInto)
 		{
 			// if the player is running then go into the sprint jump animation
-			if (mCurrentMovements & PlayerMovementBitField::RUNNING)
+			if (mCurrentMovements & PlayerMovementBitField::RUNNING && abs(mVelocity.x) > kBaseMaxHorizontalSpeed)
 			{
 				mStartFrame = 5;
 				mEndFrame   = 5;
@@ -1181,12 +1184,16 @@ void PlayableCharacter::UpdateAnimationsSmallMario(PlayerMovementBitField newMov
 				break;
 			}
 
-			if (!(mCurrentMovements & PlayerMovementBitField::JUMPING) && (mCurrentMovements & PlayerMovementBitField::MOVING_LEFT || mCurrentMovements & PlayerMovementBitField::MOVING_RIGHT))
+			// If not running and moving left or right, and your speed is high enough then go into the sprint animation
+			if (   !(mCurrentMovements & PlayerMovementBitField::JUMPING) 
+				&&  (mCurrentMovements & PlayerMovementBitField::MOVING_LEFT || mCurrentMovements & PlayerMovementBitField::MOVING_RIGHT) 
+				&& abs(mVelocity.x) > kBaseMaxHorizontalSpeed
+				&& mGrounded)
 			{
 				mAnimationCurrentState = PlayerMovementBitField::RUNNING;
 
-				mStartFrame = 3;
-				mEndFrame   = 4;
+				mStartFrame   = 3;
+				mEndFrame     = 4;
 				mCurrentFrame = mStartFrame;
 			}
 		}
