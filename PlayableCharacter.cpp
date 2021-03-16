@@ -60,7 +60,8 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , mGrounded(false)
 , mHasControl(true)
 
-, mJumpTimerLeway(0.0f)
+, mDeathAnimationTime(6.0f)
+, mJumpLewayTimer(0.0f)
 , mForcedMovementDistanceTravelled(0.0f)
 
 , mExitingPipe(false)
@@ -141,29 +142,36 @@ void PlayableCharacter::Render()
 
 void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2D levelBounds, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
-	// If the player has no control then just dont change anything
-	if (!mHasControl)
+	if (mIsAlive)
 	{
-		ForcedMovementUpdate(deltaTime);
+		// If the player has no control then just dont change anything
+		if (!mHasControl)
+		{
+			ForcedMovementUpdate(deltaTime);
 
-		return;
+			return;
+		}
+
+		// First handle input to see if the player wants to move in a direction
+		HandleMovementInput(e);
+
+		// Now update the player's physics
+		UpdatePhysics(deltaTime);
+
+		// Check to see if there were any collisions in the new position to move to
+		CollisionPositionalData collisionOnX = HandleXCollisions(deltaTime, interactionLayer, objectLayer);
+		CollisionPositionalData collisionOnY = HandleYCollisions(deltaTime, interactionLayer, objectLayer);
+
+		// Pass through the collision info into the positional calculations
+		CalculateNewPosition(deltaTime, collisionOnX, collisionOnY);
+
+		// Update the player's animations
+		UpdateAnimations(deltaTime);
 	}
-
-	// First handle input to see if the player wants to move in a direction
-	HandleMovementInput(e);
-
-	// Now update the player's physics
-	UpdatePhysics(deltaTime);
-
-	// Check to see if there were any collisions in the new position to move to
-	CollisionPositionalData collisionOnX = HandleXCollisions(deltaTime, interactionLayer, objectLayer);
-	CollisionPositionalData collisionOnY = HandleYCollisions(deltaTime, interactionLayer, objectLayer);
-
-	// Pass through the collision info into the positional calculations
-	CalculateNewPosition(deltaTime, collisionOnX, collisionOnY);
-
-	// Update the player's animations
-	UpdateAnimations(deltaTime);
+	else
+	{
+		mDeathAnimationTime -= deltaTime;
+	}
 }
 
 // ----------------------------------------------------- //
@@ -441,8 +449,19 @@ void PlayableCharacter::CalculateNewPosition(const float deltaTime, CollisionPos
 	// Check for bounds
 	if (newRealGridPos.y <= 0.0f)
 		newRealGridPos.y = 0.0f;
-	else if (newRealGridPos.y >= mLevelBounds.y + 2)
-		newRealGridPos.y = mLevelBounds.y + 2;
+	else if (newRealGridPos.y >= mLevelBounds.y + 1.7f)
+	{
+		if (mIsAlive)
+		{
+			// Then mario has gone off screen and dies
+			mHasControl = false;
+			mIsAlive    = false;
+
+			Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_DIED, "");
+		}
+
+		//newRealGridPos.y = mLevelBounds.y + 2;
+	}
 
 	if (newRealGridPos.x <= 0.0f)
 		newRealGridPos.x = 0.0f;
@@ -463,7 +482,7 @@ void PlayableCharacter::CalculateNewPosition(const float deltaTime, CollisionPos
 			mRealGridPosition.y = int(mRealGridPosition.y) + 0.9;
 		}
 
-		if(mJumpTimerLeway <= 0.0f)
+		if(mJumpLewayTimer <= 0.0f)
 			mVelocity.y = 0.0f;	
 	}
 
@@ -776,7 +795,7 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 		// Give the minimum jump height of boost upwards
 		mVelocity.y     = mJumpInitialBoost;
 
-		mJumpTimerLeway = 0.0f;
+		mJumpLewayTimer = 0.0f;
 
 		Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_JUMPED, "");
 	}
@@ -891,6 +910,8 @@ void PlayableCharacter::SpawnIntoNewArea(const Vector2D newPos, const Vector2D n
 	// Now calculate the starting render reference point
 	CalculateInitialRenderReferencePoint();
 
+	mIsAlive = true;
+
 	if (pipeTransition)
 	{
 		mForceMovementInDirectionSet     = true;
@@ -916,7 +937,7 @@ void PlayableCharacter::SpawnIntoNewArea(const Vector2D newPos, const Vector2D n
 		break;
 		}
 
-		SetEnteringPipe(mForcedMovementDirection);
+		Notify(SUBJECT_NOTIFICATION_TYPES::EXIT_PIPE, "");
 
 		mExitingPipe = true;
 	}
@@ -1377,6 +1398,8 @@ void PlayableCharacter::SetEnteringPipe(MOVEMENT_DIRECTION direction)
 	mForceMovementInDirectionSet = true;
 
 	mForcedMovementDirection = direction;
+
+	Notify(SUBJECT_NOTIFICATION_TYPES::ENTERING_PIPE, "");
 }
 
 // ----------------------------------------------------- //

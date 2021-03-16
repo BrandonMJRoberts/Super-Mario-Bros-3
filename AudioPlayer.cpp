@@ -276,6 +276,13 @@ void Audio_Player::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string
 		SetMainLevelMusicTrack("SDL_Mario_Project/Audio/Music/Game Select.mp3");
 		PlayMainLevelMusic();
 	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::PLAYER_DIED:
+		RemoveAllMusicTracks();
+		PauseAllSFX();
+
+		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/1-Down.wav");
+	break;
 	}
 }
 

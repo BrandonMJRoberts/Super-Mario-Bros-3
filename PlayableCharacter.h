@@ -33,6 +33,9 @@ public:
 
 	bool           GetIsExitingPipe() const { return mExitingPipe; }
 
+	bool           GetIsAlive()       const { return mIsAlive; }
+	bool           GetShouldDeathTransition() const { return (!mIsAlive && (mDeathAnimationTime < 0.0f)); }
+
 private:
 	void HandleMovementInput(SDL_Event e);
 
@@ -115,7 +118,8 @@ private:
 
 	unsigned int mCurrentMovements;
 
-	float        mJumpTimerLeway;
+	float        mJumpLewayTimer;
+	float        mDeathAnimationTime;
 
 	PlayerMovementBitField mAnimationCurrentState;
 

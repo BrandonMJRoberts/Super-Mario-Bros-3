@@ -233,7 +233,7 @@ void HUD_Display::Render()
 
 void HUD_Display::Update(const float deltaTime)
 {
-	if (mTimerCounting)
+	if (mTimerCounting && !mPaused)
 	{
 		if (mTimeRemaming > 0.0f)
 			mTimeRemaming -= deltaTime;
@@ -303,7 +303,7 @@ void HUD_Display::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string 
 	return;
 
 	case SUBJECT_NOTIFICATION_TYPES::COIN_COLLECTED:
-		mCurrentScore += 100;
+		mCurrentScore      += 100;
 		mCurrentMoneyCount += 1;
 	break;
 
@@ -325,6 +325,12 @@ void HUD_Display::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string 
 
 	case SUBJECT_NOTIFICATION_TYPES::EXIT_PIPE:
 		mPaused = false;
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::PLAYER_DIED:
+		mPaused = true;
+
+		mLivesRemaining--;
 	break;
 	}
 }

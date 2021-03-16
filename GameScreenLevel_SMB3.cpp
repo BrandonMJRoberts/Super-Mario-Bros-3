@@ -168,7 +168,7 @@ ReturnDataFromGameScreen GameScreenLevel_SMB3::Update(const float deltaTime, SDL
 		Area_Transition_Data returnData = mAreas[mCurrentLevelAreaID]->Update(deltaTime, e, mPlayer);
 
 		// Check to see if the level has been completed
-		if (returnData.goToWorldMap)
+		if (returnData.goToWorldMap || (mPlayer && mPlayer->GetShouldDeathTransition()))
 		{
 			if(returnData.LevelComplete)
 				return ReturnDataFromGameScreen(SCREENS_SMB3::WORLD_MAP, "COMPLETE");
