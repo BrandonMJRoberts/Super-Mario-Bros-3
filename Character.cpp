@@ -98,18 +98,37 @@ void Character::HandleInput(SDL_Event e)
 
 // --------------------------------------------------------------------------------------------------------- //
 
+void Character::ApplyMovement(const float deltaTime)
+{
+	mPosition += (mVelocity * deltaTime);
+}
+
+// --------------------------------------------------------------------------------------------------------- //
+
 void Character::Update(float deltaTime, SDL_Event e)
 {
 	HandleInput(e);
 
 	UpdatePhysics(deltaTime);
+
+	ApplyMovement(deltaTime);
 }
 
 // --------------------------------------------------------------------------------------------------------- //
 
 void Character::UpdatePhysics(const float deltaTime)
 {
+	// First check for collisions
+	if(mLevelMap->GetTileAt(mPosition.x + (mVelocity.x * deltaTime), mPosition.y) != 0)
+	{
+		// There is a collision to the right of the player
 
+	}
+
+	//if()
+
+	// Now apply the change in velocity based on those collisions
+	mVelocity.y -= (CHARACTER_GRAVITY * deltaTime);
 }
 
 // --------------------------------------------------------------------------------------------------------- //

@@ -47,6 +47,7 @@ protected:
 
 	void          HandleInput(SDL_Event e);
 	void          UpdatePhysics(const float deltaTime);
+	void          ApplyMovement(const float deltaTime);
 
 	// General data
 	SDL_Renderer*      mRenderer;
