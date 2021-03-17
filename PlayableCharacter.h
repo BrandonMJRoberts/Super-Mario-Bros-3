@@ -145,6 +145,9 @@ private:
 	// Time for the death animation to play out before going back to the main menu
 	float              mDeathAnimationTime;
 
+	float              mPMeterFillAmount;
+	const float        kPMeterFillSpeed;
+
 	// forced transition movement
 	const float        kForcedMovementSpeed;
 	float              mForcedMovementDistanceTravelled;

@@ -155,7 +155,9 @@ Area_Transition_Data LevelAreas::Update(const float deltaTime, SDL_Event e, Play
 	if (mObjectLayer && player)
 	{
 		if (mObjectLayer->GetLevelEndCollected())
+		{
 			player->SetLevelOver();
+		}
 
 		if (player->GetIsAlive())
 		{

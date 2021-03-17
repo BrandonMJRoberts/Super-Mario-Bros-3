@@ -35,13 +35,13 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , mCollisionBoxOffset(0.0f, 0.0f)
 
 , kMaxHorizontalSpeedWalking(5.0f)
-, kMaxHorizontalSpeedRunning(8.5f)
+, kMaxHorizontalSpeedRunning(10.0f)
 , kForcedMovementSpeed(1.8f)
 
 , kFrictionMultiplier(9.0f)
 
 , kJumpHeldAccelerationDepreciationRate(15.0f)
-, kJumpInitialBoost(-10.0f)
+, kJumpInitialBoost(-14.0f)
 , kJumpHeldInitialBoost(-10.0f)
 , mJumpHeldCurrentBoost(0.0f)
 
@@ -65,7 +65,10 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , mDeathAnimationTime(4.5f)
 , mForcedMovementDistanceTravelled(0.0f)
 
+, mPMeterFillAmount(0.0f)
+
 , mExitingPipe(false)
+, kPMeterFillSpeed(0.25f)
 {
 	// Load in the sprite sheet for this character
 	LoadInCorrectSpriteSheet();
@@ -1068,7 +1071,6 @@ void PlayableCharacter::UpdatePhysics(const float deltaTime)
 	if (   mCurrentMovements & PlayerMovementBitField::MOVING_RIGHT 
 		|| mCurrentMovements & PlayerMovementBitField::MOVING_LEFT)
 	{
-		float multiplier = 1.0f;
 		double speed     = 15.0;
 
 		// Running check
@@ -1079,14 +1081,14 @@ void PlayableCharacter::UpdatePhysics(const float deltaTime)
 				HandleChangeInAnimations(PlayerMovementBitField::RUNNING, true);
 
 			// Set the multipler to be less as the net acceleration is going to be more
-			multiplier = 0.7f;
+			speed = 12.0f;
 		}
 
 		// Set the acceleration based on the player's current moving direction
 		if(mCurrentMovements & PlayerMovementBitField::MOVING_RIGHT)
-			mAcceleration.x = speed * multiplier;
+			mAcceleration.x = speed;
 		else if(mCurrentMovements & PlayerMovementBitField::MOVING_LEFT)
-			mAcceleration.x = -speed * multiplier;
+			mAcceleration.x = -speed;
 	}
 	else
 	{
@@ -1147,7 +1149,27 @@ void PlayableCharacter::UpdatePhysics(const float deltaTime)
 	// ------------------------------------------------------------------------------------------------------------------------ 
 
 	// Update the player's animation speed based on how fast they are current moving on the x
-	mTimePerFrame = kBaseTimePerFrame - ((abs(mVelocity.x) / kMaxHorizontalSpeedRunning) * kBaseTimePerFrame);
+	mTimePerFrame = float(std::max(kBaseTimePerFrame - ((abs(mVelocity.x) / kMaxHorizontalSpeedRunning) * kBaseTimePerFrame), 0.06));
+
+	// Make sure that the P-Meter is filling up whilst the player is running
+	if (mVelocity.x > kMaxHorizontalSpeedWalking)
+	{
+		mPMeterFillAmount += (deltaTime * kPMeterFillSpeed);
+
+		if (mPMeterFillAmount > 1.0f)
+			mPMeterFillAmount = 1.0f;
+	}
+	else
+	{
+		mPMeterFillAmount -= (deltaTime * kPMeterFillSpeed);
+
+		if (mPMeterFillAmount < 0.0f)
+			mPMeterFillAmount = 0.0f;
+	}
+
+	Notify(SUBJECT_NOTIFICATION_TYPES::UPDATE_P_METER, std::to_string(mPMeterFillAmount));
+
+	// ------------------------------------------------------------------------------------------------------------------------ 
 
 	// Output the player's current velocity
 	std::cout << "X: " << mVelocity.x << "\t Y :" << mVelocity.y << std::endl;

@@ -28,6 +28,7 @@ LevelEndObject::LevelEndObject(const Vector2D      spawnPosition,
 	, mCollisionBoxOffset(0.25f, 0.25f)
 	, mFlipFrameDirection(false)
 	, mSurroundingBoxPosition(spawnPosition)
+	, mCollected(false)
 {
 	if (mSurroundingSprite == nullptr)
 	{
@@ -98,7 +99,7 @@ bool LevelEndObject::Update(const float deltaTime, const Vector2D playerPosition
 	// Move the object upwards offscreen
 	if (mCollected)
 	{
-		mCurrentPosition.y -= 10.0f * deltaTime;
+		mCurrentPosition.y -= 10.0 * deltaTime;
 	}
 
 	if (!mUpdatedStaticVariables)
@@ -181,6 +182,7 @@ ObjectCollisionHandleData LevelEndObject::SetIsCollidedWith(TwoDimensionalCollis
 	}
 
 	Notify(SUBJECT_NOTIFICATION_TYPES::LEVEL_CLEAR, "");
+	Notify(SUBJECT_NOTIFICATION_TYPES::ADD_END_CARD, std::to_string(mCurrentFrameID));
 
 	return ObjectCollisionHandleData(false, true, false, true, false);
 }

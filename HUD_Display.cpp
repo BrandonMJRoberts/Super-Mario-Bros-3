@@ -163,7 +163,7 @@ void HUD_Display::Render()
 
 		mDestRectPlaceHolder   = SDL_Rect{ (int)mCompletePMeterOffset.x, (int)mCompletePMeterOffset.y, mCompletePMeterSprite->GetWidth() / 2, mCompletePMeterSprite->GetHeight() };
 
-		if (mPMeterFillAmount == 6)
+		if (mPMeterFillAmount == 7)
 			mSourceRectPlaceHolder.x = mCompletePMeterSprite->GetWidth() / 2;
 		else
 			mSourceRectPlaceHolder.x = 0;
@@ -297,9 +297,10 @@ void HUD_Display::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string 
 	return;
 
 	case SUBJECT_NOTIFICATION_TYPES::UPDATE_P_METER:
-		unsigned int newValue;
-		dataLine >> newValue;
-		mPMeterFillAmount = newValue;
+		float fillAmountFraction;
+		dataLine >> fillAmountFraction;
+
+		mPMeterFillAmount = int(fillAmountFraction * 7.0f);
 	return;
 
 	case SUBJECT_NOTIFICATION_TYPES::COIN_COLLECTED:
