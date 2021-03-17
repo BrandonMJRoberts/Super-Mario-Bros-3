@@ -20,27 +20,31 @@ public:
 	void Render();
 	void Update(const float deltaTime, SDL_Event e, const Vector2D levelBounds, InteractableLayer* interactionLayer, ObjectLayer* objectLayer);
 
-	const Vector2D GetRealGridPosition()     const { return mRealGridPosition; }
-	const Vector2D GetScreenGridPosition()   const { return mScreenGridPosition; }
+	// Getters
+	const Vector2D GetRealGridPosition()      const { return mRealGridPosition; }
+	const Vector2D GetScreenGridPosition()    const { return mScreenGridPosition; }
 
-	const Vector2D GetRenderReferencePoint() const { return mRenderRefencePoint; }
+	const Vector2D GetRenderReferencePoint()  const { return mRenderRefencePoint; }
 
-	void           SpawnIntoNewArea(const Vector2D newPos, const Vector2D newLevelBounds, bool pipeTransition);
+	bool           GetIsExitingPipe()         const { return mExitingPipe; }
 
-	void           SetLevelOver() { mHasControl = false; }
+	bool           GetIsAlive()               const { return mIsAlive; }
+	bool           GetShouldDeathTransition() const { return (!mIsAlive && (mDeathAnimationTime < 0.0f)); }
+
+	// Setters
+	void           SetLevelOver()                   { mHasControl = false; }
 
 	void           SetEnteringPipe(MOVEMENT_DIRECTION direction);
 
-	bool           GetIsExitingPipe() const { return mExitingPipe; }
-
-	bool           GetIsAlive()       const { return mIsAlive; }
-	bool           GetShouldDeathTransition() const { return (!mIsAlive && (mDeathAnimationTime < 0.0f)); }
+	void           SpawnIntoNewArea(const Vector2D newPos, const Vector2D newLevelBounds, bool pipeTransition);
 
 private:
+	// Movement functions
 	void HandleMovementInput(SDL_Event e);
 
 	void ForcedMovementUpdate(const float deltaTime);
 
+	// positional functions
 	void CalculateNewPosition(const float deltaTime, CollisionPositionalData xCollisionOccured, CollisionPositionalData yCollisionOccured);
 	void CalculateInitialRenderReferencePoint();
 
@@ -48,86 +52,105 @@ private:
 
 	void CalculateNewScreenPosAndRenderPos(Vector2D movementDistance, const CollisionPositionalData xCollisionOccured, const CollisionPositionalData yCollisionOccured);
 
-	bool HandleCollisionsWithInteractionLayer(InteractableLayer* interactionLayer, const Vector2D newPos);
-	MovementPrevention HandleCollisionsWithInteractionObjectLayer(ObjectLayer* objectLayer, const Vector2D newPos);
+	Vector2D ConvertRealPositionIntoScreenPos(Vector2D realPos);
 
-	CollisionPositionalData CheckXCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer);
-	CollisionPositionalData CheckYCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer);
+	// Animation functions
+	void UpdateAnimationsSmallMario  (PlayerMovementBitField newMovement, bool goingInto);
+	void UpdateAnimationsLargeMario  (PlayerMovementBitField newMovement, bool goingInto);
+	void UpdateAnimationsFrogMario   (PlayerMovementBitField newMovement, bool goingInto);
+	void UpdateAnimationsHammerMario (PlayerMovementBitField newMovement, bool goingInto);
+	void UpdateAnimationsFireMario   (PlayerMovementBitField newMovement, bool goingInto);
+	void UpdateAnimationsTanookiMario(PlayerMovementBitField newMovement, bool goingInto);
+	void UpdateAnimationsLeafMario   (PlayerMovementBitField newMovement, bool goingInto);
+	void UpdateAnimationsStarMario   (PlayerMovementBitField newMovement, bool goingInto);
 
-	void UpdatePhysics(const float deltaTime);
+	void HandleChangeInAnimations(PlayerMovementBitField newMovement, bool goingInto);
 
 	void UpdateAnimations(const float deltaTime);
 
 	void LoadInCorrectSpriteSheet();
 
-	void UpdateAnimationsSmallMario(PlayerMovementBitField newMovement, bool goingInto);
-	void UpdateAnimationsLargeMario(PlayerMovementBitField newMovement, bool goingInto);
-	void UpdateAnimationsFrogMario(PlayerMovementBitField newMovement, bool goingInto);
-	void UpdateAnimationsHammerMario(PlayerMovementBitField newMovement, bool goingInto);
-	void UpdateAnimationsFireMario(PlayerMovementBitField newMovement, bool goingInto);
-	void UpdateAnimationsTanookiMario(PlayerMovementBitField newMovement, bool goingInto);
-	void UpdateAnimationsLeafMario(PlayerMovementBitField newMovement, bool goingInto);
-	void UpdateAnimationsStarMario(PlayerMovementBitField newMovement, bool goingInto);
-
+	// Collision functions
 	CollisionPositionalData HandleXCollisions(const float deltaTime, InteractableLayer* interactionLayer, ObjectLayer* objectLayer);
 	CollisionPositionalData HandleYCollisions(const float deltaTime, InteractableLayer* interactionLayer, ObjectLayer* objectLayer);
 
-	void HandleChangeInAnimations(PlayerMovementBitField newMovement, bool goingInto);
+	bool                    HandleCollisionsWithInteractionLayer(InteractableLayer* interactionLayer, const Vector2D newPos);
+	MovementPrevention      HandleCollisionsWithInteractionObjectLayer(ObjectLayer* objectLayer, const Vector2D newPos);
 
-	Vector2D ConvertRealPositionIntoScreenPos(Vector2D realPos);
+	CollisionPositionalData CheckXCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer);
+	CollisionPositionalData CheckYCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer);
 
-	Vector2D   mRealGridPosition;   // The player's position in the collision world
-	Vector2D   mScreenGridPosition; // Player's screen position
+	void                    UpdatePhysics(const float deltaTime);
 
-	Vector2D   mRenderRefencePoint; // For when rendering the level based on where the player is in it - but not using the player's exact position
+	// Member variables
+	Vector2D      mRealGridPosition;   // The player's position in the collision world
+	Vector2D      mScreenGridPosition; // Player's screen position
+	Vector2D      mRenderRefencePoint; // For when rendering the level based on where the player is in it - but not using the player's exact position
 
-	Vector2D   mVelocity;
-	Vector2D   mAcceleration;
+	// Physics
+	Vector2D      mVelocity;
+	Vector2D      mAcceleration;
 
-	Vector2D   mCollisionBox; // Using grid space for the collision box, not pixel size
-	Vector2D   mCollisionBoxOffset; // Not all sprites on sheets render from the bottom left so they shouldnt collide from there
+	// Collision
+	Vector2D      mCollisionBox; // Using grid space for the collision box, not pixel size
+	Vector2D      mCollisionBoxOffset; // Not all sprites on sheets render from the bottom left so they shouldnt collide from there
 
-	Vector2D   mLevelBounds;
+	// Level bounding area
+	Vector2D      mLevelBounds;
 
+	// Rendering data
 	Texture2D*    mSpriteSheet;
 	SDL_Renderer* mRenderer;
 
-	unsigned int mSingleSpriteWidth;
-	unsigned int mSingleSpriteHeight;
+	// Pixels for sprite width and height
+	unsigned int  mSingleSpriteWidth;
+	unsigned int  mSingleSpriteHeight;
 
-	unsigned int mNumberOfSpritesOnWidth;
-	unsigned int mNumberOfSpritesOnHeight;
+	// Count of sprites on width and height
+	unsigned int  mNumberOfSpritesOnWidth;
+	unsigned int  mNumberOfSpritesOnHeight;
+	 
+	// Rendering frame data
+	unsigned int  mCurrentFrame;
+	unsigned int  mStartFrame;
+	unsigned int  mEndFrame;
 
-	unsigned int mCurrentFrame;
-	unsigned int mStartFrame;
-	unsigned int mEndFrame;
+	// Time rendering data
+	float         mTimeTillNextFrame;
+	const float   mBaseTimePerFrame;
 
-	float        mTimeTillNextFrame;
-	const float  mTimePerFrame;
+	// Velocity variables
+	const float   kMaxHorizontalSpeedWalking;
+	const float   kMaxHorizontalSpeedRunning;
 
-	const float  kBaseMaxHorizontalSpeed;
-	float        mMaxHorizontalSpeed;
+	// Terminal velocity on the Y
+	const float   kMaxYVelocity;
 
-	const float  kMaxYVelocity;
+	// Friction 
+	const float   kFrictionMultiplier;
 
-	const float  kFrictionMultiplier;
-	const float  kJumpHeldAccelerationDepreciationRate;
-	float        mJumpInitialBoost;
-	const float  kJumpHeldInitialBoost;
-	float        mJumpHeldCurrentBoost;
+	// Amount the extra jump force being given due to holding jump depreciates
+	const float   kJumpHeldAccelerationDepreciationRate;
 
-	unsigned int mCurrentMovements;
 
-	float        mJumpLewayTimer;
-	float        mDeathAnimationTime;
+	const float   kJumpInitialBoost;
+	const float   kJumpHeldInitialBoost;
+	float         mJumpHeldCurrentBoost;
 
+	// Current player movements
+	unsigned int           mCurrentMovements;
 	PlayerMovementBitField mAnimationCurrentState;
 
-	POWER_UP_TYPE mPowerUpState;
+	// Time for the death animation to play out before going back to the main menu
+	float              mDeathAnimationTime;
 
-	MOVEMENT_DIRECTION mForcedMovementDirection;
+	// forced transition movement
 	const float        kForcedMovementSpeed;
 	float              mForcedMovementDistanceTravelled;
+	MOVEMENT_DIRECTION mForcedMovementDirection;
+
+	// State variables
+	POWER_UP_TYPE mPowerUpState;
 
 	bool         mIsAlive;
 	bool         mWasFacingRight;
