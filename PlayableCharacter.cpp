@@ -40,7 +40,7 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 
 , kFrictionMultiplier(9.0f)
 
-, kJumpHeldAccelerationDepreciationRate(16.0f)
+, kJumpHeldAccelerationDepreciationRate(15.0f)
 , kJumpInitialBoost(-14.0f)
 , kJumpHeldInitialBoost(-17.0f)
 , mJumpHeldCurrentBoost(kJumpHeldInitialBoost)
@@ -292,28 +292,39 @@ CollisionPositionalData PlayableCharacter::HandleYCollisions(const float deltaTi
 	{
 		CollisionPositionalData returnData = CheckYCollision(leftPos, rightPos, interactionLayer, objectLayer);
 
-		if (returnData.collisionOccured && mVelocity.y >= 0.0f)
+		if (returnData.collisionOccured)
 		{
-			mCurrentMovements &= ~(PlayerMovementBitField::HOLDING_JUMP);
-
-			if (!(mCurrentMovements & PlayerMovementBitField::JUMPING))
+			if (mVelocity.y >= 0.0f)
 			{
-				mCurrentMovements &= ~(PlayerMovementBitField::JUMPING);
 				mCurrentMovements &= ~(PlayerMovementBitField::HOLDING_JUMP);
-			}
 
-			if (   !(mCurrentMovements & PlayerMovementBitField::MOVING_LEFT || mCurrentMovements & PlayerMovementBitField::MOVING_RIGHT) 
-				&&   mCurrentMovements & PlayerMovementBitField::RUNNING 
-				&& !(mCurrentMovements & PlayerMovementBitField::JUMPING))
+				if (!(mCurrentMovements & PlayerMovementBitField::JUMPING))
+				{
+					mCurrentMovements &= ~(PlayerMovementBitField::JUMPING);
+					mCurrentMovements &= ~(PlayerMovementBitField::HOLDING_JUMP);
+				}
+
+				if (!(mCurrentMovements & PlayerMovementBitField::MOVING_LEFT || mCurrentMovements & PlayerMovementBitField::MOVING_RIGHT)
+					&& mCurrentMovements & PlayerMovementBitField::RUNNING
+					&& !(mCurrentMovements & PlayerMovementBitField::JUMPING))
+				{
+					HandleChangeInAnimations(PlayerMovementBitField::NONE, true);
+				}
+
+				mGrounded = true;
+			}
+			else 
 			{
-				HandleChangeInAnimations(PlayerMovementBitField::NONE, true);
+				mGrounded = false;
 			}
 
-			mGrounded       = true;
+			mVelocity.y = 0.0f;
 			return CollisionPositionalData(returnData.collisionOccured, leftPos, rightPos, returnData.collisionWithInteractionLayer, returnData.collisionWithObjectLayer);
 		}
 		else
+		{
 			mGrounded = false;
+		}
 	}
 	else // Going upwards
 	{
@@ -322,7 +333,13 @@ CollisionPositionalData PlayableCharacter::HandleYCollisions(const float deltaTi
 
 		mGrounded = false;
 
+
 		CollisionPositionalData returnData = CheckYCollision(leftPos, rightPos, interactionLayer, objectLayer);
+
+		if (returnData.collisionOccured && mVelocity.y < 0.0f)
+		{
+			mVelocity.y = 4.0f;
+		}
 
 		return (CollisionPositionalData(returnData.collisionOccured, leftPos, rightPos, returnData.collisionWithInteractionLayer, returnData.collisionWithObjectLayer));
 	}
@@ -487,8 +504,8 @@ void PlayableCharacter::CalculateNewPosition(const float deltaTime, CollisionPos
 			mRealGridPosition.y = int(mRealGridPosition.y) + 0.9;
 		}
 
-		if (mVelocity.y > 0.0f)
-			mVelocity.y = 0.0f;
+		//if (mVelocity.y > 0.0f)
+		//	mVelocity.y = 0.0f;
 
 	}
 	else
