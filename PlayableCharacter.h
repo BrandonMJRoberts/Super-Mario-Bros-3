@@ -117,7 +117,8 @@ private:
 
 	// Time rendering data
 	float         mTimeTillNextFrame;
-	const float   mBaseTimePerFrame;
+	const float   kBaseTimePerFrame;
+	float         mTimePerFrame;
 
 	// Velocity variables
 	const float   kMaxHorizontalSpeedWalking;

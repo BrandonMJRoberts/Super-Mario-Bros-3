@@ -41,14 +41,16 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , kFrictionMultiplier(9.0f)
 
 , kJumpHeldAccelerationDepreciationRate(15.0f)
-, kJumpInitialBoost(-14.0f)
-, kJumpHeldInitialBoost(-17.0f)
-, mJumpHeldCurrentBoost(kJumpHeldInitialBoost)
+, kJumpInitialBoost(-10.0f)
+, kJumpHeldInitialBoost(-10.0f)
+, mJumpHeldCurrentBoost(0.0f)
 
 , mCurrentMovements(PlayerMovementBitField::NONE)
 
-, mBaseTimePerFrame(timePerFrame)
+, kBaseTimePerFrame(timePerFrame)
 , mTimeTillNextFrame(timePerFrame)
+, mTimePerFrame(timePerFrame)
+
 , mAnimationCurrentState(PlayerMovementBitField::NONE)
 , mForcedMovementDirection(MOVEMENT_DIRECTION::DOWN)
 
@@ -57,7 +59,7 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , mPowerUpState(POWER_UP_TYPE::NONE)
 , mRenderer(renderer)
 , mWasFacingRight(true)
-, mGrounded(false)
+, mGrounded(true)
 , mHasControl(true)
 
 , mDeathAnimationTime(4.5f)
@@ -867,16 +869,20 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 	}
 
 	// Triggering the start of a jump
-	if (mGrounded && mCurrentMovements & PlayerMovementBitField::JUMPING)
+	if (   mGrounded 
+		&& mCurrentMovements & PlayerMovementBitField::JUMPING)
 	{
 		// Set the extra boost to be relative to the x speed the player is going
-		mJumpHeldCurrentBoost = kJumpHeldInitialBoost * std::max(float(abs(mVelocity.x) / kMaxHorizontalSpeedRunning), 0.1f);
+		if (mCurrentMovements & PlayerMovementBitField::HOLDING_JUMP)
+			mJumpHeldCurrentBoost = kJumpHeldInitialBoost * std::max(float(abs(mVelocity.x) / kMaxHorizontalSpeedRunning), 0.1f);
+		else
+			mJumpHeldCurrentBoost = 0.0f;
 
 		// Set the initial jump force
-		mVelocity.y = kJumpInitialBoost;
+		mVelocity.y           = kJumpInitialBoost;
 
 		// Set the player is no longer touching the ground
-		mGrounded = false;
+		mGrounded             = false;
 
 		// Notify observers that the player has jumped
 		Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_JUMPED, "");
@@ -1140,6 +1146,9 @@ void PlayableCharacter::UpdatePhysics(const float deltaTime)
 
 	// ------------------------------------------------------------------------------------------------------------------------ 
 
+	// Update the player's animation speed based on how fast they are current moving on the x
+	mTimePerFrame = kBaseTimePerFrame - ((abs(mVelocity.x) / kMaxHorizontalSpeedRunning) * kBaseTimePerFrame);
+
 	// Output the player's current velocity
 	std::cout << "X: " << mVelocity.x << "\t Y :" << mVelocity.y << std::endl;
 }
@@ -1165,7 +1174,7 @@ void PlayableCharacter::UpdateAnimations(const float deltaTime)
 		}
 
 		// Reset the animation time
-		mTimeTillNextFrame = mBaseTimePerFrame;
+		mTimeTillNextFrame = mTimePerFrame;
 	}
 }
 
