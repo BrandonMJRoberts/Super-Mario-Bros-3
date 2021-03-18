@@ -7,6 +7,8 @@
 
 #include "Texture2D.h"
 
+#include "AudioPlayer.h"
+
 class GameScreenMainMenu_SMB3 final : public GameScreen_SMB3
 {
 public:
@@ -18,6 +20,8 @@ public:
 	ReturnDataFromGameScreen Update(const float deltaTime, SDL_Event e) override;
 
 private:
+	void HandleInput(SDL_Event e);
+
 	Texture2D* mSelectorSprite;
 
 	Texture2D* mSinglePlayerOption;
@@ -29,6 +33,8 @@ private:
 	Texture2D* mGround;
 
 	Texture2D* mBackground;
+
+	Audio_Player* mAudioPlayer;
 };
 
 #endif // !_GAME_SCREEN_MENU_MENU_SMB3_H_

@@ -247,7 +247,7 @@ void PlayableCharacter::ForcedMovementUpdate(const float deltaTime)
 	// Now check to see if we have moved far enough to determine this is far enough
 	if (mForcedMovementDistanceTravelled > capDistance)
 	{
-		mForceMovementInDirectionSet = false;
+		mForceMovementInDirectionSet     = false;
 		mForcedMovementDistanceTravelled = 0.0f;
 
 		// Pipe check

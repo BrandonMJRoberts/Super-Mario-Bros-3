@@ -35,20 +35,22 @@ private:
 
 	RenderData  GetRenderData() override { return RenderData{ mCurrentSpriteID, mStartSpriteID, mEndSpriteID, mTimeRemainingTillNextFrame, mTimePerFrame }; }
 
-	const unsigned int		    mColourIndexOfKoopa;
+	const unsigned int	 mColourIndexOfKoopa;
 
-	static bool                 mUpdatedStaticVariables;
+	bool                 mUpdatedStaticVariables;
 
-	static unsigned int         mCurrentSpriteID;
-	static unsigned int         mEndSpriteID;
-	static unsigned int         mStartSpriteID;
+	unsigned int         mCurrentSpriteID;
+	unsigned int         mEndSpriteID;
+	unsigned int         mStartSpriteID;
 
-	static float                mTimeRemainingTillNextFrame;
-	float					    mTimePerFrame;
+	float                mTimeRemainingTillNextFrame;
+	float			     mTimePerFrame;
 
-	unsigned int                mHitsRemaining;
-	float                       mTimeTillConversion;
-	const float                 kTimeOnFloor;
+	unsigned int         mHitsRemaining;
+	float                mTimeTillConversion;
+	const float          kTimeOnFloor;
+
+	unsigned int         mColourStartID;
 };
 
 #endif

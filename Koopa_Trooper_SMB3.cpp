@@ -4,14 +4,6 @@
 
 #include <sstream>
 
-unsigned int KoopaTrooper::mCurrentSpriteID(0);
-unsigned int KoopaTrooper::mStartSpriteID(0);
-unsigned int KoopaTrooper::mEndSpriteID(1);
-
-float        KoopaTrooper::mTimeRemainingTillNextFrame(0.0f);
-bool		 KoopaTrooper::mUpdatedStaticVariables(false);
-
-
 // ------------------------------------------------------------------------------ //
 
 KoopaTrooper::KoopaTrooper(const Vector2D      spawnPosition,
@@ -41,11 +33,20 @@ KoopaTrooper::KoopaTrooper(const Vector2D      spawnPosition,
 , canJump
 , startFacingLeft)
 
+, mColourStartID(0)
 , mColourIndexOfKoopa(colourIndexOfKoopa)
 , mTimePerFrame(timePerFrame)
 , mHitsRemaining(1)
 , kTimeOnFloor(5.0f)
 , mTimeTillConversion(0.0f)
+
+, mStartSpriteID(0)
+, mEndSpriteID(0)
+, mCurrentSpriteID(0)
+
+, mUpdatedStaticVariables(false)
+
+, mTimeRemainingTillNextFrame(0.0f)
 {
 	if(mFacingLeft)
 		mVelocity.x = -MOVEMENT_SPEED;
@@ -55,8 +56,22 @@ KoopaTrooper::KoopaTrooper(const Vector2D      spawnPosition,
 	switch (colourIndexOfKoopa)
 	{
 	default:
+	case 'R':
+		mColourStartID = 7;
+	break;
+	
+	case 'G':
+		mColourStartID = 0;
+	break;
+
+	case 'B':
+		mColourStartID = 28;
 	break;
 	}
+
+	mStartSpriteID   = mColourStartID;
+	mEndSpriteID     = mStartSpriteID + 1;
+	mCurrentSpriteID = mStartSpriteID;
 }
 
 // ------------------------------------------------------------------------------ //
@@ -157,13 +172,15 @@ ObjectCollisionHandleData KoopaTrooper::SetIsCollidedWith(TwoDimensionalCollisio
 	if (mHitsRemaining == 0)
 	{
 		// Stop the shell from moving if it is jumped on whilst moving
-		if (mVelocity.x != 0.0f && collisionData.playerPriorPosition.y < mCurrentPosition.y - mCollisionBox.y && collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::DOWN)
+		if (   mVelocity.x != 0.0f 
+			&& collisionData.playerPriorPosition.y < mCurrentPosition.y - mCollisionBox.y 
+			&& collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::DOWN)
 		{
 			mVelocity.x      = 0.0f;
 
-			mCurrentSpriteID = 2;
-			mEndSpriteID     = 2;
-			mStartSpriteID   = 2;
+			mCurrentSpriteID = mColourStartID + 2;
+			mEndSpriteID     = mColourStartID + 2;
+			mStartSpriteID   = mColourStartID + 2;
 
 			mTimeTillConversion = kTimeOnFloor;
 
@@ -180,9 +197,9 @@ ObjectCollisionHandleData KoopaTrooper::SetIsCollidedWith(TwoDimensionalCollisio
 			mVelocity.x = 4.0f;
 		}
 
-		mCurrentSpriteID = 3;
-		mEndSpriteID     = 5;
-		mStartSpriteID   = 3;
+		mCurrentSpriteID = mColourStartID + 3;
+		mEndSpriteID     = mColourStartID + 5;
+		mStartSpriteID   = mColourStartID + 3;
 
 		mTimeTillConversion = kTimeOnFloor;
 		mTimePerFrame       = KOOPA_SHELL_ANIMATION_SPEED;
@@ -190,14 +207,15 @@ ObjectCollisionHandleData KoopaTrooper::SetIsCollidedWith(TwoDimensionalCollisio
 		return ObjectCollisionHandleData(false, true, false, false, false);
 	}
 
-	if (collisionData.playerPriorPosition.y < mCurrentPosition.y - mCollisionBox.y && collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::DOWN)
+	if (   collisionData.playerPriorPosition.y < mCurrentPosition.y - mCollisionBox.y 
+		&& collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::DOWN)
 	{
 		// Stop the koopa
 		mVelocity.x      = 0.0f;
 
-		mCurrentSpriteID = 2;
-		mEndSpriteID     = 2;
-		mStartSpriteID   = 2;
+		mCurrentSpriteID = mColourStartID + 2;
+		mEndSpriteID     = mColourStartID + 2;
+		mStartSpriteID   = mColourStartID + 2;
 
 		if (mHitsRemaining > 0)
 		{

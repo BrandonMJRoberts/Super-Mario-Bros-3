@@ -283,6 +283,11 @@ void Audio_Player::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string
 
 		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/1-Down.wav");
 	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::PLAY_MAIN_MENU_MUSIC:
+		SetMainLevelMusicTrack("SDL_Mario_Project/Audio/Music/Main Menu Music.mp3");
+		PlayMainLevelMusic();
+	break;
 	}
 }
 
@@ -416,6 +421,7 @@ void Audio_Player::RemoveAllSFX()
 
 void Audio_Player::PauseAllSFX()
 {
+	Mix_Pause(0);
 	Mix_Pause(1);
 	Mix_Pause(2);
 	Mix_Pause(3);
@@ -423,13 +429,13 @@ void Audio_Player::PauseAllSFX()
 	Mix_Pause(5);
 	Mix_Pause(6);
 	Mix_Pause(7);
-	Mix_Pause(8);
 }
 
 // ----------------------------------------------------- //
 
 void Audio_Player::ResumeAllSFX()
 {
+	Mix_Resume(0);
 	Mix_Resume(1);
 	Mix_Resume(2);
 	Mix_Resume(3);
@@ -437,7 +443,6 @@ void Audio_Player::ResumeAllSFX()
 	Mix_Resume(5);
 	Mix_Resume(6);
 	Mix_Resume(7);
-	Mix_Resume(8);
 }
 
 // ----------------------------------------------------- //
@@ -501,12 +506,18 @@ void Audio_Player::SetAudioVolume(int volume)
 
 void Audio_Player::Update()
 {
+	// Loop through all the SFX currently being played and check if any are duplicates
+
+
+
+	/*
 	// Loop through all SFX and check to see if they are in use
-	Mix_Chunk* sfx;
+	Mix_Chunk*   sfx;
 	unsigned int index = 0;
 
 	std::vector<unsigned int> sfxIndexesBeingPlayed;
 
+	// Loop through all open channels
 	for (unsigned int i = 0; i < openChannels.size(); i++)
 	{
 		// Get the SFX being played on this chunk
@@ -522,18 +533,23 @@ void Audio_Player::Update()
 		}
 	}
 
+
+	*/
+/*
 	// Now we have the indexes that are being played, remove all others offset
 	unsigned int offset = 0;
 
 	if (sfxIndexesBeingPlayed.size() > 0)
 	{
+		// Loop through all values that have been shown to be playing
+		//for (unsigned int indexBeingPlayed = 0; indexBeingPlayed < sfxIndexesBeingPlayed.size(); indexBeingPlayed++)
 		for (unsigned int indexBeingPlayed = sfxIndexesBeingPlayed.size(); indexBeingPlayed > 0; indexBeingPlayed--)
 		{
 			for (unsigned int sfxVectorIndex = 0; sfxVectorIndex < mSFX.size(); sfxVectorIndex++)
 			{
-				if (sfxVectorIndex == sfxIndexesBeingPlayed[indexBeingPlayed - 1])
+				if (sfxVectorIndex == sfxIndexesBeingPlayed[indexBeingPlayed])
 				{
-					mSFX.erase(mSFX.begin() + sfxIndexesBeingPlayed[indexBeingPlayed - 1] - offset);
+					mSFX.erase(mSFX.begin() + (sfxIndexesBeingPlayed[indexBeingPlayed] - offset));
 					offset++;
 				}
 				else
@@ -542,7 +558,7 @@ void Audio_Player::Update()
 				}
 			}
 		}
-	}
+	}*/
 }
 
 // ----------------------------------------------------- //
@@ -550,7 +566,7 @@ void Audio_Player::Update()
 void Audio_Player::SetChannelFinished(int channel)
 {
 	// Get the SFX that was playing on the channel
-	Mix_Chunk* sfx = Mix_GetChunk(channel);
+	Mix_Chunk*    sfx = Mix_GetChunk(channel);
 	Mix_FreeChunk(sfx);
 
 	openChannels.push_back(channel);
