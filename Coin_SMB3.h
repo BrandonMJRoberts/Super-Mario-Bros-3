@@ -30,6 +30,8 @@ public:
 
 	ObjectCollisionHandleData        SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerMovements, const bool isPlayer) override { Notify(SUBJECT_NOTIFICATION_TYPES::COIN_COLLECTED, ""); return ObjectCollisionHandleData(true, false, false, false, false); }
 
+	bool UpdateReleaseAnimation(const float deltaTime, const Vector2D& startPos) override;
+
 private:
 	void        UpdateStaticVariables(const float deltaTime);
 

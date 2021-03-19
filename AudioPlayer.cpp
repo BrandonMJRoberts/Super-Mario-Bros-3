@@ -506,59 +506,7 @@ void Audio_Player::SetAudioVolume(int volume)
 
 void Audio_Player::Update()
 {
-	// Loop through all the SFX currently being played and check if any are duplicates
-
-
-
-	/*
-	// Loop through all SFX and check to see if they are in use
-	Mix_Chunk*   sfx;
-	unsigned int index = 0;
-
-	std::vector<unsigned int> sfxIndexesBeingPlayed;
-
-	// Loop through all open channels
-	for (unsigned int i = 0; i < openChannels.size(); i++)
-	{
-		// Get the SFX being played on this chunk
-		sfx = Mix_GetChunk(openChannels[i]);
-
-		for (unsigned int j = 0; j < mSFX.size(); j++)
-		{
-			if (mSFX[j] == sfx)
-			{
-				sfxIndexesBeingPlayed.push_back(j);
-				break;
-			}
-		}
-	}
-
-
-	*/
-/*
-	// Now we have the indexes that are being played, remove all others offset
-	unsigned int offset = 0;
-
-	if (sfxIndexesBeingPlayed.size() > 0)
-	{
-		// Loop through all values that have been shown to be playing
-		//for (unsigned int indexBeingPlayed = 0; indexBeingPlayed < sfxIndexesBeingPlayed.size(); indexBeingPlayed++)
-		for (unsigned int indexBeingPlayed = sfxIndexesBeingPlayed.size(); indexBeingPlayed > 0; indexBeingPlayed--)
-		{
-			for (unsigned int sfxVectorIndex = 0; sfxVectorIndex < mSFX.size(); sfxVectorIndex++)
-			{
-				if (sfxVectorIndex == sfxIndexesBeingPlayed[indexBeingPlayed])
-				{
-					mSFX.erase(mSFX.begin() + (sfxIndexesBeingPlayed[indexBeingPlayed] - offset));
-					offset++;
-				}
-				else
-				{
-					continue;
-				}
-			}
-		}
-	}*/
+	
 }
 
 // ----------------------------------------------------- //
@@ -571,15 +519,16 @@ void Audio_Player::SetChannelFinished(int channel)
 
 	openChannels.push_back(channel);
 
-	// Loop through and see if this channel is in our vector
-	////for (unsigned int i = 0; i < mFilledChannels.size(); i++)
-	//{
-	//	if (mFilledChannels[i] == channel)
-	//	{
-	//		mFilledChannels.erase(mFilledChannels.begin() + i);
-	//		return;
-	//	}
-	//}
+	// Loop through all sfx current playing and delete it from the list
+	for (unsigned int i = 0; i < mSFX.size(); i++)
+	{
+		if (sfx == mSFX[i])
+		{
+			//delete mSFX[i];
+			mSFX.erase(mSFX.begin() + i);
+			return;
+		}
+	}
 }
 
 // ----------------------------------------------------- //

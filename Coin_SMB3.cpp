@@ -103,3 +103,50 @@ void Coin_SMB3::UpdateStaticVariables(const float deltaTime)
 }
 
 // ---------------------------------------------------------------------------------- //
+
+bool Coin_SMB3::UpdateReleaseAnimation(const float deltaTime, const Vector2D& startPos)
+{
+	if (mReleaseAnimationTimer == 0.0f)
+	{
+		// Play the coin SFX
+		Notify(SUBJECT_NOTIFICATION_TYPES::COIN_COLLECTED, "");
+
+		mAnimationStartPosition = startPos;
+	}
+
+	// Need to make the fall back down before destroying the coin
+	if (mTraveledUpOnAnimation)
+	{
+		// Travel down
+		mCurrentPosition.x -= 0.1 * deltaTime;
+
+		// Check to see if it has completed the movement
+		if (mCurrentPosition.x < startPos.y)
+			return true;
+	}
+	else
+	{
+		// Need to travel up in a bounce kind of way
+		mCurrentPosition.x += 0.1 * deltaTime;
+
+		// Check to see if it has completed the movement up
+		if (mCurrentPosition.x > startPos.y + 3)
+			mTraveledUpOnAnimation = true;
+	}
+
+	// Add time to the timer
+	mReleaseAnimationTimer += deltaTime;
+
+	// Now determine if the sprite should change on the animation
+	if (mReleaseAnimationTimer > mTimePerFrame)
+	{
+		mReleaseAnimationCurrentFrame++;
+
+		if (mReleaseAnimationCurrentFrame > mReleaseAnimationEndFrame)
+			mReleaseAnimationCurrentFrame = mReleaseAnimationStartFrame;
+	}
+
+	return false;
+}
+
+// ---------------------------------------------------------------------------------- //

@@ -42,7 +42,7 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 
 , kJumpHeldAccelerationDepreciationRate(15.0f)
 , kJumpInitialBoost(-14.0f)
-, kJumpHeldInitialBoost(-10.0f)
+, kJumpHeldInitialBoost(-15.0f)
 , mJumpHeldCurrentBoost(0.0f)
 
 , mCurrentMovements(PlayerMovementBitField::NONE)
@@ -478,7 +478,7 @@ void PlayableCharacter::CalculateNewPosition(const float deltaTime, CollisionPos
 	// Check for bounds
 	if (newRealGridPos.y <= 0.0f)
 		newRealGridPos.y = 0.0f;
-	else if (newRealGridPos.y >= mLevelBounds.y + 1.7f)
+	else if (newRealGridPos.y >= mLevelBounds.y + 1.5f)
 	{
 		// Only do this check if mario is alive
 		if (mIsAlive)
@@ -699,15 +699,11 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 
 				// Save that we are now jumping
 				mCurrentMovements |= PlayerMovementBitField::JUMPING;
-			}
 
-			// If we are currently jumping and not already holding jump
-			if (    (mCurrentMovements & PlayerMovementBitField::JUMPING) 
-				&& !(mCurrentMovements & PlayerMovementBitField::HOLDING_JUMP))
-			{
 				// Save that we are holding jump
 				mCurrentMovements |= PlayerMovementBitField::HOLDING_JUMP;
 			}
+			
 		break;
 
 		// Pressing move to the right
@@ -842,14 +838,16 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 		// Released jump
 		case SDLK_w:
 
+			mCurrentMovements &= ~(PlayerMovementBitField::HOLDING_JUMP);
+
 			// Not holding jump anymore
 			if (mCurrentMovements & PlayerMovementBitField::JUMPING)
 			{
 				mCurrentMovements &= ~(PlayerMovementBitField::JUMPING);
-				mCurrentMovements &= ~(PlayerMovementBitField::HOLDING_JUMP);
 
 				// If you release jump whilst jumping you cannot continue the extra boost after the release
 				mJumpHeldCurrentBoost = 0.0f;
+				mAcceleration.y       = 0.0f;
 			}
 		break;
 		}
@@ -876,10 +874,10 @@ void PlayableCharacter::HandleMovementInput(SDL_Event e)
 		&& mCurrentMovements & PlayerMovementBitField::JUMPING)
 	{
 		// Set the extra boost to be relative to the x speed the player is going
-		if (mCurrentMovements & PlayerMovementBitField::HOLDING_JUMP)
-			mJumpHeldCurrentBoost = kJumpHeldInitialBoost * std::max(float(abs(mVelocity.x) / kMaxHorizontalSpeedRunning), 0.1f);
+		if (mVelocity.x > kMaxHorizontalSpeedWalking)
+			mJumpHeldCurrentBoost = kJumpHeldInitialBoost;
 		else
-			mJumpHeldCurrentBoost = 0.0f;
+			mJumpHeldCurrentBoost = kJumpHeldInitialBoost / 2.0f;
 
 		// Set the initial jump force
 		mVelocity.y           = kJumpInitialBoost;
@@ -1099,18 +1097,24 @@ void PlayableCharacter::UpdatePhysics(const float deltaTime)
 	// ------------------------------------------------------------------------------------------------------------------------ 
 
 	// Jumping calculations - you only get the extra jump height if you are holding run, otherwise it is just the regular jump
-	if (   (mCurrentMovements & PlayerMovementBitField::JUMPING) 
-		&& (mCurrentMovements & PlayerMovementBitField::HOLDING_JUMP))
+	if (mCurrentMovements & PlayerMovementBitField::JUMPING)
 	{
-		// Reduce the current extra being added onto the jump
-		mJumpHeldCurrentBoost += (kJumpHeldAccelerationDepreciationRate * deltaTime);
+		if ((mCurrentMovements & PlayerMovementBitField::HOLDING_JUMP))
+		{
+			// If holding down jump then keep mario going up until a point
+			mAcceleration.y = mJumpHeldCurrentBoost;
 
-		// If holding down jump then keep mario going up until a point
-		mAcceleration.y = mJumpHeldCurrentBoost;
+			// Reduce the current extra being added onto the jump
+			mJumpHeldCurrentBoost += (kJumpHeldAccelerationDepreciationRate * deltaTime);
 
-		// Bounds check
-		if (mJumpHeldCurrentBoost >= 0.0f)
+			// Bounds check
+			if (mJumpHeldCurrentBoost > 0.0f)
+				mJumpHeldCurrentBoost = 0.0f;
+		}
+		else
+		{
 			mJumpHeldCurrentBoost = 0.0f;
+		}
 	}
 
 	// ------------------------------------------------------------------------------------------------------------------------ 

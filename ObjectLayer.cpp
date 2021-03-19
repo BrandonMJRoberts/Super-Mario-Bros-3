@@ -339,7 +339,7 @@ void ObjectLayer::InstantiateNameConversions()
 	mNameToObjectConversion["PARA_GOOMBA"]        = new ParaGoomba(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Goomba/Goomba.png", 6, 3, 1.0f, 1.0f, 0.3f, true, true, true);
 
 	mNameToObjectConversion["KOOPA_TROOPER"]      = new KoopaTrooper(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Koopa Trooper/Koopa.png", 14, 3, 1.0f, 1.0f, KOOPA_WALK_ANIMATION_SPEED, true, false, true, 0);
-	mNameToObjectConversion["PARA_KOOPA_TROOPER"] = new KoopaTrooper(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Koopa Trooper/Koopa.png", 1, 1, 1.0f, 1.0f, KOOPA_WALK_ANIMATION_SPEED, true, true, true, 0);
+	mNameToObjectConversion["PARA_KOOPA_TROOPER"] = new KoopaTrooper(Vector2D(), false, mRenderer, "SDL_Mario_Project/Enemies/Koopa Trooper/Koopa.png", 14, 3, 1.0f, 1.0f, KOOPA_WALK_ANIMATION_SPEED, true, true, true, 0);
 
 	mNameToObjectConversion["WALK_WAY"]           = new OneWayWalkway(Vector2D(), false, mRenderer, "", 1, 1, 1.0f, 0.25f, 0.0f);
 

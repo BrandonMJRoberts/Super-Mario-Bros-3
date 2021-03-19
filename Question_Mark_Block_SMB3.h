@@ -18,8 +18,8 @@ public:
 					  const unsigned int	   hitsBlockCanTake,
 					  const POWER_UP_TYPE	   powerUpMinimumForDamage,
 					  const bool               objectReleaseScales,
-					  const CollectableObject* baseObjectReleased,
-					  const CollectableObject* maxObjectReleased);
+					  CollectableObject*       baseObjectReleased,
+					  CollectableObject*       maxObjectReleased);
 	~QuestionMarkBlock() override;
 
 	bool Update(const float deltaTime, const Vector2D playerPosition, InteractableLayer* interactionLayer, ObjectLayer* objectLayer) override;
@@ -45,10 +45,12 @@ private:
 	static float                mTimeRemainingTillNextFrame;
 	const float				    mTimePerFrame;
 
+	CollectableObject*          mObjectReleased;
 
 	float                       mStartBounceYPos;
 	bool                        mDoingBounceAnimation;
 	bool                        mHitPeakOfBounce;
+	bool                        mPlayReleaseAnimation;
 };
 
 #endif

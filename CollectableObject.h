@@ -28,8 +28,19 @@ public:
 
 	ObjectCollisionHandleData SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerMovements, const bool isPlayer) override { return ObjectCollisionHandleData(true, false, false, false, false); }
 
+	virtual bool UpdateReleaseAnimation(const float deltaTime, const Vector2D& startPos) { return false; }
+
 protected:
 	Vector2D    mVelocity; // velocity for the movement of the collectable
+
+	float       mReleaseAnimationTimer;
+
+	unsigned int mReleaseAnimationStartFrame;
+	unsigned int mReleaseAnimationEndFrame;
+	unsigned int mReleaseAnimationCurrentFrame;
+
+	Vector2D	 mAnimationStartPosition;
+	bool         mTraveledUpOnAnimation;
 
 	bool        mCanMove;
 	bool        mCanJump;

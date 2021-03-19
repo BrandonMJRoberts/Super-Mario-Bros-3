@@ -1,4 +1,5 @@
 #include "Question_Mark_Block_SMB3.h"
+#include "CollectableObject.h"
 
 #include <sstream>
 
@@ -23,8 +24,8 @@ QuestionMarkBlock::QuestionMarkBlock(const Vector2D           spawnPosition,
 	const unsigned int	     hitsBlockCanTake,
 	const POWER_UP_TYPE	     powerUpMinimumForDamage,
 	const bool               objectReleaseScales,
-	const CollectableObject* baseObjectReleased,
-	const CollectableObject* maxObjectReleased)
+	CollectableObject*       baseObjectReleased,
+	CollectableObject*       maxObjectReleased)
 
 : BlockObject(spawnPosition
 , startSpawnedInLevel
@@ -40,9 +41,13 @@ QuestionMarkBlock::QuestionMarkBlock(const Vector2D           spawnPosition,
 , objectReleaseScales
 , baseObjectReleased
 , maxObjectReleased)
+
 , mTimePerFrame(timePerFrame)
 , mDoingBounceAnimation(false)
 , mStartBounceYPos(0.0f)
+, mPlayReleaseAnimation(false)
+, mHitPeakOfBounce(false)
+, mObjectReleased(baseObjectReleased)
 {
 	
 }
@@ -68,7 +73,7 @@ bool QuestionMarkBlock::Update(const float deltaTime, const Vector2D playerPosit
 		if (mHitPeakOfBounce)
 		{
 			// Move the block down
-			mCurrentPosition.y += 6.0f * deltaTime;
+			mCurrentPosition.y += 6.0 * deltaTime;
 
 			// Check to see if the animation should end
 			if (mCurrentPosition.y > mStartBounceYPos)
@@ -79,11 +84,23 @@ bool QuestionMarkBlock::Update(const float deltaTime, const Vector2D playerPosit
 		}
 		else
 		{
-			mCurrentPosition.y -= 6.0f * deltaTime;
+			mCurrentPosition.y -= 6.0 * deltaTime;
 
-			if (mCurrentPosition.y < mStartBounceYPos - 0.4f)
+			if (mCurrentPosition.y < mStartBounceYPos - 0.4)
 			{
 				mHitPeakOfBounce = true;
+			}
+		}
+	}
+
+	if (mPlayReleaseAnimation)
+	{
+		if (mObjectReleased)
+		{
+			if (mObjectReleased->UpdateReleaseAnimation(deltaTime, mCurrentPosition))
+			{
+				delete mObjectReleased;
+				mObjectReleased = nullptr;
 			}
 		}
 	}
@@ -103,7 +120,7 @@ BaseObject* QuestionMarkBlock::Clone(std::string dataForNewObject)
 	char scalable;
 	bool canScale = true;
 
-	streamLine >> newPos.x >> newPos.y >> nameOfItemToDrop >> quantity >> scalable >> nameOfItemToDrop;
+	streamLine >> newPos.x >> newPos.y >> nameOfItemToDrop >> quantity >> scalable >> nameOfMaxItemToDrop;
 
 	if (scalable == 'F')
 		canScale = false;
@@ -146,6 +163,14 @@ void QuestionMarkBlock::Render(const Vector2D renderReferencePoint)
 		RenderSprite(renderReferencePoint, 4);
 	else
 		RenderSprite(renderReferencePoint, mCurrentSpriteID);
+
+	if (mPlayReleaseAnimation)
+	{
+		if (mObjectReleased)
+		{
+			mObjectReleased->Render(renderReferencePoint);
+		}
+	}
 }
 
 // ------------------------------------------------------------- //
@@ -155,7 +180,8 @@ ObjectCollisionHandleData QuestionMarkBlock::SetIsCollidedWith(TwoDimensionalCol
 	if (!isPlayer)
 		return ObjectCollisionHandleData();
 
-	if (collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::UP && collisionData.playerPriorPosition.y > mCurrentPosition.y)
+	if (   collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::UP 
+		&& collisionData.playerPriorPosition.y > mCurrentPosition.y)
 	{
 		if (mHitsBlockCanTake > 0)
 		{
@@ -165,16 +191,10 @@ ObjectCollisionHandleData QuestionMarkBlock::SetIsCollidedWith(TwoDimensionalCol
 			mDoingBounceAnimation = true;
 
 			mStartBounceYPos = mCurrentPosition.y;
-		}
 
-		// If was the last hit then release the object stored in it
-		if (mHitsBlockCanTake == 0)
-		{
-			if (mMinimumObjectReleased)
-			{
-
-			}
-		}
+			// Release the object stored in it
+			mPlayReleaseAnimation = true;
+		}		
 	}
 
 	return ObjectCollisionHandleData();

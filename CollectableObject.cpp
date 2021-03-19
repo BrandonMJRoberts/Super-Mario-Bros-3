@@ -26,6 +26,13 @@ CollectableObject::CollectableObject(const Vector2D       spawnPosition
 , mCanMove(collectableCanMove)
 , mFacingLeft(false)
 , mVelocity(0, 0)
+, mReleaseAnimationTimer(0.0f)
+
+, mReleaseAnimationStartFrame(0)
+, mReleaseAnimationEndFrame(0)
+, mReleaseAnimationCurrentFrame(0)
+
+, mCanJump(false)
 {
 
 
