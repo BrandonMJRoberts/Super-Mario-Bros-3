@@ -42,11 +42,9 @@ public:
 
 protected:
 	void          Jump();
-	void          WalkRight();
-	void          WalkLeft();
 
 	void          HandleInput(SDL_Event e);
-	void          UpdatePhysics(const float deltaTime);
+	void          HandleCollisions(const float deltaTime);
 	void          ApplyMovement(const float deltaTime);
 
 	// General data
@@ -67,6 +65,8 @@ protected:
 	LevelMap*          mLevelMap;
 
 	unsigned int       mPlayerMovementData;
+
+	bool               mUsingCollisionBox;
 };
 
 #endif _CHARACTER_H_

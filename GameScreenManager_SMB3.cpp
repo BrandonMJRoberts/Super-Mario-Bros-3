@@ -64,9 +64,6 @@ void GameScreenManager_SMB3::Update(const float deltaTime, SDL_Event e)
 	if (mCurrentScreen)
 		mReturnDataPlaceHolder = mCurrentScreen->Update(deltaTime, e);
 
-	if(mAudioPlayer)
-		mAudioPlayer->Update();
-
 	if (mHUD)
 		mHUD->Update(deltaTime);
 

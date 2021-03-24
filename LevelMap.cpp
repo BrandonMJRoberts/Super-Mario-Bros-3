@@ -44,7 +44,7 @@ LevelMap::~LevelMap()
 int LevelMap::GetTileAt(unsigned int h, unsigned int w)
 {
 	// Bounds checks
-	if (h < mLevelHeight && w < mLevelWidth)
+	if (h < mLevelHeight && w < mLevelWidth && h > 0 && w > 0)
 	{
 		// Pass back the value
 		return mMap[h][w];
@@ -85,13 +85,13 @@ void LevelMap::LoadMapFromFile(const char* filePath)
 		}
 
 		// Now we have the memory allocated we need to populate the array with values from the text file
-		std::string line;
+		std::string line = "";
 
 		// Load in the data
 		for (unsigned int h = 0; h < mLevelHeight; h++)
 		{
 			// Get the next line in the file
-			std::getline(inFile, line);
+			inFile >> line;// std::getline(inFile, line);
 
 			for (unsigned int w = 0; w < mLevelWidth; w++)
 			{
@@ -104,13 +104,14 @@ void LevelMap::LoadMapFromFile(const char* filePath)
 				}
 			}
 		}
+
+		inFile.close();
+		return;
 	}
 	else
 	{
 		inFile.close();
 	}
-
-	inFile.close();
 }
 
 // -------------------------------------------------------------------------------- //

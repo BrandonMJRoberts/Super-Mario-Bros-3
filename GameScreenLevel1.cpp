@@ -39,7 +39,7 @@ GameScreenLevel1::~GameScreenLevel1()
 bool GameScreenLevel1::SetUpLevel() 
 {
 	// Load in the collision map for this level
-	mLevelMap = new LevelMap("SDL_Mario_Project/Collision Maps/Level1.txt", "SDL_Mario_Project/Background Sprites/Mario Bros 1 Images/Background Sprites Level 1.png", mRenderer);
+	mLevelMap = new LevelMap("SDL_Mario_Project/Collision Maps SMB1/Level1.txt", "SDL_Mario_Project/Mario Bros 1 Images/Background Sprites Level 1.png", mRenderer);
 
 	// If no collision map then dont load the level
 	if (!mLevelMap)
@@ -55,7 +55,7 @@ bool GameScreenLevel1::SetUpLevel()
 	}
 
 	// Create mario
-	mMario = new Character(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Mario.png", Vector2D(5, 4), 1, 1, mLevelMap, Vector2D(1.0f, 1.3125));
+	mMario = new Character(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Mario.png", Vector2D(5,0), 1, 1, mLevelMap, Vector2D(1.0f, 1.3125));
 	if (!mMario)
 	{
 		std::cout << "mMario failed to load." << std::endl;
@@ -64,13 +64,15 @@ bool GameScreenLevel1::SetUpLevel()
 	}
 
 	// Create luigi
-	mLuigi = new Character(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Luigi.png", Vector2D(7, 4), 1, 1, mLevelMap, Vector2D(1.0f, 1.3125));
-	if (!mLuigi)
-	{
-		std::cout << "mLuigi failed to load." << std::endl;
-		mLuigi = nullptr;
-		return false;
-	}
+	//mLuigi = new Character(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Luigi.png", Vector2D(7, 0), 1, 1, mLevelMap, Vector2D(1.0f, 1.3125));
+	//if (!mLuigi)
+	//{
+	//	std::cout << "mLuigi failed to load." << std::endl;
+	//	mLuigi = nullptr;
+	//	return false;
+	//}
+
+	mLuigi = nullptr;
 
 	// If we get here then everything has loaded correctly
 	return true;
@@ -81,23 +83,35 @@ bool GameScreenLevel1::SetUpLevel()
 void GameScreenLevel1::Update(float deltaTime, SDL_Event e)
 {
 	// Update the characters
-	mMario->Update(deltaTime, e);
-	mLuigi->Update(deltaTime, e);
+
+	if(mMario)
+		mMario->Update(deltaTime, e);
+
+	if(mLuigi)
+		mLuigi->Update(deltaTime, e);
 
 	// Collisions check between the characters
-	if (Collisions::Instance()->Circle(mMario, mLuigi))
-	{
-		std::cout << "collisions" << std::endl;
-	}
+	//if (Collisions::Instance()->Circle(mMario, mLuigi))
+	//{
+	//	std::cout << "collisions" << std::endl;
+	//}
 }
 
 // --------------------------------------------------------------------------------------------- //
 
 void GameScreenLevel1::Render()
 {
-	mBackgroundTexture->Render(Vector2D(), SDL_FLIP_NONE, 0.0f);
-	mMario->Render();
-	mLuigi->Render();
+	//if(mBackgroundTexture)
+	//	mBackgroundTexture->Render(Vector2D(), SDL_FLIP_NONE, 0.0f);
+
+	if(mLevelMap)
+		mLevelMap->Render();
+
+	if(mMario)
+		mMario->Render();
+
+	if(mLuigi)
+		mLuigi->Render();
 }
 
 // --------------------------------------------------------------------------------------------- //

@@ -16,8 +16,6 @@ public:
 
 	void OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string data) override;
 
-	void Update();
-
 	void SetChannelFinished(int channelID);
 
 private:

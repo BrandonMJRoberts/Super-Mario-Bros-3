@@ -504,13 +504,6 @@ void Audio_Player::SetAudioVolume(int volume)
 
 // ----------------------------------------------------- //
 
-void Audio_Player::Update()
-{
-	
-}
-
-// ----------------------------------------------------- //
-
 void Audio_Player::SetChannelFinished(int channel)
 {
 	// Get the SFX that was playing on the channel

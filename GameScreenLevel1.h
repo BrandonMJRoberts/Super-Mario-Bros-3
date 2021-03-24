@@ -3,6 +3,7 @@
 
 #include "GameScreen.h"
 #include "Commons.h"
+
 #include <SDL.h>
 
 class Texture2D;
@@ -20,8 +21,10 @@ public:
 
 private:
 	Texture2D*      mBackgroundTexture;
+
 	Character*      mMario;
 	Character*      mLuigi;
+
 	LevelMap*       mLevelMap;
 
 	bool            SetUpLevel();
