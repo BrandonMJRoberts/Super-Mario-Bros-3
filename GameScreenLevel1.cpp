@@ -6,6 +6,7 @@
 #include "LevelMap.h"
 
 #include "POW_SMB1.h"
+#include "Pipe_SMB1.h"
 
 #include <iostream>
 
@@ -17,6 +18,7 @@ GameScreenLevel1::GameScreenLevel1(SDL_Renderer* renderer)
 	, mMario(nullptr)
 	, mLuigi(nullptr)
 	, mLevelMap(nullptr)
+	, mPipes{nullptr, nullptr, nullptr, nullptr}
 {
 	if (!SetUpLevel())
 	{
@@ -39,6 +41,12 @@ GameScreenLevel1::~GameScreenLevel1()
 
 	delete mPowBlock;
 	mPowBlock = nullptr;
+
+	for (unsigned int i = 0; i < 4; i++)
+	{
+		delete mPipes[i];
+		mPipes[i] = nullptr;
+	}
 }
 
 // --------------------------------------------------------------------------------------------- //
@@ -120,6 +128,13 @@ void GameScreenLevel1::Render()
 	if (mPowBlock)
 	{
 		mPowBlock->Render();
+	}
+
+	// Render the pipes
+	for (unsigned int i = 0; i < 4; i++)
+	{
+		if (mPipes[i])
+			mPipes[i]->Render();
 	}
 }
 

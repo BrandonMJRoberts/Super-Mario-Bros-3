@@ -67,7 +67,7 @@ void POW::Update(const float deltaTime)
 		{
 			mPosition.y -= 3.0 * deltaTime;
 
-			if (mPosition.y > mStartPosition.y - 1.0f)
+			if (mPosition.y < mStartPosition.y - 1.0f)
 			{
 				// Completed this section
 				mGoingUp = false;
@@ -97,6 +97,9 @@ void POW::Update(const float deltaTime)
 
 bool POW::SetHasBeenHit()
 {
+	if (mDoingBounce)
+		return false;
+
 	mDoingBounce = true;
 
 	mCurrentSpriteID++;
