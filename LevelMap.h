@@ -12,9 +12,10 @@ public:
 	LevelMap(const char* filePathToCollisionMap, const char* filePathToSpriteSheet, SDL_Renderer* renderer);
 	~LevelMap();
 
-	int GetTileAt(unsigned int h, unsigned int w);
+	int  GetCollisionTileAt(unsigned int h, unsigned int w);
 
-	void LoadMapFromFile(const char* filePath);
+	void LoadCollisionMapFromFile(const char* filePath);
+
 	void Render();
 
 private:
@@ -22,7 +23,7 @@ private:
 
 	Texture2D* mBackgroundSpriteSheet;
 
-	int** mMap;
+	int**         mCollisionMap;
 
 	unsigned int  mLevelWidth;
 	unsigned int  mLevelHeight;

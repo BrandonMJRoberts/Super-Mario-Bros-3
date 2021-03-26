@@ -5,11 +5,18 @@
 
 #include "LevelMap.h"
 
+#include "POW_SMB1.h"
+
 #include <iostream>
 
 // --------------------------------------------------------------------------------------------- //
 
-GameScreenLevel1::GameScreenLevel1(SDL_Renderer* renderer) : GameScreen(renderer)
+GameScreenLevel1::GameScreenLevel1(SDL_Renderer* renderer) 
+	: GameScreen(renderer)
+	, mPowBlock(nullptr)
+	, mMario(nullptr)
+	, mLuigi(nullptr)
+	, mLevelMap(nullptr)
 {
 	if (!SetUpLevel())
 	{
@@ -21,9 +28,6 @@ GameScreenLevel1::GameScreenLevel1(SDL_Renderer* renderer) : GameScreen(renderer
 
 GameScreenLevel1::~GameScreenLevel1()
 {
-	delete mBackgroundTexture;
-	mBackgroundTexture = nullptr;
-
 	delete mMario;
 	mMario = nullptr;
 
@@ -32,47 +36,42 @@ GameScreenLevel1::~GameScreenLevel1()
 
 	delete mLevelMap;
 	mLevelMap = nullptr;
+
+	delete mPowBlock;
+	mPowBlock = nullptr;
 }
 
 // --------------------------------------------------------------------------------------------- //
 
-bool GameScreenLevel1::SetUpLevel() 
+bool GameScreenLevel1::SetUpLevel()
 {
 	// Load in the collision map for this level
-	mLevelMap = new LevelMap("SDL_Mario_Project/Collision Maps SMB1/Level1.txt", "SDL_Mario_Project/Mario Bros 1 Images/Background Sprites Level 1.png", mRenderer);
+	mLevelMap = new LevelMap("SDL_Mario_Project/Level Maps SMB1/CollisionMapLevel1.txt", "SDL_Mario_Project/Mario Bros 1 Images/Background Sprites Level 1.png", mRenderer);
 
 	// If no collision map then dont load the level
 	if (!mLevelMap)
 		return false;
 
-	// Load in the background texture
-	mBackgroundTexture = new Texture2D(mRenderer);
-	if (!mBackgroundTexture->LoadFromFile("SDL_Mario_Project/Mario Bros 1 Images/BackgroundMB.png"))
-	{
-		std::cout << "Background texture failed to load." << std::endl;
-		mBackgroundTexture = nullptr;
-		return false;
-	}
-
 	// Create mario
-	mMario = new Character(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Mario.png", Vector2D(5,0), 1, 1, mLevelMap, Vector2D(1.0f, 1.3125));
+	mMario = new Character(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Mario.png", Vector2D(5, 0), 1, 1, mLevelMap, Vector2D(1.0f, 1.3125));
 	if (!mMario)
 	{
 		std::cout << "mMario failed to load." << std::endl;
 		mMario = nullptr;
-		return false;
 	}
 
 	// Create luigi
-	//mLuigi = new Character(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Luigi.png", Vector2D(7, 0), 1, 1, mLevelMap, Vector2D(1.0f, 1.3125));
-	//if (!mLuigi)
-	//{
-	//	std::cout << "mLuigi failed to load." << std::endl;
-	//	mLuigi = nullptr;
-	//	return false;
-	//}
+	mLuigi = new Character(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Luigi.png", Vector2D(7, 0), 1, 1, mLevelMap, Vector2D(1.0f, 1.3125));
+	if (!mLuigi)
+	{
+		std::cout << "mLuigi failed to load." << std::endl;
+		mLuigi = nullptr;
+	}
 
 	mLuigi = nullptr;
+
+	// Create the pow block
+	mPowBlock = new POW(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/PowBlock.png", Vector2D(7.5, 9));
 
 	// If we get here then everything has loaded correctly
 	return true;
@@ -83,12 +82,20 @@ bool GameScreenLevel1::SetUpLevel()
 void GameScreenLevel1::Update(float deltaTime, SDL_Event e)
 {
 	// Update the characters
-
-	if(mMario)
+	if (mMario)
 		mMario->Update(deltaTime, e);
 
-	if(mLuigi)
+	if (mLuigi)
 		mLuigi->Update(deltaTime, e);
+
+	// Check for collisions with the pow block
+	CheckForPOWCollision();
+
+	// Now update the pow block
+	if (mPowBlock)
+	{
+		mPowBlock->Update(deltaTime);
+	}
 
 	// Collisions check between the characters
 	//if (Collisions::Instance()->Circle(mMario, mLuigi))
@@ -101,17 +108,40 @@ void GameScreenLevel1::Update(float deltaTime, SDL_Event e)
 
 void GameScreenLevel1::Render()
 {
-	//if(mBackgroundTexture)
-	//	mBackgroundTexture->Render(Vector2D(), SDL_FLIP_NONE, 0.0f);
-
-	if(mLevelMap)
+	if (mLevelMap)
 		mLevelMap->Render();
 
-	if(mMario)
+	if (mMario)
 		mMario->Render();
 
-	if(mLuigi)
+	if (mLuigi)
 		mLuigi->Render();
+
+	if (mPowBlock)
+	{
+		mPowBlock->Render();
+	}
+}
+
+// --------------------------------------------------------------------------------------------- //
+
+void GameScreenLevel1::CheckForPOWCollision()
+{
+	if (!mPowBlock)
+		return;
+
+	if (Collisions::Instance()->Box(Rect2D(mPowBlock->GetPosition(), mPowBlock->GetCollisionBox()), Rect2D(mMario->GetPosition(), mMario->GetCollisionBox())))
+	{
+		// There is a collision so now check that mario is going upwards and is in the correct position
+		
+
+		// There is a collision so tell the POW block that this has happened
+		if (mPowBlock->SetHasBeenHit())
+		{
+			delete mPowBlock;
+			mPowBlock = nullptr;
+		}
+	}
 }
 
 // --------------------------------------------------------------------------------------------- //

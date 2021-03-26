@@ -185,6 +185,7 @@
     <ClCompile Include="Para_Goomba_SMB3.cpp" />
     <ClCompile Include="Para_Koopa_Trooper_SMB3.cpp" />
     <ClCompile Include="PhysicalObject.cpp" />
+    <ClCompile Include="Pipe_SMB1.cpp" />
     <ClCompile Include="Pipe_SMB3.cpp" />
     <ClCompile Include="PlayableCharacter.cpp" />
     <ClCompile Include="BaseObject.cpp" />
@@ -207,6 +208,7 @@
     <ClCompile Include="GameScreen.cpp" />
     <ClCompile Include="GameScreenLevel1.cpp" />
     <ClCompile Include="GameScreenManager.cpp" />
+    <ClCompile Include="POW_SMB1.cpp" />
     <ClCompile Include="Question_Mark_Block_SMB3.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="SpawnPoint_SMB3.cpp" />
@@ -262,6 +264,7 @@
     <ClInclude Include="Para_Goomba_SMB3.h" />
     <ClInclude Include="Para_Koopa_Trooper_SMB3.h" />
     <ClInclude Include="PhysicalObject.h" />
+    <ClInclude Include="Pipe_SMB1.h" />
     <ClInclude Include="Pipe_SMB3.h" />
     <ClInclude Include="Power_Up.h" />
     <ClInclude Include="PlayableCharacter.h" />
@@ -277,6 +280,7 @@
     <ClInclude Include="GameScreenMainMenu_SMB3.h" />
     <ClInclude Include="GameScreenManager.h" />
     <ClInclude Include="GameScreenWorldMap_SMB3.h" />
+    <ClInclude Include="POW_SMB1.h" />
     <ClInclude Include="Question_Mark_Block_SMB3.h" />
     <ClInclude Include="SpawnPoint_SMB3.h" />
     <ClInclude Include="HUD_Display.h" />

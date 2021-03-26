@@ -6,9 +6,9 @@
 
 #include <SDL.h>
 
-class Texture2D;
 class Character;
 class LevelMap;
+class POW;
 
 class GameScreenLevel1 final : public GameScreen
 {
@@ -20,12 +20,14 @@ public:
 	void Update(float deltaTime, SDL_Event e) override;
 
 private:
-	Texture2D*      mBackgroundTexture;
+	void            CheckForPOWCollision();
 
 	Character*      mMario;
 	Character*      mLuigi;
 
 	LevelMap*       mLevelMap;
+
+	POW*            mPowBlock;
 
 	bool            SetUpLevel();
 };

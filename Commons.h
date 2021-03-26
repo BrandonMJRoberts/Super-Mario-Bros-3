@@ -1,6 +1,8 @@
 #ifndef _COMMONS_H_
 #define _COMMONS_H_
 
+#include "Game_Maths.h"
+
 // ---------------------------------------------------------------------- //
 
 struct GameSelectReturnData
@@ -17,12 +19,21 @@ struct GameSelectReturnData
 
 struct Rect2D
 {
-	Rect2D(float startX, float startY, float startWidth, float startHeight)
+	Rect2D(float startX, float startY, float startWidth, float startHeight) 
+		: x(startX)
+		, y(startY)
+		, width(startWidth)
+		, height(startHeight)
+	{	
+	}
+
+	Rect2D(Vector2D position, Vector2D collisionBox)
+		: x(position.x)
+		, y(position.y)
+		, width(collisionBox.x)
+		, height(collisionBox.y)
 	{
-		x      = startX;
-		y      = startY;
-		width  = startWidth;
-		height = startHeight;
+
 	}
 
 	double x;

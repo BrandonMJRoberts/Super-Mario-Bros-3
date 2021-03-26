@@ -11,10 +11,14 @@
 
 // -------------------------------------------------------------------------------- //
 
-LevelMap::LevelMap(const char* filePathToCollisionMap, const char* filePathToSpriteSheet, SDL_Renderer* renderer) : mLevelHeight(0), mLevelWidth(0), mMap(nullptr), mRenderer(renderer)
+LevelMap::LevelMap(const char* filePathToCollisionMap, const char* filePathToSpriteSheet, SDL_Renderer* renderer) 
+	: mLevelHeight(0), 
+	mLevelWidth(0), 
+	mCollisionMap(nullptr), 
+	mRenderer(renderer)
 {
 	// Load the map into the level map from the file path
-	LoadMapFromFile(filePathToCollisionMap);
+	LoadCollisionMapFromFile(filePathToCollisionMap);
 
 	// Create the background collision sprite sheet
 	mBackgroundSpriteSheet = new Texture2D(mRenderer);
@@ -32,22 +36,22 @@ LevelMap::~LevelMap()
 	// Clean up the memory allocated for the memory 
 	for (unsigned int i = 0; i < mLevelHeight; i++)
 	{
-		delete[] mMap[i];
+		delete[] mCollisionMap[i];
 	}
-	delete[] mMap;
+	delete[] mCollisionMap;
 
-	mMap = nullptr;
+	mCollisionMap = nullptr;
 }
 
 // -------------------------------------------------------------------------------- //
 
-int LevelMap::GetTileAt(unsigned int h, unsigned int w)
+int LevelMap::GetCollisionTileAt(unsigned int h, unsigned int w)
 {
 	// Bounds checks
 	if (h < mLevelHeight && w < mLevelWidth && h > 0 && w > 0)
 	{
 		// Pass back the value
-		return mMap[h][w];
+		return mCollisionMap[h][w];
 	}
 
 	return 0;
@@ -55,7 +59,7 @@ int LevelMap::GetTileAt(unsigned int h, unsigned int w)
 
 // -------------------------------------------------------------------------------- //
 
-void LevelMap::LoadMapFromFile(const char* filePath)
+void LevelMap::LoadCollisionMapFromFile(const char* filePath)
 {
 	std::ifstream inFile;
 
@@ -64,24 +68,24 @@ void LevelMap::LoadMapFromFile(const char* filePath)
 	if (inFile.is_open())
 	{
 		// Delete the old map
-		if (mMap)
+		if (mCollisionMap)
 		{
 			for (unsigned int i = 0; i < mLevelHeight; i++)
 			{
-				delete[] mMap[i];
+				delete[] mCollisionMap[i];
 			}
-			delete[] mMap;
-			mMap = nullptr;
+			delete[] mCollisionMap;
+			mCollisionMap = nullptr;
 		}
 
 		// Get the width and height
 		inFile >> mLevelWidth >> mLevelHeight;
 
 		// Now allocate memory for the map
-		mMap = new int* [mLevelHeight];
+		mCollisionMap = new int* [mLevelHeight];
 		for (unsigned int i = 0; i < mLevelHeight; i++)
 		{
-			mMap[i] = new int[mLevelWidth];
+			mCollisionMap[i] = new int[mLevelWidth];
 		}
 
 		// Now we have the memory allocated we need to populate the array with values from the text file
@@ -91,16 +95,16 @@ void LevelMap::LoadMapFromFile(const char* filePath)
 		for (unsigned int h = 0; h < mLevelHeight; h++)
 		{
 			// Get the next line in the file
-			inFile >> line;// std::getline(inFile, line);
+			inFile >> line;
 
 			for (unsigned int w = 0; w < mLevelWidth; w++)
 			{
 				if (line.size() > w)
 				{
 					if (line[w] == '0')
-						mMap[h][w] = 0;
+						mCollisionMap[h][w] = 0;
 					else
-						mMap[h][w] = 1;
+						mCollisionMap[h][w] = 1;
 				}
 			}
 		}
@@ -126,7 +130,7 @@ void LevelMap::Render()
 	{
 		for (unsigned int w = 0; w < mLevelWidth; w++)
 		{
-			sourceRect.x = mMap[h][w] * SPRITE_RESOLUTION;
+			sourceRect.x = mCollisionMap[h][w] * SPRITE_RESOLUTION;
 
 			destRect.x = w * SPRITE_RESOLUTION;
 			destRect.y = h * SPRITE_RESOLUTION;

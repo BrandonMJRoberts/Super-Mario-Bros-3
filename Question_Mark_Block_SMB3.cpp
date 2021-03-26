@@ -190,7 +190,7 @@ ObjectCollisionHandleData QuestionMarkBlock::SetIsCollidedWith(TwoDimensionalCol
 			// Now trigger the bounce animation
 			mDoingBounceAnimation = true;
 
-			mStartBounceYPos = mCurrentPosition.y;
+			mStartBounceYPos = (float)mCurrentPosition.y;
 
 			// Release the object stored in it
 			mPlayReleaseAnimation = true;

@@ -186,7 +186,7 @@ void Character::HandleCollisions(const float deltaTime)
 		// Going to the right
 		if (mVelocity.x > 0.0f)
 		{
-			if (mLevelMap->GetTileAt((unsigned int)(mPosition.x + movementDistance.x + mCollisionBox.x), (unsigned int)mPosition.y) != 0)
+			if (mLevelMap->GetCollisionTileAt((unsigned int)(mPosition.x + movementDistance.x + mCollisionBox.x), (unsigned int)mPosition.y) != 0)
 			{
 
 			}
@@ -200,8 +200,8 @@ void Character::HandleCollisions(const float deltaTime)
 		if (mVelocity.y >= 0.0f)
 		{
 			// Check for a collision
-			if (   mLevelMap->GetTileAt((unsigned int)(mPosition.y + mCollisionBox.y + movementDistance.y), (unsigned int)(mPosition.x + mCollisionBox.x)) != 0  // Right foot check
-				|| mLevelMap->GetTileAt((unsigned int)(mPosition.y + mCollisionBox.y + movementDistance.y), (unsigned int)(mPosition.x)) != 0) // Left foot check
+			if (   mLevelMap->GetCollisionTileAt((unsigned int)(mPosition.y + mCollisionBox.y + movementDistance.y), (unsigned int)(mPosition.x + mCollisionBox.x)) != 0  // Right foot check
+				|| mLevelMap->GetCollisionTileAt((unsigned int)(mPosition.y + mCollisionBox.y + movementDistance.y), (unsigned int)(mPosition.x)) != 0) // Left foot check
 			{
 				mVelocity.y = 0.0f;
 			}
@@ -209,8 +209,8 @@ void Character::HandleCollisions(const float deltaTime)
 		else // Going up
 		{
 			// Check for a collision
-			if (   mLevelMap->GetTileAt((unsigned int)(mPosition.x + mCollisionBox.x), (unsigned int)(mPosition.y + movementDistance.y)) != 0  // Right head check
-				|| mLevelMap->GetTileAt((unsigned int)(mPosition.x),                   (unsigned int)(mPosition.y + movementDistance.y)) != 0) // Left head check
+			if (   mLevelMap->GetCollisionTileAt((unsigned int)(mPosition.x + mCollisionBox.x), (unsigned int)(mPosition.y + movementDistance.y)) != 0  // Right head check
+				|| mLevelMap->GetCollisionTileAt((unsigned int)(mPosition.x),                   (unsigned int)(mPosition.y + movementDistance.y)) != 0) // Left head check
 			{
 				// Give a bounce back down effect
 				//mVelocity.y = 0.0f;

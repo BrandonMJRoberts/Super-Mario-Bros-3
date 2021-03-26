@@ -148,6 +148,12 @@
     <Filter Include="Source Files\Scene Transitions">
       <UniqueIdentifier>{f02e18d0-bc05-4fac-95d3-5258f1a34153}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Mario Bros 1\Level Objects">
+      <UniqueIdentifier>{6e7b9a87-aced-4f94-a7fa-33fba16b5514}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mario Bros 1\Level Objects">
+      <UniqueIdentifier>{1bfc9d7d-33b9-4442-813f-8870903aebca}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -311,6 +317,12 @@
     </ClCompile>
     <ClCompile Include="LevelMap.cpp">
       <Filter>Source Files\Mario Bros 1</Filter>
+    </ClCompile>
+    <ClCompile Include="Pipe_SMB1.cpp">
+      <Filter>Source Files\Mario Bros 1\Level Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="POW_SMB1.cpp">
+      <Filter>Source Files\Mario Bros 1\Level Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -505,6 +517,12 @@
     </ClInclude>
     <ClInclude Include="LevelMap.h">
       <Filter>Header Files\Mario Bros 1</Filter>
+    </ClInclude>
+    <ClInclude Include="Pipe_SMB1.h">
+      <Filter>Header Files\Mario Bros 1\Level Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="POW_SMB1.h">
+      <Filter>Header Files\Mario Bros 1\Level Objects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
