@@ -1,20 +1,17 @@
 #ifndef _POW_SMB1_H_
 #define _POW_SMB1_H_
 
-#include "Game_Maths.h"
+#include "RenderObject.h"
 
-class  Texture2D;
 struct SDL_Renderer;
-struct SDL_Rect;
 
-class POW
+class POW final : public RenderObject
 {
 public:
 	POW(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D bottomLeftStartPos);
 	~POW();
 
-	void     Render();
-	void     Update(const float deltaTime);
+	void     Update(const float deltaTime) override;
 
 	Vector2D GetCollisionBox() const { return mCollisionBox; }
 	Vector2D GetPosition()     const { return mPosition;     }
@@ -22,17 +19,15 @@ public:
 	bool     SetHasBeenHit();
 
 private:
+	Texture2D* GetSpriteSheet() override { return mSpriteSheet; }
+
+	void UpdatePhysics() override { ; }
+
 	Texture2D*   mSpriteSheet;
 
-	Vector2D     mPosition;
 	Vector2D     mStartPosition;
 
 	Vector2D	 mCollisionBox;
-
-	SDL_Rect*    mSourceRect;
-	SDL_Rect*	 mDestRect;
-
-	unsigned int mCurrentSpriteID;
 
 	bool	     mDoingBounce;
 	bool		 mGoingUp;

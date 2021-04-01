@@ -25,11 +25,7 @@ Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D sta
 
 	, mUsingCollisionBox(false)
 {
-	mTexture = new Texture2D(renderer);
-	if (!mTexture->LoadFromFile(imagePath))
-	{
-		std::cout << "Failed to load the character sprite." << std::endl;
-	}
+	CalculateSpriteData(renderer, imagePath);
 }
 
 // --------------------------------------------------------------------------------------------------------- //
@@ -52,12 +48,12 @@ Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D sta
 	, mLevelMap(levelMap)
 
 	, mUsingCollisionBox(true)
+
+	, mCurrentSpriteID(3)
+	, mEndSpriteID(3)
+	, mStartSpriteID(3)
 {
-	mTexture = new Texture2D(renderer);
-	if (!mTexture->LoadFromFile(imagePath))
-	{
-		std::cout << "Failed to load the character sprite." << std::endl;
-	}
+	CalculateSpriteData(renderer, imagePath);
 }
 
 // --------------------------------------------------------------------------------------------------------- //
@@ -77,9 +73,9 @@ Character::~Character()
 void Character::Render()
 {
 	if(mVelocity.x < 0.0f)
-		mTexture->Render(mPosition * SPRITE_RES, SDL_FLIP_HORIZONTAL, 0.0f);
+		mTexture->Render(*mSourceRect, *mDestRect, SDL_FLIP_NONE, 0.0f);
 	else
-		mTexture->Render(mPosition * SPRITE_RES, SDL_FLIP_NONE, 0.0f);
+		mTexture->Render(*mSourceRect, *mDestRect, SDL_FLIP_HORIZONTAL, 0.0f);
 
 }
 
@@ -166,6 +162,10 @@ void Character::Update(float deltaTime, SDL_Event e)
 
 	// Apply the players movement based off of their current velocity
 	ApplyMovement(deltaTime);
+
+	// Now apply the change in movement to the dest rect
+	mDestRect->x =  mPosition.x * SPRITE_RES;
+	mDestRect->y =  mPosition.y * SPRITE_RES;
 
 	std::cout << mPosition.y << std::endl;
 }
@@ -258,6 +258,31 @@ void Character::Jump()
 
 	// Apply the jump force
 	mVelocity.y          = mJumpForce;
+}
+
+// --------------------------------------------------------------------------------------------------------- //
+
+void Character::CalculateSpriteData(SDL_Renderer* renderer, std::string filePath)
+{
+	mTexture = new Texture2D(renderer);
+	if (!mTexture->LoadFromFile(filePath.c_str()))
+	{
+		std::cout << "Failed to load the character sprite." << std::endl;
+		return;
+	}
+
+	int spriteWidth = mTexture->GetWidth() / kSpritesOnWidth;
+	int spriteHeight = mTexture->GetHeight() / kSpritesOnHeight;
+
+	mSourceRect = new SDL_Rect{ int(spriteWidth * (mCurrentSpriteID % kSpritesOnWidth)),
+									  int(spriteHeight * int(mCurrentSpriteID / kSpritesOnWidth)),
+									  spriteWidth,
+									  spriteHeight };
+
+	mDestRect = new SDL_Rect{ int(mPosition.x * SPRITE_RES),
+									  (int)(mPosition.y * SPRITE_RES),
+									   spriteWidth,
+									   spriteHeight };
 }
 
 // --------------------------------------------------------------------------------------------------------- //

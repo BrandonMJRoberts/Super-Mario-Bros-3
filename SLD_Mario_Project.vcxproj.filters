@@ -154,6 +154,18 @@
     <Filter Include="Source Files\Mario Bros 1\Level Objects">
       <UniqueIdentifier>{1bfc9d7d-33b9-4442-813f-8870903aebca}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Mario Bros 1\Level Objects\Abstract">
+      <UniqueIdentifier>{1d307b3a-c73e-4302-96d7-4f8176a0dbd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Mario Bros 1\Level Objects\Spawnable">
+      <UniqueIdentifier>{f4e86ebb-5486-4b1d-a734-d50be15a715e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mario Bros 1\Level Objects\Abstract">
+      <UniqueIdentifier>{62a51f24-9f50-434a-aa4a-4c86ccb9497f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mario Bros 1\Level Objects\Spawnable">
+      <UniqueIdentifier>{18b51281-85e2-474e-91c1-428dd8c72f4b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -318,11 +330,29 @@
     <ClCompile Include="LevelMap.cpp">
       <Filter>Source Files\Mario Bros 1</Filter>
     </ClCompile>
+    <ClCompile Include="RenderObject.cpp">
+      <Filter>Source Files\Mario Bros 1\Level Objects\Abstract</Filter>
+    </ClCompile>
+    <ClCompile Include="Coin.cpp">
+      <Filter>Source Files\Mario Bros 1\Level Objects\Spawnable</Filter>
+    </ClCompile>
+    <ClCompile Include="Crab.cpp">
+      <Filter>Source Files\Mario Bros 1\Level Objects\Spawnable</Filter>
+    </ClCompile>
+    <ClCompile Include="FighterFly.cpp">
+      <Filter>Source Files\Mario Bros 1\Level Objects\Spawnable</Filter>
+    </ClCompile>
+    <ClCompile Include="Freezie.cpp">
+      <Filter>Source Files\Mario Bros 1\Level Objects\Spawnable</Filter>
+    </ClCompile>
     <ClCompile Include="Pipe_SMB1.cpp">
-      <Filter>Source Files\Mario Bros 1\Level Objects</Filter>
+      <Filter>Source Files\Mario Bros 1\Level Objects\Spawnable</Filter>
     </ClCompile>
     <ClCompile Include="POW_SMB1.cpp">
-      <Filter>Source Files\Mario Bros 1\Level Objects</Filter>
+      <Filter>Source Files\Mario Bros 1\Level Objects\Spawnable</Filter>
+    </ClCompile>
+    <ClCompile Include="Spiny.cpp">
+      <Filter>Source Files\Mario Bros 1\Level Objects\Spawnable</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -518,11 +548,29 @@
     <ClInclude Include="LevelMap.h">
       <Filter>Header Files\Mario Bros 1</Filter>
     </ClInclude>
+    <ClInclude Include="RenderObject.h">
+      <Filter>Header Files\Mario Bros 1\Level Objects\Abstract</Filter>
+    </ClInclude>
+    <ClInclude Include="Coin.h">
+      <Filter>Header Files\Mario Bros 1\Level Objects\Spawnable</Filter>
+    </ClInclude>
+    <ClInclude Include="Crab.h">
+      <Filter>Header Files\Mario Bros 1\Level Objects\Spawnable</Filter>
+    </ClInclude>
+    <ClInclude Include="FighterFly.h">
+      <Filter>Header Files\Mario Bros 1\Level Objects\Spawnable</Filter>
+    </ClInclude>
+    <ClInclude Include="Freezie.h">
+      <Filter>Header Files\Mario Bros 1\Level Objects\Spawnable</Filter>
+    </ClInclude>
     <ClInclude Include="Pipe_SMB1.h">
-      <Filter>Header Files\Mario Bros 1\Level Objects</Filter>
+      <Filter>Header Files\Mario Bros 1\Level Objects\Spawnable</Filter>
     </ClInclude>
     <ClInclude Include="POW_SMB1.h">
-      <Filter>Header Files\Mario Bros 1\Level Objects</Filter>
+      <Filter>Header Files\Mario Bros 1\Level Objects\Spawnable</Filter>
+    </ClInclude>
+    <ClInclude Include="Spiny.h">
+      <Filter>Header Files\Mario Bros 1\Level Objects\Spawnable</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

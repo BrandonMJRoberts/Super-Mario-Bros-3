@@ -1,11 +1,9 @@
 #ifndef _PIPE_SMB1_H_
 #define _PIPE_SMB1_H_
 
-#include "Game_Maths.h"
+#include "RenderObject.h"
 
-class  Texture2D;
 struct SDL_Renderer;
-struct SDL_Rect;
 
 // -------------------------------------------------------------------------------- //
 
@@ -17,26 +15,28 @@ enum class PIPE_FACING_DIRECTION_SMB1
 
 // -------------------------------------------------------------------------------- //
 
-class PIPE_SMB1
+class PIPE_SMB1 final : public RenderObject
 {
 public:
-	PIPE_SMB1(SDL_Renderer* renderer, const char* filePathToSpriteSheet, PIPE_FACING_DIRECTION_SMB1 facingDirection, Vector2D bottomLeftPosition);
+	PIPE_SMB1(SDL_Renderer* renderer, const char* filePathToSpriteSheet, PIPE_FACING_DIRECTION_SMB1 facingDirection, Vector2D bottomLeftPosition, const float timePerFrame);
 	~PIPE_SMB1();
 
-	void Render();
-	void Update(const float deltaTime);
+	void Update(const float deltaTime) override;
 
-	void SetReleasingEnemy();
+	void SetIsDoingAnimation(bool collisionFromLeft);
 
 private:
-	Vector2D     mPosition;
+	Texture2D* GetSpriteSheet() override { return mSpriteSheet; }
 
-	Texture2D*   mSpriteSheet;
+	void UpdatePhysics() override { ; }
+
+	static Texture2D*   mSpriteSheet;
+	static unsigned int mPipeCount;
 
 	PIPE_FACING_DIRECTION_SMB1 mPipeFacingDirection;
 
-	SDL_Rect*    mSourceRect;
-	SDL_Rect*    mDestRect;
+	bool         mDoingAnimation;
+	bool         mAnimationDirectionIsRight;
 };
 
 // -------------------------------------------------------------------------------- //

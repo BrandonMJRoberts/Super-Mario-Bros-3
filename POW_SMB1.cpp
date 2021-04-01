@@ -7,20 +7,16 @@
 
 // ----------------------------------------------------------------- //
 
-POW::POW(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D bottomLeftStartPos)
-	: mSpriteSheet(nullptr)
+POW::POW(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D bottomLeftStartPos) 
+	: RenderObject(0, 0, 0, 0.0f, bottomLeftStartPos, 3, 1)
+	, mSpriteSheet(nullptr)
 
-	, mPosition(bottomLeftStartPos)
 	, mStartPosition(bottomLeftStartPos)
 
-	, mCurrentSpriteID(0)
 	, mDoingBounce(false)
 	, mGoingUp(true)
 
 	, mCollisionBox(1.0f, 1.0f)
-
-	, mSourceRect(nullptr)
-	, mDestRect(nullptr)
 {
 	mSourceRect = new SDL_Rect{ 0, 0,                                                               SPRITE_RES, SPRITE_RES };
 	mDestRect   = new SDL_Rect{ (int)(mPosition.x * SPRITE_RES), (int)((mPosition.y - 1.0f) * SPRITE_RES), SPRITE_RES, SPRITE_RES };
@@ -38,23 +34,6 @@ POW::~POW()
 {
 	delete mSpriteSheet;
 	mSpriteSheet = nullptr;
-
-	delete mSourceRect;
-	mSourceRect = nullptr;
-
-	delete mDestRect;
-	mDestRect = nullptr;
-}
-
-// ----------------------------------------------------------------- //
-
-void POW::Render()
-{
-	if (!mSpriteSheet)
-		return;
-
-	// Render the pow block
-	mSpriteSheet->Render(*mSourceRect, *mDestRect, SDL_FLIP_NONE, 0.0f);
 }
 
 // ----------------------------------------------------------------- //

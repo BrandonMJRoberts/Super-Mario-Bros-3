@@ -4,60 +4,95 @@
 
 #include <SDL.h>
 
+Texture2D*   PIPE_SMB1::mSpriteSheet = nullptr;
+unsigned int PIPE_SMB1::mPipeCount   = 0;
+
 // --------------------------------------------------------------------------------------- //
 
-PIPE_SMB1::PIPE_SMB1(SDL_Renderer* renderer, const char* filePathToSpriteSheet, PIPE_FACING_DIRECTION_SMB1 facingDirection, Vector2D bottomLeftPosition)
-	: mSpriteSheet(nullptr)
-
-	, mSourceRect(nullptr)
-	, mDestRect(nullptr)
+PIPE_SMB1::PIPE_SMB1(SDL_Renderer* renderer, const char* filePathToSpriteSheet, PIPE_FACING_DIRECTION_SMB1 facingDirection, Vector2D bottomLeftPosition, const float timePerFrame)
+	: RenderObject(0, 0, 0, timePerFrame, bottomLeftPosition, 1, 1)
 
 	, mPipeFacingDirection(facingDirection)
-	, mPosition(bottomLeftPosition)
+
+	, mAnimationDirectionIsRight(false)
+	, mDoingAnimation(false)
 {
-	mSpriteSheet = new Texture2D(renderer);
-	if (!mSpriteSheet->LoadFromFile(filePathToSpriteSheet))
+	if (mSpriteSheet == nullptr)
 	{
-		std::cout << "Failed to load sprite sheet for pipes" << std::endl;
+		mSpriteSheet = new Texture2D(renderer);
+		if (!mSpriteSheet->LoadFromFile(filePathToSpriteSheet))
+		{
+			std::cout << "Failed to load sprite sheet for pipes" << std::endl;
+		}
 	}
+
+	mPipeCount++;
 }
 
 // --------------------------------------------------------------------------------------- //
 
 PIPE_SMB1::~PIPE_SMB1()
 {
-	delete mSpriteSheet;
-	mSpriteSheet = nullptr;
+	if (mPipeCount == 1)
+	{
+		delete mSpriteSheet;
+		mSpriteSheet = nullptr;
+	}
 
-	delete mSourceRect;
-	mSourceRect = nullptr;
-
-	delete mDestRect;
-	mDestRect = nullptr;
-}
-
-// --------------------------------------------------------------------------------------- //
-
-void PIPE_SMB1::Render()
-{
-	if (!mSpriteSheet)
-		return;
-
-	mSpriteSheet->Render(*mSourceRect, *mDestRect, SDL_FLIP_NONE, 0.0f);
+	mPipeCount--;
 }
 
 // --------------------------------------------------------------------------------------- //
 
 void PIPE_SMB1::Update(const float deltaTime)
 {
+	if (mDoingAnimation)
+	{
+		mTimeRemainingPerFrame -= deltaTime;
 
+		if (mTimeRemainingPerFrame < 0.0f)
+		{
+			mTimeRemainingPerFrame = kTimePerFrame;
+
+			if (mAnimationDirectionIsRight)
+			{
+				mCurrentSpriteID++;
+
+				if (mCurrentSpriteID > 3)
+				{
+					mCurrentSpriteID = 0;
+					mDoingAnimation  = false;
+				}
+			}
+			else
+			{
+				mCurrentSpriteID--;
+
+				if (mCurrentSpriteID < 0)
+				{
+					mCurrentSpriteID = 0;
+					mDoingAnimation  = false;
+				}
+			}
+		}
+	}
 }
 
 // --------------------------------------------------------------------------------------- //
 
-void PIPE_SMB1::SetReleasingEnemy()
+void PIPE_SMB1::SetIsDoingAnimation(bool animationGoingLeft)
 {
+	mDoingAnimation            = true;
+	mAnimationDirectionIsRight = !animationGoingLeft;
 
+	if (mAnimationDirectionIsRight)
+	{
+		mCurrentSpriteID = 0;
+	}
+	else
+	{
+		mCurrentSpriteID = 3;
+	}
 }
 
 // --------------------------------------------------------------------------------------- //

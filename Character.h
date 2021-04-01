@@ -47,6 +47,8 @@ protected:
 	void          HandleCollisions(const float deltaTime);
 	void          ApplyMovement(const float deltaTime);
 
+	void		  CalculateSpriteData(SDL_Renderer* renderer, std::string filePath);
+
 	// General data
 	SDL_Renderer*      mRenderer;
 	Vector2D           mPosition;
@@ -62,9 +64,16 @@ protected:
 	const unsigned int kSpritesOnWidth;
 	const unsigned int kSpritesOnHeight;
 
+	unsigned int       mCurrentSpriteID;
+	unsigned int       mEndSpriteID;
+	unsigned int       mStartSpriteID;
+
 	LevelMap*          mLevelMap;
 
 	unsigned int       mPlayerMovementData;
+
+	SDL_Rect*          mSourceRect;
+	SDL_Rect*          mDestRect;
 
 	bool               mUsingCollisionBox;
 };
