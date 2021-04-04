@@ -18,6 +18,9 @@ public:
 
 	void Render();
 
+	unsigned int GetLevelWidth()  const { return mLevelWidth; }
+	unsigned int GetLevelHeight() const { return mLevelHeight; }
+
 private:
 	SDL_Renderer* mRenderer;
 

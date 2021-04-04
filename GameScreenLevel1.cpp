@@ -34,7 +34,9 @@ GameScreenLevel1::GameScreenLevel1(SDL_Renderer* renderer)
 	, kEnemysPerSpeedUp(5)
 
 	, mEnemySpawnPointLeft(0.0f, 0.0f)
-	, mEnemySpawnPointRight(0.0f, 0.0f)
+	, mEnemySpawnPointRight(11.0f, 0.0f)
+
+	, mBackgroundSprite(nullptr)
 {
 	if (!SetUpLevel())
 	{
@@ -63,6 +65,9 @@ GameScreenLevel1::~GameScreenLevel1()
 		delete mPipes[i];
 		mPipes[i] = nullptr;
 	}
+
+	delete mBackgroundSprite;
+	mBackgroundSprite = nullptr;
 }
 
 // --------------------------------------------------------------------------------------------- //
@@ -97,13 +102,19 @@ bool GameScreenLevel1::SetUpLevel()
 	// Create the pow block
 	mPowBlock = new POW(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/PowBlock.png", Vector2D(7.5, 9));
 
-
 	// Load in the pipes
 	mPipes[0] = new PIPE_SMB1(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Pipe.png", PIPE_FACING_DIRECTION_SMB1::LEFT, Vector2D(), 0.1f);
 	mPipes[1] = new PIPE_SMB1(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Pipe.png", PIPE_FACING_DIRECTION_SMB1::LEFT, Vector2D(), 0.1f);
 	mPipes[2] = new PIPE_SMB1(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Pipe.png", PIPE_FACING_DIRECTION_SMB1::RIGHT, Vector2D(), 0.1f);
 	mPipes[3] = new PIPE_SMB1(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Pipe.png", PIPE_FACING_DIRECTION_SMB1::RIGHT, Vector2D(), 0.1f);
 
+
+	mBackgroundSprite = new Texture2D(mRenderer);
+	if (!mBackgroundSprite->LoadFromFile("SDL_Mario_Project/Mario Bros 1 Images/Background 1.png"))
+	{
+		std::cout << "Failed to load in background" << std::endl;
+		return false;
+	}
 
 	// If we get here then everything has loaded correctly
 	return true;
@@ -126,7 +137,28 @@ void GameScreenLevel1::Update(float deltaTime, SDL_Event e)
 		// Check for collisions with the pow block
 		CheckForPOWCollision();
 
-		mPowBlock->Update(deltaTime);
+		mPowBlock->Update(deltaTime, mLevelMap);
+	}
+
+	// Now update the level objects
+	for (unsigned int i = 0; i < mLevelObjects.size(); i++)
+	{
+		if (mLevelObjects[i])
+		{
+			mLevelObjects[i]->Update(deltaTime, mLevelMap);
+
+			// Now check to see if the object is too far off the screen. If so delete it
+			if (mLevelObjects[i]->GetPosition().y - mLevelObjects[i]->GetCollisionBox().y > mLevelMap->GetLevelHeight())
+			{
+				delete mLevelObjects[i];
+				mLevelObjects.erase(mLevelObjects.begin() + i);
+			}
+		}
+		else
+		{
+			mLevelObjects.erase(mLevelObjects.begin() + i);
+		}
+		
 	}
 
 	// Spawn enemies
@@ -143,14 +175,10 @@ void GameScreenLevel1::Update(float deltaTime, SDL_Event e)
 
 void GameScreenLevel1::Render()
 {
+	mBackgroundSprite->Render(Vector2D(0.0f, -250.0f), SDL_FLIP_NONE, 0.0f);
+
 	if (mLevelMap)
 		mLevelMap->Render();
-
-	if (mMario)
-		mMario->Render();
-
-	if (mLuigi)
-		mLuigi->Render();
 
 	if (mPowBlock)
 	{
@@ -162,6 +190,18 @@ void GameScreenLevel1::Render()
 	{
 		if (mPipes[i])
 			mPipes[i]->Render();
+	}
+
+	if (mMario)
+		mMario->Render();
+
+	if (mLuigi)
+		mLuigi->Render();
+
+	for (unsigned int i = 0; i < mLevelObjects.size(); i++)
+	{
+		if(mLevelObjects[i])
+			mLevelObjects[i]->Render();
 	}
 }
 
@@ -188,24 +228,24 @@ void GameScreenLevel1::CheckForPOWCollision()
 void GameScreenLevel1::SpawnNewEnemy(EnemyType enemy)
 {
 	// First choose which side to spawn at
-
+	Vector2D spawnPoint = mEnemySpawnPointLeft;
 
 	switch (enemy)
 	{
 	case EnemyType::CRAB:
-		mLevelObjects.push_back(new Crab(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Crab.png", 0.1f, Vector2D()));
+		mLevelObjects.push_back(new Crab(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Crab.png", 0.1f, spawnPoint));
 	break;
 
 	case EnemyType::FREEZIE:
-		mLevelObjects.push_back(new Freezie(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Freezie.png", 0.1f, Vector2D()));
+		mLevelObjects.push_back(new Freezie(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Freezie.png", 0.1f, spawnPoint, Vector2D(1.0f, 1.0f)));
 	break;
 
 	case EnemyType::FIGHTER_FLY:
-		mLevelObjects.push_back(new FighterFly(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/FighterFly.png", 0.1f, Vector2D()));
+		mLevelObjects.push_back(new FighterFly(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/FighterFly.png", 0.1f, spawnPoint, Vector2D(1.0f, 1.0f)));
 	break;
 
 	case EnemyType::SPINY:
-		mLevelObjects.push_back(new Spiny(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Spiny.png", 0.1f, Vector2D()));
+		mLevelObjects.push_back(new Spiny(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Spiny.png", 0.1f, spawnPoint, Vector2D(1.0f, 1.0f)));
 	break;
 
 	default:
@@ -222,9 +262,9 @@ void GameScreenLevel1::EnemySpawnCheck(const float deltaTime)
 
 	if (mTimeRemainingTillSpawn <= 0.0f)
 	{
-		SpawnNewEnemy(EnemyType::CRAB);
+		SpawnNewEnemy((EnemyType)(rand() % (unsigned int)EnemyType::MAX));
 
-		mTimePerEnemySpawn = mTimePerEnemySpawn;
+		mTimeRemainingTillSpawn = mTimePerEnemySpawn;
 		mEnemysSpawnedTotal++;
 
 		if (mEnemysSpawnedTotal % kEnemysPerSpeedUp == 0)

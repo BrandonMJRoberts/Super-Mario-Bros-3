@@ -9,10 +9,10 @@ struct SDL_Renderer;
 class FighterFly final : public RenderObject
 {
 public:
-	FighterFly(SDL_Renderer* renderer, const char* filePathToSpriteSheet, const float timePerFrame, Vector2D startPos);
+	FighterFly(SDL_Renderer* renderer, const char* filePathToSpriteSheet, const float timePerFrame, Vector2D startPos, Vector2D collisionBox);
 	~FighterFly();
 
-	void UpdatePhysics() override;
+	void UpdatePhysics(const float deltaTime, LevelMap* levelMap) override;
 
 private:
 	Texture2D* GetSpriteSheet() override { return mSpriteSheet; }

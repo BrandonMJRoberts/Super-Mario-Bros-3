@@ -7,8 +7,8 @@
 
 // ----------------------------------------------------------------- //
 
-POW::POW(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D bottomLeftStartPos) 
-	: RenderObject(0, 0, 0, 0.0f, bottomLeftStartPos, 3, 1)
+POW::POW(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D bottomLeftStartPos, Vector2D collisionBox)
+	: RenderObject(0, 0, 0, 0.0f, bottomLeftStartPos, 3, 1, collisionBox)
 	, mSpriteSheet(nullptr)
 
 	, mStartPosition(bottomLeftStartPos)
@@ -38,7 +38,7 @@ POW::~POW()
 
 // ----------------------------------------------------------------- //
 
-void POW::Update(const float deltaTime)
+void POW::Update(const float deltaTime, LevelMap* levelMap)
 {
 	if (mDoingBounce)
 	{

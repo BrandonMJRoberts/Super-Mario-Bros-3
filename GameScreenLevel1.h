@@ -12,6 +12,7 @@ class LevelMap;
 class POW;
 class PIPE_SMB1;
 class RenderObject;
+class Texture2D;
 
 // ------------------------------------------------------------- //
 
@@ -20,7 +21,9 @@ enum class EnemyType
 	CRAB = 0,
 	FIGHTER_FLY,
 	FREEZIE,
-	SPINY
+	SPINY, 
+
+	MAX
 };
 
 // ------------------------------------------------------------- //
@@ -56,6 +59,8 @@ private:
 
 	// Enemies and coins that can spawn
 	std::vector<RenderObject*> mLevelObjects;
+
+	Texture2D*                 mBackgroundSprite;
 
 	// Enemy spawning timers
 	float           mTimePerEnemySpawn;

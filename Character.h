@@ -16,7 +16,8 @@ enum PlayerMovementData
 	WALKING_LEFT_SMB1   = 1 << 0,
 	WALKING_RIGHT_SMB1  = 1 << 1,
 	JUMPING_SMB1        = 1 << 2,
-	DEAD_SMB1           = 1 << 3
+	DEAD_SMB1           = 1 << 3,
+	WAS_FACING_RIGHT    = 1 << 4
 };
 
 // ---------------------------------------------------------------------------- //

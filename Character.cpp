@@ -72,10 +72,23 @@ Character::~Character()
 
 void Character::Render()
 {
-	if(mVelocity.x < 0.0f)
-		mTexture->Render(*mSourceRect, *mDestRect, SDL_FLIP_NONE, 0.0f);
-	else
+	if (mVelocity.x > 0.0f)
+	{
 		mTexture->Render(*mSourceRect, *mDestRect, SDL_FLIP_HORIZONTAL, 0.0f);
+	}
+	else if (mVelocity.x < 0.0f)
+	{
+		mTexture->Render(*mSourceRect, *mDestRect, SDL_FLIP_NONE, 0.0f);
+	}
+	else
+	{
+		if (mPlayerMovementData & PlayerMovementData::WAS_FACING_RIGHT)
+		{
+			mTexture->Render(*mSourceRect, *mDestRect, SDL_FLIP_HORIZONTAL, 0.0f);
+		}
+		else
+			mTexture->Render(*mSourceRect, *mDestRect, SDL_FLIP_NONE, 0.0f);
+	}
 
 }
 
@@ -90,17 +103,26 @@ void Character::HandleInput(SDL_Event e)
 		{
 		case SDLK_d:
 			// Set that the player is now jumping
-			mPlayerMovementData |= PlayerMovementData::WALKING_RIGHT_SMB1;
+			if (!(mPlayerMovementData & PlayerMovementData::WALKING_LEFT_SMB1))
+			{
+				mPlayerMovementData |= PlayerMovementData::WALKING_RIGHT_SMB1;
+				mPlayerMovementData |= PlayerMovementData::WAS_FACING_RIGHT;
 
-			// Apply the jump force
-			mVelocity.x = 3.0f;
+				// Apply the movement force
+				mVelocity.x = 3.0f;
+			}
 		break;
 
 		case SDLK_a:
-			mPlayerMovementData |= PlayerMovementData::WALKING_LEFT_SMB1;
+			if (!(mPlayerMovementData & PlayerMovementData::WALKING_RIGHT_SMB1))
+			{
+				mPlayerMovementData |= PlayerMovementData::WALKING_LEFT_SMB1;
 
-			// Apply the jump force
-			mVelocity.x = -3.0f;
+				mPlayerMovementData &= ~(PlayerMovementData::WAS_FACING_RIGHT);
+
+				// Apply the movement force
+				mVelocity.x = -3.0f;
+			}
 		break;
 
 		case SDLK_w:
@@ -114,18 +136,25 @@ void Character::HandleInput(SDL_Event e)
 		switch (e.key.keysym.sym)
 		{
 		case SDLK_d:
-			// Set that the player is now jumping
-			mPlayerMovementData &= ~(PlayerMovementData::WALKING_RIGHT_SMB1);
 
-			// Apply the jump force
-			mVelocity.x = 0.0f;
+			if (!(mPlayerMovementData & PlayerMovementData::WALKING_LEFT_SMB1))
+			{
+				// Set that the player is now jumping
+				mPlayerMovementData &= ~(PlayerMovementData::WALKING_RIGHT_SMB1);
+
+				// Apply the jump force
+				mVelocity.x = 0.0f;
+			}
 		break;
 
 		case SDLK_a:
-			mPlayerMovementData &= ~(PlayerMovementData::WALKING_LEFT_SMB1);
+			if (!(mPlayerMovementData & PlayerMovementData::WALKING_RIGHT_SMB1))
+			{
+				mPlayerMovementData &= ~(PlayerMovementData::WALKING_LEFT_SMB1);
 
-			// Apply the jump force
-			mVelocity.x = 0.0f;
+				// Apply the jump force
+				mVelocity.x = 0.0f;
+			}
 		break;
 		}
 	break;

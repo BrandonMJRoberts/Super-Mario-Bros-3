@@ -4,14 +4,15 @@
 #include "RenderObject.h"
 
 struct SDL_Renderer;
+class  LevelMap;
 
 class Coin final : public RenderObject
 {
 public:
-	Coin(SDL_Renderer* renderer, const Vector2D startPosition, const char* filePathToSpriteSheet, const float timePerFrame);
+	Coin(SDL_Renderer* renderer, const Vector2D startPosition, const char* filePathToSpriteSheet, const float timePerFrame, Vector2D collisionBox = Vector2D(1.0f, 1.0f));
 	~Coin();
 
-	void Update(const float deltaTime) override;
+	void UpdatePhysics(const float deltaTime, LevelMap* levelMap) override;
 
 private:
 	Texture2D* GetSpriteSheet() override { return mSpriteSheet; }

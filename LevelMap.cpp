@@ -48,7 +48,7 @@ LevelMap::~LevelMap()
 int LevelMap::GetCollisionTileAt(unsigned int h, unsigned int w)
 {
 	// Bounds checks
-	if (h < mLevelHeight && w < mLevelWidth && h > 0 && w > 0)
+	if (h < mLevelHeight && w < mLevelWidth && h >= 0 && w >= 0)
 	{
 		// Pass back the value
 		return mCollisionMap[h][w];

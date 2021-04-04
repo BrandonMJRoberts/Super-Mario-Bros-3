@@ -18,17 +18,17 @@ enum class PIPE_FACING_DIRECTION_SMB1
 class PIPE_SMB1 final : public RenderObject
 {
 public:
-	PIPE_SMB1(SDL_Renderer* renderer, const char* filePathToSpriteSheet, PIPE_FACING_DIRECTION_SMB1 facingDirection, Vector2D bottomLeftPosition, const float timePerFrame);
+	PIPE_SMB1(SDL_Renderer* renderer, const char* filePathToSpriteSheet, PIPE_FACING_DIRECTION_SMB1 facingDirection, Vector2D bottomLeftPosition, const float timePerFrame, Vector2D collisionBox = Vector2D(1.0f, 1.0f));
 	~PIPE_SMB1();
 
-	void Update(const float deltaTime) override;
+	void Update(const float deltaTime, LevelMap* levelMap) override;
 
 	void SetIsDoingAnimation(bool collisionFromLeft);
 
 private:
 	Texture2D* GetSpriteSheet() override { return mSpriteSheet; }
 
-	void UpdatePhysics() override { ; }
+	void UpdatePhysics(const float deltaTime, LevelMap* levelMap) override { ; }
 
 	static Texture2D*   mSpriteSheet;
 	static unsigned int mPipeCount;

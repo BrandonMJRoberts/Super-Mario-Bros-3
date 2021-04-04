@@ -9,8 +9,8 @@ unsigned int PIPE_SMB1::mPipeCount   = 0;
 
 // --------------------------------------------------------------------------------------- //
 
-PIPE_SMB1::PIPE_SMB1(SDL_Renderer* renderer, const char* filePathToSpriteSheet, PIPE_FACING_DIRECTION_SMB1 facingDirection, Vector2D bottomLeftPosition, const float timePerFrame)
-	: RenderObject(0, 0, 0, timePerFrame, bottomLeftPosition, 1, 1)
+PIPE_SMB1::PIPE_SMB1(SDL_Renderer* renderer, const char* filePathToSpriteSheet, PIPE_FACING_DIRECTION_SMB1 facingDirection, Vector2D bottomLeftPosition, const float timePerFrame, Vector2D collisionBox)
+	: RenderObject(0, 0, 0, timePerFrame, bottomLeftPosition, 1, 1, collisionBox)
 
 	, mPipeFacingDirection(facingDirection)
 
@@ -44,7 +44,7 @@ PIPE_SMB1::~PIPE_SMB1()
 
 // --------------------------------------------------------------------------------------- //
 
-void PIPE_SMB1::Update(const float deltaTime)
+void PIPE_SMB1::Update(const float deltaTime, LevelMap* levelMap)
 {
 	if (mDoingAnimation)
 	{

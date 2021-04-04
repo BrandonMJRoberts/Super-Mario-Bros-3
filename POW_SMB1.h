@@ -4,14 +4,15 @@
 #include "RenderObject.h"
 
 struct SDL_Renderer;
+class LevelMap;
 
 class POW final : public RenderObject
 {
 public:
-	POW(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D bottomLeftStartPos);
+	POW(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D bottomLeftStartPos, Vector2D collisionBox = Vector2D(1.0f, 1.0f));
 	~POW();
 
-	void     Update(const float deltaTime) override;
+	void     Update(const float deltaTime, LevelMap* levelMap) override;
 
 	Vector2D GetCollisionBox() const { return mCollisionBox; }
 	Vector2D GetPosition()     const { return mPosition;     }
@@ -21,7 +22,7 @@ public:
 private:
 	Texture2D* GetSpriteSheet() override { return mSpriteSheet; }
 
-	void UpdatePhysics() override { ; }
+	void UpdatePhysics(const float deltaTime, LevelMap* levelMap) override { ; }
 
 	Texture2D*   mSpriteSheet;
 

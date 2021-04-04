@@ -2,12 +2,15 @@
 
 #include "Texture2D.h"
 
+#include "LevelMap.h"
+
 Texture2D*   Freezie::mSpriteSheet  = nullptr;
 unsigned int Freezie::mFreezieCount = 0;
 
 // --------------------------------------------------------- //
 
-Freezie::Freezie(SDL_Renderer* renderer, const char* filePathToSpriteSheet, const float timePerFrame, Vector2D startPos)
+Freezie::Freezie(SDL_Renderer* renderer, const char* filePathToSpriteSheet, const float timePerFrame, Vector2D startPos, Vector2D collisionBox) 
+	: RenderObject(0, 2, 0, timePerFrame, startPos, 8, 1, collisionBox)
 {
 	// Load in the sprite sheet
 	if (mFreezieCount == 0)
@@ -39,9 +42,29 @@ Freezie::~Freezie()
 
 // --------------------------------------------------------- //
 
-void Freezie::UpdatePhysics()
+void Freezie::UpdatePhysics(const float deltaTime, LevelMap* levelMap)
 {
+	Vector2D movementDistance = mVelocity * deltaTime;
 
+	// Check for collisions
+	if (levelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x)) == '1'
+		|| levelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x + mCollisionBox.x)) == '1') // Down collision
+	{
+		mVelocity.y = 0.0f;
+	}
+	else if (levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y - movementDistance.y), int(mPosition.x)) == '1' ||
+		levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y - movementDistance.y), int(mPosition.x + mCollisionBox.x)) == '1') // Up collision
+	{
+		// Up collision bounce back down
+		mVelocity.y = 1.0f;
+	}
+	else
+	{
+		mVelocity.y += CHARACTER_GRAVITY * deltaTime;
+
+		// No y collisions
+		mPosition.y += movementDistance.y;
+	}
 }
 
 // --------------------------------------------------------- //
