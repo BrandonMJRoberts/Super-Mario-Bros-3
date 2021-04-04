@@ -72,6 +72,8 @@ private:
 	// Spawn points
 	const Vector2D     mEnemySpawnPointLeft;
 	const Vector2D     mEnemySpawnPointRight;
+
+	bool			   mSpawningLeftSide;
 };
 
 

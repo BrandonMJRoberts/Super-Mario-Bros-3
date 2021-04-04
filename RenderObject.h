@@ -13,7 +13,7 @@ class RenderObject abstract
 {
 public:
 	RenderObject();
-	RenderObject(unsigned int start, unsigned int end, unsigned int current, const float timePerFrame, Vector2D startPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, Vector2D collisionBox);
+	RenderObject(unsigned int start, unsigned int end, unsigned int current, const float timePerFrame, Vector2D startPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, Vector2D collisionBox, const float movementSpeed);
 	~RenderObject();
 
 	virtual void Update(const float deltaTime, LevelMap* levelMap);
@@ -24,7 +24,7 @@ public:
 	Vector2D GetCollisionBox() const { return mCollisionBox; }
 
 protected:
-	virtual void       UpdatePhysics(const float deltaTime, LevelMap* levelMap) = 0;
+	virtual void       UpdatePhysics(const float deltaTime, LevelMap* levelMap);
 	virtual Texture2D* GetSpriteSheet() = 0;
 
 	void               SetupRenderRects();
@@ -43,8 +43,10 @@ protected:
 	const float  kTimePerFrame;
 	float		 mTimeRemainingPerFrame;
 
-	float mSingleSpriteHeight;
-	float mSingleSpriteWidth;
+	const float kMovementSpeed;
+
+	unsigned int mSingleSpriteHeight;
+	unsigned int mSingleSpriteWidth;
 
 	SDL_Rect*    mSourceRect;
 	SDL_Rect*    mDestRect;

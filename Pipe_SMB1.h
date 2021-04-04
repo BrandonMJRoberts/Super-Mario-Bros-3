@@ -25,10 +25,10 @@ public:
 
 	void SetIsDoingAnimation(bool collisionFromLeft);
 
+	void UpdatePhysics(const float deltaTime, LevelMap* levelMap) { ; }
+
 private:
 	Texture2D* GetSpriteSheet() override { return mSpriteSheet; }
-
-	void UpdatePhysics(const float deltaTime, LevelMap* levelMap) override { ; }
 
 	static Texture2D*   mSpriteSheet;
 	static unsigned int mPipeCount;

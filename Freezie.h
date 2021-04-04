@@ -9,10 +9,8 @@ struct SDL_Renderer;
 class Freezie final : public RenderObject
 {
 public:
-	Freezie(SDL_Renderer* renderer, const char* filePathToSpriteSheet, const float timePerFrame, Vector2D startPos, Vector2D collisionBox);
+	Freezie(SDL_Renderer* renderer, const char* filePathToSpriteSheet, const float timePerFrame, Vector2D startPos, Vector2D collisionBox, bool spawningOnLeftSide, const float movementSpeed);
 	~Freezie();
-
-	void UpdatePhysics(const float deltaTime, LevelMap* levelMap) override;
 
 private:
 	Texture2D* GetSpriteSheet() override { return mSpriteSheet; }

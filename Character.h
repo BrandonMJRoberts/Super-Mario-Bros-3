@@ -47,6 +47,7 @@ protected:
 	void          HandleInput(SDL_Event e);
 	void          HandleCollisions(const float deltaTime);
 	void          ApplyMovement(const float deltaTime);
+	void		  CheckForLooping();
 
 	void		  CalculateSpriteData(SDL_Renderer* renderer, std::string filePath);
 
@@ -77,6 +78,7 @@ protected:
 	SDL_Rect*          mDestRect;
 
 	bool               mUsingCollisionBox;
+	bool               mCanJump;
 };
 
 #endif _CHARACTER_H_

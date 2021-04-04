@@ -33,10 +33,12 @@ GameScreenLevel1::GameScreenLevel1(SDL_Renderer* renderer)
 	, mEnemysSpawnedTotal(0)
 	, kEnemysPerSpeedUp(5)
 
-	, mEnemySpawnPointLeft(0.0f, 0.0f)
-	, mEnemySpawnPointRight(11.0f, 0.0f)
+	, mEnemySpawnPointLeft(-0.9f, 1.95f)
+	, mEnemySpawnPointRight(15.9f, 1.95f)
 
 	, mBackgroundSprite(nullptr)
+
+	, mSpawningLeftSide(true)
 {
 	if (!SetUpLevel())
 	{
@@ -82,7 +84,7 @@ bool GameScreenLevel1::SetUpLevel()
 		return false;
 
 	// Create mario
-	mMario = new Character(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Mario.png", Vector2D(5, 0), 7, 2, mLevelMap, Vector2D(1.0f, 1.3125));
+	mMario = new Character(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Mario.png", Vector2D(5.0f, 1.9f), 7, 2, mLevelMap, Vector2D(1.0f, 1.4));
 	if (!mMario)
 	{
 		std::cout << "mMario failed to load." << std::endl;
@@ -90,7 +92,7 @@ bool GameScreenLevel1::SetUpLevel()
 	}
 
 	// Create luigi
-	mLuigi = new Character(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Luigi.png", Vector2D(7, 0), 7, 2, mLevelMap, Vector2D(1.0f, 1.3125));
+	mLuigi = new Character(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Luigi.png", Vector2D(7.0f, 1.9f), 7, 2, mLevelMap, Vector2D(1.0f, 1.4));
 	if (!mLuigi)
 	{
 		std::cout << "mLuigi failed to load." << std::endl;
@@ -163,12 +165,6 @@ void GameScreenLevel1::Update(float deltaTime, SDL_Event e)
 
 	// Spawn enemies
 	EnemySpawnCheck(deltaTime);
-
-	// Collisions check between the characters
-	//if (Collisions::Instance()->Circle(mMario, mLuigi))
-	//{
-	//	std::cout << "collisions" << std::endl;
-	//}
 }
 
 // --------------------------------------------------------------------------------------------- //
@@ -227,30 +223,37 @@ void GameScreenLevel1::CheckForPOWCollision()
 
 void GameScreenLevel1::SpawnNewEnemy(EnemyType enemy)
 {
+	Vector2D spawnPoint;
+
 	// First choose which side to spawn at
-	Vector2D spawnPoint = mEnemySpawnPointLeft;
+	if (mSpawningLeftSide)
+		spawnPoint = mEnemySpawnPointLeft;
+	else
+		spawnPoint = mEnemySpawnPointRight;
 
 	switch (enemy)
 	{
 	case EnemyType::CRAB:
-		mLevelObjects.push_back(new Crab(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Crab.png", 0.1f, spawnPoint));
+		mLevelObjects.push_back(new Crab(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Crab.png", 0.09f, spawnPoint, Vector2D(1.0f, 1.0f), mSpawningLeftSide, 3.0f));
 	break;
 
 	case EnemyType::FREEZIE:
-		mLevelObjects.push_back(new Freezie(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Freezie.png", 0.1f, spawnPoint, Vector2D(1.0f, 1.0f)));
+		mLevelObjects.push_back(new Freezie(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Freezie.png", 0.1f, spawnPoint, Vector2D(1.0f, 1.0f), mSpawningLeftSide, 2.5f));
 	break;
 
 	case EnemyType::FIGHTER_FLY:
-		mLevelObjects.push_back(new FighterFly(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/FighterFly.png", 0.1f, spawnPoint, Vector2D(1.0f, 1.0f)));
+		mLevelObjects.push_back(new FighterFly(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/FighterFly.png", 0.12f, spawnPoint, Vector2D(1.0f, 1.0f), mSpawningLeftSide, 3.5f));
 	break;
 
 	case EnemyType::SPINY:
-		mLevelObjects.push_back(new Spiny(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Spiny.png", 0.1f, spawnPoint, Vector2D(1.0f, 1.0f)));
+		mLevelObjects.push_back(new Spiny(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Spiny.png", 0.18f, spawnPoint, Vector2D(1.0f, 1.0f), mSpawningLeftSide, 1.0f));
 	break;
 
 	default:
 	break;
 	}
+
+	mSpawningLeftSide = !mSpawningLeftSide;
 }
 
 // --------------------------------------------------------------------------------------------- //

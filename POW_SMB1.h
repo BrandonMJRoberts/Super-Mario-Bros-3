@@ -19,10 +19,10 @@ public:
 
 	bool     SetHasBeenHit();
 
+	void UpdatePhysics(const float deltaTime, LevelMap* levelMap) { ; }
+
 private:
 	Texture2D* GetSpriteSheet() override { return mSpriteSheet; }
-
-	void UpdatePhysics(const float deltaTime, LevelMap* levelMap) override { ; }
 
 	Texture2D*   mSpriteSheet;
 

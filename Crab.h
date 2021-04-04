@@ -9,10 +9,8 @@ class LevelMap;
 class Crab final : public RenderObject
 {
 public:
-	Crab(SDL_Renderer* renderer, const char* filePathToSpriteSheet, const float timePerFrame, Vector2D startPos, Vector2D collisionBox = Vector2D(1.0f, 1.0f));
+	Crab(SDL_Renderer* renderer, const char* filePathToSpriteSheet, const float timePerFrame, Vector2D startPos, Vector2D collisionBox, bool spawningOnLeftSide, const float movementSpeed);
 	~Crab();
-
-	void UpdatePhysics(const float deltaTime, LevelMap* levelMap) override;
 
 private:
 	Texture2D* GetSpriteSheet() override { return mSpriteSheet; }

@@ -10,7 +10,7 @@ unsigned int PIPE_SMB1::mPipeCount   = 0;
 // --------------------------------------------------------------------------------------- //
 
 PIPE_SMB1::PIPE_SMB1(SDL_Renderer* renderer, const char* filePathToSpriteSheet, PIPE_FACING_DIRECTION_SMB1 facingDirection, Vector2D bottomLeftPosition, const float timePerFrame, Vector2D collisionBox)
-	: RenderObject(0, 0, 0, timePerFrame, bottomLeftPosition, 1, 1, collisionBox)
+	: RenderObject(0, 0, 0, timePerFrame, bottomLeftPosition, 1, 1, collisionBox, 0.0f)
 
 	, mPipeFacingDirection(facingDirection)
 

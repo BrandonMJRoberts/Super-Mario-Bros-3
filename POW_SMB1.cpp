@@ -8,7 +8,7 @@
 // ----------------------------------------------------------------- //
 
 POW::POW(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D bottomLeftStartPos, Vector2D collisionBox)
-	: RenderObject(0, 0, 0, 0.0f, bottomLeftStartPos, 3, 1, collisionBox)
+	: RenderObject(0, 0, 0, 0.0f, bottomLeftStartPos, 3, 1, collisionBox, 0.0f)
 	, mSpriteSheet(nullptr)
 
 	, mStartPosition(bottomLeftStartPos)

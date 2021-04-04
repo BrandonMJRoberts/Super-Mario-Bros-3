@@ -31,13 +31,15 @@ RenderObject::RenderObject()
 
 	, mSingleSpriteHeight(0)
 	, mSingleSpriteWidth(0)
+
+	, kMovementSpeed(3.0f)
 {
 
 }
 
 // --------------------------------------------------------------- //
 
-RenderObject::RenderObject(unsigned int start, unsigned int end, unsigned int current, const float timePerFrame, Vector2D startPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, Vector2D collisionBox)
+RenderObject::RenderObject(unsigned int start, unsigned int end, unsigned int current, const float timePerFrame, Vector2D startPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, Vector2D collisionBox, const float movementSpeed)
 	: mCurrentSpriteID(current)
 	, mEndSpriteID(end)
 	, mStartFrameID(start)
@@ -61,6 +63,8 @@ RenderObject::RenderObject(unsigned int start, unsigned int end, unsigned int cu
 
 	, mSingleSpriteHeight(0)
 	, mSingleSpriteWidth(0)
+
+	, kMovementSpeed(movementSpeed)
 {
 
 }
@@ -87,8 +91,8 @@ void RenderObject::Render()
 		return;
 
 	// Update the render position
-	mDestRect->x = mPosition.x * SPRITE_RES;
-	mDestRect->y = (mPosition.y - mCollisionBox.y) * SPRITE_RES;
+	mDestRect->x = int(mPosition.x * SPRITE_RES);
+	mDestRect->y = int((mPosition.y - mCollisionBox.y) * SPRITE_RES);
 
 	if(mFacingLeft)
 		texture->Render(*mSourceRect, *mDestRect, SDL_FLIP_NONE, 0.0f);
@@ -152,6 +156,56 @@ void RenderObject::SetupRenderRects()
 									  (int)((mPosition.y - 1.0f) * SPRITE_RES),
 									   (int)mSingleSpriteWidth,
 									   (int)mSingleSpriteHeight };
+}
+
+// --------------------------------------------------------------- //
+
+void RenderObject::UpdatePhysics(const float deltaTime, LevelMap* levelMap)
+{
+	Vector2D movementDistance = mVelocity * deltaTime;
+
+	// Check for collisions
+	if (   levelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x))                   == 1 // left check
+		|| levelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x + mCollisionBox.x)) == 1) // right check
+	{
+		mVelocity.y = 0.0f;
+	}
+	else if (levelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x))                   == 1 ||  // left check
+		     levelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x + mCollisionBox.x)) == 1) // right check
+	{
+		// Up collision bounce back down
+		mVelocity.y = 1.0f;
+	}
+	else
+	{
+		mVelocity.y += CHARACTER_GRAVITY * deltaTime;
+
+		// No y collisions
+		mPosition.y += movementDistance.y;
+	}
+
+	// Now for x checks
+	if (   levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y), int(mPosition.x)) == 1  // top left check
+		|| levelMap->GetCollisionTileAt(int(mPosition.y),                   int(mPosition.x)) == 1) // bottom left check
+	{
+		mVelocity.x = 0.0f;
+	}
+	else if (levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y), int(mPosition.x + mCollisionBox.x)) == 1 ||  // top right check
+		     levelMap->GetCollisionTileAt(int(mPosition.y),                   int(mPosition.x + mCollisionBox.x)) == 1) // bottom right check
+	{
+		// Up collision bounce back down
+		mVelocity.x = 0.0f;
+	}
+	else
+	{
+		if (mFacingLeft)
+			mVelocity.x = -kMovementSpeed;
+		else
+			mVelocity.x = kMovementSpeed;
+
+		// No y collisions
+		mPosition.x += movementDistance.x;
+	}
 }
 
 // --------------------------------------------------------------- //

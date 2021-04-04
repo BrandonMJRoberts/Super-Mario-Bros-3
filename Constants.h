@@ -11,4 +11,4 @@
 const float CHARACTER_MOVEMENT_SPEED        = 1.0f;
 const float CHARACTER_JUMP_FORCE_DECREMENT  = 5.0f;
 const float CHARACTER_INITIAL_JUMP_FORCE    = 10.0f;
-const float CHARACTER_GRAVITY               = 3.0f;
+const float CHARACTER_GRAVITY               = 6.0f;
