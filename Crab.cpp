@@ -8,7 +8,7 @@ unsigned int Crab::mCrabCount = 0;
 
 // ------------------------------------------------------ //
 
-Crab::Crab(SDL_Renderer* renderer, const char* filePathToSpriteSheet, const float timePerFrame, Vector2D startPos, Vector2D collisionBox, bool spawningOnLeftSide, const float movementSpeed) 
+Crab::Crab(SDL_Renderer* renderer, const char* filePathToSpriteSheet, const float timePerFrame, Vector2D startPos, Vector2D collisionBox, bool spawningOnLeftSide, const float movementSpeed, unsigned int colourID)
 	: RenderObject(0, 2, 0, timePerFrame, startPos, 7, 6, collisionBox, movementSpeed)
 {
 	mFacingLeft = !spawningOnLeftSide;
@@ -24,6 +24,25 @@ Crab::Crab(SDL_Renderer* renderer, const char* filePathToSpriteSheet, const floa
 	}
 
 	mCrabCount++;
+
+	switch (colourID)
+	{
+	default:
+	case 0:
+	break;
+
+	case 1:
+		mCurrentSpriteID = 14;
+		mEndSpriteID     = 16;
+		mStartFrameID    = 14;
+	break;
+
+	case 2:
+		mCurrentSpriteID = 28;
+		mEndSpriteID     = 30;
+		mStartFrameID    = 28;
+	break;
+	}
 
 	SetupRenderRects();
 }

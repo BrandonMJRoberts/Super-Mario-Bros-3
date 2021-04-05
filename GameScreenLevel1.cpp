@@ -234,7 +234,7 @@ void GameScreenLevel1::SpawnNewEnemy(EnemyType enemy)
 	switch (enemy)
 	{
 	case EnemyType::CRAB:
-		mLevelObjects.push_back(new Crab(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Crab.png", 0.09f, spawnPoint, Vector2D(1.0f, 1.0f), mSpawningLeftSide, 3.0f));
+		mLevelObjects.push_back(new Crab(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Crab.png", 0.09f, spawnPoint, Vector2D(1.0f, 1.0f), mSpawningLeftSide, 3.0f, rand() % 3));
 	break;
 
 	case EnemyType::FREEZIE:
@@ -246,7 +246,7 @@ void GameScreenLevel1::SpawnNewEnemy(EnemyType enemy)
 	break;
 
 	case EnemyType::SPINY:
-		mLevelObjects.push_back(new Spiny(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Spiny.png", 0.18f, spawnPoint, Vector2D(1.0f, 1.0f), mSpawningLeftSide, 1.0f));
+		mLevelObjects.push_back(new Spiny(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Spiny.png", 0.18f, spawnPoint, Vector2D(1.0f, 1.0f), mSpawningLeftSide, 1.0f, rand() % 3));
 	break;
 
 	default:

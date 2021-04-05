@@ -9,7 +9,7 @@ unsigned int Spiny::mSpinyCount = 0;
 
 // --------------------------------------------------------- //
 
-Spiny::Spiny(SDL_Renderer* renderer, const char* filePathToSpriteSheet, const float timePerFrame, Vector2D startPos, Vector2D collisionBox, bool spawningOnLeftSide, const float movementSpeed)
+Spiny::Spiny(SDL_Renderer* renderer, const char* filePathToSpriteSheet, const float timePerFrame, Vector2D startPos, Vector2D collisionBox, bool spawningOnLeftSide, const float movementSpeed, unsigned int colourID)
 	: RenderObject(0, 2, 0, timePerFrame, startPos, 5, 3, collisionBox, movementSpeed)
 {
 	mFacingLeft = !spawningOnLeftSide;
@@ -25,6 +25,25 @@ Spiny::Spiny(SDL_Renderer* renderer, const char* filePathToSpriteSheet, const fl
 	}
 
 	mSpinyCount++;
+
+	switch (colourID)
+	{
+	default:
+	case 0:
+	break;
+
+	case 1:
+		mCurrentSpriteID = 5;
+		mEndSpriteID     = 7;
+		mStartFrameID    = 5;
+	break;
+
+	case 2:
+		mCurrentSpriteID = 10;
+		mEndSpriteID     = 12;
+		mStartFrameID    = 10;
+	break;
+	}
 
 	SetupRenderRects();
 }
