@@ -9,7 +9,7 @@ struct SDL_Renderer;
 class FighterFly final : public RenderObject
 {
 public:
-	FighterFly(SDL_Renderer* renderer, const char* filePathToSpriteSheet, const float timePerFrame, Vector2D startPos, Vector2D collisionBox, bool spawningOnLeftSide, const float movementSpeed);
+	FighterFly(SDL_Renderer* renderer, const char* filePathToSpriteSheet, const float timePerFrame, Vector2D startPos, Vector2D collisionBox, bool spawningOnLeftSide, const float movementSpeed, unsigned int colourID);
 	~FighterFly();
 
 private:

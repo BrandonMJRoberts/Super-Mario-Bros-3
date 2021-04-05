@@ -9,7 +9,7 @@ unsigned int FighterFly::mFighterFlyCount  = 0;
 
 // --------------------------------------------------------- //
 
-FighterFly::FighterFly(SDL_Renderer* renderer, const char* filePathToSpriteSheet, const float timePerFrame, Vector2D startPos, Vector2D collisionBox, bool spawningOnLeftSide, const float movementSpeed)
+FighterFly::FighterFly(SDL_Renderer* renderer, const char* filePathToSpriteSheet, const float timePerFrame, Vector2D startPos, Vector2D collisionBox, bool spawningOnLeftSide, const float movementSpeed, unsigned int colourID)
 	: RenderObject(0, 1, 0, timePerFrame, startPos, 7, 3, collisionBox, movementSpeed)
 {
 	mFacingLeft = !spawningOnLeftSide;
@@ -25,6 +25,25 @@ FighterFly::FighterFly(SDL_Renderer* renderer, const char* filePathToSpriteSheet
 	}
 
 	mFighterFlyCount++;
+
+	switch (colourID)
+	{
+	default:
+	case 0:
+	break;
+
+	case 1:
+		mCurrentSpriteID = 7;
+		mEndSpriteID     = 8;
+		mStartFrameID    = 7;
+	break;
+
+	case 2:
+		mCurrentSpriteID = 14;
+		mEndSpriteID     = 15;
+		mStartFrameID    = 14;
+	break;
+	}
 
 	SetupRenderRects();
 }

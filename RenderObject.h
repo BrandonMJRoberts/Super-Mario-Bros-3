@@ -29,6 +29,8 @@ protected:
 
 	void               SetupRenderRects();
 
+	void         CheckForLooping(LevelMap* levelMap);
+
 	Vector2D     mPosition;
 	Vector2D     mVelocity;
 	Vector2D     mCollisionBox;

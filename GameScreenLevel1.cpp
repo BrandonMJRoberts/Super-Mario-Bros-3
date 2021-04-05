@@ -242,7 +242,7 @@ void GameScreenLevel1::SpawnNewEnemy(EnemyType enemy)
 	break;
 
 	case EnemyType::FIGHTER_FLY:
-		mLevelObjects.push_back(new FighterFly(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/FighterFly.png", 0.12f, spawnPoint, Vector2D(1.0f, 1.0f), mSpawningLeftSide, 3.5f));
+		mLevelObjects.push_back(new FighterFly(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/FighterFly.png", 0.12f, spawnPoint, Vector2D(1.0f, 1.0f), mSpawningLeftSide, 3.5f, rand() % 3));
 	break;
 
 	case EnemyType::SPINY:
