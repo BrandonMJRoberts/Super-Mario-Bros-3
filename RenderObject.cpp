@@ -33,6 +33,9 @@ RenderObject::RenderObject()
 	, mSingleSpriteWidth(0)
 
 	, kMovementSpeed(3.0f)
+
+	, mGrounded(false)
+	, mHittingWall(false)
 {
 
 }
@@ -65,6 +68,9 @@ RenderObject::RenderObject(unsigned int start, unsigned int end, unsigned int cu
 	, mSingleSpriteWidth(0)
 
 	, kMovementSpeed(movementSpeed)
+
+	, mGrounded(false)
+	, mHittingWall(false)
 {
 
 }
@@ -104,30 +110,9 @@ void RenderObject::Render()
 
 void RenderObject::Update(const float deltaTime, LevelMap* levelMap)
 {
-	// Take the time off 
-	mTimeRemainingPerFrame -= deltaTime;
-
-	// Check for the time boundary
-	if (mTimeRemainingPerFrame < 0.0f)
+	if (mGrounded)
 	{
-		// Reset the time
-		mTimeRemainingPerFrame = kTimePerFrame;
-
-		// Increment the sprite ID
-		mCurrentSpriteID++;
-
-		// Check for looping boundaries
-		if (mCurrentSpriteID > mEndSpriteID)
-		{
-			mCurrentSpriteID = mStartFrameID;
-		}
-
-		if (mSourceRect)
-		{
-			// Update the sprite sheet
-			mSourceRect->x = int(mSingleSpriteWidth * (mCurrentSpriteID % kSpritesOnWidth));
-			mSourceRect->y = int(mSingleSpriteHeight * int(mCurrentSpriteID / kSpritesOnWidth));
-		}
+		UpdateAnimations(deltaTime);
 	}
 
 	// Now update the physics of this object - this should be overriden by the child class
@@ -171,12 +156,16 @@ void RenderObject::UpdatePhysics(const float deltaTime, LevelMap* levelMap)
 		|| levelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x + mCollisionBox.x)) == 1) // right check
 	{
 		mVelocity.y = 0.0f;
+
+		mGrounded = true;
 	}
 	else if (levelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x))                   == 1 ||  // left check
 		     levelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x + mCollisionBox.x)) == 1) // right check
 	{
 		// Up collision bounce back down
-		mVelocity.y = 1.0f;
+		mVelocity.y      = 1.0f;
+
+		mGrounded        = false;
 	}
 	else
 	{
@@ -184,6 +173,8 @@ void RenderObject::UpdatePhysics(const float deltaTime, LevelMap* levelMap)
 
 		// No y collisions
 		mPosition.y += movementDistance.y;
+
+		mGrounded = false;
 	}
 
 	// Now for x checks
@@ -191,19 +182,36 @@ void RenderObject::UpdatePhysics(const float deltaTime, LevelMap* levelMap)
 		|| levelMap->GetCollisionTileAt(int(mPosition.y),                   int(mPosition.x)) == 1) // bottom left check
 	{
 		mVelocity.x = 0.0f;
+
+		// Flip direction
+		if (!mHittingWall)
+		{
+			mFacingLeft = !mFacingLeft;
+			mHittingWall = true;
+		}
 	}
 	else if (levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y), int(mPosition.x + mCollisionBox.x)) == 1 ||  // top right check
 		     levelMap->GetCollisionTileAt(int(mPosition.y),                   int(mPosition.x + mCollisionBox.x)) == 1) // bottom right check
 	{
 		// Up collision bounce back down
 		mVelocity.x = 0.0f;
+
+		// Flip direction
+		if (!mHittingWall)
+		{
+			mFacingLeft  = !mFacingLeft;
+			mHittingWall = true;
+		}
 	}
 	else
 	{
+		// Set X velocity
 		if (mFacingLeft)
 			mVelocity.x = -kMovementSpeed;
 		else
 			mVelocity.x = kMovementSpeed;
+
+		mHittingWall = false;
 
 		// No y collisions
 		mPosition.x += movementDistance.x;
@@ -224,6 +232,37 @@ void RenderObject::CheckForLooping(LevelMap* levelMap)
 	else if (mPosition.x + mCollisionBox.x < 0.0f && mVelocity.x < 0.0f)
 	{
 		mPosition.x = levelMap->GetLevelWidth() - 0.01;
+	}
+}
+
+// --------------------------------------------------------------- //
+
+void RenderObject::UpdateAnimations(const float deltaTime)
+{
+	// Take the time off 
+	mTimeRemainingPerFrame -= deltaTime;
+
+	// Check for the time boundary
+	if (mTimeRemainingPerFrame < 0.0f)
+	{
+		// Reset the time
+		mTimeRemainingPerFrame = kTimePerFrame;
+
+		// Increment the sprite ID
+		mCurrentSpriteID++;
+
+		// Check for looping boundaries
+		if (mCurrentSpriteID > mEndSpriteID)
+		{
+			mCurrentSpriteID = mStartFrameID;
+		}
+
+		if (mSourceRect)
+		{
+			// Update the sprite sheet
+			mSourceRect->x = int(mSingleSpriteWidth * (mCurrentSpriteID % kSpritesOnWidth));
+			mSourceRect->y = int(mSingleSpriteHeight * int(mCurrentSpriteID / kSpritesOnWidth));
+		}
 	}
 }
 

@@ -29,7 +29,9 @@ protected:
 
 	void               SetupRenderRects();
 
-	void         CheckForLooping(LevelMap* levelMap);
+	void               UpdateAnimations(const float deltaTime);
+
+	void               CheckForLooping(LevelMap* levelMap);
 
 	Vector2D     mPosition;
 	Vector2D     mVelocity;
@@ -54,6 +56,8 @@ protected:
 	SDL_Rect*    mDestRect;
 
 	bool         mFacingLeft;
+	bool         mGrounded;
+	bool		 mHittingWall;
 };
 
 #endif

@@ -7,11 +7,12 @@
 
 // --------------------------------------------------------------------------------------------------------- //
 
-Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D startingPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, LevelMap* levelMap, const float collisionCircleRadius)
+Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D startingPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, LevelMap* levelMap, const float collisionCircleRadius, const float timePerFrame)
 	: mJumpForce(CHARACTER_INITIAL_JUMP_FORCE)
 	, mPlayerMovementData(0)
 	, mVelocity(0, 0)
 	, mPosition(startingPosition)
+	, mSpawnPosition(startingPosition)
 
 	, mRenderer(renderer)
 
@@ -26,13 +27,22 @@ Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D sta
 	, mUsingCollisionBox(false)
 
 	, mCanJump(false)
+
+	, kTimePerFrame(timePerFrame)
+	, mTimeRemainingPerFrame(timePerFrame)
+
+	, mSingleSpriteWidth(0)
+	, mSingleSpriteHeight(0)
+
+	, mIsAlive(true)
+	, mHasCompletedDeathBounce(false)
 {
 	CalculateSpriteData(renderer, imagePath);
 }
 
 // --------------------------------------------------------------------------------------------------------- //
 
-Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D startingPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, LevelMap* levelMap, const Vector2D collisionBox)
+Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D startingPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, LevelMap* levelMap, const Vector2D collisionBox, const float timePerFrame)
 	: mJumpForce(CHARACTER_INITIAL_JUMP_FORCE)
 
 	, mCollisionBox(collisionBox)
@@ -42,6 +52,8 @@ Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D sta
 
 	, mVelocity(0, 0)
 	, mPosition(startingPosition)
+	, mSpawnPosition(startingPosition)
+
 	, mPlayerMovementData(0)
 
 	, kSpritesOnWidth(spritesOnWidth)
@@ -56,6 +68,15 @@ Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D sta
 	, mStartSpriteID(3)
 
 	, mCanJump(false)
+
+	, kTimePerFrame(timePerFrame)
+	, mTimeRemainingPerFrame(timePerFrame)
+
+	, mSingleSpriteWidth(0)
+	, mSingleSpriteHeight(0)
+
+	, mIsAlive(true)
+	, mHasCompletedDeathBounce(false)
 {
 	CalculateSpriteData(renderer, imagePath);
 }
@@ -110,31 +131,44 @@ void Character::HandleInput(SDL_Event e)
 		{
 		case SDLK_d:
 			// Set that the player is now jumping
-			if (!(mPlayerMovementData & PlayerMovementData::WALKING_LEFT_SMB1))
+			if (!(mPlayerMovementData & PlayerMovementData::WALKING_LEFT_SMB1) && !(mPlayerMovementData & PlayerMovementData::WALKING_RIGHT_SMB1))
 			{
 				mPlayerMovementData |= PlayerMovementData::WALKING_RIGHT_SMB1;
+				mPlayerMovementData &= ~(PlayerMovementData::WALKING_LEFT_SMB1);
+
 				mPlayerMovementData |= PlayerMovementData::WAS_FACING_RIGHT;
 
 				// Apply the movement force
 				mVelocity.x = 3.0f;
+
+				mEndSpriteID     = 2;
+				mStartSpriteID   = 0;
+				mCurrentSpriteID = mStartSpriteID;
 			}
 		break;
 
 		case SDLK_a:
-			if (!(mPlayerMovementData & PlayerMovementData::WALKING_RIGHT_SMB1))
+			if (!(mPlayerMovementData & PlayerMovementData::WALKING_RIGHT_SMB1) && !(mPlayerMovementData & PlayerMovementData::WALKING_LEFT_SMB1))
 			{
 				mPlayerMovementData |= PlayerMovementData::WALKING_LEFT_SMB1;
+				mPlayerMovementData &= ~(PlayerMovementData::WALKING_RIGHT_SMB1);
 
 				mPlayerMovementData &= ~(PlayerMovementData::WAS_FACING_RIGHT);
 
 				// Apply the movement force
-				mVelocity.x = -3.0f;
+				mVelocity.x      = -3.0f;
+
+				mEndSpriteID     = 2;
+				mStartSpriteID   = 0;
+				mCurrentSpriteID = mStartSpriteID;
 			}
 		break;
 
 		case SDLK_w:
-			if(!(mPlayerMovementData & PlayerMovementData::JUMPING_SMB1))
+			if (mCanJump && !(mPlayerMovementData & PlayerMovementData::JUMPING_SMB1))
+			{
 				Jump();
+			}
 		break;
 		}
 	break;
@@ -144,24 +178,45 @@ void Character::HandleInput(SDL_Event e)
 		{
 		case SDLK_d:
 
-			if (!(mPlayerMovementData & PlayerMovementData::WALKING_LEFT_SMB1))
-			{
-				// Set that the player is now jumping
-				mPlayerMovementData &= ~(PlayerMovementData::WALKING_RIGHT_SMB1);
+			// Set that the player is now jumping
+			mPlayerMovementData &= ~(PlayerMovementData::WALKING_RIGHT_SMB1);
 
-				// Apply the jump force
-				mVelocity.x = 0.0f;
+			// Apply the jump force
+			mVelocity.x = 0.0f;
+
+			if (mCanJump)
+			{
+				mEndSpriteID = 3;
+				mStartSpriteID = 3;
 			}
+			else
+			{
+				mEndSpriteID = 4;
+				mStartSpriteID = 4;
+			}
+
+			mCurrentSpriteID = mStartSpriteID;
+
 		break;
 
 		case SDLK_a:
-			if (!(mPlayerMovementData & PlayerMovementData::WALKING_RIGHT_SMB1))
-			{
-				mPlayerMovementData &= ~(PlayerMovementData::WALKING_LEFT_SMB1);
+			mPlayerMovementData &= ~(PlayerMovementData::WALKING_LEFT_SMB1);
 
-				// Apply the jump force
-				mVelocity.x = 0.0f;
+			// Apply the jump force
+			mVelocity.x = 0.0f;
+
+			if (mCanJump)
+			{
+				mEndSpriteID   = 3;
+				mStartSpriteID = 3;
 			}
+			else
+			{
+				mEndSpriteID   = 4;
+				mStartSpriteID = 4;
+			}
+
+			mCurrentSpriteID = mStartSpriteID;
 		break;
 		}
 	break;
@@ -190,16 +245,27 @@ void Character::ApplyMovement(const float deltaTime)
 
 void Character::Update(float deltaTime, SDL_Event e)
 {
-	// Handle if the player has pressed any input
-	HandleInput(e);
+	if (mIsAlive)
+	{
+		// Handle if the player has pressed any input
+		HandleInput(e);
 
-	// handle if the player has made any collisions
-	HandleCollisions(deltaTime);
+		// handle if the player has made any collisions
+		HandleCollisions(deltaTime);
 
-	// Apply the players movement based off of their current velocity
-	ApplyMovement(deltaTime);
+		// Apply the players movement based off of their current velocity
+		ApplyMovement(deltaTime);
 
-	CheckForLooping();
+		HandleAnimations(deltaTime);
+
+		CheckForLooping();
+	}
+	else
+	{
+		HandleAnimations(deltaTime);
+
+		UpdateDeathAnimationMovement(deltaTime);
+	}
 }
 
 // --------------------------------------------------------------------------------------------------------- //
@@ -209,7 +275,7 @@ void Character::HandleCollisions(const float deltaTime)
 	Vector2D movementDistance = mVelocity * deltaTime;
 
 	// Check for collisions
-	if (   mLevelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x))                   == 1 // left check
+	if (   mLevelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x))                   == 1  // left check
 		|| mLevelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x + mCollisionBox.x)) == 1) // right check
 	{
 		mPosition.y = (int)(mPosition.y + movementDistance.y) - 0.001;
@@ -222,6 +288,8 @@ void Character::HandleCollisions(const float deltaTime)
 	{
 		// Up collision bounce back down
 		mVelocity.y = 1.0f;
+
+		mCanJump    = false;
 	}
 	else
 	{
@@ -265,6 +333,8 @@ void Character::Jump()
 
 	// Apply the jump force
 	mVelocity.y          = mJumpForce;
+
+	mCanJump = false;
 }
 
 // --------------------------------------------------------------------------------------------------------- //
@@ -278,18 +348,21 @@ void Character::CalculateSpriteData(SDL_Renderer* renderer, std::string filePath
 		return;
 	}
 
-	int spriteWidth = mTexture->GetWidth() / kSpritesOnWidth;
-	int spriteHeight = mTexture->GetHeight() / kSpritesOnHeight;
+	if (kSpritesOnHeight == 0 || kSpritesOnWidth == 0)
+		return;
 
-	mSourceRect = new SDL_Rect{ int(spriteWidth * (mCurrentSpriteID % kSpritesOnWidth)),
-									  int(spriteHeight * int(mCurrentSpriteID / kSpritesOnWidth)),
-									  spriteWidth,
-									  spriteHeight };
+	mSingleSpriteWidth  = mTexture->GetWidth()  / kSpritesOnWidth;
+	mSingleSpriteHeight = mTexture->GetHeight() / kSpritesOnHeight;
 
-	mDestRect = new SDL_Rect{ int(mPosition.x * SPRITE_RES),
+	mSourceRect = new SDL_Rect{       int(mSingleSpriteWidth * (mCurrentSpriteID % kSpritesOnWidth)),
+									  int(mSingleSpriteHeight * int(mCurrentSpriteID / kSpritesOnWidth)),
+									  (int)mSingleSpriteWidth,
+									  (int)mSingleSpriteHeight };
+
+	mDestRect = new SDL_Rect{           int(mPosition.x * SPRITE_RES),
 									  (int)((mPosition.y - mCollisionBox.y) * SPRITE_RES),
-									   spriteWidth,
-									   spriteHeight };
+									   (int)mSingleSpriteWidth,
+									   (int)mSingleSpriteHeight };
 }
 
 // --------------------------------------------------------------------------------------------------------- //
@@ -307,6 +380,98 @@ void Character::CheckForLooping()
 	{
 		mPosition.x = mLevelMap->GetLevelWidth() - 0.01;
 	}
+}
+
+// --------------------------------------------------------------------------------------------------------- //
+
+void Character::HandleAnimations(const float deltaTime)
+{
+	mTimeRemainingPerFrame -= deltaTime;
+
+	if (mTimeRemainingPerFrame < 0.0f)
+	{
+		mCurrentSpriteID++;
+		mTimeRemainingPerFrame = kTimePerFrame;
+
+		if (mCurrentSpriteID > mEndSpriteID)
+		{
+			mCurrentSpriteID = mStartSpriteID;
+		}
+	}
+
+	// Now update the sprite sheet position
+	mSourceRect->x = int(mSingleSpriteWidth  *    (mCurrentSpriteID % kSpritesOnWidth));
+	mSourceRect->y = int(mSingleSpriteHeight * int(mCurrentSpriteID / kSpritesOnWidth));
+}
+
+// --------------------------------------------------------------------------------------------------------- //
+
+void Character::SetHasBeenHit()
+{
+	mIsAlive         = false;
+
+	mStartSpriteID   = 10;
+	mEndSpriteID     = 10;
+	mCurrentSpriteID = mStartSpriteID;
+
+	mDeathPosition  = mPosition;
+}
+
+// --------------------------------------------------------------------------------------------------------- //
+
+void Character::UpdateDeathAnimationMovement(const float deltaTime)
+{
+	if (mHasCompletedDeathBounce)
+	{
+		// Going down
+		mPosition.y += deltaTime * 3.0;
+
+		if (mPosition.y > mLevelMap->GetLevelHeight())
+		{
+			RespawnPlayer();
+		}
+	}
+	else
+	{
+		// Going up
+		mPosition.y -= deltaTime * 3.0;
+
+		if (mPosition.y < mDeathPosition.y - 2.0f)
+		{
+			mHasCompletedDeathBounce = true;
+		}
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------- //
+
+void Character::RespawnPlayer()
+{
+	mIsAlive  = true;
+	mPosition = mSpawnPosition;
+
+	mCurrentSpriteID = 3;
+	mEndSpriteID     = 3;
+	mStartSpriteID   = 3;
+
+	mVelocity        = Vector2D(0.0f, 0.0f);
+
+	mTimeRemainingPerFrame   = kTimePerFrame;
+
+	mPlayerMovementData      = 0;
+
+	mCanJump                 = false;
+	mHasCompletedDeathBounce = false;
+
+	mSourceRect = new SDL_Rect{        int(mSingleSpriteWidth * (mCurrentSpriteID % kSpritesOnWidth)),
+									   int(mSingleSpriteHeight * int(mCurrentSpriteID / kSpritesOnWidth)),
+									  (int)mSingleSpriteWidth,
+									  (int)mSingleSpriteHeight };
+
+	mDestRect = new SDL_Rect{          int(mPosition.x * SPRITE_RES),
+									  (int)((mPosition.y - mCollisionBox.y) * SPRITE_RES),
+									   (int)mSingleSpriteWidth,
+									   (int)mSingleSpriteHeight };
 }
 
 // --------------------------------------------------------------------------------------------------------- //

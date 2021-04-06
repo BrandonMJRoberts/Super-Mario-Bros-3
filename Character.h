@@ -28,8 +28,8 @@ class Character final
 {
 public:
 	Character() = delete;
-	Character(SDL_Renderer* renderer, std::string imagePath, Vector2D startingPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, LevelMap* levelMap, const float collisionCircleRadius);
-	Character(SDL_Renderer* renderer, std::string imagePath, Vector2D startingPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, LevelMap* levelMap, const Vector2D collisionBox);
+	Character(SDL_Renderer* renderer, std::string imagePath, Vector2D startingPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, LevelMap* levelMap, const float collisionCircleRadius, const float timePerFrame);
+	Character(SDL_Renderer* renderer, std::string imagePath, Vector2D startingPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, LevelMap* levelMap, const Vector2D collisionBox, const float timePerFrame);
 	~Character();
 
 	void          Render();
@@ -41,6 +41,8 @@ public:
 	double        GetCollisionRadius() const { return mCollisionRadius; }
 	Vector2D      GetCollisionBox()    const { return mCollisionBox; }
 
+	void          SetHasBeenHit();
+
 protected:
 	void          Jump();
 
@@ -49,7 +51,13 @@ protected:
 	void          ApplyMovement(const float deltaTime);
 	void		  CheckForLooping();
 
+	void          UpdateDeathAnimationMovement(const float deltaTime);
+
+	void          HandleAnimations(const float deltaTime);
+
 	void		  CalculateSpriteData(SDL_Renderer* renderer, std::string filePath);
+
+	void          RespawnPlayer();
 
 	// General data
 	SDL_Renderer*      mRenderer;
@@ -63,12 +71,21 @@ protected:
 
 	Vector2D           mVelocity;
 
+	Vector2D           mDeathPosition;
+	Vector2D           mSpawnPosition;
+
 	const unsigned int kSpritesOnWidth;
 	const unsigned int kSpritesOnHeight;
 
 	unsigned int       mCurrentSpriteID;
 	unsigned int       mEndSpriteID;
 	unsigned int       mStartSpriteID;
+
+	const float        kTimePerFrame;
+	float              mTimeRemainingPerFrame;
+
+	unsigned int       mSingleSpriteWidth;
+	unsigned int       mSingleSpriteHeight;
 
 	LevelMap*          mLevelMap;
 
@@ -79,6 +96,8 @@ protected:
 
 	bool               mUsingCollisionBox;
 	bool               mCanJump;
+	bool               mIsAlive;
+	bool               mHasCompletedDeathBounce;
 };
 
 #endif _CHARACTER_H_
