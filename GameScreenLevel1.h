@@ -55,7 +55,7 @@ private:
 
 	// Pow and pipes
 	POW*            mPowBlock;
-	PIPE_SMB1*      mPipes[4];
+	PIPE_SMB1*      mPipes[2];
 
 	// Enemies and coins that can spawn
 	std::vector<RenderObject*> mLevelObjects;

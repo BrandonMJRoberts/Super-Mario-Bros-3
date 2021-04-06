@@ -26,7 +26,14 @@ PIPE_SMB1::PIPE_SMB1(SDL_Renderer* renderer, const char* filePathToSpriteSheet, 
 		}
 	}
 
+	if (mPipeFacingDirection == PIPE_FACING_DIRECTION_SMB1::LEFT)
+		mFacingLeft = true;
+	else
+		mFacingLeft = false;
+
 	mPipeCount++;
+
+	SetupRenderRects();
 }
 
 // --------------------------------------------------------------------------------------- //

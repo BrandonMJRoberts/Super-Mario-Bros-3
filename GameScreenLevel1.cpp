@@ -25,7 +25,7 @@ GameScreenLevel1::GameScreenLevel1(SDL_Renderer* renderer)
 	, mMario(nullptr)
 	, mLuigi(nullptr)
 	, mLevelMap(nullptr)
-	, mPipes{nullptr, nullptr, nullptr, nullptr}
+	, mPipes{nullptr, nullptr}
 
 	, mTimePerEnemySpawn(2.0f)
 	, mTimeRemainingTillSpawn(0.0f)
@@ -105,10 +105,8 @@ bool GameScreenLevel1::SetUpLevel()
 	mPowBlock = new POW(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/PowBlock.png", Vector2D(7.5, 9));
 
 	// Load in the pipes
-	mPipes[0] = new PIPE_SMB1(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Pipe.png", PIPE_FACING_DIRECTION_SMB1::LEFT, Vector2D(), 0.1f);
-	mPipes[1] = new PIPE_SMB1(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Pipe.png", PIPE_FACING_DIRECTION_SMB1::LEFT, Vector2D(), 0.1f);
-	mPipes[2] = new PIPE_SMB1(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Pipe.png", PIPE_FACING_DIRECTION_SMB1::RIGHT, Vector2D(), 0.1f);
-	mPipes[3] = new PIPE_SMB1(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Pipe.png", PIPE_FACING_DIRECTION_SMB1::RIGHT, Vector2D(), 0.1f);
+	mPipes[0] = new PIPE_SMB1(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Pipe.png", PIPE_FACING_DIRECTION_SMB1::LEFT, Vector2D(14.0f, 2.1f), 0.1f, Vector2D(2.0f, 2.0f));
+	mPipes[1] = new PIPE_SMB1(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Pipe.png", PIPE_FACING_DIRECTION_SMB1::RIGHT, Vector2D(0.0f, 2.1f), 0.1f, Vector2D(2.0f, 2.0f));
 
 
 	mBackgroundSprite = new Texture2D(mRenderer);
@@ -181,8 +179,14 @@ void GameScreenLevel1::Render()
 		mPowBlock->Render();
 	}
 
+	for (unsigned int i = 0; i < mLevelObjects.size(); i++)
+	{
+		if(mLevelObjects[i])
+			mLevelObjects[i]->Render();
+	}
+
 	// Render the pipes
-	for (unsigned int i = 0; i < 4; i++)
+	for (unsigned int i = 0; i < 2; i++)
 	{
 		if (mPipes[i])
 			mPipes[i]->Render();
@@ -193,12 +197,6 @@ void GameScreenLevel1::Render()
 
 	if (mLuigi)
 		mLuigi->Render();
-
-	for (unsigned int i = 0; i < mLevelObjects.size(); i++)
-	{
-		if(mLevelObjects[i])
-			mLevelObjects[i]->Render();
-	}
 }
 
 // --------------------------------------------------------------------------------------------- //

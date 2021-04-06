@@ -140,7 +140,7 @@ void RenderObject::SetupRenderRects()
 									  (int)mSingleSpriteHeight };
 
 	mDestRect          = new SDL_Rect{   int(mPosition.x         * SPRITE_RES), 
-									  (int)((mPosition.y - 1.0f) * SPRITE_RES),
+									  (int)((mPosition.y - mCollisionBox.y) * SPRITE_RES),
 									   (int)mSingleSpriteWidth,
 									   (int)mSingleSpriteHeight };
 }
