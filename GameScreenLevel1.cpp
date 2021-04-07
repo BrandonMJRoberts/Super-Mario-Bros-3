@@ -62,7 +62,7 @@ GameScreenLevel1::~GameScreenLevel1()
 	delete mPowBlock;
 	mPowBlock = nullptr;
 
-	for (unsigned int i = 0; i < 4; i++)
+	for (unsigned int i = 0; i < 2; i++)
 	{
 		delete mPipes[i];
 		mPipes[i] = nullptr;
@@ -84,7 +84,7 @@ bool GameScreenLevel1::SetUpLevel()
 		return false;
 
 	// Create mario
-	mMario = new Character(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Mario.png", Vector2D(5.0f, 1.9f), 7, 2, mLevelMap, Vector2D(1.0f, 1.4), 0.1f);
+	mMario = new Character(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Mario.png", Vector2D(5.0f, 12.9f), 7, 2, mLevelMap, Vector2D(1.0f, 1.4), 0.1f);
 	if (!mMario)
 	{
 		std::cout << "mMario failed to load." << std::endl;
@@ -92,7 +92,7 @@ bool GameScreenLevel1::SetUpLevel()
 	}
 
 	// Create luigi
-	mLuigi = new Character(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Luigi.png", Vector2D(7.0f, 1.9f), 7, 2, mLevelMap, Vector2D(1.0f, 1.4), 0.1f);
+	mLuigi = new Character(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Luigi.png", Vector2D(7.0f, 12.9f), 7, 2, mLevelMap, Vector2D(1.0f, 1.4), 0.1f);
 	if (!mLuigi)
 	{
 		std::cout << "mLuigi failed to load." << std::endl;
@@ -146,6 +146,9 @@ void GameScreenLevel1::Update(float deltaTime, SDL_Event e)
 		if (mLevelObjects[i])
 		{
 			mLevelObjects[i]->Update(deltaTime, mLevelMap);
+
+			// Check for collisions with mario
+			CheckForMarioCollision(mLevelObjects[i]->GetPosition(), mLevelObjects[i]->GetCollisionBox());
 
 			// Now check to see if the object is too far off the screen. If so delete it
 			if (mLevelObjects[i]->GetPosition().y - mLevelObjects[i]->GetCollisionBox().y > mLevelMap->GetLevelHeight())
@@ -203,7 +206,13 @@ void GameScreenLevel1::Render()
 
 void GameScreenLevel1::CheckForPOWCollision()
 {
-	if (Collisions::Instance()->Box(Rect2D(mPowBlock->GetPosition(), mPowBlock->GetCollisionBox()), Rect2D(mMario->GetPosition(), mMario->GetCollisionBox())))
+	if (!mMario || !mPowBlock)
+		return;
+
+	Vector2D powBlockPos = mPowBlock->GetPosition(), marioPos = mMario->GetPosition();
+
+	if (   Collisions::Instance()->Box(Rect2D(powBlockPos, mPowBlock->GetCollisionBox()), Rect2D(marioPos, mMario->GetCollisionBox()))
+		&& marioPos.y >= powBlockPos.y + mPowBlock->GetCollisionBox().y)
 	{
 		// There is a collision so now check that mario is going upwards and is in the correct position
 		
@@ -278,6 +287,33 @@ void GameScreenLevel1::EnemySpawnCheck(const float deltaTime)
 			}
 		}
 	}
+}
+
+// --------------------------------------------------------------------------------------------- //
+
+void GameScreenLevel1::CheckForMarioCollision(Vector2D position, Vector2D collisionBox)
+{
+	if (!mMario)
+		return;
+
+	Vector2D marioPos = mMario->GetPosition();
+
+	// X check
+	if (   marioPos.x > position.x + collisionBox.x
+		|| marioPos.x + mMario->GetCollisionBox().x < position.x)
+	{
+		return;
+	}
+
+	// y check
+	if (   marioPos.y - mMario->GetCollisionBox().y > position.y
+		|| marioPos.y                               < position.y - collisionBox.y)
+	{
+		return;
+	}
+
+	// set mario as hit
+	mMario->SetHasBeenHit();
 }
 
 // --------------------------------------------------------------------------------------------- //

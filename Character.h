@@ -8,6 +8,8 @@
 
 class LevelMap;
 
+#define DEATH_ANIMATION_SPEED 3.0
+
 // ---------------------------------------------------------------------------- //
 
 enum PlayerMovementData
@@ -56,6 +58,8 @@ protected:
 	void          HandleAnimations(const float deltaTime);
 
 	void		  CalculateSpriteData(SDL_Renderer* renderer, std::string filePath);
+
+	void          AddGravity(const float deltaTime);
 
 	void          RespawnPlayer();
 

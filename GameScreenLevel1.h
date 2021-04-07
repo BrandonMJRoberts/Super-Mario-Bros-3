@@ -43,6 +43,8 @@ private:
 	void            SpawnNewEnemy(EnemyType enemy);
 	void			EnemySpawnCheck(const float deltaTime);
 
+	void		    CheckForMarioCollision(Vector2D position, Vector2D collisionBox);
+
 	// init
 	bool            SetUpLevel();
 

@@ -270,6 +270,13 @@ void Character::Update(float deltaTime, SDL_Event e)
 
 // --------------------------------------------------------------------------------------------------------- //
 
+void Character::AddGravity(const float deltaTime)
+{
+	mVelocity.y += deltaTime * CHARACTER_GRAVITY;
+}
+
+// --------------------------------------------------------------------------------------------------------- //
+
 void Character::HandleCollisions(const float deltaTime)
 {
 	Vector2D movementDistance = mVelocity * deltaTime;
@@ -408,38 +415,32 @@ void Character::HandleAnimations(const float deltaTime)
 
 void Character::SetHasBeenHit()
 {
+	if (!mIsAlive)
+		return;
+
 	mIsAlive         = false;
 
 	mStartSpriteID   = 10;
 	mEndSpriteID     = 10;
 	mCurrentSpriteID = mStartSpriteID;
 
-	mDeathPosition  = mPosition;
+	mDeathPosition   = mPosition;
+
+	mVelocity        = Vector2D(0.0f, -1.0f);
 }
 
 // --------------------------------------------------------------------------------------------------------- //
 
 void Character::UpdateDeathAnimationMovement(const float deltaTime)
 {
-	if (mHasCompletedDeathBounce)
-	{
-		// Going down
-		mPosition.y += deltaTime * 3.0;
+	// Going down
+	mVelocity.y += deltaTime * DEATH_ANIMATION_SPEED;
 
-		if (mPosition.y > mLevelMap->GetLevelHeight())
-		{
-			RespawnPlayer();
-		}
-	}
-	else
-	{
-		// Going up
-		mPosition.y -= deltaTime * 3.0;
+	mPosition.y += mVelocity.y * deltaTime;
 
-		if (mPosition.y < mDeathPosition.y - 2.0f)
-		{
-			mHasCompletedDeathBounce = true;
-		}
+	if (mPosition.y - mCollisionBox.y > mLevelMap->GetLevelHeight())
+	{
+		RespawnPlayer();
 	}
 }
 
@@ -454,7 +455,7 @@ void Character::RespawnPlayer()
 	mEndSpriteID     = 3;
 	mStartSpriteID   = 3;
 
-	mVelocity        = Vector2D(0.0f, 0.0f);
+	mVelocity        = Vector2D();
 
 	mTimeRemainingPerFrame   = kTimePerFrame;
 
