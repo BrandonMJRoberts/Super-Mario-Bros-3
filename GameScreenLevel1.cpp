@@ -28,7 +28,7 @@ GameScreenLevel1::GameScreenLevel1(SDL_Renderer* renderer)
 	, mLevelMap(nullptr)
 	, mPipes{nullptr, nullptr}
 
-	, mTimePerEnemySpawn(2.5f)
+	, mTimePerEnemySpawn(4.0f)
 	, mTimeRemainingTillSpawn(0.0f)
 
 	, mEnemysSpawnedTotal(0)

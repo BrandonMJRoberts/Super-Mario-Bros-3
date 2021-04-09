@@ -5,6 +5,8 @@
 
 #include <iostream>
 
+#include <ctime>
+
 #include "Constants.h"
 #include "Constants_SMB3.h"
 
@@ -172,6 +174,9 @@ int main(int argx, char* args[])
 		gameSelectScreen = new GameScreen_GameSelect(gRenderer);
 
 		gOldTime = SDL_GetTicks();
+
+		// Make random different for this run through
+		srand((unsigned)time(0));
 
 		// Loop until a game is selected
 		while (!GameSelected)
