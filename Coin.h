@@ -12,6 +12,8 @@ public:
 	Coin(SDL_Renderer* renderer, const Vector2D startPosition, const char* filePathToSpriteSheet, const float timePerFrame, Vector2D collisionBox);
 	~Coin();
 
+	bool Update(const float deltaTime, LevelMap* levelMap) override;
+
 private:
 	Texture2D* GetSpriteSheet() override { return mSpriteSheet; }
 

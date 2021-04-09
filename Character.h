@@ -45,6 +45,9 @@ public:
 
 	void          SetHasBeenHit();
 
+	void          AddToScore()              { mCoinCount++; }
+	unsigned int  GetCoinCount()      const { return mCoinCount; }
+
 protected:
 	void          Jump();
 
@@ -94,6 +97,8 @@ protected:
 	LevelMap*          mLevelMap;
 
 	unsigned int       mPlayerMovementData;
+
+	unsigned int       mCoinCount;
 
 	SDL_Rect*          mSourceRect;
 	SDL_Rect*          mDestRect;

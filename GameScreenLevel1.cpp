@@ -12,6 +12,7 @@
 #include "Spiny.h"
 #include "Freezie.h"
 #include "FighterFly.h"
+#include "Coin.h"
 
 #include "RenderObject.h"
 
@@ -27,11 +28,11 @@ GameScreenLevel1::GameScreenLevel1(SDL_Renderer* renderer)
 	, mLevelMap(nullptr)
 	, mPipes{nullptr, nullptr}
 
-	, mTimePerEnemySpawn(2.0f)
+	, mTimePerEnemySpawn(2.5f)
 	, mTimeRemainingTillSpawn(0.0f)
 
 	, mEnemysSpawnedTotal(0)
-	, kEnemysPerSpeedUp(5)
+	, kEnemysPerSpeedUp(10)
 
 	, mEnemySpawnPointLeft(-0.9f, 1.95f)
 	, mEnemySpawnPointRight(15.9f, 1.95f)
@@ -154,7 +155,7 @@ void GameScreenLevel1::Update(float deltaTime, SDL_Event e)
 			}
 
 			// Check for collisions with mario
-			CheckForMarioCollision(mLevelObjects[i]->GetPosition(), mLevelObjects[i]->GetCollisionBox());
+			CheckForMarioCollision(mMario, mLevelObjects[i]->GetPosition(), mLevelObjects[i]->GetCollisionBox(), false);
 
 			// Now check to see if the object is too far off the screen. If so delete it
 			if (mLevelObjects[i]->GetPosition().y - mLevelObjects[i]->GetCollisionBox().y > mLevelMap->GetLevelHeight())
@@ -168,6 +169,25 @@ void GameScreenLevel1::Update(float deltaTime, SDL_Event e)
 			mLevelObjects.erase(mLevelObjects.begin() + i);
 		}
 		
+	}
+
+	// Now update the coins
+	for (unsigned int i = 0; i < mCoins.size(); i++)
+	{
+		if (mCoins[i])
+		{
+			mCoins[i]->Update(deltaTime, mLevelMap);
+
+			if (CheckForMarioCollision(mMario, mCoins[i]->GetPosition(), mCoins[i]->GetCollisionBox(), true))
+			{
+				delete mCoins[i];
+				mCoins[i] = nullptr;
+			}
+		}
+		else
+		{
+			mCoins.erase(mCoins.begin() + i);
+		}
 	}
 
 	// Spawn enemies
@@ -192,6 +212,13 @@ void GameScreenLevel1::Render()
 	{
 		if(mLevelObjects[i])
 			mLevelObjects[i]->Render();
+	}
+
+	// Now render the coins
+	for (unsigned int i = 0; i < mCoins.size(); i++)
+	{
+		if(mCoins[i])
+			mCoins[i]->Render();
 	}
 
 	// Render the pipes
@@ -267,6 +294,21 @@ void GameScreenLevel1::SpawnNewEnemy(EnemyType enemy)
 	}
 
 	mSpawningLeftSide = !mSpawningLeftSide;
+
+	// There is a random chance of a coin spawning at the same time as an enemy so check for this occasion here
+	if (rand() % 10 == 1)
+	{
+		// First choose which side to spawn at
+		if (mSpawningLeftSide)
+			spawnPoint = mEnemySpawnPointLeft;
+		else
+			spawnPoint = mEnemySpawnPointRight;
+
+		// 1 in 10 chance
+		mCoins.push_back(new Coin(mRenderer, spawnPoint, "SDL_Mario_Project/Mario Bros 1 Images/Coin.png", 0.07f, Vector2D(1.0f, 1.0f)));
+
+		mSpawningLeftSide = !mSpawningLeftSide;
+	}
 }
 
 // --------------------------------------------------------------------------------------------- //
@@ -297,29 +339,34 @@ void GameScreenLevel1::EnemySpawnCheck(const float deltaTime)
 
 // --------------------------------------------------------------------------------------------- //
 
-void GameScreenLevel1::CheckForMarioCollision(Vector2D position, Vector2D collisionBox)
+bool GameScreenLevel1::CheckForMarioCollision(Character* player, Vector2D position, Vector2D collisionBox, bool isACoin)
 {
-	if (!mMario)
-		return;
+	if (!player)
+		return false;
 
-	Vector2D marioPos = mMario->GetPosition();
+	Vector2D marioPos = player->GetPosition();
 
 	// X check
 	if (   marioPos.x > position.x + collisionBox.x
-		|| marioPos.x + mMario->GetCollisionBox().x < position.x)
+		|| marioPos.x + player->GetCollisionBox().x < position.x)
 	{
-		return;
+		return false;
 	}
 
 	// y check
-	if (   marioPos.y - mMario->GetCollisionBox().y > position.y
+	if (   marioPos.y - player->GetCollisionBox().y > position.y
 		|| marioPos.y                               < position.y - collisionBox.y)
 	{
-		return;
+		return false;
 	}
 
 	// set mario as hit
-	mMario->SetHasBeenHit();
+	if (isACoin)
+		player->AddToScore();
+	else
+		player->SetHasBeenHit();
+
+	return true;
 }
 
 // --------------------------------------------------------------------------------------------- //

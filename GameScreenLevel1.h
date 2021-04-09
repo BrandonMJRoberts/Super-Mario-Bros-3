@@ -13,6 +13,7 @@ class POW;
 class PIPE_SMB1;
 class RenderObject;
 class Texture2D;
+class Coin;
 
 // ------------------------------------------------------------- //
 
@@ -43,7 +44,7 @@ private:
 	void            SpawnNewEnemy(EnemyType enemy);
 	void			EnemySpawnCheck(const float deltaTime);
 
-	void		    CheckForMarioCollision(Vector2D position, Vector2D collisionBox);
+	bool		    CheckForMarioCollision(Character* player, Vector2D position, Vector2D collisionBox, bool isACoin);
 
 	// init
 	bool            SetUpLevel();
@@ -61,6 +62,7 @@ private:
 
 	// Enemies and coins that can spawn
 	std::vector<RenderObject*> mLevelObjects;
+	std::vector<Coin*>         mCoins;
 
 	Texture2D*                 mBackgroundSprite;
 

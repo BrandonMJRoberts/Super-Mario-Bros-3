@@ -15,7 +15,7 @@ Audio_Player::Audio_Player()
 	openChannels = { 0,1,2,3,4,5,6,7 };
 
 	// Default the volume to not be deafening
-	SetAudioVolume(10);
+	SetAudioVolume(25);
 
 	Mix_AllocateChannels(8);
 

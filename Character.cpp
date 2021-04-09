@@ -36,6 +36,8 @@ Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D sta
 
 	, mIsAlive(true)
 	, mHasCompletedDeathBounce(false)
+
+	, mCoinCount(0)
 {
 	CalculateSpriteData(renderer, imagePath);
 }
@@ -77,6 +79,8 @@ Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D sta
 
 	, mIsAlive(true)
 	, mHasCompletedDeathBounce(false)
+
+	, mCoinCount(0)
 {
 	CalculateSpriteData(renderer, imagePath);
 }
