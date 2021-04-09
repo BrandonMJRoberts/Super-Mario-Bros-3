@@ -38,7 +38,7 @@ POW::~POW()
 
 // ----------------------------------------------------------------- //
 
-void POW::Update(const float deltaTime, LevelMap* levelMap)
+bool POW::Update(const float deltaTime, LevelMap* levelMap)
 {
 	if (mDoingBounce)
 	{
@@ -70,6 +70,8 @@ void POW::Update(const float deltaTime, LevelMap* levelMap)
 		// Now update the dest rect so the pow block updates its render position
 		mDestRect->y = (int)(mPosition.y - SPRITE_RES);
 	}
+
+	return false;
 }
 
 // ----------------------------------------------------------------- //

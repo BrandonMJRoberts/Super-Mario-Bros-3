@@ -145,7 +145,13 @@ void GameScreenLevel1::Update(float deltaTime, SDL_Event e)
 	{
 		if (mLevelObjects[i])
 		{
-			mLevelObjects[i]->Update(deltaTime, mLevelMap);
+			if (mLevelObjects[i]->Update(deltaTime, mLevelMap))
+			{
+				delete mLevelObjects[i];
+				mLevelObjects[i] = nullptr;
+
+				continue;
+			}
 
 			// Check for collisions with mario
 			CheckForMarioCollision(mLevelObjects[i]->GetPosition(), mLevelObjects[i]->GetCollisionBox());

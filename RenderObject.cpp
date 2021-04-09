@@ -108,7 +108,7 @@ void RenderObject::Render()
 
 // --------------------------------------------------------------- //
 
-void RenderObject::Update(const float deltaTime, LevelMap* levelMap)
+bool RenderObject::Update(const float deltaTime, LevelMap* levelMap)
 {
 	if (mGrounded)
 	{
@@ -118,7 +118,10 @@ void RenderObject::Update(const float deltaTime, LevelMap* levelMap)
 	// Now update the physics of this object - this should be overriden by the child class
 	UpdatePhysics(deltaTime, levelMap);
 
-	CheckForLooping(levelMap);
+	if (CheckForLooping(levelMap))
+		return true;
+
+	return false;
 }
 
 // --------------------------------------------------------------- //
@@ -220,19 +223,37 @@ void RenderObject::UpdatePhysics(const float deltaTime, LevelMap* levelMap)
 
 // --------------------------------------------------------------- //
 
-void RenderObject::CheckForLooping(LevelMap* levelMap)
+bool RenderObject::CheckForLooping(LevelMap* levelMap)
 {
 	if (!levelMap)
-		return;
+		return false;
 
 	if (mPosition.x > levelMap->GetLevelWidth() && mVelocity.x > 0.0f)
 	{
-		mPosition.x = -(mCollisionBox.x) + 0.01;
+		// Now check to see if we are at the bottom of the screen
+		if (int(mPosition.y + 0.05) == levelMap->GetLevelHeight() - 1)
+		{
+			return true;
+		}
+		else
+		{
+			mPosition.x = -(mCollisionBox.x) + 0.01;
+		}
 	}
 	else if (mPosition.x + mCollisionBox.x < 0.0f && mVelocity.x < 0.0f)
 	{
-		mPosition.x = levelMap->GetLevelWidth() - 0.01;
+		// Now check to see if we are at the bottom of the screen
+		if (int(mPosition.y + 0.05) == levelMap->GetLevelHeight() - 1)
+		{
+			return true;
+		}
+		else
+		{
+			mPosition.x = levelMap->GetLevelWidth() - 0.01;
+		}
 	}
+
+	return false;
 }
 
 // --------------------------------------------------------------- //

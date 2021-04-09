@@ -16,7 +16,7 @@ public:
 	RenderObject(unsigned int start, unsigned int end, unsigned int current, const float timePerFrame, Vector2D startPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, Vector2D collisionBox, const float movementSpeed);
 	~RenderObject();
 
-	virtual void Update(const float deltaTime, LevelMap* levelMap);
+	virtual bool Update(const float deltaTime, LevelMap* levelMap);
 
 	virtual void Render();
 
@@ -31,7 +31,7 @@ protected:
 
 	void               UpdateAnimations(const float deltaTime);
 
-	void               CheckForLooping(LevelMap* levelMap);
+	bool               CheckForLooping(LevelMap* levelMap);
 
 	Vector2D     mPosition;
 	Vector2D     mVelocity;

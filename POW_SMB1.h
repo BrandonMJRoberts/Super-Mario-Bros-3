@@ -12,7 +12,7 @@ public:
 	POW(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D bottomLeftStartPos, Vector2D collisionBox = Vector2D(1.0f, 1.0f));
 	~POW();
 
-	void     Update(const float deltaTime, LevelMap* levelMap) override;
+	bool     Update(const float deltaTime, LevelMap* levelMap) override;
 
 	Vector2D GetCollisionBox() const { return mCollisionBox; }
 	Vector2D GetPosition()     const { return mPosition;     }

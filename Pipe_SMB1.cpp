@@ -51,7 +51,7 @@ PIPE_SMB1::~PIPE_SMB1()
 
 // --------------------------------------------------------------------------------------- //
 
-void PIPE_SMB1::Update(const float deltaTime, LevelMap* levelMap)
+bool PIPE_SMB1::Update(const float deltaTime, LevelMap* levelMap)
 {
 	if (mDoingAnimation)
 	{
@@ -83,6 +83,8 @@ void PIPE_SMB1::Update(const float deltaTime, LevelMap* levelMap)
 			}
 		}
 	}
+
+	return false;
 }
 
 // --------------------------------------------------------------------------------------- //

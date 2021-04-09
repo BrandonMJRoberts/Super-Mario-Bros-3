@@ -130,13 +130,14 @@ void Character::HandleInput(SDL_Event e)
 		switch (e.key.keysym.sym)
 		{
 		case SDLK_d:
-			// Set that the player is now jumping
-			if (!(mPlayerMovementData & PlayerMovementData::WALKING_LEFT_SMB1) && !(mPlayerMovementData & PlayerMovementData::WALKING_RIGHT_SMB1))
+			// Set that the player is now walking right
+			if (!(mPlayerMovementData & PlayerMovementData::WALKING_RIGHT_SMB1))
 			{
 				mPlayerMovementData |= PlayerMovementData::WALKING_RIGHT_SMB1;
 				mPlayerMovementData &= ~(PlayerMovementData::WALKING_LEFT_SMB1);
 
-				mPlayerMovementData |= PlayerMovementData::WAS_FACING_RIGHT;
+				// Set that the player is no longer previously facing right
+				mPlayerMovementData &= ~(PlayerMovementData::WAS_FACING_RIGHT);
 
 				// Apply the movement force
 				mVelocity.x = 3.0f;
@@ -148,12 +149,10 @@ void Character::HandleInput(SDL_Event e)
 		break;
 
 		case SDLK_a:
-			if (!(mPlayerMovementData & PlayerMovementData::WALKING_RIGHT_SMB1) && !(mPlayerMovementData & PlayerMovementData::WALKING_LEFT_SMB1))
+			if (!(mPlayerMovementData & PlayerMovementData::WALKING_LEFT_SMB1))
 			{
 				mPlayerMovementData |= PlayerMovementData::WALKING_LEFT_SMB1;
 				mPlayerMovementData &= ~(PlayerMovementData::WALKING_RIGHT_SMB1);
-
-				mPlayerMovementData &= ~(PlayerMovementData::WAS_FACING_RIGHT);
 
 				// Apply the movement force
 				mVelocity.x      = -3.0f;
@@ -177,21 +176,20 @@ void Character::HandleInput(SDL_Event e)
 		switch (e.key.keysym.sym)
 		{
 		case SDLK_d:
-
-			// Set that the player is now jumping
 			mPlayerMovementData &= ~(PlayerMovementData::WALKING_RIGHT_SMB1);
+			mPlayerMovementData |=   PlayerMovementData::WAS_FACING_RIGHT;
 
 			// Apply the jump force
 			mVelocity.x = 0.0f;
 
-			if (mCanJump)
+			if (mCanJump || !(mPlayerMovementData & PlayerMovementData::JUMPING_SMB1))
 			{
-				mEndSpriteID = 3;
+				mEndSpriteID   = 3;
 				mStartSpriteID = 3;
 			}
 			else
 			{
-				mEndSpriteID = 4;
+				mEndSpriteID   = 4;
 				mStartSpriteID = 4;
 			}
 
@@ -201,11 +199,12 @@ void Character::HandleInput(SDL_Event e)
 
 		case SDLK_a:
 			mPlayerMovementData &= ~(PlayerMovementData::WALKING_LEFT_SMB1);
+			mPlayerMovementData &= ~(PlayerMovementData::WAS_FACING_RIGHT);
 
 			// Apply the jump force
 			mVelocity.x = 0.0f;
 
-			if (mCanJump)
+			if (mCanJump || !(mPlayerMovementData & PlayerMovementData::JUMPING_SMB1))
 			{
 				mEndSpriteID   = 3;
 				mStartSpriteID = 3;
