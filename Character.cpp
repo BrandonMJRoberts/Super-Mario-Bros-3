@@ -26,8 +26,6 @@ Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D sta
 
 	, mUsingCollisionBox(false)
 
-	, mCanJump(false)
-
 	, kTimePerFrame(timePerFrame)
 	, mTimeRemainingPerFrame(timePerFrame)
 
@@ -69,8 +67,6 @@ Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D sta
 	, mCurrentSpriteID(3)
 	, mEndSpriteID(3)
 	, mStartSpriteID(3)
-
-	, mCanJump(false)
 
 	, kTimePerFrame(timePerFrame)
 	, mTimeRemainingPerFrame(timePerFrame)
@@ -122,8 +118,8 @@ void Character::Render()
 	}
 
 	// Now apply the change in movement to the dest rect
-	mDestRect->x = mPosition.x * SPRITE_RES;
-	mDestRect->y = (mPosition.y - mCollisionBox.y) * SPRITE_RES;
+	mDestRect->x = int(mPosition.x * SPRITE_RES);
+	mDestRect->y = int((mPosition.y - mCollisionBox.y) * SPRITE_RES);
 }
 
 // --------------------------------------------------------------------------------------------------------- //
@@ -145,9 +141,12 @@ void Character::HandleInput(SDL_Event e)
 				// Set that the player is no longer previously facing right
 				mPlayerMovementData &= ~(PlayerMovementData::WAS_FACING_RIGHT);
 
-				mEndSpriteID     = 2;
-				mStartSpriteID   = 0;
-				mCurrentSpriteID = mStartSpriteID;
+				if (!(mPlayerMovementData & PlayerMovementData::JUMPING_SMB1))
+				{
+					mEndSpriteID     = 2;
+					mStartSpriteID   = 0;
+					mCurrentSpriteID = mStartSpriteID;
+				}
 			}
 		break;
 
@@ -157,14 +156,17 @@ void Character::HandleInput(SDL_Event e)
 				mPlayerMovementData |= PlayerMovementData::WALKING_LEFT_SMB1;
 				mPlayerMovementData &= ~(PlayerMovementData::WALKING_RIGHT_SMB1);
 
-				mEndSpriteID     = 2;
-				mStartSpriteID   = 0;
-				mCurrentSpriteID = mStartSpriteID;
+				if (!(mPlayerMovementData & PlayerMovementData::JUMPING_SMB1))
+				{
+					mEndSpriteID     = 2;
+					mStartSpriteID   = 0;
+					mCurrentSpriteID = mStartSpriteID;
+				}
 			}
 		break;
 
 		case SDLK_w:
-			if (mCanJump && !(mPlayerMovementData & PlayerMovementData::JUMPING_SMB1))
+			if (!(mPlayerMovementData & PlayerMovementData::JUMPING_SMB1))
 			{
 				Jump();
 			}
@@ -181,7 +183,7 @@ void Character::HandleInput(SDL_Event e)
 
 			if (!(mPlayerMovementData & PlayerMovementData::WALKING_LEFT_SMB1))
 			{
-				if (mCanJump || !(mPlayerMovementData & PlayerMovementData::JUMPING_SMB1))
+				if (!(mPlayerMovementData & PlayerMovementData::JUMPING_SMB1))
 				{
 					mEndSpriteID = 3;
 					mStartSpriteID = 3;
@@ -202,7 +204,7 @@ void Character::HandleInput(SDL_Event e)
 
 			if (!(mPlayerMovementData & PlayerMovementData::WALKING_RIGHT_SMB1))
 			{
-				if (mCanJump || !(mPlayerMovementData & PlayerMovementData::JUMPING_SMB1))
+				if (!(mPlayerMovementData & PlayerMovementData::JUMPING_SMB1))
 				{
 					mEndSpriteID = 3;
 					mStartSpriteID = 3;
@@ -298,25 +300,30 @@ void Character::HandleCollisions(const float deltaTime)
 	if (   mLevelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x))                   == 1  // left check
 		|| mLevelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x + mCollisionBox.x)) == 1) // right check
 	{
-		//mPosition.y = (int)(mPosition.y + movementDistance.y) - 0.001;
-		mPosition.y -= 0.01f;
+		mPosition.y = (int)(mPosition.y + movementDistance.y) - 0.001;
+
+		// Set that you are not jumping
+		mPlayerMovementData &= ~(PlayerMovementData::JUMPING_SMB1);
 
 		mVelocity.y = 0.0f;
-		mCanJump    = true;
+
+		if (!(mPlayerMovementData & PlayerMovementData::WALKING_LEFT_SMB1) && !(mPlayerMovementData & PlayerMovementData::WALKING_RIGHT_SMB1))
+		{
+			mCurrentSpriteID = 3;
+			mEndSpriteID     = 3;
+			mStartSpriteID   = 3;
+		}
 	}
-	else if (mLevelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x)) == 1 ||                 // left check
-		     mLevelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x + mCollisionBox.x)) == 1) // right check
+	else if (mLevelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y + movementDistance.y), int(mPosition.x))                   == 1 ||                 // left check
+		     mLevelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y + movementDistance.y), int(mPosition.x + mCollisionBox.x)) == 1) // right check
 	{
 		// Up collision bounce back down
-		mVelocity.y = 1.0f;
-
-		mCanJump    = false;
+		mVelocity.y = 2.0f;
 	}
 	else
 	{
 		mVelocity.y += CHARACTER_GRAVITY * deltaTime;
 		mPosition.y += movementDistance.y;
-		mCanJump     = false;
 	}
 
 	// Now for x checks
@@ -328,12 +335,10 @@ void Character::HandleCollisions(const float deltaTime)
 	else if (mLevelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y), int(mPosition.x + mCollisionBox.x)) == 1 ||  // top right check
 		     mLevelMap->GetCollisionTileAt(int(mPosition.y),                   int(mPosition.x + mCollisionBox.x)) == 1) // bottom right check
 	{
-		// Up collision bounce back down
 		mVelocity.x = 0.0f;
 	}
 	else
 	{
-		// No y collisions
 		mPosition.x += movementDistance.x;
 	}
 }
@@ -355,7 +360,9 @@ void Character::Jump()
 	// Apply the jump force
 	mVelocity.y          = mJumpForce;
 
-	mCanJump = false;
+	mStartSpriteID   = 4;
+	mEndSpriteID     = 4;
+	mCurrentSpriteID = mStartSpriteID;
 }
 
 // --------------------------------------------------------------------------------------------------------- //
@@ -482,7 +489,6 @@ void Character::RespawnPlayer()
 
 	mPlayerMovementData      = 0;
 
-	mCanJump                 = false;
 	mHasCompletedDeathBounce = false;
 
 	mSourceRect = new SDL_Rect{        int(mSingleSpriteWidth * (mCurrentSpriteID % kSpritesOnWidth)),

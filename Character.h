@@ -109,7 +109,6 @@ protected:
 	SDL_Rect*          mDestRect;
 
 	bool               mUsingCollisionBox;
-	bool               mCanJump;
 	bool               mIsAlive;
 	bool               mHasCompletedDeathBounce;
 };

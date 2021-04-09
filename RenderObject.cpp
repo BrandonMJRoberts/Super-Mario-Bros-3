@@ -162,8 +162,8 @@ void RenderObject::UpdatePhysics(const float deltaTime, LevelMap* levelMap)
 
 		mGrounded = true;
 	}
-	else if (levelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x))                   == 1 ||  // left check
-		     levelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x + mCollisionBox.x)) == 1) // right check
+	else if (levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y + movementDistance.y), int(mPosition.x))                   == 1 ||  // left check
+		     levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y + movementDistance.y), int(mPosition.x + mCollisionBox.x)) == 1) // right check
 	{
 		// Up collision bounce back down
 		mVelocity.y      = 1.0f;

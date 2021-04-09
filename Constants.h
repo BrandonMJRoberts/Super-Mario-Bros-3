@@ -8,7 +8,7 @@
 #define SCREEN_HEIGHT_GRID (SCREEN_HEIGHT / SPRITE_RES)
 #define SCREEN_WIDTH_GRID  (SCREEN_WIDTH  / SPRITE_RES)
 
-const float CHARACTER_MOVEMENT_SPEED        = 1.0f;
-const float CHARACTER_JUMP_FORCE_DECREMENT  = 5.0f;
-const float CHARACTER_INITIAL_JUMP_FORCE    = 10.0f;
-const float CHARACTER_GRAVITY               = 6.0f;
+const float CHARACTER_MOVEMENT_SPEED        =  1.0f;
+const float CHARACTER_JUMP_FORCE_DECREMENT  =  5.0f;
+const float CHARACTER_INITIAL_JUMP_FORCE    = -5.0f;
+const float CHARACTER_GRAVITY               =  6.0f;
