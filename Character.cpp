@@ -38,6 +38,7 @@ Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D sta
 	, mHasCompletedDeathBounce(false)
 
 	, mCoinCount(0)
+	, mLifeCount(3)
 {
 	CalculateSpriteData(renderer, imagePath);
 }
@@ -81,6 +82,7 @@ Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D sta
 	, mHasCompletedDeathBounce(false)
 
 	, mCoinCount(0)
+	, mLifeCount(3)
 {
 	CalculateSpriteData(renderer, imagePath);
 }
@@ -429,7 +431,14 @@ void Character::SetHasBeenHit()
 
 	mDeathPosition   = mPosition;
 
+	mLifeCount--;
+
 	mVelocity        = Vector2D(0.0f, -1.0f);
+
+	if (mLifeCount < 0)
+	{
+		mLifeCount = 0;
+	}
 }
 
 // --------------------------------------------------------------------------------------------------------- //

@@ -14,6 +14,7 @@ class PIPE_SMB1;
 class RenderObject;
 class Texture2D;
 class Coin;
+class TextRenderer;
 
 // ------------------------------------------------------------- //
 
@@ -76,6 +77,8 @@ private:
 	// Spawn points
 	const Vector2D     mEnemySpawnPointLeft;
 	const Vector2D     mEnemySpawnPointRight;
+	
+	TextRenderer*      mTextRenderer;
 
 	bool			   mSpawningLeftSide;
 };

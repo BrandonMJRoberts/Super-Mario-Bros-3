@@ -48,6 +48,9 @@ public:
 	void          AddToScore()              { mCoinCount++; }
 	unsigned int  GetCoinCount()      const { return mCoinCount; }
 
+	void DecreaseLifeCount()                { mLifeCount--; }
+	int GetLifeCount()                const { return mLifeCount; };
+
 protected:
 	void          Jump();
 
@@ -99,6 +102,8 @@ protected:
 	unsigned int       mPlayerMovementData;
 
 	unsigned int       mCoinCount;
+
+	int                mLifeCount;
 
 	SDL_Rect*          mSourceRect;
 	SDL_Rect*          mDestRect;

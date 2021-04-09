@@ -16,6 +16,8 @@
 
 #include "RenderObject.h"
 
+#include "TextRenderer.h"
+
 #include <iostream>
 
 // --------------------------------------------------------------------------------------------- //
@@ -40,6 +42,7 @@ GameScreenLevel1::GameScreenLevel1(SDL_Renderer* renderer)
 	, mBackgroundSprite(nullptr)
 
 	, mSpawningLeftSide(true)
+	, mTextRenderer(nullptr)
 {
 	if (!SetUpLevel())
 	{
@@ -71,6 +74,23 @@ GameScreenLevel1::~GameScreenLevel1()
 
 	delete mBackgroundSprite;
 	mBackgroundSprite = nullptr;
+
+	delete mTextRenderer;
+	mTextRenderer = nullptr;
+
+	for (unsigned int i = 0; i < mCoins.size(); i++)
+	{
+		delete mCoins[i];
+		mCoins[i] = nullptr;
+	}
+	mCoins.clear();
+
+	for (unsigned int i = 0; i < mLevelObjects.size(); i++)
+	{
+		delete mLevelObjects[i];
+		mLevelObjects[i] = nullptr;
+	}
+	mLevelObjects.clear();
 }
 
 // --------------------------------------------------------------------------------------------- //
@@ -93,14 +113,14 @@ bool GameScreenLevel1::SetUpLevel()
 	}
 
 	// Create luigi
-	mLuigi = new Character(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Luigi.png", Vector2D(7.0f, 12.9f), 7, 2, mLevelMap, Vector2D(1.0f, 1.4), 0.1f);
-	if (!mLuigi)
-	{
-		std::cout << "mLuigi failed to load." << std::endl;
-		mLuigi = nullptr;
-	}
+	//mLuigi = new Character(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Luigi.png", Vector2D(7.0f, 12.9f), 7, 2, mLevelMap, Vector2D(1.0f, 1.4), 0.1f);
+	//if (!mLuigi)
+	//{
+	//	std::cout << "mLuigi failed to load." << std::endl;
+	//	mLuigi = nullptr;
+	//}
 
-	mLuigi = nullptr;
+	//mLuigi = nullptr;
 
 	// Create the pow block
 	mPowBlock = new POW(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/PowBlock.png", Vector2D(7.5, 9));
@@ -117,6 +137,9 @@ bool GameScreenLevel1::SetUpLevel()
 		return false;
 	}
 
+	// Setup the text renderer
+	mTextRenderer = new TextRenderer(mRenderer, "SDL_Mario_Project/Fonts and HUD/Font.png", 12, 3);
+
 	// If we get here then everything has loaded correctly
 	return true;
 }
@@ -129,8 +152,8 @@ void GameScreenLevel1::Update(float deltaTime, SDL_Event e)
 	if (mMario)
 		mMario->Update(deltaTime, e);
 
-	if (mLuigi)
-		mLuigi->Update(deltaTime, e);
+	//if (mLuigi)
+	//	mLuigi->Update(deltaTime, e);
 
 	// Now update the pow block
 	if (mPowBlock)
@@ -228,11 +251,18 @@ void GameScreenLevel1::Render()
 			mPipes[i]->Render();
 	}
 
+	//if (mLuigi)
+	//	mLuigi->Render();
+
+	// Now render the scores
+	if (mTextRenderer && mMario)
+	{
+		mTextRenderer->RenderFromLeft("SCORE " + std::to_string(mMario->GetCoinCount()), 10, Vector2D(50, 392));
+		mTextRenderer->RenderFromLeft("LIVES " + std::to_string(mMario->GetLifeCount()), 10, Vector2D(300, 392));
+	}
+
 	if (mMario)
 		mMario->Render();
-
-	if (mLuigi)
-		mLuigi->Render();
 }
 
 // --------------------------------------------------------------------------------------------- //
