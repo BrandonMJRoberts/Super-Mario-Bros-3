@@ -294,15 +294,17 @@ void Character::HandleCollisions(const float deltaTime)
 	Vector2D movementDistance = mVelocity * deltaTime;
 
 	// Check for collisions
+	// Y collisions first
 	if (   mLevelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x))                   == 1  // left check
 		|| mLevelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x + mCollisionBox.x)) == 1) // right check
 	{
-		mPosition.y = (int)(mPosition.y + movementDistance.y) - 0.001;
+		//mPosition.y = (int)(mPosition.y + movementDistance.y) - 0.001;
+		mPosition.y -= 0.01f;
 
 		mVelocity.y = 0.0f;
 		mCanJump    = true;
 	}
-	else if (mLevelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x)) == 1 ||  // left check
+	else if (mLevelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x)) == 1 ||                 // left check
 		     mLevelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x + mCollisionBox.x)) == 1) // right check
 	{
 		// Up collision bounce back down

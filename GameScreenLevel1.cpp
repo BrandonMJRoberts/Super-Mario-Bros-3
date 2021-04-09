@@ -105,7 +105,7 @@ bool GameScreenLevel1::SetUpLevel()
 		return false;
 
 	// Create mario
-	mMario = new Character(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Mario.png", Vector2D(5.0f, 12.9f), 7, 2, mLevelMap, Vector2D(1.0f, 1.4), 0.1f);
+	mMario = new Character(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Mario.png", Vector2D(5.0f, 11.0f), 7, 2, mLevelMap, Vector2D(1.0f, 1.25f), 0.1f);
 	if (!mMario)
 	{
 		std::cout << "mMario failed to load." << std::endl;
