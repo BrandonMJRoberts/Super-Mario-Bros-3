@@ -30,7 +30,7 @@ GameScreenLevel1::GameScreenLevel1(SDL_Renderer* renderer)
 	, mLevelMap(nullptr)
 	, mPipes{nullptr, nullptr}
 
-	, mTimePerEnemySpawn(4.0f)
+	, mTimePerEnemySpawn(3.0f)
 	, mTimeRemainingTillSpawn(0.0f)
 
 	, mEnemysSpawnedTotal(0)
@@ -105,7 +105,7 @@ bool GameScreenLevel1::SetUpLevel()
 		return false;
 
 	// Create mario
-	mMario = new Character(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Mario.png", Vector2D(5.0f, 11.0f), 7, 2, mLevelMap, Vector2D(1.0f, 1.25f), 0.1f);
+	mMario = new Character(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Mario.png", Vector2D(5.0f, 11.0f), 7, 2, mLevelMap, Vector2D(1.0f, 1.4f), 0.1f);
 	if (!mMario)
 	{
 		std::cout << "mMario failed to load." << std::endl;

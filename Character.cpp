@@ -245,7 +245,7 @@ void Character::ApplyMovement(const float deltaTime)
 	mPosition += (mVelocity * deltaTime);
 
 	// Screen capping
-	if (mPosition.y + mCollisionBox.y > SCREEN_HEIGHT_GRID)
+	if (mPosition.y > SCREEN_HEIGHT_GRID)
 	{
 		mPosition.y = SCREEN_HEIGHT_GRID - mCollisionBox.y;
 	}
@@ -294,20 +294,22 @@ void Character::AddGravity(const float deltaTime)
 void Character::HandleCollisions(const float deltaTime)
 {
 	Vector2D movementDistance = mVelocity * deltaTime;
+	bool yCollision = true;
 
 	// Check for collisions
 	// Y collisions first
 	if (   mLevelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x))                   == 1  // left check
 		|| mLevelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x + mCollisionBox.x)) == 1) // right check
 	{
-		mPosition.y = (int)(mPosition.y + movementDistance.y) - 0.001;
-
 		// Set that you are not jumping
 		mPlayerMovementData &= ~(PlayerMovementData::JUMPING_SMB1);
 
-		mVelocity.y = 0.0f;
+		mPosition.y          = int(mPosition.y + movementDistance.y) - 0.005;
 
-		if (!(mPlayerMovementData & PlayerMovementData::WALKING_LEFT_SMB1) && !(mPlayerMovementData & PlayerMovementData::WALKING_RIGHT_SMB1))
+		mVelocity.y          = 0.0f;
+
+		if (   !(mPlayerMovementData & PlayerMovementData::WALKING_LEFT_SMB1) 
+			&& !(mPlayerMovementData & PlayerMovementData::WALKING_RIGHT_SMB1))
 		{
 			mCurrentSpriteID = 3;
 			mEndSpriteID     = 3;
@@ -318,29 +320,43 @@ void Character::HandleCollisions(const float deltaTime)
 		     mLevelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y + movementDistance.y), int(mPosition.x + mCollisionBox.x)) == 1) // right check
 	{
 		// Up collision bounce back down
-		mVelocity.y = 2.0f;
+		mVelocity.y        = 2.0f;
+
+		mPosition.y = int(mPosition.y - mCollisionBox.y - 0.1) + mCollisionBox.y + 1.005;
 	}
 	else
 	{
-		mVelocity.y += CHARACTER_GRAVITY * deltaTime;
-		mPosition.y += movementDistance.y;
+		yCollision   = false;
 	}
 
+
 	// Now for x checks
-	if (   mLevelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y), int(mPosition.x)) == 1  // top left check
-		|| mLevelMap->GetCollisionTileAt(int(mPosition.y),                   int(mPosition.x)) == 1) // bottom left check
+	if (   mLevelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y ), int(mPosition.x + movementDistance.x)) == 1  // top left check
+		|| mLevelMap->GetCollisionTileAt(int(mPosition.y),                    int(mPosition.x + movementDistance.x)) == 1) // bottom left check
 	{
 		mVelocity.x = 0.0f;
+
+		mPosition.x = int(mPosition.x) + 0.01;
 	}
-	else if (mLevelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y), int(mPosition.x + mCollisionBox.x)) == 1 ||  // top right check
-		     mLevelMap->GetCollisionTileAt(int(mPosition.y),                   int(mPosition.x + mCollisionBox.x)) == 1) // bottom right check
+	else if (mLevelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y), int(mPosition.x + mCollisionBox.x + movementDistance.x)) == 1 ||  // top right check
+		     mLevelMap->GetCollisionTileAt(int(mPosition.y),                   int(mPosition.x + mCollisionBox.x + movementDistance.x)) == 1)    // bottom right check
 	{
 		mVelocity.x = 0.0f;
+
+		mPosition.x = int(mPosition.x) + mCollisionBox.x - 0.01;
 	}
 	else
 	{
 		mPosition.x += movementDistance.x;
 	}
+
+	if (!yCollision)
+	{
+		mPosition.y += movementDistance.y;
+		mVelocity.y += CHARACTER_GRAVITY * deltaTime;
+	}
+
+	std::cout << mPosition.y << std::endl;
 }
 
 // --------------------------------------------------------------------------------------------------------- //
