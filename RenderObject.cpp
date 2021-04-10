@@ -288,3 +288,10 @@ void RenderObject::UpdateAnimations(const float deltaTime)
 }
 
 // --------------------------------------------------------------- //
+
+void RenderObject::SetPOWHit()
+{
+	AddVelocity(Vector2D(0.0f, -2.0f));
+}
+
+// --------------------------------------------------------------- //

@@ -23,6 +23,10 @@ public:
 	Vector2D GetPosition()     const { return mPosition; }
 	Vector2D GetCollisionBox() const { return mCollisionBox; }
 
+	void AddVelocity(Vector2D change) { mVelocity += change; }
+
+	virtual void SetPOWHit();
+
 protected:
 	virtual void       UpdatePhysics(const float deltaTime, LevelMap* levelMap);
 	virtual Texture2D* GetSpriteSheet() = 0;
