@@ -51,6 +51,8 @@ public:
 	void DecreaseLifeCount()                { mLifeCount--; }
 	int GetLifeCount()                const { return mLifeCount; };
 
+	void SetHitHead()                       { mVelocity.y = 2.0f; }
+
 protected:
 	void          Jump();
 

@@ -14,12 +14,13 @@ public:
 
 	bool     Update(const float deltaTime, LevelMap* levelMap) override;
 
-	Vector2D GetCollisionBox() const { return mCollisionBox; }
-	Vector2D GetPosition()     const { return mPosition;     }
+	Vector2D GetCollisionBox()     const { return mCollisionBox; }
+	Vector2D GetPosition()         const { return mPosition;     }
+	Vector2D GetCollisionBoxOffset() const{ return mCollisionBoxOffset; }
 
 	bool     SetHasBeenHit();
 
-	void UpdatePhysics(const float deltaTime, LevelMap* levelMap) { ; }
+	void     UpdatePhysics(const float deltaTime, LevelMap* levelMap) { ; }
 
 private:
 	Texture2D* GetSpriteSheet() override { return mSpriteSheet; }
@@ -29,6 +30,7 @@ private:
 	Vector2D     mStartPosition;
 
 	Vector2D	 mCollisionBox;
+	Vector2D     mCollisionBoxOffset;
 
 	bool	     mDoingBounce;
 	bool		 mGoingUp;

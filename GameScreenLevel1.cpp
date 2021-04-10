@@ -158,10 +158,10 @@ void GameScreenLevel1::Update(float deltaTime, SDL_Event e)
 	// Now update the pow block
 	if (mPowBlock)
 	{
+		mPowBlock->Update(deltaTime, mLevelMap);
+
 		// Check for collisions with the pow block
 		CheckForPOWCollision();
-
-		mPowBlock->Update(deltaTime, mLevelMap);
 	}
 
 	// Now update the level objects
@@ -274,11 +274,20 @@ void GameScreenLevel1::CheckForPOWCollision()
 
 	Vector2D powBlockPos = mPowBlock->GetPosition(), marioPos = mMario->GetPosition();
 
-	if (   Collisions::Instance()->Box(Rect2D(powBlockPos, mPowBlock->GetCollisionBox()), Rect2D(marioPos, mMario->GetCollisionBox()))
-		&& marioPos.y >= powBlockPos.y + mPowBlock->GetCollisionBox().y)
+	if (Collisions::Instance()->Box(Rect2D(powBlockPos - mPowBlock->GetCollisionBoxOffset(), mPowBlock->GetCollisionBox()), Rect2D(marioPos, mMario->GetCollisionBox())))
 	{
 		// There is a collision so now check that mario is going upwards and is in the correct position
-		
+
+
+		// Apply the effect that the pow block has
+		for (unsigned int i = 0; i < mLevelObjects.size(); i++)
+		{
+			mCoins.push_back(new Coin(mRenderer, mLevelObjects[i]->GetPosition(), "SDL_Mario_Project/Mario Bros 1 Images/Coin.png", 0.15f, Vector2D(1.0f, 1.0f)));
+
+			delete mLevelObjects[i];
+			mLevelObjects[i] = nullptr;
+		}
+		mLevelObjects.clear();
 
 		// There is a collision so tell the POW block that this has happened
 		if (mPowBlock->SetHasBeenHit())
@@ -286,6 +295,8 @@ void GameScreenLevel1::CheckForPOWCollision()
 			delete mPowBlock;
 			mPowBlock = nullptr;
 		}
+
+		mMario->SetHitHead();
 	}
 }
 

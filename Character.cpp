@@ -286,29 +286,44 @@ void Character::Update(float deltaTime, SDL_Event e)
 
 void Character::AddGravity(const float deltaTime)
 {
-	mVelocity.y += deltaTime * CHARACTER_GRAVITY;
+	mVelocity.y += CHARACTER_GRAVITY * deltaTime;
 }
 
 // --------------------------------------------------------------------------------------------------------- //
 
 void Character::HandleCollisions(const float deltaTime)
 {
-	Vector2D movementDistance = mVelocity * deltaTime;
-	bool yCollision = true;
+	// ---------------------------------------------------------------------------------------------------------------------------------------------------- //
 
-	// Check for collisions
-	// Y collisions first
-	if (   mLevelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x))                   == 1  // left check
-		|| mLevelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x + mCollisionBox.x)) == 1) // right check
+	Vector2D currentPos       = mPosition;
+	Vector2D newPos           = mPosition + (mVelocity * deltaTime);
+
+	// ---------------------------------------------------------------------------------------------------------------------------------------------------- //
+
+	// act on y collisions
+	if (mLevelMap->GetCollisionTileAt(int(newPos.y - mCollisionBox.y), int(newPos.x))                   == 1 || // bottom left check
+		mLevelMap->GetCollisionTileAt(int(newPos.y - mCollisionBox.y), int(newPos.x + mCollisionBox.x)) == 1)   // bottom right check
+	{
+		// Up collision bounce back down velocity
+		mVelocity.y = 2.0f;
+
+		// Set the position to be correct
+		newPos.y = int(newPos.y - mCollisionBox.y) + mCollisionBox.y + 1.005;
+	} 
+	else if (mLevelMap->GetCollisionTileAt(int(newPos.y), int(newPos.x))                   == 1  // bottom left  check
+		  || mLevelMap->GetCollisionTileAt(int(newPos.y), int(newPos.x + mCollisionBox.x)) == 1) // bottom right check
 	{
 		// Set that you are not jumping
 		mPlayerMovementData &= ~(PlayerMovementData::JUMPING_SMB1);
 
-		mPosition.y          = int(mPosition.y + movementDistance.y) - 0.005;
+		// Set the position
+		newPos.y = int(newPos.y) - 0.005;
 
-		mVelocity.y          = 0.0f;
+		// zero the velocity
+		mVelocity.y = 0.0f;
 
-		if (   !(mPlayerMovementData & PlayerMovementData::WALKING_LEFT_SMB1) 
+		// See if the player should revert back to normal standing frame
+		if (   !(mPlayerMovementData & PlayerMovementData::WALKING_LEFT_SMB1)
 			&& !(mPlayerMovementData & PlayerMovementData::WALKING_RIGHT_SMB1))
 		{
 			mCurrentSpriteID = 3;
@@ -316,45 +331,46 @@ void Character::HandleCollisions(const float deltaTime)
 			mStartSpriteID   = 3;
 		}
 	}
-	else if (mLevelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y + movementDistance.y), int(mPosition.x))                   == 1 ||                 // left check
-		     mLevelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y + movementDistance.y), int(mPosition.x + mCollisionBox.x)) == 1) // right check
-	{
-		// Up collision bounce back down
-		mVelocity.y        = 2.0f;
-
-		mPosition.y = int(mPosition.y - mCollisionBox.y - 0.1) + mCollisionBox.y + 1.005;
-	}
 	else
 	{
-		yCollision   = false;
-	}
+		// Apply the movement
+		//mPosition.y  = newPos.y;
 
-
-	// Now for x checks
-	if (   mLevelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y ), int(mPosition.x + movementDistance.x)) == 1  // top left check
-		|| mLevelMap->GetCollisionTileAt(int(mPosition.y),                    int(mPosition.x + movementDistance.x)) == 1) // bottom left check
-	{
-		mVelocity.x = 0.0f;
-
-		mPosition.x = int(mPosition.x) + 0.01;
-	}
-	else if (mLevelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y), int(mPosition.x + mCollisionBox.x + movementDistance.x)) == 1 ||  // top right check
-		     mLevelMap->GetCollisionTileAt(int(mPosition.y),                   int(mPosition.x + mCollisionBox.x + movementDistance.x)) == 1)    // bottom right check
-	{
-		mVelocity.x = 0.0f;
-
-		mPosition.x = int(mPosition.x) + mCollisionBox.x - 0.01;
-	}
-	else
-	{
-		mPosition.x += movementDistance.x;
-	}
-
-	if (!yCollision)
-	{
-		mPosition.y += movementDistance.y;
+		// Apply gravity
 		mVelocity.y += CHARACTER_GRAVITY * deltaTime;
 	}
+
+	// ---------------------------------------------------------------------------------------------------------------------------------------------------- //
+
+	// Act on x collisions
+	if (   mLevelMap->GetCollisionTileAt(int(newPos.y - mCollisionBox.y), int(newPos.x)) == 1  // top left check
+		|| mLevelMap->GetCollisionTileAt(int(newPos.y),                   int(newPos.x)) == 1) // bottom left check
+	{
+		// Zero the velocity
+		mVelocity.x = 0.0f;
+
+		// Set the position
+		newPos.x = int(newPos.x) + 0.01;
+	}
+	else if (mLevelMap->GetCollisionTileAt(int(newPos.y - mCollisionBox.y), int(newPos.x + mCollisionBox.x)) == 1 ||  // top right check
+		     mLevelMap->GetCollisionTileAt(int(newPos.y),                   int(newPos.x + mCollisionBox.x)) == 1)    // bottom right check
+	{
+		// Zero the velocity
+		mVelocity.x = 0.0f;
+
+		// Set the position
+		newPos.x = int(newPos.x) + mCollisionBox.x - 0.01;
+	}
+	else
+	{
+		// Apply the movement
+	//	mPosition.x = newPos.x;
+	}
+
+	// ---------------------------------------------------------------------------------------------------------------------------------------------------- //
+
+	// Set the new position
+	mPosition = newPos;
 
 	std::cout << mPosition.y << std::endl;
 }

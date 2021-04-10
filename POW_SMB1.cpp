@@ -17,6 +17,8 @@ POW::POW(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D bot
 	, mGoingUp(true)
 
 	, mCollisionBox(1.0f, 1.0f)
+
+	, mCollisionBoxOffset(0.0f, 0.0f)
 {
 	mSourceRect = new SDL_Rect{ 0, 0,                                                               SPRITE_RES, SPRITE_RES };
 	mDestRect   = new SDL_Rect{ (int)(mPosition.x * SPRITE_RES), (int)((mPosition.y - 1.0f) * SPRITE_RES), SPRITE_RES, SPRITE_RES };
@@ -25,6 +27,10 @@ POW::POW(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D bot
 	if (!mSpriteSheet->LoadFromFile(filePathToSpriteSheet))
 	{
 		std::cout << "Failed to load sprite sheet for pow block!" << std::endl;
+	}
+	else
+	{
+		mSingleSpriteWidth = mSpriteSheet->GetWidth() / 3.0f;
 	}
 }
 
@@ -88,11 +94,17 @@ bool POW::SetHasBeenHit()
 	switch (mCurrentSpriteID)
 	{
 	case 1:
-		mCollisionBox.y = 0.75f;
+		mCollisionBox.y       = 0.75f;
+		mCollisionBoxOffset.y = 0.25f;
+
+		mSourceRect->x = int(mSingleSpriteWidth * (mCurrentSpriteID % kSpritesOnWidth));
 	break;
 
 	case 2:
-		mCollisionBox.y = 0.5f;
+		mCollisionBox.y       = 0.5f;
+		mCollisionBoxOffset.y = 0.5f;
+
+		mSourceRect->x = int(mSingleSpriteWidth * (mCurrentSpriteID % kSpritesOnWidth));
 	break;
 
 	case 3:
