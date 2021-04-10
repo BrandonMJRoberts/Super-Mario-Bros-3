@@ -4,6 +4,8 @@
 #include "GameScreen.h"
 #include "Commons.h"
 
+#include "AudioPlayer.h"
+
 #include <SDL.h>
 #include <vector>
 
@@ -79,6 +81,8 @@ private:
 	const Vector2D     mEnemySpawnPointRight;
 	
 	TextRenderer*      mTextRenderer;
+
+	Audio_Player*      mAudioPlayer;
 
 	bool			   mSpawningLeftSide;
 };

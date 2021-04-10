@@ -7,7 +7,7 @@
 
 // --------------------------------------------------------------------------------------------------------- //
 
-Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D startingPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, LevelMap* levelMap, const float collisionCircleRadius, const float timePerFrame)
+Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D startingPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, LevelMap* levelMap, const float collisionCircleRadius, const float timePerFrame, Audio_Player* AudioPlayerRef)
 	: mJumpForce(CHARACTER_INITIAL_JUMP_FORCE)
 	, mPlayerMovementData(0)
 	, mVelocity(0, 0)
@@ -37,13 +37,15 @@ Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D sta
 
 	, mCoinCount(0)
 	, mLifeCount(3)
+
+	, mAudioPlayerRef(AudioPlayerRef)
 {
 	CalculateSpriteData(renderer, imagePath);
 }
 
 // --------------------------------------------------------------------------------------------------------- //
 
-Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D startingPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, LevelMap* levelMap, const Vector2D collisionBox, const float timePerFrame)
+Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D startingPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, LevelMap* levelMap, const Vector2D collisionBox, const float timePerFrame, Audio_Player* AudioPlayerRef)
 	: mJumpForce(CHARACTER_INITIAL_JUMP_FORCE)
 
 	, mCollisionBox(collisionBox)
@@ -79,6 +81,8 @@ Character::Character(SDL_Renderer* renderer, std::string imagePath, Vector2D sta
 
 	, mCoinCount(0)
 	, mLifeCount(3)
+
+	, mAudioPlayerRef(AudioPlayerRef)
 {
 	CalculateSpriteData(renderer, imagePath);
 }
@@ -395,6 +399,9 @@ void Character::Jump()
 	mStartSpriteID   = 4;
 	mEndSpriteID     = 4;
 	mCurrentSpriteID = mStartSpriteID;
+
+	if(mAudioPlayerRef)
+		mAudioPlayerRef->OnNotify(SUBJECT_NOTIFICATION_TYPES::PLAYER_JUMPED, "");
 }
 
 // --------------------------------------------------------------------------------------------------------- //
@@ -487,6 +494,9 @@ void Character::SetHasBeenHit()
 	{
 		mLifeCount = 0;
 	}
+
+	if (mAudioPlayerRef)
+		mAudioPlayerRef->OnNotify(SUBJECT_NOTIFICATION_TYPES::PLAYER_DIED, "SMB1");
 }
 
 // --------------------------------------------------------------------------------------------------------- //

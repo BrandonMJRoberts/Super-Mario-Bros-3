@@ -30,7 +30,7 @@ POW::POW(SDL_Renderer* renderer, const char* filePathToSpriteSheet, Vector2D bot
 	}
 	else
 	{
-		mSingleSpriteWidth = mSpriteSheet->GetWidth() / 3.0f;
+		mSingleSpriteWidth = int(mSpriteSheet->GetWidth() / 3.0f);
 	}
 }
 

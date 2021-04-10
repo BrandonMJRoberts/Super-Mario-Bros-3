@@ -43,6 +43,8 @@ GameScreenLevel1::GameScreenLevel1(SDL_Renderer* renderer)
 
 	, mSpawningLeftSide(true)
 	, mTextRenderer(nullptr)
+
+	, mAudioPlayer(nullptr)
 {
 	if (!SetUpLevel())
 	{
@@ -91,12 +93,18 @@ GameScreenLevel1::~GameScreenLevel1()
 		mLevelObjects[i] = nullptr;
 	}
 	mLevelObjects.clear();
+
+	delete mAudioPlayer;
+	mAudioPlayer = nullptr;
 }
 
 // --------------------------------------------------------------------------------------------- //
 
 bool GameScreenLevel1::SetUpLevel()
 {
+	mAudioPlayer = new Audio_Player();
+	mAudioPlayer->OnNotify(SUBJECT_NOTIFICATION_TYPES::PLAY_SMB1_MUSIC, "");
+
 	// Load in the collision map for this level
 	mLevelMap = new LevelMap("SDL_Mario_Project/Level Maps SMB1/CollisionMapLevel1.txt", "SDL_Mario_Project/Mario Bros 1 Images/Background Sprites Level 1.png", mRenderer);
 
@@ -105,7 +113,7 @@ bool GameScreenLevel1::SetUpLevel()
 		return false;
 
 	// Create mario
-	mMario = new Character(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Mario.png", Vector2D(5.0f, 11.0f), 7, 2, mLevelMap, Vector2D(1.0f, 1.4f), 0.1f);
+	mMario = new Character(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Mario.png", Vector2D(5.0f, 11.0f), 7, 2, mLevelMap, Vector2D(1.0f, 1.4f), 0.1f, mAudioPlayer);
 	if (!mMario)
 	{
 		std::cout << "mMario failed to load." << std::endl;
@@ -203,6 +211,9 @@ void GameScreenLevel1::Update(float deltaTime, SDL_Event e)
 
 			if (CheckForMarioCollision(mMario, mCoins[i]->GetPosition(), mCoins[i]->GetCollisionBox(), true))
 			{
+				if(mAudioPlayer)
+					mAudioPlayer->OnNotify(SUBJECT_NOTIFICATION_TYPES::COIN_COLLECTED, "");
+
 				delete mCoins[i];
 				mCoins[i] = nullptr;
 			}

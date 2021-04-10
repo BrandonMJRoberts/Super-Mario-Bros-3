@@ -169,7 +169,9 @@ enum class SUBJECT_NOTIFICATION_TYPES
 	EXIT_PIPE,
 	PLAYER_DIED,
 
-	PLAY_MAIN_MENU_MUSIC
+	PLAY_MAIN_MENU_MUSIC,
+
+	PLAY_SMB1_MUSIC
 };
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //

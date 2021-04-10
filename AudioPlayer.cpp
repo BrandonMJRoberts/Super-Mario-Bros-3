@@ -278,14 +278,23 @@ void Audio_Player::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string
 	break;
 
 	case SUBJECT_NOTIFICATION_TYPES::PLAYER_DIED:
-		RemoveAllMusicTracks();
-		PauseAllSFX();
+		// Only pause music if we are in SMB3 not SMB1
+		if (data != "SMB1")
+		{
+			RemoveAllMusicTracks();
+			PauseAllSFX();
+		}
 
 		PlaySFXTrack("SDL_Mario_Project/Audio/SFX/1-Down.wav");
 	break;
 
 	case SUBJECT_NOTIFICATION_TYPES::PLAY_MAIN_MENU_MUSIC:
 		SetMainLevelMusicTrack("SDL_Mario_Project/Audio/Music/Main Menu Music.mp3");
+		PlayMainLevelMusic();
+	break;
+
+	case SUBJECT_NOTIFICATION_TYPES::PLAY_SMB1_MUSIC:
+		SetMainLevelMusicTrack("SDL_Mario_Project/Audio/Music/World/26 - Pipe Maze.mp3");
 		PlayMainLevelMusic();
 	break;
 	}

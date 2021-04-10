@@ -6,6 +6,8 @@
 #include "Commons.h"
 #include "Game_Maths.h"
 
+#include "AudioPlayer.h"
+
 class LevelMap;
 
 #define DEATH_ANIMATION_SPEED 3.0
@@ -30,8 +32,8 @@ class Character final
 {
 public:
 	Character() = delete;
-	Character(SDL_Renderer* renderer, std::string imagePath, Vector2D startingPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, LevelMap* levelMap, const float collisionCircleRadius, const float timePerFrame);
-	Character(SDL_Renderer* renderer, std::string imagePath, Vector2D startingPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, LevelMap* levelMap, const Vector2D collisionBox, const float timePerFrame);
+	Character(SDL_Renderer* renderer, std::string imagePath, Vector2D startingPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, LevelMap* levelMap, const float collisionCircleRadius, const float timePerFrame, Audio_Player* AudioPlayerRef);
+	Character(SDL_Renderer* renderer, std::string imagePath, Vector2D startingPosition, const unsigned int spritesOnWidth, const unsigned int spritesOnHeight, LevelMap* levelMap, const Vector2D collisionBox, const float timePerFrame, Audio_Player* AudioPlayerRef);
 	~Character();
 
 	void          Render();
@@ -111,6 +113,8 @@ protected:
 
 	SDL_Rect*          mSourceRect;
 	SDL_Rect*          mDestRect;
+
+	Audio_Player*      mAudioPlayerRef;
 
 	bool               mUsingCollisionBox;
 	bool               mIsAlive;

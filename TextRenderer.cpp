@@ -43,8 +43,8 @@ void TextRenderer::RenderFromLeft(const std::string textToRender, const unsigned
 {
 	unsigned int spriteID;
 
-	mDestRectPlaceholder.y = topLeftPosition.y;
-	mDestRectPlaceholder.x = topLeftPosition.x;
+	mDestRectPlaceholder.y = int(topLeftPosition.y);
+	mDestRectPlaceholder.x = int(topLeftPosition.x);
 
 	// Loop through all of the characters that are needed to be rendered
 	for (unsigned int i = 0; i < textToRender.size(); i++)
@@ -70,8 +70,8 @@ void TextRenderer::RenderFromRight(const std::string textToRender, const unsigne
 {
 	unsigned int spriteID;
 
-	mDestRectPlaceholder.y = topRightPosition.y;
-	mDestRectPlaceholder.x = topRightPosition.x;
+	mDestRectPlaceholder.y = int(topRightPosition.y);
+	mDestRectPlaceholder.x = int(topRightPosition.x);
 
 	// Loop through all of the characters that are needed to be rendered
 	for (int i = textToRender.size() - 1; i >= 0; i--)
