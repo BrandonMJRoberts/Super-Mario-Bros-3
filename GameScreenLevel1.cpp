@@ -274,7 +274,8 @@ void GameScreenLevel1::CheckForPOWCollision()
 
 	Vector2D powBlockPos = mPowBlock->GetPosition(), marioPos = mMario->GetPosition();
 
-	if (Collisions::Instance()->Box(Rect2D(powBlockPos - mPowBlock->GetCollisionBoxOffset(), mPowBlock->GetCollisionBox()), Rect2D(marioPos, mMario->GetCollisionBox())))
+	if (Collisions::Instance()->Box(Rect2D(powBlockPos - mPowBlock->GetCollisionBoxOffset(), mPowBlock->GetCollisionBox()), Rect2D(marioPos, mMario->GetCollisionBox())) &&
+		mMario->GetCurrentVelocity().y < 0.0f)
 	{
 		// There is a collision so now check that mario is going upwards and is in the correct position
 
@@ -288,6 +289,12 @@ void GameScreenLevel1::CheckForPOWCollision()
 			mLevelObjects[i] = nullptr;
 		}
 		mLevelObjects.clear();
+
+		// Add a little bounce to the coins
+		for (unsigned int i = 0; i < mCoins.size(); i++)
+		{
+			mCoins[i]->AddVelocity(Vector2D(0.0f, -2.0f));
+		}
 
 		// There is a collision so tell the POW block that this has happened
 		if (mPowBlock->SetHasBeenHit())

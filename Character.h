@@ -43,6 +43,8 @@ public:
 	double        GetCollisionRadius() const { return mCollisionRadius; }
 	Vector2D      GetCollisionBox()    const { return mCollisionBox; }
 
+	Vector2D      GetCurrentVelocity()    const { return mVelocity; }
+
 	void          SetHasBeenHit();
 
 	void          AddToScore()              { mCoinCount++; }

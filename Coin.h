@@ -14,6 +14,8 @@ public:
 
 	bool Update(const float deltaTime, LevelMap* levelMap) override;
 
+	void AddVelocity(Vector2D change) { mVelocity += change; }
+
 private:
 	Texture2D* GetSpriteSheet() override { return mSpriteSheet; }
 
