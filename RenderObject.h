@@ -29,8 +29,8 @@ public:
 
 	bool         GetIsFlipped() const { return mIsFlipped; }
 
-	void         SetIsDead()        { mIsAlive = false; }
-	bool         GetIsAlive() const { return mIsAlive; }
+	void         SetIsDeadAndHit()        { mIsAlive = false; mDoingDeathAnimation = true; }
+	bool         GetIsAlive()       const { return mIsAlive; }
 
 protected:
 	virtual bool       ClassSpecificUpdate(const float deltaTime) { return false; }
@@ -59,6 +59,7 @@ protected:
 	float		 mTimeRemainingPerFrame;
 
 	float        mMovementSpeed;
+	float        mRotation;
 
 	unsigned int mSingleSpriteHeight;
 	unsigned int mSingleSpriteWidth;
@@ -72,6 +73,7 @@ protected:
 
 	bool         mIsFlipped;
 	bool         mIsAlive;
+	bool         mDoingDeathAnimation;
 };
 
 #endif

@@ -188,14 +188,6 @@ void GameScreenLevel1::Update(float deltaTime, SDL_Event e)
 			// Check for collisions with mario
 			CheckForMarioCollision(mMario, mLevelObjects[i]->GetPosition(), mLevelObjects[i]->GetCollisionBox(), mLevelObjects[i], false);
 
-			// If the collision has killed the enemy then remove it from the list
-			if (!mLevelObjects[i]->GetIsAlive())
-			{
-				delete mLevelObjects[i];
-				mLevelObjects[i] = nullptr;
-				mLevelObjects.erase(mLevelObjects.begin() + i);
-			}
-
 			// Now check to see if the object is too far off the screen. If so delete it
 			if (mLevelObjects[i]->GetPosition().y - mLevelObjects[i]->GetCollisionBox().y > mLevelMap->GetLevelHeight())
 			{
@@ -207,7 +199,6 @@ void GameScreenLevel1::Update(float deltaTime, SDL_Event e)
 		{
 			mLevelObjects.erase(mLevelObjects.begin() + i);
 		}
-		
 	}
 
 	// Now update the coins
@@ -425,12 +416,23 @@ bool GameScreenLevel1::CheckForMarioCollision(Character* player, Vector2D positi
 
 	// set mario as hit
 	if (isACoin)
-		player->AddToScore();
+	{
+		if(player->GetIsAlive())
+			player->AddToScore();
+	}
 	else
 	{
 		if (object->GetIsFlipped())
 		{
-			object->SetIsDead();
+			if (object->GetIsAlive())
+			{
+				// Kill the object
+				object->SetIsDeadAndHit();
+				object->AddVelocity(Vector2D(player->GetCurrentVelocity().x, -3.0f));
+
+				// give the player a point
+				player->AddToScore();
+			}
 		}
 		else
 			player->SetHasBeenHit();

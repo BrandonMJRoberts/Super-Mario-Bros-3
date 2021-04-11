@@ -39,6 +39,8 @@ RenderObject::RenderObject()
 
 	, mIsFlipped(false)
 	, mIsAlive(true)
+
+	, mRotation(0.0f)
 {
 
 }
@@ -77,6 +79,8 @@ RenderObject::RenderObject(unsigned int start, unsigned int end, unsigned int cu
 
 	, mIsFlipped(false)
 	, mIsAlive(true)
+
+	, mRotation(0.0f)
 {
 
 }
@@ -107,28 +111,47 @@ void RenderObject::Render()
 	mDestRect->y = int((mPosition.y - mCollisionBox.y) * SPRITE_RES);
 
 	if(mFacingLeft)
-		texture->Render(*mSourceRect, *mDestRect, SDL_FLIP_NONE, 0.0f);
+		texture->Render(*mSourceRect, *mDestRect, SDL_FLIP_NONE, mRotation);
 	else
-		texture->Render(*mSourceRect, *mDestRect, SDL_FLIP_HORIZONTAL, 0.0f);
+		texture->Render(*mSourceRect, *mDestRect, SDL_FLIP_HORIZONTAL, mRotation);
 }
 
 // --------------------------------------------------------------- //
 
 bool RenderObject::Update(const float deltaTime, LevelMap* levelMap)
 {
-	if (mGrounded)
+	if (mDoingDeathAnimation)
 	{
-		UpdateAnimations(deltaTime);
+		mVelocity.y += CHARACTER_GRAVITY * deltaTime;
+		mPosition.y += mVelocity.y * deltaTime;
+
+		if(mVelocity.x > 0.0f)
+			mRotation   += 60.0f * deltaTime;
+		else
+			mRotation   -= 60.0f * deltaTime;
+
+		// Check if it has gone off the bottom of the screen
+		if (mPosition.y - mCollisionBox.y > SCREEN_HEIGHT_GRID)
+		{
+			return true;
+		}
 	}
+	else
+	{
+		if (mGrounded)
+		{
+			UpdateAnimations(deltaTime);
+		}
 
-	// Now update the physics of this object - this should be overriden by the child class
-	UpdatePhysics(deltaTime, levelMap);
+		// Now update the physics of this object - this should be overriden by the child class
+		UpdatePhysics(deltaTime, levelMap);
 
-	if (ClassSpecificUpdate(deltaTime))
-		return true;
+		if (ClassSpecificUpdate(deltaTime))
+			return true;
 
-	if (CheckForLooping(levelMap))
-		return true;
+		if (CheckForLooping(levelMap))
+			return true;
+	}
 
 	return false;
 }
