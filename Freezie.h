@@ -12,11 +12,18 @@ public:
 	Freezie(SDL_Renderer* renderer, const char* filePathToSpriteSheet, const float timePerFrame, Vector2D startPos, Vector2D collisionBox, bool spawningOnLeftSide, const float movementSpeed);
 	~Freezie();
 
+	void SetPOWHit() override;
+
 private:
+	bool ClassSpecificUpdate(const float deltaTime) override;
+
 	Texture2D* GetSpriteSheet() override { return mSpriteSheet; }
 
 	static Texture2D*   mSpriteSheet;
 	static unsigned int mFreezieCount;
+
+	float               mCrackCountdown;
+	bool                mIsCracking;
 };
 
 #endif 

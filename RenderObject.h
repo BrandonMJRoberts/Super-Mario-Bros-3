@@ -27,7 +27,11 @@ public:
 
 	virtual void SetPOWHit();
 
+	bool         GetIsFlipped() const { return mIsFlipped; }
+
 protected:
+	virtual bool       ClassSpecificUpdate(const float deltaTime) { return false; }
+
 	virtual void       UpdatePhysics(const float deltaTime, LevelMap* levelMap);
 	virtual Texture2D* GetSpriteSheet() = 0;
 
@@ -51,7 +55,7 @@ protected:
 	const float  kTimePerFrame;
 	float		 mTimeRemainingPerFrame;
 
-	const float kMovementSpeed;
+	float        mMovementSpeed;
 
 	unsigned int mSingleSpriteHeight;
 	unsigned int mSingleSpriteWidth;
@@ -62,6 +66,8 @@ protected:
 	bool         mFacingLeft;
 	bool         mGrounded;
 	bool		 mHittingWall;
+
+	bool         mIsFlipped;
 };
 
 #endif

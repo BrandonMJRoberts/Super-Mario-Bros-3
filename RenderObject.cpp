@@ -32,10 +32,12 @@ RenderObject::RenderObject()
 	, mSingleSpriteHeight(0)
 	, mSingleSpriteWidth(0)
 
-	, kMovementSpeed(3.0f)
+	, mMovementSpeed(3.0f)
 
 	, mGrounded(false)
 	, mHittingWall(false)
+
+	, mIsFlipped(false)
 {
 
 }
@@ -67,10 +69,12 @@ RenderObject::RenderObject(unsigned int start, unsigned int end, unsigned int cu
 	, mSingleSpriteHeight(0)
 	, mSingleSpriteWidth(0)
 
-	, kMovementSpeed(movementSpeed)
+	, mMovementSpeed(movementSpeed)
 
 	, mGrounded(false)
 	, mHittingWall(false)
+
+	, mIsFlipped(false)
 {
 
 }
@@ -117,6 +121,9 @@ bool RenderObject::Update(const float deltaTime, LevelMap* levelMap)
 
 	// Now update the physics of this object - this should be overriden by the child class
 	UpdatePhysics(deltaTime, levelMap);
+
+	if (ClassSpecificUpdate(deltaTime))
+		return true;
 
 	if (CheckForLooping(levelMap))
 		return true;
@@ -209,10 +216,13 @@ void RenderObject::UpdatePhysics(const float deltaTime, LevelMap* levelMap)
 	else
 	{
 		// Set X velocity
-		if (mFacingLeft)
-			mVelocity.x = -kMovementSpeed;
-		else
-			mVelocity.x = kMovementSpeed;
+		if (!mIsFlipped)
+		{
+			if (mFacingLeft)
+				mVelocity.x = -mMovementSpeed;
+			else
+				mVelocity.x = mMovementSpeed;
+		}
 
 		mHittingWall = false;
 

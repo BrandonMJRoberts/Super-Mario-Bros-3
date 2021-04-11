@@ -11,6 +11,8 @@ unsigned int Freezie::mFreezieCount = 0;
 
 Freezie::Freezie(SDL_Renderer* renderer, const char* filePathToSpriteSheet, const float timePerFrame, Vector2D startPos, Vector2D collisionBox, bool spawningOnLeftSide, const float movementSpeed)
 	: RenderObject(0, 2, 0, timePerFrame, startPos, 8, 1, collisionBox, movementSpeed)
+
+	, mIsCracking(false)
 {
 	mFacingLeft = !spawningOnLeftSide;
 
@@ -43,3 +45,35 @@ Freezie::~Freezie()
 }
 
 // --------------------------------------------------------- //
+
+void Freezie::SetPOWHit()
+{
+	mIsCracking      = true;
+	mIsFlipped       = true;
+	mCrackCountdown  = kTimePerFrame * 4; // give time for the animation
+
+	mCurrentSpriteID = 3;
+	mEndSpriteID     = 7;
+	mStartFrameID    = 3;
+
+	mVelocity.x      = 0.0f;
+}
+
+// ------------------------------------------------------ //
+
+bool Freezie::ClassSpecificUpdate(const float deltaTime)
+{
+	if (mIsCracking && mGrounded)
+	{
+		mCrackCountdown -= deltaTime;
+
+		if (mCrackCountdown < 0.0f)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+// ------------------------------------------------------ //
