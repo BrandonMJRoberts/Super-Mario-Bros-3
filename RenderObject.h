@@ -29,6 +29,9 @@ public:
 
 	bool         GetIsFlipped() const { return mIsFlipped; }
 
+	void         SetIsDead()        { mIsAlive = false; }
+	bool         GetIsAlive() const { return mIsAlive; }
+
 protected:
 	virtual bool       ClassSpecificUpdate(const float deltaTime) { return false; }
 
@@ -68,6 +71,7 @@ protected:
 	bool		 mHittingWall;
 
 	bool         mIsFlipped;
+	bool         mIsAlive;
 };
 
 #endif

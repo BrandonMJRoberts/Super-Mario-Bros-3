@@ -47,7 +47,7 @@ private:
 	void            SpawnNewEnemy(EnemyType enemy);
 	void			EnemySpawnCheck(const float deltaTime);
 
-	bool		    CheckForMarioCollision(Character* player, Vector2D position, Vector2D collisionBox, bool isACoin);
+	bool		    CheckForMarioCollision(Character* player, Vector2D position, Vector2D collisionBox, RenderObject* object, bool isACoin);
 
 	// init
 	bool            SetUpLevel();

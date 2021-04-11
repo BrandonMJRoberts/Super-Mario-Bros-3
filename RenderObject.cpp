@@ -38,6 +38,7 @@ RenderObject::RenderObject()
 	, mHittingWall(false)
 
 	, mIsFlipped(false)
+	, mIsAlive(true)
 {
 
 }
@@ -75,6 +76,7 @@ RenderObject::RenderObject(unsigned int start, unsigned int end, unsigned int cu
 	, mHittingWall(false)
 
 	, mIsFlipped(false)
+	, mIsAlive(true)
 {
 
 }

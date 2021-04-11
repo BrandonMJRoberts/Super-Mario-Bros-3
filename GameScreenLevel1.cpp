@@ -186,7 +186,15 @@ void GameScreenLevel1::Update(float deltaTime, SDL_Event e)
 			}
 
 			// Check for collisions with mario
-			CheckForMarioCollision(mMario, mLevelObjects[i]->GetPosition(), mLevelObjects[i]->GetCollisionBox(), false);
+			CheckForMarioCollision(mMario, mLevelObjects[i]->GetPosition(), mLevelObjects[i]->GetCollisionBox(), mLevelObjects[i], false);
+
+			// If the collision has killed the enemy then remove it from the list
+			if (!mLevelObjects[i]->GetIsAlive())
+			{
+				delete mLevelObjects[i];
+				mLevelObjects[i] = nullptr;
+				mLevelObjects.erase(mLevelObjects.begin() + i);
+			}
 
 			// Now check to see if the object is too far off the screen. If so delete it
 			if (mLevelObjects[i]->GetPosition().y - mLevelObjects[i]->GetCollisionBox().y > mLevelMap->GetLevelHeight())
@@ -209,7 +217,7 @@ void GameScreenLevel1::Update(float deltaTime, SDL_Event e)
 		{
 			mCoins[i]->Update(deltaTime, mLevelMap);
 
-			if (CheckForMarioCollision(mMario, mCoins[i]->GetPosition(), mCoins[i]->GetCollisionBox(), true))
+			if (CheckForMarioCollision(mMario, mCoins[i]->GetPosition(), mCoins[i]->GetCollisionBox(), mCoins[i], true))
 			{
 				if(mAudioPlayer)
 					mAudioPlayer->OnNotify(SUBJECT_NOTIFICATION_TYPES::COIN_COLLECTED, "");
@@ -394,9 +402,9 @@ void GameScreenLevel1::EnemySpawnCheck(const float deltaTime)
 
 // --------------------------------------------------------------------------------------------- //
 
-bool GameScreenLevel1::CheckForMarioCollision(Character* player, Vector2D position, Vector2D collisionBox, bool isACoin)
+bool GameScreenLevel1::CheckForMarioCollision(Character* player, Vector2D position, Vector2D collisionBox, RenderObject* object, bool isACoin)
 {
-	if (!player)
+	if (!player || !object)
 		return false;
 
 	Vector2D marioPos = player->GetPosition();
@@ -419,7 +427,14 @@ bool GameScreenLevel1::CheckForMarioCollision(Character* player, Vector2D positi
 	if (isACoin)
 		player->AddToScore();
 	else
-		player->SetHasBeenHit();
+	{
+		if (object->GetIsFlipped())
+		{
+			object->SetIsDead();
+		}
+		else
+			player->SetHasBeenHit();
+	}
 
 	return true;
 }
