@@ -194,7 +194,7 @@ void RenderObject::UpdatePhysics(const float deltaTime, LevelMap* levelMap)
 		||	levelMap->GetCollisionTileAt(int(mPosition.y + checkingDistance), int(mPosition.x + mCollisionBox.x)))) // Bottom right
 	{
 		// Foot collision
-		mPosition.y = int(mPosition.y - mCollisionBox.y) + mCollisionBox.y + 0.999;
+		mPosition.y = int(mPosition.y + checkingDistance) - 0.001;
 
 		mGrounded = true;
 
@@ -223,7 +223,7 @@ void RenderObject::UpdatePhysics(const float deltaTime, LevelMap* levelMap)
 		&& (levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y), int(mPosition.x - checkingDistance)) // Top left
 		||  levelMap->GetCollisionTileAt(int(mPosition.y),                   int(mPosition.x - checkingDistance)))) // bottom left
 	{
-		mPosition.x = int(mPosition.x) + 0.01;
+		mPosition.x = int(mPosition.x - checkingDistance) + 1.01;
 
 		mFacingLeft = false;
 		mVelocity.x = mMovementSpeed;
@@ -232,7 +232,7 @@ void RenderObject::UpdatePhysics(const float deltaTime, LevelMap* levelMap)
 		   && ( levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y), int(mPosition.x + mCollisionBox.x + checkingDistance))   // Top right
 		   ||   levelMap->GetCollisionTileAt(int(mPosition.y),                   int(mPosition.x + mCollisionBox.x + checkingDistance)))) // bottom right
 	{
-		mPosition.x = int(mPosition.x) + mCollisionBox.x - 0.01;
+		mPosition.x = int(mPosition.x + checkingDistance) - 0.01;
 
 		mFacingLeft = true;
 		mVelocity.x = -mMovementSpeed;
@@ -246,154 +246,6 @@ void RenderObject::UpdatePhysics(const float deltaTime, LevelMap* levelMap)
 	{
 		mPosition.y += (mVelocity * deltaTime).y;
 	}
-
-
-	/*
-	// Calculate the potential new position
-	Vector2D movementDistance = mVelocity * deltaTime;
-	Vector2D newPos           = mPosition + movementDistance;
-
-	// Now check to see if this new position collides with the enviroment
-	// First check the Y axis
-	if(     mVelocity.y >= 0.0f 
-		&& (levelMap->GetCollisionTileAt(int(newPos.y), int(mPosition.x))                   == 1   // left check
-		||  levelMap->GetCollisionTileAt(int(newPos.y), int(mPosition.x + mCollisionBox.x)) == 1)) // right check
-	{
-		// Foot collision so set the new position
-
-		// Check for an x collision
-		if (   !(levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y), int(newPos.x))                   == 1   // top left check
-			||   levelMap->GetCollisionTileAt(int(mPosition.y),                   int(newPos.x))                   == 1) 
-			|| !(levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y), int(newPos.x + mCollisionBox.x)) == 1 ||  // top right check
-				 levelMap->GetCollisionTileAt(int(mPosition.y),                   int(newPos.x + mCollisionBox.x)) == 1))
-		{
-			newPos.y = int(newPos.y - mCollisionBox.y) + mCollisionBox.y - 0.0001;
-		}
-
-		mGrounded = true;
-
-		mVelocity.y = 0.0f;
-	}
-	else if (  mVelocity.y < 0.0f
-		   && (levelMap->GetCollisionTileAt(int(newPos.y - mCollisionBox.y), int(mPosition.x))                   == 1    // left check
-		   ||  levelMap->GetCollisionTileAt(int(newPos.y - mCollisionBox.y), int(mPosition.x + mCollisionBox.x)) == 1))  // right check
-	{
-		// Head collision so bounce back down
-		mVelocity.y = 2.0;
-
-		mGrounded   = false;
-	}
-	else
-	{
-		if (!mGrounded)
-		{
-			mVelocity.y += CHARACTER_GRAVITY * deltaTime;
-		}
-
-		mGrounded    = false;
-	}
-
-
-	// Now for the X-axis checks
-	if(     mVelocity.x < 0.0f
-		&& (levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y), int(newPos.x)) == 1   // top left check
-		||  levelMap->GetCollisionTileAt(int(mPosition.y),                   int(newPos.x)) == 1)) // Bottom left check
-	{
-		// left collision
-		newPos.x    = int(newPos.x) + 0.99;
-
-		mVelocity.x = mMovementSpeed;
-
-		mFacingLeft = false;
-	}
-	else if(mVelocity.x > 0.0f
-		&& (levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y), int(newPos.x + mCollisionBox.x)) == 1 ||  // top right check
-			levelMap->GetCollisionTileAt(int(mPosition.y),                   int(newPos.x + mCollisionBox.x)) == 1))   // bottom right check
-	{
-		// right collision
-		newPos.x    = int(newPos.x) + mCollisionBox.x - 1.01;
-
-		mVelocity.x = -mMovementSpeed;
-
-		mFacingLeft = true;
-	}
-
-	// Apply the change in position
-	mPosition = newPos;
-
-
-	*/
-
-
-
-
-
-
-
-
-	/*
-
-	// Check for collisions
-	if (   levelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x))                   == 1 // left check
-		|| levelMap->GetCollisionTileAt(int(mPosition.y + movementDistance.y), int(mPosition.x + mCollisionBox.x)) == 1) // right check
-	{
-		mVelocity.y = 0.0f;
-
-		mGrounded = true;
-	}
-	//else if (levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y + movementDistance.y), int(mPosition.x))                   == 1 ||  // left check
-	//	     levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y + movementDistance.y), int(mPosition.x + mCollisionBox.x)) == 1) // right check
-	//{
-		// Up collision bounce back down
-	//	mVelocity.y      = 1.0f;
-
-	//	mGrounded        = false;
-	//}
-	else
-	{
-		mVelocity.y += CHARACTER_GRAVITY * deltaTime;
-
-		// No y collisions
-		mPosition.y += movementDistance.y;
-
-		mGrounded = false;
-	}
-
-	// Now for x checks
-	if (   levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y), int(mPosition.x)) == 1  // top left check
-		|| levelMap->GetCollisionTileAt(int(mPosition.y),                   int(mPosition.x)) == 1) // bottom left check
-	{
-		mVelocity.x = 0.0f;
-
-		// Flip direction
-		if (!mHittingWall)
-		{
-			mFacingLeft = !mFacingLeft;
-			mHittingWall = true;
-		}
-	}
-	else if (levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y), int(mPosition.x + mCollisionBox.x)) == 1 ||  // top right check
-		     levelMap->GetCollisionTileAt(int(mPosition.y),                   int(mPosition.x + mCollisionBox.x)) == 1) // bottom right check
-	{
-		// Up collision bounce back down
-		mVelocity.x = 0.0f;
-
-		// Flip direction
-		if (!mHittingWall)
-		{
-			mFacingLeft  = !mFacingLeft;
-			mHittingWall = true;
-		}
-	}
-	else
-	{
-		mHittingWall = false;
-
-		// No y collisions
-		mPosition.x += movementDistance.x;
-	}
-
-	*/
 }
 
 // --------------------------------------------------------------- //

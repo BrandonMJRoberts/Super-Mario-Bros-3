@@ -298,6 +298,84 @@ void Character::AddGravity(const float deltaTime)
 void Character::HandleCollisions(const float deltaTime)
 {
 	
+	bool  yCollision = true;
+	float checkingDistance = 0.1f;
+
+	// first check y axis
+	if (       mVelocity.y >= 0.0f
+		&& (   mLevelMap->GetCollisionTileAt(int(mPosition.y + checkingDistance), int(mPosition.x)) // Bottom left 
+			|| mLevelMap->GetCollisionTileAt(int(mPosition.y + checkingDistance), int(mPosition.x + mCollisionBox.x)))) // Bottom right
+	{
+		// Set that you are not jumping
+		mPlayerMovementData &= ~(PlayerMovementData::JUMPING_SMB1);
+
+		// Set the position
+		mPosition.y = int(mPosition.y + checkingDistance) - 0.001;
+
+		// zero the velocity
+		mVelocity.y = 0.0f;
+
+		// See if the player should revert back to normal standing frame
+		if (   !(mPlayerMovementData & PlayerMovementData::WALKING_LEFT_SMB1)
+			&& !(mPlayerMovementData & PlayerMovementData::WALKING_RIGHT_SMB1))
+		{
+			mCurrentSpriteID = 3;
+			mEndSpriteID     = 3;
+			mStartSpriteID   = 3;
+		}
+	}
+	else if (  mVelocity.y < 0.0f  // Head collision
+		&& (   mLevelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y - checkingDistance), int(mPosition.x)) // Top left 
+			|| mLevelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y - checkingDistance), int(mPosition.x + mCollisionBox.x)))) // Top right
+	{
+		mVelocity.y = 2.0f;
+
+		//mPosition.y = int(mPosition.y - mCollisionBox.y) + mCollisionBox.y + 1.005;
+	}
+	else
+	{
+		yCollision = false;
+
+		mVelocity.y += CHARACTER_GRAVITY * deltaTime;
+		std::cout << "GRAVITY!" << std::endl;
+	}
+
+
+	// X axis
+	if (       mVelocity.x <= 0.0f && 
+		(   mLevelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y), int(mPosition.x - checkingDistance)) // Top left
+			|| mLevelMap->GetCollisionTileAt(int(mPosition.y),                int(mPosition.x - checkingDistance)))) // bottom left
+	{
+		// Zero the velocity
+		mVelocity.x = 0.0f;
+
+		mPosition.x = int(mPosition.x - checkingDistance) + 1.01;
+
+		mPlayerMovementData &= ~(PlayerMovementData::WAS_FACING_RIGHT);
+	}
+	else if (  mVelocity.x >= 0.0f &&
+		 (   mLevelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y), int(mPosition.x + mCollisionBox.x + checkingDistance))   // Top right
+			|| mLevelMap->GetCollisionTileAt(int(mPosition.y),                 int(mPosition.x + mCollisionBox.x + checkingDistance)))) // bottom right
+	{
+		// Zero the velocity
+		mVelocity.x = 0.0f;
+
+		// Set the position
+		mPosition.x = int(mPosition.x + checkingDistance) - 0.01;
+
+		mPlayerMovementData |= PlayerMovementData::WAS_FACING_RIGHT;
+	}
+	else
+	{
+		mPosition.x += (mVelocity * deltaTime).x;
+	}
+
+	if (!yCollision)
+	{
+		mPosition.y += (mVelocity * deltaTime).y;
+	}
+
+	/*
 	// ---------------------------------------------------------------------------------------------------------------------------------------------------- //
 
 	Vector2D currentPos       = mPosition;
@@ -378,6 +456,7 @@ void Character::HandleCollisions(const float deltaTime)
 	mPosition = newPos;
 
 	//std::cout << mPosition.y << std::endl;
+	*/
 
 	
 }
