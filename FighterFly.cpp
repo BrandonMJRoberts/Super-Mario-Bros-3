@@ -16,6 +16,11 @@ FighterFly::FighterFly(SDL_Renderer* renderer, const char* filePathToSpriteSheet
 {
 	mFacingLeft = !spawningOnLeftSide;
 
+	if (mFacingLeft)
+		mVelocity.x = -mMovementSpeed;
+	else
+		mVelocity.x = mMovementSpeed;
+
 	// Load in the sprite sheet
 	if (mFighterFlyCount == 0)
 	{

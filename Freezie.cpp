@@ -16,6 +16,11 @@ Freezie::Freezie(SDL_Renderer* renderer, const char* filePathToSpriteSheet, cons
 {
 	mFacingLeft = !spawningOnLeftSide;
 
+	if (mFacingLeft)
+		mVelocity.x = -mMovementSpeed;
+	else
+		mVelocity.x = mMovementSpeed;
+
 	// Load in the sprite sheet
 	if (mFreezieCount == 0)
 	{
@@ -63,7 +68,7 @@ void Freezie::SetPOWHit()
 
 bool Freezie::ClassSpecificUpdate(const float deltaTime)
 {
-	if (mIsCracking && mGrounded)
+	if (mIsCracking)
 	{
 		mCrackCountdown -= deltaTime;
 

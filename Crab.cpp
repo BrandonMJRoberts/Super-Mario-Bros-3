@@ -18,6 +18,11 @@ Crab::Crab(SDL_Renderer* renderer, const char* filePathToSpriteSheet, const floa
 {
 	mFacingLeft = !spawningOnLeftSide;
 
+	if (mFacingLeft)
+		mVelocity.x = -mMovementSpeed;
+	else
+		mVelocity.x = mMovementSpeed;
+
 	// Load in the sprite sheet
 	if (mCrabCount == 0)
 	{
@@ -76,7 +81,7 @@ void Crab::SetPOWHit()
 	AddVelocity(Vector2D(0.0f, -1.0f));
 
 	mIsFlipped         = true;
-	mFlipCountdown     = 6.0f;
+	mFlipCountdown     = 4.0f;
 
 	mCurrentSpriteID   = mSpriteSheetStartPoint + 3;
 	mEndSpriteID       = mSpriteSheetStartPoint + 4;
@@ -99,7 +104,8 @@ bool Crab::ClassSpecificUpdate(const float deltaTime)
 			mEndSpriteID     = mSpriteSheetStartPoint + 9;
 			mStartFrameID    = mSpriteSheetStartPoint + 7;
 
-			mVelocity.x      = mMovementSpeed * 2.0;
+			mMovementSpeed  *= 1.5f;
+			mVelocity.x      = mMovementSpeed;
 
 			mAngry           = true;
 			mIsFlipped       = false;

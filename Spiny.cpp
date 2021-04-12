@@ -14,6 +14,11 @@ Spiny::Spiny(SDL_Renderer* renderer, const char* filePathToSpriteSheet, const fl
 {
 	mFacingLeft = !spawningOnLeftSide;
 
+	if (mFacingLeft)
+		mVelocity.x = -mMovementSpeed;
+	else
+		mVelocity.x = mMovementSpeed;
+
 	// Load in the sprite sheet
 	if (mSpinyCount == 0)
 	{

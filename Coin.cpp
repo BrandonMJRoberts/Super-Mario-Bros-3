@@ -26,6 +26,11 @@ Coin::Coin(SDL_Renderer* renderer, const Vector2D startPosition, const char* fil
 
 	mCoinCount++;
 
+	if (mFacingLeft)
+		mVelocity.x = -mMovementSpeed;
+	else
+		mVelocity.x = mMovementSpeed;
+
 	SetupRenderRects();
 }
 

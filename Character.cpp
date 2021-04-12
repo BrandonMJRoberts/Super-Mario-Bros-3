@@ -297,6 +297,7 @@ void Character::AddGravity(const float deltaTime)
 
 void Character::HandleCollisions(const float deltaTime)
 {
+	
 	// ---------------------------------------------------------------------------------------------------------------------------------------------------- //
 
 	Vector2D currentPos       = mPosition;
@@ -321,7 +322,7 @@ void Character::HandleCollisions(const float deltaTime)
 		mPlayerMovementData &= ~(PlayerMovementData::JUMPING_SMB1);
 
 		// Set the position
-		newPos.y = int(newPos.y) - 0.005;
+		//newPos.y = int(newPos.y) - 0.005;
 
 		// zero the velocity
 		mVelocity.y = 0.0f;
@@ -376,7 +377,9 @@ void Character::HandleCollisions(const float deltaTime)
 	// Set the new position
 	mPosition = newPos;
 
-	std::cout << mPosition.y << std::endl;
+	//std::cout << mPosition.y << std::endl;
+
+	
 }
 
 // --------------------------------------------------------------------------------------------------------- //

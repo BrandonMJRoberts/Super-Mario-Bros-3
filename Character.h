@@ -52,12 +52,12 @@ public:
 	void          AddToScore()              { mCoinCount++; }
 	unsigned int  GetCoinCount()      const { return mCoinCount; }
 
-	void          DecreaseLifeCount()                { mLifeCount--; }
-	int           GetLifeCount()                const { return mLifeCount; };
+	void          DecreaseLifeCount()       { mLifeCount--; }
+	int           GetLifeCount()      const { return mLifeCount; };
 
-	void          SetHitHead()                       { mVelocity.y = 2.0f; }
+	void          SetHitHead()              { mVelocity.y = 2.0f; }
 
-	bool          GetIsAlive() const { return mIsAlive; }
+	bool          GetIsAlive()		  const { return mIsAlive; }
 
 protected:
 	void          Jump();
