@@ -219,18 +219,18 @@ void RenderObject::UpdatePhysics(const float deltaTime, LevelMap* levelMap)
 
 
 	// X axis
-	if(    mVelocity.x < 0.0f
+	if(    mVelocity.x <= 0.0f
 		&& (levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y), int(mPosition.x - checkingDistance)) // Top left
-		||  levelMap->GetCollisionTileAt(int(mPosition.y),                   int(mPosition.x - checkingDistance)))) // bottom left
+		||  levelMap->GetCollisionTileAt(int(mPosition.y),                   int(mPosition.x - checkingDistance)))) // Middle check - as the collision box can wrap around a block
 	{
 		mPosition.x = int(mPosition.x - checkingDistance) + 1.01;
 
 		mFacingLeft = false;
 		mVelocity.x = mMovementSpeed;
 	}
-	else if ( mVelocity.x > 0.0f
+	else if ( mVelocity.x >= 0.0f
 		   && ( levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y), int(mPosition.x + mCollisionBox.x + checkingDistance))   // Top right
-		   ||   levelMap->GetCollisionTileAt(int(mPosition.y),                   int(mPosition.x + mCollisionBox.x + checkingDistance)))) // bottom right
+		   ||   levelMap->GetCollisionTileAt(int(mPosition.y),                   int(mPosition.x + mCollisionBox.x + checkingDistance)))) // Middle check - as the collision box can wrap around a block) // bottom right
 	{
 		mPosition.x = int(mPosition.x + checkingDistance) - 0.01;
 

@@ -241,6 +241,13 @@ void GameScreenLevel1::Render()
 		mPowBlock->Render();
 	}
 
+	// Now render the scores
+	if (mTextRenderer && mMario)
+	{
+		mTextRenderer->RenderFromLeft("SCORE " + std::to_string(mMario->GetCoinCount()), 10, Vector2D(50, 392));
+		mTextRenderer->RenderFromLeft("LIVES " + std::to_string(mMario->GetLifeCount()), 10, Vector2D(300, 392));
+	}
+
 	for (unsigned int i = 0; i < mLevelObjects.size(); i++)
 	{
 		if(mLevelObjects[i])
@@ -254,25 +261,18 @@ void GameScreenLevel1::Render()
 			mCoins[i]->Render();
 	}
 
+	//if (mLuigi)
+	//	mLuigi->Render();
+
+	if (mMario)
+		mMario->Render();
+
 	// Render the pipes
 	for (unsigned int i = 0; i < 2; i++)
 	{
 		if (mPipes[i])
 			mPipes[i]->Render();
 	}
-
-	//if (mLuigi)
-	//	mLuigi->Render();
-
-	// Now render the scores
-	if (mTextRenderer && mMario)
-	{
-		mTextRenderer->RenderFromLeft("SCORE " + std::to_string(mMario->GetCoinCount()), 10, Vector2D(50, 392));
-		mTextRenderer->RenderFromLeft("LIVES " + std::to_string(mMario->GetLifeCount()), 10, Vector2D(300, 392));
-	}
-
-	if (mMario)
-		mMario->Render();
 }
 
 // --------------------------------------------------------------------------------------------- //

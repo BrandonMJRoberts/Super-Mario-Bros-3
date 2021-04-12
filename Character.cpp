@@ -299,7 +299,7 @@ void Character::HandleCollisions(const float deltaTime)
 {
 	
 	bool  yCollision = true;
-	float checkingDistance = 0.1f;
+	float checkingDistance = 0.15f;
 
 	// first check y axis
 	if (       mVelocity.y >= 0.0f
@@ -323,14 +323,17 @@ void Character::HandleCollisions(const float deltaTime)
 			mEndSpriteID     = 3;
 			mStartSpriteID   = 3;
 		}
+		else
+		{
+			mEndSpriteID   = 2;
+			mStartSpriteID = 0;
+		}
 	}
 	else if (  mVelocity.y < 0.0f  // Head collision
 		&& (   mLevelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y - checkingDistance), int(mPosition.x)) // Top left 
 			|| mLevelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y - checkingDistance), int(mPosition.x + mCollisionBox.x)))) // Top right
 	{
 		mVelocity.y = 2.0f;
-
-		//mPosition.y = int(mPosition.y - mCollisionBox.y) + mCollisionBox.y + 1.005;
 	}
 	else
 	{
@@ -343,8 +346,9 @@ void Character::HandleCollisions(const float deltaTime)
 
 	// X axis
 	if (       mVelocity.x <= 0.0f && 
-		(   mLevelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y), int(mPosition.x - checkingDistance)) // Top left
-			|| mLevelMap->GetCollisionTileAt(int(mPosition.y),                int(mPosition.x - checkingDistance)))) // bottom left
+		(      mLevelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y),          int(mPosition.x - checkingDistance)) // Top left
+			|| mLevelMap->GetCollisionTileAt(int(mPosition.y),                            int(mPosition.x - checkingDistance))
+			|| mLevelMap->GetCollisionTileAt(int(mPosition.y - (mCollisionBox.y / 2.0f)), int(mPosition.x - checkingDistance)))) // bottom left
 	{
 		// Zero the velocity
 		mVelocity.x = 0.0f;
@@ -354,8 +358,9 @@ void Character::HandleCollisions(const float deltaTime)
 		mPlayerMovementData &= ~(PlayerMovementData::WAS_FACING_RIGHT);
 	}
 	else if (  mVelocity.x >= 0.0f &&
-		 (   mLevelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y), int(mPosition.x + mCollisionBox.x + checkingDistance))   // Top right
-			|| mLevelMap->GetCollisionTileAt(int(mPosition.y),                 int(mPosition.x + mCollisionBox.x + checkingDistance)))) // bottom right
+		 (     mLevelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y), int(mPosition.x + mCollisionBox.x + checkingDistance))   // Top right
+			|| mLevelMap->GetCollisionTileAt(int(mPosition.y),                 int(mPosition.x + mCollisionBox.x + checkingDistance))
+			|| mLevelMap->GetCollisionTileAt(int(mPosition.y - (mCollisionBox.y / 2.0f)), int(mPosition.x + mCollisionBox.x + checkingDistance)))) // bottom right
 	{
 		// Zero the velocity
 		mVelocity.x = 0.0f;
