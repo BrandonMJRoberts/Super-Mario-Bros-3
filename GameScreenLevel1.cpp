@@ -113,7 +113,7 @@ bool GameScreenLevel1::SetUpLevel()
 		return false;
 
 	// Create mario
-	mMario = new Character(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Mario.png", Vector2D(5.0f, 11.0f), 7, 2, mLevelMap, Vector2D(1.0f, 1.4f), 0.1f, mAudioPlayer);
+	mMario = new Character(mRenderer, "SDL_Mario_Project/Mario Bros 1 Images/Mario.png", Vector2D(5.0f, 11.9f), 7, 2, mLevelMap, Vector2D(1.0f, 1.4f), 0.1f, mAudioPlayer);
 	if (!mMario)
 	{
 		std::cout << "mMario failed to load." << std::endl;
@@ -208,9 +208,11 @@ void GameScreenLevel1::Update(float deltaTime, SDL_Event e)
 		{
 			mCoins[i]->Update(deltaTime, mLevelMap);
 
-			if (CheckForMarioCollision(mMario, mCoins[i]->GetPosition(), mCoins[i]->GetCollisionBox(), mCoins[i], true))
+			if (mMario && mMario->GetIsAlive() && CheckForMarioCollision(mMario, mCoins[i]->GetPosition(), mCoins[i]->GetCollisionBox(), mCoins[i], true))
 			{
-				if(mAudioPlayer)
+				mMario->AddToScore();
+
+				if (mAudioPlayer)
 					mAudioPlayer->OnNotify(SUBJECT_NOTIFICATION_TYPES::COIN_COLLECTED, "");
 
 				delete mCoins[i];
@@ -415,12 +417,7 @@ bool GameScreenLevel1::CheckForMarioCollision(Character* player, Vector2D positi
 	}
 
 	// set mario as hit
-	if (isACoin)
-	{
-		if(player->GetIsAlive())
-			player->AddToScore();
-	}
-	else
+	if (!isACoin)
 	{
 		if (object->GetIsFlipped())
 		{
