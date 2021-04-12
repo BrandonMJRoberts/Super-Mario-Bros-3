@@ -99,7 +99,10 @@ bool Spiny::ClassSpecificUpdate(const float deltaTime)
 			mEndSpriteID     = mSpriteSheetStartPoint + 2;
 			mStartFrameID    = mSpriteSheetStartPoint;
 
-			mVelocity.x      = mMovementSpeed;
+			if (mFacingLeft)
+				mVelocity.x      = mMovementSpeed;
+			else
+				mVelocity.x      = mMovementSpeed;
 
 			mIsFlipped       = false;
 		}

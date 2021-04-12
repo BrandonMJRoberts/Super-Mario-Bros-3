@@ -358,8 +358,8 @@ void Character::HandleCollisions(const float deltaTime)
 		mPlayerMovementData &= ~(PlayerMovementData::WAS_FACING_RIGHT);
 	}
 	else if (  mVelocity.x >= 0.0f &&
-		 (     mLevelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y), int(mPosition.x + mCollisionBox.x + checkingDistance))   // Top right
-			|| mLevelMap->GetCollisionTileAt(int(mPosition.y),                 int(mPosition.x + mCollisionBox.x + checkingDistance))
+		 (     mLevelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y),          int(mPosition.x + mCollisionBox.x + checkingDistance))   // Top right
+			|| mLevelMap->GetCollisionTileAt(int(mPosition.y),                            int(mPosition.x + mCollisionBox.x + checkingDistance))
 			|| mLevelMap->GetCollisionTileAt(int(mPosition.y - (mCollisionBox.y / 2.0f)), int(mPosition.x + mCollisionBox.x + checkingDistance)))) // bottom right
 	{
 		// Zero the velocity
@@ -379,91 +379,6 @@ void Character::HandleCollisions(const float deltaTime)
 	{
 		mPosition.y += (mVelocity * deltaTime).y;
 	}
-
-	/*
-	// ---------------------------------------------------------------------------------------------------------------------------------------------------- //
-
-	Vector2D currentPos       = mPosition;
-	Vector2D newPos           = mPosition + (mVelocity * deltaTime);
-
-	// ---------------------------------------------------------------------------------------------------------------------------------------------------- //
-
-	// act on y collisions
-	if (mLevelMap->GetCollisionTileAt(int(newPos.y - mCollisionBox.y), int(newPos.x))                   == 1 || // bottom left check
-		mLevelMap->GetCollisionTileAt(int(newPos.y - mCollisionBox.y), int(newPos.x + mCollisionBox.x)) == 1)   // bottom right check
-	{
-		// Up collision bounce back down velocity
-		mVelocity.y = 2.0f;
-
-		// Set the position to be correct
-		newPos.y = int(newPos.y - mCollisionBox.y) + mCollisionBox.y + 1.005;
-	} 
-	else if (mLevelMap->GetCollisionTileAt(int(newPos.y), int(newPos.x))                   == 1  // bottom left  check
-		  || mLevelMap->GetCollisionTileAt(int(newPos.y), int(newPos.x + mCollisionBox.x)) == 1) // bottom right check
-	{
-		// Set that you are not jumping
-		mPlayerMovementData &= ~(PlayerMovementData::JUMPING_SMB1);
-
-		// Set the position
-		//newPos.y = int(newPos.y) - 0.005;
-
-		// zero the velocity
-		mVelocity.y = 0.0f;
-
-		// See if the player should revert back to normal standing frame
-		if (   !(mPlayerMovementData & PlayerMovementData::WALKING_LEFT_SMB1)
-			&& !(mPlayerMovementData & PlayerMovementData::WALKING_RIGHT_SMB1))
-		{
-			mCurrentSpriteID = 3;
-			mEndSpriteID     = 3;
-			mStartSpriteID   = 3;
-		}
-	}
-	else
-	{
-		// Apply the movement
-		//mPosition.y  = newPos.y;
-
-		// Apply gravity
-		mVelocity.y += CHARACTER_GRAVITY * deltaTime;
-	}
-
-	// ---------------------------------------------------------------------------------------------------------------------------------------------------- //
-
-	// Act on x collisions
-	if (   mLevelMap->GetCollisionTileAt(int(newPos.y - mCollisionBox.y), int(newPos.x)) == 1  // top left check
-		|| mLevelMap->GetCollisionTileAt(int(newPos.y),                   int(newPos.x)) == 1) // bottom left check
-	{
-		// Zero the velocity
-		mVelocity.x = 0.0f;
-
-		// Set the position
-		newPos.x = int(newPos.x) + 0.01;
-	}
-	else if (mLevelMap->GetCollisionTileAt(int(newPos.y - mCollisionBox.y), int(newPos.x + mCollisionBox.x)) == 1 ||  // top right check
-		     mLevelMap->GetCollisionTileAt(int(newPos.y),                   int(newPos.x + mCollisionBox.x)) == 1)    // bottom right check
-	{
-		// Zero the velocity
-		mVelocity.x = 0.0f;
-
-		// Set the position
-		newPos.x = int(newPos.x) + mCollisionBox.x - 0.01;
-	}
-	else
-	{
-		// Apply the movement
-	//	mPosition.x = newPos.x;
-	}
-
-	// ---------------------------------------------------------------------------------------------------------------------------------------------------- //
-
-	// Set the new position
-	mPosition = newPos;
-
-	//std::cout << mPosition.y << std::endl;
-	*/
-
-	
 }
 
 // --------------------------------------------------------------------------------------------------------- //

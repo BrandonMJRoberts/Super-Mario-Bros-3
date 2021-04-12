@@ -123,7 +123,7 @@ bool RenderObject::Update(const float deltaTime, LevelMap* levelMap)
 {
 	if (mDoingDeathAnimation)
 	{
-		mVelocity.y += CHARACTER_GRAVITY * deltaTime;
+		mVelocity.y += GRAVITY * deltaTime;
 		mPosition.y += mVelocity.y * deltaTime;
 
 		if(mVelocity.x > 0.0f)
@@ -213,7 +213,7 @@ void RenderObject::UpdatePhysics(const float deltaTime, LevelMap* levelMap)
 		mGrounded  = false;
 		yCollision = false;
 
-		mVelocity.y += CHARACTER_GRAVITY * deltaTime;
+		mVelocity.y += GRAVITY * deltaTime;
 		std::cout << "GRAVITY!" << std::endl;
 	}
 
