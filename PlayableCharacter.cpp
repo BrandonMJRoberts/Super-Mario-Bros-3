@@ -70,6 +70,8 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 
 , mExitingPipe(false)
 , kPMeterFillSpeed(0.25f)
+
+, mForcedMovementDistanceBoundary(0.0f)
 {
 	// Load in the sprite sheet for this character
 	LoadInCorrectSpriteSheet();
@@ -246,31 +248,17 @@ void PlayableCharacter::ForcedMovementUpdate(const float deltaTime)
 
 	// -----------------------------------------------------------------------------------------------
 
-	float capDistance = 0.0f;
-
-	if (mForcedMovementDirection == MOVEMENT_DIRECTION::UP || mForcedMovementDirection == MOVEMENT_DIRECTION::DOWN)
-	{
-		// Have the check based on the Y axis
-		capDistance = float(mCollisionBox.y * 1.2);
-	}
-	else
-	{
-		// Have the check based on the X axis
-		capDistance = float(mCollisionBox.x * 1.2);
-	}
-
-	// -----------------------------------------------------------------------------------------------
-
 	// Now check to see if we have moved far enough to determine this is far enough
-	if (mForcedMovementDistanceTravelled > capDistance)
+	if (mForcedMovementDistanceTravelled > mForcedMovementDistanceBoundary)
 	{
 		mForceMovementInDirectionSet     = false;
 		mForcedMovementDistanceTravelled = 0.0f;
+		mForcedMovementDistanceBoundary = 0.0f;
 
 		// Pipe check
 		if (mExitingPipe)
 		{
-			mHasControl = true;
+			mHasControl  = true;
 			mExitingPipe = false;
 		}
 	}
@@ -1020,18 +1008,26 @@ void PlayableCharacter::SpawnIntoNewArea(const Vector2D newPos, const Vector2D n
 		default:
 		case MOVEMENT_DIRECTION::DOWN:
 			mScreenGridPosition.y -= (mCollisionBox.y * 1.2f);
+
+			mForcedMovementDistanceBoundary = mCollisionBox.y * 0.85f;
 		break;
 
 		case MOVEMENT_DIRECTION::UP:
 			mScreenGridPosition.y += (mCollisionBox.y * 1.2f);
+
+			mForcedMovementDistanceBoundary = mCollisionBox.y * 1.2f;
 		break;
 
 		case MOVEMENT_DIRECTION::LEFT:
 			mScreenGridPosition.x += (mCollisionBox.x * 1.2f);
+
+			mForcedMovementDistanceBoundary = mCollisionBox.x * 1.2f;
 		break;
 
 		case MOVEMENT_DIRECTION::RIGHT:
 			mScreenGridPosition.x -= (mCollisionBox.x * 1.2f);
+
+			mForcedMovementDistanceBoundary = mCollisionBox.x * 1.2f;
 		break;
 		}
 
@@ -1595,14 +1591,20 @@ void PlayableCharacter::SetEnteringPipe(MOVEMENT_DIRECTION direction)
 	case MOVEMENT_DIRECTION::DOWN:
 	case MOVEMENT_DIRECTION::UP:
 		HandleChangeInAnimations(PlayerMovementBitField::ENTERING_PIPE_VERTICALLY, true);
+
+		mForcedMovementDistanceBoundary = 1.2f * mCollisionBox.y;
 	break;
 
 	case MOVEMENT_DIRECTION::RIGHT:
 		HandleChangeInAnimations(PlayerMovementBitField::MOVING_RIGHT, true);
+
+		mForcedMovementDistanceBoundary = 1.2f * mCollisionBox.x;
 	break;
 
 	case MOVEMENT_DIRECTION::LEFT:
 		HandleChangeInAnimations(PlayerMovementBitField::MOVING_LEFT, true);
+
+		mForcedMovementDistanceBoundary = 1.2f * mCollisionBox.x;
 	break;
 	}
 
