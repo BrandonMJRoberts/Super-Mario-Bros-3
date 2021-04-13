@@ -352,7 +352,7 @@ void GameScreenLevel1::SpawnNewEnemy(EnemyType enemy)
 	mSpawningLeftSide = !mSpawningLeftSide;
 
 	// There is a random chance of a coin spawning at the same time as an enemy so check for this occasion here
-	if (rand() % 10 == 1)
+	if (rand() % 2 == 1)
 	{
 		// First choose which side to spawn at
 		if (mSpawningLeftSide)
@@ -361,7 +361,7 @@ void GameScreenLevel1::SpawnNewEnemy(EnemyType enemy)
 			spawnPoint = mEnemySpawnPointRight;
 
 		// 1 in 10 chance
-		mCoins.push_back(new Coin(mRenderer, spawnPoint, "SDL_Mario_Project/Mario Bros 1 Images/Coin.png", 0.07f, Vector2D(1.0f, 1.0f)));
+		mCoins.push_back(new Coin(mRenderer, spawnPoint, "SDL_Mario_Project/Mario Bros 1 Images/Coin.png", 0.07f, Vector2D(0.5f, 1.0f)));
 
 		mSpawningLeftSide = !mSpawningLeftSide;
 	}

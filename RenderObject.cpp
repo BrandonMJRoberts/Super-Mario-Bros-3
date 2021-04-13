@@ -42,6 +42,8 @@ RenderObject::RenderObject()
 
 	, mRotation(0.0f)
 	, mDoingDeathAnimation(false)
+
+	, mCollisionBoxOffset(0.0f, 0.0f)
 {
 
 }
@@ -83,6 +85,8 @@ RenderObject::RenderObject(unsigned int start, unsigned int end, unsigned int cu
 
 	, mRotation(0.0f)
 	, mDoingDeathAnimation(false)
+
+	, mCollisionBoxOffset(0.0f, 0.0f)
 {
 }
 
@@ -185,24 +189,24 @@ void RenderObject::SetupRenderRects()
 
 void RenderObject::UpdatePhysics(const float deltaTime, LevelMap* levelMap)
 {
-	bool yCollision = true;
+	bool  yCollision       = true;
 	float checkingDistance = 0.1f;
 
 	// first check y axis
 	if(     mVelocity.y >= 0.0f 
-		&& (levelMap->GetCollisionTileAt(int(mPosition.y + checkingDistance), int(mPosition.x)) // Bottom left 
-		||	levelMap->GetCollisionTileAt(int(mPosition.y + checkingDistance), int(mPosition.x + mCollisionBox.x)))) // Bottom right
+		&& (levelMap->GetCollisionTileAt(int(mPosition.y + checkingDistance - mCollisionBoxOffset.y), int(mPosition.x + mCollisionBoxOffset.x))                     // Bottom left 
+		||	levelMap->GetCollisionTileAt(int(mPosition.y + checkingDistance - mCollisionBoxOffset.y), int(mPosition.x + mCollisionBox.x + mCollisionBoxOffset.x)))) // Bottom right
 	{
 		// Foot collision
-		mPosition.y = int(mPosition.y + checkingDistance) - 0.001;
+		mPosition.y = int(mPosition.y + checkingDistance) - 0.001 - mCollisionBoxOffset.y;
 
-		mGrounded = true;
+		mGrounded   = true;
 
 		mVelocity.y = 0.0f;
 	}
 	else if   (  mVelocity.y < 0.0f  // Head collision
-		   && (  levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y - checkingDistance),  int(mPosition.x)) // Top left 
-			  || levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y - checkingDistance), int(mPosition.x + mCollisionBox.x)))) // Top right
+		   && (  levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y - checkingDistance - mCollisionBoxOffset.y),  int(mPosition.x + mCollisionBoxOffset.x)) // Top left 
+			  || levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y - checkingDistance - mCollisionBoxOffset.y), int(mPosition.x  + mCollisionBox.x + mCollisionBoxOffset.x)))) // Top right
 	{
 		mVelocity.y = 2.0f;
 
@@ -220,19 +224,19 @@ void RenderObject::UpdatePhysics(const float deltaTime, LevelMap* levelMap)
 
 	// X axis
 	if(    mVelocity.x <= 0.0f
-		&& (levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y), int(mPosition.x - checkingDistance)) // Top left
-		||  levelMap->GetCollisionTileAt(int(mPosition.y),                   int(mPosition.x - checkingDistance)))) // Middle check - as the collision box can wrap around a block
+		&& (levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y - mCollisionBoxOffset.y), int(mPosition.x - checkingDistance + mCollisionBoxOffset.x)) // Top left
+		||  levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBoxOffset.y),                   int(mPosition.x - checkingDistance + mCollisionBoxOffset.x)))) // Middle check - as the collision box can wrap around a block
 	{
-		mPosition.x = int(mPosition.x - checkingDistance) + 1.01;
+		mPosition.x = int(mPosition.x - checkingDistance) + 1.01 - mCollisionBoxOffset.x;
 
 		mFacingLeft = false;
 		mVelocity.x = mMovementSpeed;
 	}
 	else if ( mVelocity.x >= 0.0f
-		   && ( levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y), int(mPosition.x + mCollisionBox.x + checkingDistance))   // Top right
-		   ||   levelMap->GetCollisionTileAt(int(mPosition.y),                   int(mPosition.x + mCollisionBox.x + checkingDistance)))) // Middle check - as the collision box can wrap around a block) // bottom right
+		   && ( levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y - mCollisionBoxOffset.y), int(mPosition.x + mCollisionBox.x + checkingDistance + mCollisionBoxOffset.x))   // Top right
+		   ||   levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBoxOffset.y),                   int(mPosition.x + mCollisionBox.x + checkingDistance + mCollisionBoxOffset.x)))) // Middle check - as the collision box can wrap around a block) // bottom right
 	{
-		mPosition.x = int(mPosition.x + checkingDistance) - 0.01;
+		mPosition.x = int(mPosition.x + checkingDistance) - 0.01 + mCollisionBoxOffset.x;
 
 		mFacingLeft = true;
 		mVelocity.x = -mMovementSpeed;

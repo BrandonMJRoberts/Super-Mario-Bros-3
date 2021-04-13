@@ -48,6 +48,8 @@ protected:
 	Vector2D     mVelocity;
 	Vector2D     mCollisionBox;
 	
+	Vector2D     mCollisionBoxOffset;
+
 	unsigned int mCurrentSpriteID;
 	unsigned int mEndSpriteID;
 	unsigned int mStartFrameID;

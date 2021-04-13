@@ -333,7 +333,7 @@ void Character::HandleCollisions(const float deltaTime)
 		&& (   mLevelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y - checkingDistance), int(mPosition.x)) // Top left 
 			|| mLevelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y - checkingDistance), int(mPosition.x + mCollisionBox.x)))) // Top right
 	{
-		mVelocity.y = 2.0f;
+		mVelocity.y = 1.0f;
 	}
 	else
 	{
