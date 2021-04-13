@@ -27,6 +27,7 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 , mCurrentFrame(0)
 , mStartFrame(0)
 , mEndFrame(0)
+
 , mNumberOfSpritesOnWidth(0)
 , mNumberOfSpritesOnHeight(0)
 , mLevelBounds(levelBounds)
@@ -1490,7 +1491,7 @@ void PlayableCharacter::LoadInCorrectSpriteSheet()
 		mSpriteSheet->LoadFromFile("SDL_Mario_Project/Characters/Mario/In Game Mario/SmallMarioSpriteSheet.png");
 
 		mNumberOfSpritesOnWidth  = 4;
-		mNumberOfSpritesOnHeight = 4;
+		mNumberOfSpritesOnHeight = 5;
 
 		mCollisionBox.x = 1.0f;   // 48 pixels wide
 		mCollisionBox.y = 1.0f;   // 48 pixels tall
@@ -1623,6 +1624,10 @@ void PlayableCharacter::KillPlayer()
 	mHasControl         = false;
 	mIsAlive            = false;
 	mDeathAnimationTime = 4.5f;
+
+	mCurrentFrame       = 16;
+	mEndFrame           = 16;
+	mStartFrame         = 16;
 
 	mVelocity.y         = -5.0f;
 }
