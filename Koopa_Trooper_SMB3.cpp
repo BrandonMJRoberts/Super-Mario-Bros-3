@@ -184,7 +184,7 @@ ObjectCollisionHandleData KoopaTrooper::SetIsCollidedWith(TwoDimensionalCollisio
 
 			mTimeTillConversion = kTimeOnFloor;
 
-			return ObjectCollisionHandleData(false, false, true, false, true);
+			return ObjectCollisionHandleData(false, false, true, false, true, false);
 		}
 
 		// Determine which direction the shell should be kicked
@@ -204,7 +204,7 @@ ObjectCollisionHandleData KoopaTrooper::SetIsCollidedWith(TwoDimensionalCollisio
 		mTimeTillConversion = kTimeOnFloor;
 		mTimePerFrame       = KOOPA_SHELL_ANIMATION_SPEED;
 
-		return ObjectCollisionHandleData(false, true, false, false, false);
+		return ObjectCollisionHandleData(false, true, false, false, false, false);
 	}
 
 	if (   collisionData.playerPriorPosition.y < mCurrentPosition.y - mCollisionBox.y 
@@ -226,11 +226,11 @@ ObjectCollisionHandleData KoopaTrooper::SetIsCollidedWith(TwoDimensionalCollisio
 
 		Notify(SUBJECT_NOTIFICATION_TYPES::JUMPED_OFF_ENEMY, "");
 
-		return ObjectCollisionHandleData(false, false, true, false, true);
+		return ObjectCollisionHandleData(false, false, true, false, true, false);
 	}
 
 	if (collisionData.collisionDataSecondary == MOVEMENT_DIRECTION::RIGHT || collisionData.collisionDataSecondary == MOVEMENT_DIRECTION::LEFT)
-		return ObjectCollisionHandleData(false, true, false, false, false);
+		return ObjectCollisionHandleData(false, true, false, false, false, true);
 
 	return ObjectCollisionHandleData();
 }

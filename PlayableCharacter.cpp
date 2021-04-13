@@ -169,6 +169,18 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 		CollisionPositionalData collisionOnX = HandleXCollisions(deltaTime, interactionLayer, objectLayer);
 		CollisionPositionalData collisionOnY = HandleYCollisions(deltaTime, interactionLayer, objectLayer);
 
+		if (collisionOnX.shouldDamagePlayer || collisionOnY.shouldDamagePlayer)
+		{
+			if (mPowerUpState == POWER_UP_TYPE::NONE)
+			{
+				KillPlayer();
+			}
+			else
+			{
+				mPowerUpState = POWER_UP_TYPE::NONE;
+			}
+		}
+
 		// Pass through the collision info into the positional calculations
 		CalculateNewPosition(deltaTime, collisionOnX, collisionOnY);
 
@@ -179,6 +191,10 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 	{
 		// If the player has died then update the time left before leaving the screen
 		mDeathAnimationTime -= deltaTime;
+
+		// Now make sure we are playing the death animation
+		mVelocity.y           += GRAVITY * deltaTime;
+		mScreenGridPosition.y += mVelocity.y * deltaTime;
 	}
 }
 
@@ -324,7 +340,7 @@ CollisionPositionalData PlayableCharacter::HandleYCollisions(const float deltaTi
 			}
 
 			mVelocity.y = 0.0f;
-			return CollisionPositionalData(returnData.collisionOccured, leftPos, rightPos, returnData.collisionWithInteractionLayer, returnData.collisionWithObjectLayer);
+			return CollisionPositionalData(returnData.collisionOccured, leftPos, rightPos, returnData.collisionWithInteractionLayer, returnData.collisionWithObjectLayer, returnData.shouldDamagePlayer);
 		}
 		else
 		{
@@ -346,7 +362,7 @@ CollisionPositionalData PlayableCharacter::HandleYCollisions(const float deltaTi
 			mVelocity.y = 4.0f;
 		}
 
-		return (CollisionPositionalData(returnData.collisionOccured, leftPos, rightPos, returnData.collisionWithInteractionLayer, returnData.collisionWithObjectLayer));
+		return (CollisionPositionalData(returnData.collisionOccured, leftPos, rightPos, returnData.collisionWithInteractionLayer, returnData.collisionWithObjectLayer, returnData.shouldDamagePlayer));
 	}
 
 	return CollisionPositionalData();
@@ -356,6 +372,18 @@ CollisionPositionalData PlayableCharacter::HandleYCollisions(const float deltaTi
 
 CollisionPositionalData PlayableCharacter::CheckXCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
+	// Check against other objects first
+	MovementPrevention leftCheck  = HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1);
+	MovementPrevention rightCheck = HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2);
+
+	if (leftCheck.StopXMovement || rightCheck.StopXMovement)
+	{
+		if (leftCheck.shouldDamagePlayer || rightCheck.shouldDamagePlayer)
+			return CollisionPositionalData(true, Vector2D(), Vector2D(), false, true, true);
+		else
+			return CollisionPositionalData(true, Vector2D(), Vector2D(), false, true, false);
+	}
+
 	// Check to see if we have hit the terrain on the X movement, and the objects in the level, and the screen constraints
 	if (HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1)                || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2) ||
 		positionToCheck1.x < 0.0f ||
@@ -364,12 +392,7 @@ CollisionPositionalData PlayableCharacter::CheckXCollision(const Vector2D positi
 		positionToCheck2.x > mLevelBounds.x)
 	{
 		// Return that there was a collision
-		return CollisionPositionalData(true, Vector2D(), Vector2D(), true, false);
-	}
-
-	if (HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1).StopXMovement || HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2).StopXMovement)
-	{
-		return CollisionPositionalData(true, Vector2D(), Vector2D(), false, true);
+		return CollisionPositionalData(true, Vector2D(), Vector2D(), true, false, false);
 	}
 
 	// Return that there was not a collision
@@ -380,6 +403,35 @@ CollisionPositionalData PlayableCharacter::CheckXCollision(const Vector2D positi
 
 CollisionPositionalData PlayableCharacter::CheckYCollision(const Vector2D positionToCheck1, const Vector2D positionToCheck2, InteractableLayer* interactionLayer, ObjectLayer* objectLayer)
 {
+	MovementPrevention returnData1 = HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1);
+	MovementPrevention returnData2 = HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2);
+
+	if (returnData1.StopYMovement || returnData2.StopYMovement)
+	{
+		if (returnData1.givesJump || returnData2.givesJump)
+		{
+			mGrounded = false;
+
+			// Give the slight jump boost 
+			mVelocity.y = kJumpInitialBoost * 0.75;
+
+			if (mCurrentMovements & PlayerMovementBitField::JUMPING)
+				mCurrentMovements |= PlayerMovementBitField::HOLDING_JUMP;
+			else
+				mCurrentMovements |= PlayerMovementBitField::JUMPING;
+		}
+		else if (!(mCurrentMovements & PlayerMovementBitField::HOLDING_JUMP))
+		{
+			mCurrentMovements &= ~(PlayerMovementBitField::JUMPING);
+		}
+
+		// Return that there was a collision
+		if (returnData1.shouldDamagePlayer || returnData2.shouldDamagePlayer)
+			return CollisionPositionalData(true, Vector2D(), Vector2D(), false, true, true);
+		else
+			return CollisionPositionalData(true, Vector2D(), Vector2D(), false, true, false);
+	}
+
 	// Check terrain collision
 	if (HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck1) || HandleCollisionsWithInteractionLayer(interactionLayer, positionToCheck2) ||
 		positionToCheck1.y < 0.0f ||
@@ -398,32 +450,7 @@ CollisionPositionalData PlayableCharacter::CheckYCollision(const Vector2D positi
 		}
 
 		// Return that there was a collision
-		return CollisionPositionalData(true, Vector2D(), Vector2D(), true, false);
-	}
-
-	MovementPrevention returnData1 = HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1), returnData2 = HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2);
-
-	if (returnData1.StopYMovement || returnData2.StopYMovement)
-	{
-		if (returnData1.givesJump || returnData2.givesJump)
-		{
-			mGrounded       = false;
-			
-			// Give the slight jump boost 
-			mVelocity.y        = kJumpInitialBoost * 0.75;
-
-			if (mCurrentMovements & PlayerMovementBitField::JUMPING)
-				mCurrentMovements |= PlayerMovementBitField::HOLDING_JUMP;
-			else
-				mCurrentMovements |= PlayerMovementBitField::JUMPING;
-		}
-		else if(!(mCurrentMovements & PlayerMovementBitField::HOLDING_JUMP))
-		{
-			mCurrentMovements &= ~(PlayerMovementBitField::JUMPING);
-		}
-
-		// Return that there was a collision
-		return CollisionPositionalData(true, Vector2D(), Vector2D(), false, true);
+		return CollisionPositionalData(true, Vector2D(), Vector2D(), true, false, false);
 	}
 
 	// Return that there was not a collision
@@ -483,12 +510,7 @@ void PlayableCharacter::CalculateNewPosition(const float deltaTime, CollisionPos
 		// Only do this check if mario is alive
 		if (mIsAlive)
 		{
-			// Then mario has gone off the bottom of the screen then he dies
-			mHasControl = false;
-			mIsAlive    = false;
-
-			// Send the notification
-			Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_DIED, "");
+			KillPlayer();
 		}
 	}
 
@@ -1590,6 +1612,19 @@ void PlayableCharacter::SetEnteringPipe(MOVEMENT_DIRECTION direction)
 	mForcedMovementDirection = direction;
 
 	Notify(SUBJECT_NOTIFICATION_TYPES::ENTERING_PIPE, "");
+}
+
+// ----------------------------------------------------- //
+
+void PlayableCharacter::KillPlayer()
+{
+	Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_DIED, "");
+
+	mHasControl         = false;
+	mIsAlive            = false;
+	mDeathAnimationTime = 4.5f;
+
+	mVelocity.y         = -5.0f;
 }
 
 // ----------------------------------------------------- //

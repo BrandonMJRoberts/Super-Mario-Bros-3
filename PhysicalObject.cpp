@@ -188,7 +188,7 @@ void PhysicalObject::UpdateStaticVariables(const float deltaTime)
 // Overarching collision handler, call this from the child classess
 void PhysicalObject::HandleMovement(const float deltaTime, InteractableLayer* interactableLayer, ObjectLayer* objectLayer)
 {
-	MovementPrevention  collisionData = MovementPrevention(HandleXCollision(deltaTime, interactableLayer, objectLayer), HandleYCollision(deltaTime, interactableLayer, objectLayer), false);
+	MovementPrevention  collisionData = MovementPrevention(HandleXCollision(deltaTime, interactableLayer, objectLayer), HandleYCollision(deltaTime, interactableLayer, objectLayer), false, false);
 	
 	// Now handle the collision data correctly
 	if (collisionData.StopYMovement)

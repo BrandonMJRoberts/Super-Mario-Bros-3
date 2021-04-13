@@ -163,7 +163,7 @@ ObjectCollisionHandleData Goomba::SetIsCollidedWith(TwoDimensionalCollision coll
 
 	if (mHitsRemaining == 0)
 	{
-		return ObjectCollisionHandleData(false, false, false, false, false);
+		return ObjectCollisionHandleData(false, false, false, false, false, false);
 		mCanMove = false;
 	}
 
@@ -182,11 +182,16 @@ ObjectCollisionHandleData Goomba::SetIsCollidedWith(TwoDimensionalCollision coll
 
 		Notify(SUBJECT_NOTIFICATION_TYPES::JUMPED_OFF_ENEMY, "");
 
-		return ObjectCollisionHandleData(false, false, true, false, true);
+		return ObjectCollisionHandleData(false, false, true, false, true, false);
 	}
 
-	if(collisionData.collisionDataSecondary == MOVEMENT_DIRECTION::RIGHT || collisionData.collisionDataSecondary == MOVEMENT_DIRECTION::LEFT)
-		return ObjectCollisionHandleData(false, true, false, false, false);
+	if( collisionData.collisionDataPrimary   == MOVEMENT_DIRECTION::NONE  || 
+		collisionData.collisionDataSecondary == MOVEMENT_DIRECTION::NONE  || 
+		collisionData.collisionDataSecondary == MOVEMENT_DIRECTION::RIGHT || 
+		collisionData.collisionDataSecondary == MOVEMENT_DIRECTION::LEFT)
+	{
+		return ObjectCollisionHandleData(false, true, false, false, false, true);
+	}
 
 	return ObjectCollisionHandleData();
 }

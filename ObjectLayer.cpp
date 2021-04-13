@@ -433,6 +433,7 @@ MovementPrevention ObjectLayer::CheckCollision(const Vector2D testPosition, cons
 			// Notify the object that it has been collided with
 			ObjectCollisionHandleData objectReturnData = mSpawnedObjectsInLevel[i]->SetIsCollidedWith(collisionData, currentMovements, isPlayer);
 
+			// End of level check
 			if (objectReturnData.completedLevel)
 			{
 				mLevelEndObjectCollected = true;
@@ -447,17 +448,18 @@ MovementPrevention ObjectLayer::CheckCollision(const Vector2D testPosition, cons
 				continue;
 			}
 
-			if (objectReturnData.movementPrevention.StopXMovement || objectReturnData.movementPrevention.StopYMovement)
+			if (objectReturnData.shouldDamagePlayer || objectReturnData.movementPrevention.StopXMovement || objectReturnData.movementPrevention.StopYMovement)
 			{
 				return MovementPrevention(  objectReturnData.movementPrevention.StopXMovement,
 						                    objectReturnData.movementPrevention.StopYMovement,
-						                    objectReturnData.givesJumpLeway);
+						                    objectReturnData.givesJumpLeway,
+					                        objectReturnData.shouldDamagePlayer);
 			}
 		}
 	}
 
 	// Return that there has been no collision
-	return MovementPrevention(false, false, false);
+	return MovementPrevention(false, false, false, false);
 }
 
 // -------------------------------------------------------------------------------------------------------------------------- //

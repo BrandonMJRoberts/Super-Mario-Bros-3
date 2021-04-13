@@ -70,6 +70,8 @@ private:
 
 	void LoadInCorrectSpriteSheet();
 
+	void KillPlayer();
+
 	// Collision functions
 	CollisionPositionalData HandleXCollisions(const float deltaTime, InteractableLayer* interactionLayer, ObjectLayer* objectLayer);
 	CollisionPositionalData HandleYCollisions(const float deltaTime, InteractableLayer* interactionLayer, ObjectLayer* objectLayer);

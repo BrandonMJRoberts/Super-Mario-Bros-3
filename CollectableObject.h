@@ -26,7 +26,7 @@ public:
 	virtual void Move();
 	virtual void Jump();
 
-	ObjectCollisionHandleData SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerMovements, const bool isPlayer) override { return ObjectCollisionHandleData(true, false, false, false, false); }
+	ObjectCollisionHandleData SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerMovements, const bool isPlayer) override { return ObjectCollisionHandleData(true, false, false, false, false, false); }
 
 	virtual bool UpdateReleaseAnimation(const float deltaTime, const Vector2D& startPos) { return false; }
 

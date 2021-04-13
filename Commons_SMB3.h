@@ -232,21 +232,25 @@ struct Area_Transition_Data final
 struct CollisionPositionalData
 {
 	CollisionPositionalData() 
+		: collisionOccured(false),
+		  collisionRealPositionLeftOrTop(Vector2D()),
+		  collisionRealPositionRightOrBottom(Vector2D()),
+		  collisionWithInteractionLayer(false),
+		  collisionWithObjectLayer(false),
+		  shouldDamagePlayer(false)
 	{ 
-		collisionOccured                     = false; 
-		collisionRealPositionLeftOrTop       = Vector2D(); 
-		collisionRealPositionRightOrBottom   = Vector2D(); 
-		collisionWithInteractionLayer        = false;
-		collisionWithObjectLayer             = false;
+		
 	}
 
-	CollisionPositionalData(const bool collisionOccured, const Vector2D collisionRealPositionLeftOrTop, const Vector2D collisionRealPositionRightOrBottom, const bool collisionWithInteractionLayer, bool collisionWithObjectLayer)
+	CollisionPositionalData(const bool collisionOccured, const Vector2D collisionRealPositionLeftOrTop, const Vector2D collisionRealPositionRightOrBottom, const bool collisionWithInteractionLayer, bool collisionWithObjectLayer, bool shouldDamagePlayer)
+		: collisionOccured(collisionOccured),
+		  collisionRealPositionLeftOrTop(collisionRealPositionLeftOrTop),
+		  collisionRealPositionRightOrBottom(collisionRealPositionRightOrBottom),
+		  collisionWithInteractionLayer(collisionWithInteractionLayer),
+		  collisionWithObjectLayer(collisionWithObjectLayer),
+		  shouldDamagePlayer(shouldDamagePlayer)
 	{ 
-		this->collisionOccured                     = collisionOccured; 
-		this->collisionRealPositionLeftOrTop       = collisionRealPositionLeftOrTop;
-		this->collisionRealPositionRightOrBottom   = collisionRealPositionRightOrBottom;
-		this->collisionWithInteractionLayer        = collisionWithInteractionLayer;
-		this->collisionWithObjectLayer             = collisionWithObjectLayer;
+
 	}
 
 	Vector2D collisionRealPositionLeftOrTop;
@@ -255,44 +259,47 @@ struct CollisionPositionalData
 	bool     collisionOccured;
 	bool     collisionWithInteractionLayer;
 	bool     collisionWithObjectLayer;
+	bool     shouldDamagePlayer;
 };
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 
 struct MovementPrevention
 {
-	MovementPrevention()                                       { StopXMovement = true;  StopYMovement = true;        givesJump = false; }
-	MovementPrevention(bool stopX, bool stopY, bool givesJump) { StopXMovement = stopX; StopYMovement = stopY; this->givesJump = givesJump; }
+	MovementPrevention()                                                                { StopXMovement = true;  StopYMovement = true;        givesJump = false;     shouldDamagePlayer = false;}
+	MovementPrevention(bool stopX, bool stopY, bool givesJump, bool damagePlayer)       { StopXMovement = stopX; StopYMovement = stopY; this->givesJump = givesJump; shouldDamagePlayer = damagePlayer; }
 
 	bool StopYMovement;
 	bool StopXMovement;
 	bool givesJump;
+	bool shouldDamagePlayer;
 };
 
 // -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- //
 
 struct ObjectCollisionHandleData final
 {
-	ObjectCollisionHandleData() 
-	{ 
-		shouldDeleteObject           = false;        
-		movementPrevention           = MovementPrevention();
-		completedLevel               = false; 
-		this->givesJumpLeway         = false; 
-	}
+	ObjectCollisionHandleData() : 
+		shouldDeleteObject(false),
+		movementPrevention(MovementPrevention()),
+		completedLevel(false),
+		givesJumpLeway(false),
+		shouldDamagePlayer(false)
+	{  	}
 
-	ObjectCollisionHandleData(bool deleteObject, bool stopMovementX, bool stopMovementY, bool LevelComplete, bool givesJumpLeway) 
-	{ 
-		shouldDeleteObject          = deleteObject; 
-		movementPrevention          = MovementPrevention(stopMovementX, stopMovementY, givesJumpLeway);
-		completedLevel              = LevelComplete; 
-		this->givesJumpLeway        = givesJumpLeway; 
-
-	}
+	ObjectCollisionHandleData(bool deleteObject, bool stopMovementX, bool stopMovementY, bool LevelComplete, bool givesJumpLeway, bool damagePlayer) :
+		shouldDeleteObject(deleteObject),
+		movementPrevention(MovementPrevention(stopMovementX, stopMovementY, givesJumpLeway, damagePlayer)),
+		completedLevel(LevelComplete),
+		givesJumpLeway(givesJumpLeway),
+		shouldDamagePlayer(damagePlayer)
+	{ 	}
 
 	bool               shouldDeleteObject;
 
 	bool               completedLevel;
+
+	bool               shouldDamagePlayer;
 
 	bool               givesJumpLeway;
 	MovementPrevention movementPrevention;

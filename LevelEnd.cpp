@@ -184,7 +184,7 @@ ObjectCollisionHandleData LevelEndObject::SetIsCollidedWith(TwoDimensionalCollis
 	Notify(SUBJECT_NOTIFICATION_TYPES::LEVEL_CLEAR, "");
 	Notify(SUBJECT_NOTIFICATION_TYPES::ADD_END_CARD, std::to_string(mCurrentFrameID));
 
-	return ObjectCollisionHandleData(false, true, false, true, false);
+	return ObjectCollisionHandleData(false, true, false, true, false, false);
 }
 
 // ---------------------------------------------------------------------------------- //

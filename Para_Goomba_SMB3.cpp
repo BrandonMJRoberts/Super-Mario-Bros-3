@@ -206,11 +206,11 @@ ObjectCollisionHandleData ParaGoomba::SetIsCollidedWith(TwoDimensionalCollision 
 			mEndSpriteID = 5;
 			mStartSpriteID = 5;
 
-			return ObjectCollisionHandleData(false, false, true, false, true);
+			return ObjectCollisionHandleData(false, false, true, false, true, false);
 		}
 	}
 
-	return ObjectCollisionHandleData(false, false, true, false, true);
+	return ObjectCollisionHandleData(false, false, true, false, true, true);
 }
 
 // ------------------------------------------------------------- //
