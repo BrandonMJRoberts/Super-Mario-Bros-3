@@ -334,13 +334,14 @@ CollisionPositionalData PlayableCharacter::HandleYCollisions(const float deltaTi
 				}
 
 				mGrounded = true;
+				mVelocity.y = 0.0f;
 			}
 			else 
 			{
 				mGrounded = false;
 			}
 
-			mVelocity.y = 0.0f;
+			//mVelocity.y = 0.0f;
 			return CollisionPositionalData(returnData.collisionOccured, leftPos, rightPos, returnData.collisionWithInteractionLayer, returnData.collisionWithObjectLayer, returnData.shouldDamagePlayer);
 		}
 		else
@@ -414,11 +415,9 @@ CollisionPositionalData PlayableCharacter::CheckYCollision(const Vector2D positi
 			mGrounded = false;
 
 			// Give the slight jump boost 
-			mVelocity.y = kJumpInitialBoost * 0.75;
+			mVelocity.y = kJumpInitialBoost * 0.5;
 
-			if (mCurrentMovements & PlayerMovementBitField::JUMPING)
-				mCurrentMovements |= PlayerMovementBitField::HOLDING_JUMP;
-			else
+			if(PlayerMovementBitField::HOLDING_JUMP)
 				mCurrentMovements |= PlayerMovementBitField::JUMPING;
 		}
 		else if (!(mCurrentMovements & PlayerMovementBitField::HOLDING_JUMP))

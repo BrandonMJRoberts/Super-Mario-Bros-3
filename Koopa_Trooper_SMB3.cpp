@@ -47,6 +47,7 @@ KoopaTrooper::KoopaTrooper(const Vector2D      spawnPosition,
 , mUpdatedStaticVariables(false)
 
 , mTimeRemainingTillNextFrame(0.0f)
+, mDelayTillNextHit(0.0f)
 {
 	if(mFacingLeft)
 		mVelocity.x = -MOVEMENT_SPEED;
@@ -131,6 +132,9 @@ bool KoopaTrooper::Update(const float deltaTime, const Vector2D playerPosition, 
 		}
 	}
 
+	if(mDelayTillNextHit > 0.0f)
+		mDelayTillNextHit -= deltaTime;
+
 	return false;
 }
 
@@ -190,26 +194,34 @@ ObjectCollisionHandleData KoopaTrooper::SetIsCollidedWith(TwoDimensionalCollisio
 		if (mVelocity.x == 0.0f)
 		{
 			// Determine which direction the shell should be kicked
-			if (collisionData.collisionDataSecondary == MOVEMENT_DIRECTION::LEFT)
+			if(mDelayTillNextHit <= 0.0f)
 			{
-				mVelocity.x = -6.0f;
-			}
-			else if (collisionData.collisionDataSecondary == MOVEMENT_DIRECTION::RIGHT)
-			{
-				mVelocity.x = 6.0f;
-			}
+				if (playerMovements & PlayerMovementBitField::MOVING_LEFT)
+				{
+					mVelocity.x = -6.0f;
 
-			mCurrentSpriteID = mColourStartID + 3;
-			mEndSpriteID = mColourStartID + 5;
-			mStartSpriteID = mColourStartID + 3;
+					mDelayTillNextHit = 1.0f;
+				}
+				else if (playerMovements & PlayerMovementBitField::MOVING_RIGHT)
+				{
+					mVelocity.x = 6.0f;
 
-			mTimeTillConversion = kTimeOnFloor;
-			mTimePerFrame = KOOPA_SHELL_ANIMATION_SPEED;
+					mDelayTillNextHit = 1.0f;
+				}
+
+				mCurrentSpriteID = mColourStartID + 3;
+				mEndSpriteID     = mColourStartID + 5;
+				mStartSpriteID   = mColourStartID + 3;
+
+				mTimeTillConversion = kTimeOnFloor;
+				mTimePerFrame       = KOOPA_SHELL_ANIMATION_SPEED;
+			}
 
 			return ObjectCollisionHandleData(false, true, false, false, false, false);
 		}
 		else
 		{
+			// Shell has hit mario whilst it is moving, so kill mario
 			return ObjectCollisionHandleData(false, true, false, false, false, true);
 		}
 	}
