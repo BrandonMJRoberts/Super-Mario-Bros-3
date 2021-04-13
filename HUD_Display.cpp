@@ -287,7 +287,11 @@ void HUD_Display::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string 
 	case SUBJECT_NOTIFICATION_TYPES::TAKE_SCORE:
 		unsigned int minusScore;
 		dataLine >> minusScore;
-		mCurrentScore -= minusScore;
+
+		if (mCurrentScore > minusScore)
+			mCurrentScore -= minusScore;
+		else
+			mCurrentScore = 0;
 	return;
 
 	case SUBJECT_NOTIFICATION_TYPES::ADD_END_CARD:
@@ -310,6 +314,7 @@ void HUD_Display::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string 
 
 	case SUBJECT_NOTIFICATION_TYPES::SETUP_MAIN_LEVEL:
 		mTimeRemaming = 300.9f;
+		mPaused       = false;
 	break;
 
 	case SUBJECT_NOTIFICATION_TYPES::SETUP_WORLD_MAP:
