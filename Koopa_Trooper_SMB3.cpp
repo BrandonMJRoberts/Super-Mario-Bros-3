@@ -187,24 +187,31 @@ ObjectCollisionHandleData KoopaTrooper::SetIsCollidedWith(TwoDimensionalCollisio
 			return ObjectCollisionHandleData(false, false, true, false, true, false);
 		}
 
-		// Determine which direction the shell should be kicked
-		if (collisionData.collisionDataSecondary == MOVEMENT_DIRECTION::LEFT)
+		if (mVelocity.x == 0.0f)
 		{
-			mVelocity.x = -4.0f;
+			// Determine which direction the shell should be kicked
+			if (collisionData.collisionDataSecondary == MOVEMENT_DIRECTION::LEFT)
+			{
+				mVelocity.x = -6.0f;
+			}
+			else if (collisionData.collisionDataSecondary == MOVEMENT_DIRECTION::RIGHT)
+			{
+				mVelocity.x = 6.0f;
+			}
+
+			mCurrentSpriteID = mColourStartID + 3;
+			mEndSpriteID = mColourStartID + 5;
+			mStartSpriteID = mColourStartID + 3;
+
+			mTimeTillConversion = kTimeOnFloor;
+			mTimePerFrame = KOOPA_SHELL_ANIMATION_SPEED;
+
+			return ObjectCollisionHandleData(false, true, false, false, false, false);
 		}
-		else if(collisionData.collisionDataSecondary == MOVEMENT_DIRECTION::RIGHT)
+		else
 		{
-			mVelocity.x = 4.0f;
+			return ObjectCollisionHandleData(false, true, false, false, false, true);
 		}
-
-		mCurrentSpriteID = mColourStartID + 3;
-		mEndSpriteID     = mColourStartID + 5;
-		mStartSpriteID   = mColourStartID + 3;
-
-		mTimeTillConversion = kTimeOnFloor;
-		mTimePerFrame       = KOOPA_SHELL_ANIMATION_SPEED;
-
-		return ObjectCollisionHandleData(false, true, false, false, false, false);
 	}
 
 	if (   collisionData.playerPriorPosition.y < mCurrentPosition.y - mCollisionBox.y 
