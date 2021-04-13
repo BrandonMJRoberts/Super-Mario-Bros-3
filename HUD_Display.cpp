@@ -120,7 +120,7 @@ void HUD_Display::Render()
 	{
 		Vector2D offset((int)mEndCardsSingleSpriteWidth, 0);
 
-		mDestRectPlaceHolder   = SDL_Rect{ (int)mFirstEndCardOffset.x, (int)mFirstEndCardOffset.y, (int)mEndCardsSingleSpriteWidth, (int)mEndCardsSingleSpriteHeight };
+		mDestRectPlaceHolder   = SDL_Rect{      (int)mFirstEndCardOffset.x,      (int)mFirstEndCardOffset.y,         (int)mEndCardsSingleSpriteWidth, (int)mEndCardsSingleSpriteHeight };
 		mSourceRectPlaceHolder = SDL_Rect{0, 0, (int)mEndCardsSingleSpriteWidth, (int)mEndCardsSingleSpriteHeight };
 
 		for (unsigned int i = 0; i < 3; i++)
@@ -297,7 +297,7 @@ void HUD_Display::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string 
 	case SUBJECT_NOTIFICATION_TYPES::ADD_END_CARD:
 		unsigned int cardID;
 		dataLine >> cardID;
-		mEndCards[mCurrentEndCardCount] = (END_CARD_TYPES)cardID;
+		mEndCards[mCurrentEndCardCount] = (END_CARD_TYPES)(cardID + 1);
 	return;
 
 	case SUBJECT_NOTIFICATION_TYPES::UPDATE_P_METER:
