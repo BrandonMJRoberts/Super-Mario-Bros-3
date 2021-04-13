@@ -319,10 +319,13 @@ void HUD_Display::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string 
 
 	case SUBJECT_NOTIFICATION_TYPES::SETUP_WORLD_MAP:
 		mTimeRemaming = 0.0f;
+
+		// Reset the fill amount
+		mPMeterFillAmount = 0;
 	break;
 
 	case SUBJECT_NOTIFICATION_TYPES::LEVEL_CLEAR:
-		mTimerCounting = false;
+		mTimerCounting    = false;
 	break;
 
 	case SUBJECT_NOTIFICATION_TYPES::ENTERING_PIPE:
