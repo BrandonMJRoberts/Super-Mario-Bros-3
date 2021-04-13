@@ -360,7 +360,7 @@ CollisionPositionalData PlayableCharacter::HandleYCollisions(const float deltaTi
 
 		if (returnData.collisionOccured && mVelocity.y < 0.0f)
 		{
-			mVelocity.y = 4.0f;
+			mVelocity.y = 3.0f;
 		}
 
 		return (CollisionPositionalData(returnData.collisionOccured, leftPos, rightPos, returnData.collisionWithInteractionLayer, returnData.collisionWithObjectLayer, returnData.shouldDamagePlayer));
