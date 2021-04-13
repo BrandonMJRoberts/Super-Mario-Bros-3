@@ -352,7 +352,7 @@ void GameScreenLevel1::SpawnNewEnemy(EnemyType enemy)
 	mSpawningLeftSide = !mSpawningLeftSide;
 
 	// There is a random chance of a coin spawning at the same time as an enemy so check for this occasion here
-	if (rand() % 2 == 1)
+	if (rand() % 10 == 1)
 	{
 		// First choose which side to spawn at
 		if (mSpawningLeftSide)

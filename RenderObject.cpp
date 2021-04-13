@@ -6,6 +6,8 @@
 
 #include "LevelMap.h"
 
+#include <math.h>
+
 // --------------------------------------------------------------- //
 
 RenderObject::RenderObject()
@@ -202,7 +204,12 @@ void RenderObject::UpdatePhysics(const float deltaTime, LevelMap* levelMap)
 
 		mGrounded   = true;
 
-		mVelocity.y = 0.0f;
+		if (mVelocity.y > 2.0f)
+		{
+			mVelocity.y = -1.0f * std::min(1.0 * (mVelocity.y / 5.0), 1.0);
+		}
+		else
+			mVelocity.y = 0.0f;
 	}
 	else if   (  mVelocity.y < 0.0f  // Head collision
 		   && (  levelMap->GetCollisionTileAt(int(mPosition.y - mCollisionBox.y - checkingDistance - mCollisionBoxOffset.y),  int(mPosition.x + mCollisionBoxOffset.x)) // Top left 
