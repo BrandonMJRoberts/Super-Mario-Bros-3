@@ -339,7 +339,8 @@ void HUD_Display::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string 
 	case SUBJECT_NOTIFICATION_TYPES::PLAYER_DIED:
 		mPaused = true;
 
-		mLivesRemaining--;
+		if(mLivesRemaining > 0)
+			mLivesRemaining--;
 	break;
 	}
 }
