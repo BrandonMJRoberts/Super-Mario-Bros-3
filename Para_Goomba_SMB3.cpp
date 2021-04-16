@@ -43,9 +43,12 @@ ParaGoomba::ParaGoomba(const Vector2D      spawnPosition,
 , kTimePerJump(0.25f)
 , kTimePerJumpLoop(2.5f)
 , mHitDelay(0.0f)
+, mWingOffset(0.0f, 0.0f)
 {
 	mHitsRemaining              = 2;
 	mTimeRemainingTillNextFrame = mTimePerFrame;
+
+	mWingOffset                 = Vector2D(-mCollisionBox.x / 2.0f, -mCollisionBox.y / 2.0f);
 
 	mWings                      = new Wings(spawnPosition, mRenderer);
 }
@@ -117,7 +120,7 @@ bool ParaGoomba::Update(const float deltaTime, const Vector2D playerPosition, In
 	{
 		if (!mWings->GetHasLostWings())
 		{
-			mWings->SetPosition(mCurrentPosition);
+			mWings->SetPosition(mCurrentPosition + mWingOffset);
 		}
 
 		mWings->Update(deltaTime);
@@ -221,6 +224,8 @@ ObjectCollisionHandleData ParaGoomba::SetIsCollidedWith(TwoDimensionalCollision 
 			if (mWings)
 				mWings->LoseWings();
 
+			Notify(SUBJECT_NOTIFICATION_TYPES::JUMPED_OFF_ENEMY, "");
+
 			return ObjectCollisionHandleData(false, false, true, false, true, false);
 		}
 		else
@@ -232,7 +237,14 @@ ObjectCollisionHandleData ParaGoomba::SetIsCollidedWith(TwoDimensionalCollision 
 			mEndSpriteID     = 5;
 			mStartSpriteID   = 5;
 
-			return ObjectCollisionHandleData(false, false, false, false, true, false);
+			if (mHitsRemaining == 0)
+			{
+				Notify(SUBJECT_NOTIFICATION_TYPES::JUMPED_OFF_ENEMY, "");
+
+				return ObjectCollisionHandleData(false, false, true, false, true, false);
+			}
+			else
+				return ObjectCollisionHandleData(false, false, false, false, true, false);
 		}
 	}
 

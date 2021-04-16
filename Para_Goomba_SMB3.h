@@ -59,6 +59,7 @@ private:
 	const float                 kTimePerJumpLoop;
 
 	Wings*                      mWings;
+	Vector2D                    mWingOffset;
 
 	float                       mHitDelay;
 };

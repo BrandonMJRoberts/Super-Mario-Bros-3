@@ -11,7 +11,7 @@ unsigned int Wings::mThisObjectCounter = 0;
 // ------------------------------------------------------------- //
 
 Wings::Wings(Vector2D startPos, SDL_Renderer* renderer) 
-	: BaseAnimation(startPos, 0, 1, 0.05f, Vector2D(0.0f, 0.0f), 2, 3)
+	: BaseAnimation(startPos, 0, 1, 0.15f, Vector2D(0.0f, 0.0f), 2, 3)
 	, mLostWings(false)
 {
 	mThisObjectCounter++;
