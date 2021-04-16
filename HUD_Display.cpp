@@ -297,7 +297,21 @@ void HUD_Display::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string 
 	case SUBJECT_NOTIFICATION_TYPES::ADD_END_CARD:
 		unsigned int cardID;
 		dataLine >> cardID;
+
+		// If completed the entire thing then reset the HUD for this bit
+		if (mCurrentEndCardCount == 3)
+		{
+			std::cout << "Resetting the cards!" << std::endl;
+
+			mEndCards[0] = END_CARD_TYPES::EMPTY;
+			mEndCards[1] = END_CARD_TYPES::EMPTY;
+			mEndCards[2] = END_CARD_TYPES::EMPTY;
+
+			mCurrentEndCardCount = 0;
+		}
+
 		mEndCards[mCurrentEndCardCount] = (END_CARD_TYPES)(cardID + 1);
+		mCurrentEndCardCount++;
 	return;
 
 	case SUBJECT_NOTIFICATION_TYPES::UPDATE_P_METER:
@@ -313,8 +327,9 @@ void HUD_Display::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string 
 	break;
 
 	case SUBJECT_NOTIFICATION_TYPES::SETUP_MAIN_LEVEL:
-		mTimeRemaming = 300.9f;
-		mPaused       = false;
+		mTimeRemaming   = 300.9f;
+		mPaused         = false;
+		mTimerCounting  = true;
 	break;
 
 	case SUBJECT_NOTIFICATION_TYPES::SETUP_WORLD_MAP:
