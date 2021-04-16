@@ -48,6 +48,8 @@ KoopaTrooper::KoopaTrooper(const Vector2D      spawnPosition,
 
 , mTimeRemainingTillNextFrame(0.0f)
 , mDelayTillNextHit(0.0f)
+
+, kMaxTimePerFrame(timePerFrame)
 {
 	if(mFacingLeft)
 		mVelocity.x = -MOVEMENT_SPEED;
@@ -129,6 +131,17 @@ bool KoopaTrooper::Update(const float deltaTime, const Vector2D playerPosition, 
 			mHitsRemaining = 1;
 
 			mTimePerFrame = KOOPA_WALK_ANIMATION_SPEED;
+
+			mStartSpriteID   = mColourStartID;
+			mEndSpriteID     = mStartSpriteID + 1;
+			mCurrentSpriteID = mStartSpriteID;
+
+			mCanMove         = true;
+
+			mFacingLeft      = true;
+			mVelocity.x      = -MOVEMENT_SPEED;
+
+			mTimePerFrame    = kMaxTimePerFrame;
 		}
 	}
 
@@ -170,17 +183,45 @@ void KoopaTrooper::Render(const Vector2D renderReferencePoint)
 
 ObjectCollisionHandleData KoopaTrooper::SetIsCollidedWith(TwoDimensionalCollision collisionData, const unsigned int playerMovements, const bool isPlayer)
 {
-	if (!isPlayer)
+	if (!isPlayer || mDelayTillNextHit > 0.0f)
 		return ObjectCollisionHandleData();
 
-	if (mHitsRemaining == 0)
+	// If koopa is up and walking
+	if (mHitsRemaining == 1)
 	{
-		// Stop the shell from moving if it is jumped on whilst moving
-		if (   mVelocity.x != 0.0f 
-			&& collisionData.playerPriorPosition.y < mCurrentPosition.y - mCollisionBox.y 
-			&& collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::DOWN)
+		// If the player is hitting the shell from above
+		if (collisionData.playerPriorPosition.y < mCurrentPosition.y - mCollisionBox.y && 
+			collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::DOWN)
 		{
+			// Stop the koopa
 			mVelocity.x      = 0.0f;
+
+			mCurrentSpriteID = mColourStartID + 2;
+			mEndSpriteID     = mColourStartID + 2;
+			mStartSpriteID   = mColourStartID + 2;
+
+			mHitsRemaining--;
+
+			mTimeTillConversion = kTimeOnFloor;
+
+			Notify(SUBJECT_NOTIFICATION_TYPES::JUMPED_OFF_ENEMY, "");
+
+			mDelayTillNextHit = 0.1f;
+
+			return ObjectCollisionHandleData(false, false, true, false, true, false);
+		}
+		else
+		{
+			return ObjectCollisionHandleData(false, true, false, false, false, true);
+		}
+	}
+	else  // Koopa is in shell mode
+	{
+		// If the player is hitting the shell from above
+		if (collisionData.playerPriorPosition.y < mCurrentPosition.y - mCollisionBox.y &&
+			collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::DOWN)
+		{
+			mVelocity.x = 0.0f;
 
 			mCurrentSpriteID = mColourStartID + 2;
 			mEndSpriteID     = mColourStartID + 2;
@@ -188,68 +229,44 @@ ObjectCollisionHandleData KoopaTrooper::SetIsCollidedWith(TwoDimensionalCollisio
 
 			mTimeTillConversion = kTimeOnFloor;
 
+			Notify(SUBJECT_NOTIFICATION_TYPES::JUMPED_OFF_ENEMY, "");
+
+			mDelayTillNextHit = 0.1f;
+
 			return ObjectCollisionHandleData(false, false, true, false, true, false);
-		}
-
-		if (mVelocity.x == 0.0f)
-		{
-			// Determine which direction the shell should be kicked
-			if(mDelayTillNextHit <= 0.0f)
-			{
-				if (playerMovements & PlayerMovementBitField::MOVING_LEFT)
-				{
-					mVelocity.x = -6.0f;
-
-					mDelayTillNextHit = 1.0f;
-				}
-				else if (playerMovements & PlayerMovementBitField::MOVING_RIGHT)
-				{
-					mVelocity.x = 6.0f;
-
-					mDelayTillNextHit = 1.0f;
-				}
-
-				mCurrentSpriteID = mColourStartID + 3;
-				mEndSpriteID     = mColourStartID + 5;
-				mStartSpriteID   = mColourStartID + 3;
-
-				mTimeTillConversion = kTimeOnFloor;
-				mTimePerFrame       = KOOPA_SHELL_ANIMATION_SPEED;
-			}
-
-			return ObjectCollisionHandleData(false, true, false, false, false, false);
 		}
 		else
 		{
-			// Shell has hit mario whilst it is moving, so kill mario
-			return ObjectCollisionHandleData(false, true, false, false, false, true);
+			// If the shell is stopped
+			if (mVelocity.x == 0.0f)
+			{
+				if (collisionData.playerPriorPosition.x >= mCurrentPosition.x + (mCollisionBox.x / 2.0f))
+				{
+					mVelocity.x = -6.0f;
+				}
+				else// if(collisionData.playerPriorPosition.x + (mCollisionBox.x / 2.0f) <= mCurrentPosition.x)
+				{
+					mVelocity.x = 6.0f;
+				}
+
+				mTimePerFrame     = kMaxTimePerFrame / 2.0f;
+
+				mCurrentSpriteID  = mColourStartID + 2;
+				mEndSpriteID      = mColourStartID + 5;
+				mStartSpriteID    = mColourStartID + 2;
+
+				mDelayTillNextHit   = 0.1f;
+				mTimeTillConversion = 10000.0f; // Make the koopa essentially never get up
+
+				return ObjectCollisionHandleData(false, true, false, false, false, false);
+			}
+			else
+			{
+				// Player has been hit so just return that
+				return ObjectCollisionHandleData(false, true, false, false, false, true);
+			}
 		}
 	}
-
-	if (   collisionData.playerPriorPosition.y < mCurrentPosition.y - mCollisionBox.y 
-		&& collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::DOWN)
-	{
-		// Stop the koopa
-		mVelocity.x      = 0.0f;
-
-		mCurrentSpriteID = mColourStartID + 2;
-		mEndSpriteID     = mColourStartID + 2;
-		mStartSpriteID   = mColourStartID + 2;
-
-		if (mHitsRemaining > 0)
-		{
-			mHitsRemaining--;
-		}
-
-		mTimeTillConversion = kTimeOnFloor;
-
-		Notify(SUBJECT_NOTIFICATION_TYPES::JUMPED_OFF_ENEMY, "");
-
-		return ObjectCollisionHandleData(false, false, true, false, true, false);
-	}
-
-	if (collisionData.collisionDataSecondary == MOVEMENT_DIRECTION::RIGHT || collisionData.collisionDataSecondary == MOVEMENT_DIRECTION::LEFT)
-		return ObjectCollisionHandleData(false, true, false, false, false, true);
 
 	return ObjectCollisionHandleData();
 }

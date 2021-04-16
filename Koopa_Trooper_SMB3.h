@@ -53,6 +53,7 @@ private:
 	unsigned int         mColourStartID;
 
 	float                mDelayTillNextHit;
+	const float          kMaxTimePerFrame;
 };
 
 #endif
