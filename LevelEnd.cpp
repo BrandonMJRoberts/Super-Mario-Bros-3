@@ -161,11 +161,11 @@ ObjectCollisionHandleData LevelEndObject::SetIsCollidedWith(TwoDimensionalCollis
 
 	switch (mCurrentFrameID)
 	{
-	// Star
+	// Mushroom
 	case 0:
-		mCurrentFrameID = 9;
-		mEndFrameID     = 11;
-		mStartFrameID   = 9;
+		mCurrentFrameID = 3;
+		mEndFrameID     = 5;
+		mStartFrameID   = 3;
 	break;
 
 	// Fire flower
@@ -175,11 +175,11 @@ ObjectCollisionHandleData LevelEndObject::SetIsCollidedWith(TwoDimensionalCollis
 		mStartFrameID   = 6;
 	break;
 
-	// Mushroom
+	// Star
 	case 2:
-		mCurrentFrameID = 3;
-		mEndFrameID     = 5;
-		mStartFrameID   = 3;
+		mCurrentFrameID = 9;
+		mEndFrameID     = 11;
+		mStartFrameID   = 9;
 	break;
 	}
 
