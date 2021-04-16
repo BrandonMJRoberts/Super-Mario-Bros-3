@@ -326,6 +326,8 @@ void HUD_Display::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string 
 
 	case SUBJECT_NOTIFICATION_TYPES::LEVEL_CLEAR:
 		mTimerCounting    = false;
+
+		mCurrentScore    += (mTimeRemaming * 100);
 	break;
 
 	case SUBJECT_NOTIFICATION_TYPES::ENTERING_PIPE:
