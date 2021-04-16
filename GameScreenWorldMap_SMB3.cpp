@@ -123,7 +123,8 @@ ReturnDataFromGameScreen GameScreen_WorldMap_SMB3::Update(const float deltaTime,
 
 
 					// Then return that we want to return into a level
-					return ReturnDataFromGameScreen(SCREENS_SMB3::LEVEL, mNodeMap->GetLevelFilePath(nodeMapValue));
+					//return ReturnDataFromGameScreen(SCREENS_SMB3::LEVEL, mNodeMap->GetLevelFilePath(nodeMapValue));
+					return ReturnDataFromGameScreen(SCREENS_SMB3::LEVEL, mNodeMap->GetLevelFilePath('0'));
 				}
 			break;
 			}
