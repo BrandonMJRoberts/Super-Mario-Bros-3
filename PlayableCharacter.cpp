@@ -172,11 +172,13 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 		CollisionPositionalData collisionOnX = HandleXCollisions(deltaTime, interactionLayer, objectLayer);
 		CollisionPositionalData collisionOnY = HandleYCollisions(deltaTime, interactionLayer, objectLayer);
 
-		if (collisionOnX.shouldDamagePlayer || collisionOnY.shouldDamagePlayer)
+		if ( collisionOnX.shouldDamagePlayer || 
+			 collisionOnY.shouldDamagePlayer)
 		{
 			if (mPowerUpState == POWER_UP_TYPE::NONE)
 			{
 				KillPlayer();
+				return;
 			}
 			else
 			{
@@ -396,7 +398,10 @@ CollisionPositionalData PlayableCharacter::CheckYCollision(const Vector2D positi
 	MovementPrevention returnData1 = HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1);
 	MovementPrevention returnData2 = HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2);
 
-	if (returnData1.StopYMovement || returnData2.StopYMovement)
+	if (returnData1.StopYMovement || 
+		returnData2.StopYMovement || 
+		returnData1.shouldDamagePlayer || 
+		returnData2.shouldDamagePlayer)
 	{
 		if (returnData1.givesJump || returnData2.givesJump)
 		{
@@ -1620,17 +1625,20 @@ void PlayableCharacter::SetEnteringPipe(MOVEMENT_DIRECTION direction)
 
 void PlayableCharacter::KillPlayer()
 {
-	Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_DIED, "");
+	if(mIsAlive)
+	{
+		Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_DIED, "");
 
-	mHasControl         = false;
-	mIsAlive            = false;
-	mDeathAnimationTime = 4.5f;
+		mHasControl         = false;
+		mIsAlive            = false;
+		mDeathAnimationTime = 4.5f;
 
-	mCurrentFrame       = 16;
-	mEndFrame           = 16;
-	mStartFrame         = 16;
+		mCurrentFrame       = 16;
+		mEndFrame           = 16;
+		mStartFrame         = 16;
 
-	mVelocity.y         = -5.0f;
+		mVelocity.y         = -5.0f;
+	}
 }
 
 // ----------------------------------------------------- //

@@ -262,7 +262,7 @@ ObjectCollisionHandleData KoopaTrooper::SetIsCollidedWith(TwoDimensionalCollisio
 			else
 			{
 				// Player has been hit so just return that
-				return ObjectCollisionHandleData(false, true, false, false, false, true);
+				return ObjectCollisionHandleData(false, false, false, false, false, true);
 			}
 		}
 	}
