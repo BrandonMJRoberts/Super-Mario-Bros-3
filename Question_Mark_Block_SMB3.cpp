@@ -197,6 +197,8 @@ ObjectCollisionHandleData QuestionMarkBlock::SetIsCollidedWith(TwoDimensionalCol
 
 			// Release the object stored in it
 			mPlayReleaseAnimation = true;
+
+			Notify(SUBJECT_NOTIFICATION_TYPES::COIN_COLLECTED, "");
 		}		
 	}
 
