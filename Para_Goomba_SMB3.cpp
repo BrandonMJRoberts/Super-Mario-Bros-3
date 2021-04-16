@@ -42,9 +42,15 @@ ParaGoomba::ParaGoomba(const Vector2D      spawnPosition,
 , mTimeRemainingTillNextFrame(mTimePerFrame)
 , kTimePerJump(0.25f)
 , kTimePerJumpLoop(2.5f)
+, mHitDelay(0.0f)
+, mWingOffset(0.0f, 0.0f)
 {
-	mHitsRemaining = 2;
+	mHitsRemaining              = 2;
 	mTimeRemainingTillNextFrame = mTimePerFrame;
+
+	mWingOffset                 = Vector2D(-mCollisionBox.x / 2.0f, -mCollisionBox.y / 2.0f);
+
+	mWings                      = new Wings(spawnPosition, mRenderer);
 }
 
 // ------------------------------------------------------------------------------------------------ //
@@ -84,7 +90,7 @@ bool ParaGoomba::Update(const float deltaTime, const Vector2D playerPosition, In
 		UpdateStaticVariables(deltaTime);
 
 	// Handleing despawning and animations
-	if (mHitsRemaining == 0)
+	if (mHitsRemaining < 0)
 	{
 		mTimerTillDespawn -= deltaTime;
 
@@ -103,9 +109,21 @@ bool ParaGoomba::Update(const float deltaTime, const Vector2D playerPosition, In
 	mJumpTimer -= deltaTime;
 
 	// Check for jumping
-	if (mCanJump && mGrounded && mJumpTimer <= 0.0f)
+	if (mCanJump  && 
+		mGrounded && 
+		mJumpTimer <= 0.0f)
 	{
 		Jump();
+	}
+
+	if (mWings)
+	{
+		if (!mWings->GetHasLostWings())
+		{
+			mWings->SetPosition(mCurrentPosition + mWingOffset);
+		}
+
+		mWings->Update(deltaTime);
 	}
 
 	return false;
@@ -181,6 +199,9 @@ void ParaGoomba::UpdateStaticVariables(const float deltaTime)
 void ParaGoomba::Render(const Vector2D renderReferencePoint)
 {
 	RenderSprite(renderReferencePoint, mCurrentSpriteID);
+
+	if (mWings)
+		mWings->Render(renderReferencePoint);
 }
 
 // ------------------------------------------------------------- //
@@ -190,27 +211,47 @@ ObjectCollisionHandleData ParaGoomba::SetIsCollidedWith(TwoDimensionalCollision 
 	if (!isPlayer)
 		return ObjectCollisionHandleData();
 
-	if (collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::DOWN)
+	if (collisionData.playerPriorPosition.y <= mCurrentPosition.y - mCollisionBox.y &&
+		collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::DOWN)
 	{
+		mHitsRemaining--;
+
 		if (mHitsRemaining > 0)
 		{
-			mHitsRemaining -= 1;
+			mCanJump        = false;
+			mVelocity.y     = 0.0f;
 
-			mCanJump = false;
-		}
-		else
-		{
-			mCanMove = false;
+			if (mWings)
+				mWings->LoseWings();
 
-			mCurrentSpriteID = 5;
-			mEndSpriteID = 5;
-			mStartSpriteID = 5;
+			Notify(SUBJECT_NOTIFICATION_TYPES::JUMPED_OFF_ENEMY, "");
 
 			return ObjectCollisionHandleData(false, false, true, false, true, false);
 		}
+		else
+		{
+			mCanMove         = false;
+			mVelocity.y      = 0.0f;
+
+			mCurrentSpriteID = 5;
+			mEndSpriteID     = 5;
+			mStartSpriteID   = 5;
+
+			if (mHitsRemaining == 0)
+			{
+				Notify(SUBJECT_NOTIFICATION_TYPES::JUMPED_OFF_ENEMY, "");
+
+				return ObjectCollisionHandleData(false, false, true, false, true, false);
+			}
+			else
+				return ObjectCollisionHandleData(false, false, false, false, true, false);
+		}
 	}
 
-	return ObjectCollisionHandleData(false, false, true, false, true, true);
+	if(mCanMove)
+		return ObjectCollisionHandleData(false, false, true, false, true, true);
+	else
+		return ObjectCollisionHandleData(false, false, false, false, false, false);
 }
 
 // ------------------------------------------------------------- //
