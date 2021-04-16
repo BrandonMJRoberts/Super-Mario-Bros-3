@@ -169,6 +169,7 @@
     <ClCompile Include="BlockObject.cpp" />
     <ClCompile Include="Brick_Block_SMB3.cpp" />
     <ClCompile Include="Coin.cpp" />
+    <ClCompile Include="CoinRelaseAnimation.cpp" />
     <ClCompile Include="Coin_SMB3.cpp" />
     <ClCompile Include="CollectableObject.cpp" />
     <ClCompile Include="Crab.cpp" />
@@ -245,6 +246,7 @@
     <ClInclude Include="BorderWorldMap.h" />
     <ClInclude Include="Brick_Block_SMB3.h" />
     <ClInclude Include="Coin.h" />
+    <ClInclude Include="CoinRelaseAnimation.h" />
     <ClInclude Include="Coin_SMB3.h" />
     <ClInclude Include="CollectableObject.h" />
     <ClInclude Include="Crab.h" />

@@ -166,6 +166,12 @@
     <Filter Include="Source Files\Mario Bros 1\Level Objects\Spawnable">
       <UniqueIdentifier>{18b51281-85e2-474e-91c1-428dd8c72f4b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Mario Bros 3\Objects\Animations">
+      <UniqueIdentifier>{051ea5fe-60a5-4470-aedf-4c0eadb3de76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Mario Bros 3\Objects\Animations">
+      <UniqueIdentifier>{968756bf-d1bc-45cc-9b2e-a2d357ccb0cc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
@@ -353,6 +359,9 @@
     </ClCompile>
     <ClCompile Include="Spiny.cpp">
       <Filter>Source Files\Mario Bros 1\Level Objects\Spawnable</Filter>
+    </ClCompile>
+    <ClCompile Include="CoinRelaseAnimation.cpp">
+      <Filter>Source Files\Mario Bros 3\Objects\Animations</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -571,6 +580,9 @@
     </ClInclude>
     <ClInclude Include="Spiny.h">
       <Filter>Header Files\Mario Bros 1\Level Objects\Spawnable</Filter>
+    </ClInclude>
+    <ClInclude Include="CoinRelaseAnimation.h">
+      <Filter>Header Files\Mario Bros 3\Objects\Animations</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

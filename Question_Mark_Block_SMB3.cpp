@@ -1,6 +1,8 @@
 #include "Question_Mark_Block_SMB3.h"
 #include "CollectableObject.h"
 
+#include "CoinRelaseAnimation.h"
+
 #include <sstream>
 
 unsigned int QuestionMarkBlock::mCurrentSpriteID(0);
@@ -47,16 +49,17 @@ QuestionMarkBlock::QuestionMarkBlock(const Vector2D           spawnPosition,
 , mStartBounceYPos(0.0f)
 , mPlayReleaseAnimation(false)
 , mHitPeakOfBounce(false)
-, mObjectReleased(baseObjectReleased)
+, mObjectReleasedAnimation(nullptr)
 {
-	
+	mObjectReleasedAnimation = new CoinReleaseAnimation(Vector2D(spawnPosition.x, spawnPosition.y - 1), mRenderer);
 }
 
 // ---------------------------------------------------------------------------------------------- //
 
 QuestionMarkBlock::~QuestionMarkBlock()
 {
-
+	delete mObjectReleasedAnimation;
+	mObjectReleasedAnimation = nullptr;
 }
 
 // ---------------------------------------------------------------------------------------------- //
@@ -95,12 +98,12 @@ bool QuestionMarkBlock::Update(const float deltaTime, const Vector2D playerPosit
 
 	if (mPlayReleaseAnimation)
 	{
-		if (mObjectReleased)
+		if (mObjectReleasedAnimation)
 		{
-			if (mObjectReleased->UpdateReleaseAnimation(deltaTime, mCurrentPosition))
+			if (mObjectReleasedAnimation->Update(deltaTime))
 			{
-				delete mObjectReleased;
-				mObjectReleased = nullptr;
+				delete mObjectReleasedAnimation;
+				mObjectReleasedAnimation = nullptr;
 			}
 		}
 	}
@@ -166,9 +169,9 @@ void QuestionMarkBlock::Render(const Vector2D renderReferencePoint)
 
 	if (mPlayReleaseAnimation)
 	{
-		if (mObjectReleased)
+		if (mObjectReleasedAnimation)
 		{
-			mObjectReleased->Render(renderReferencePoint);
+			mObjectReleasedAnimation->Render(renderReferencePoint);
 		}
 	}
 }

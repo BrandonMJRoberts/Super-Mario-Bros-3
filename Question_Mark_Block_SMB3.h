@@ -3,6 +3,8 @@
 
 #include "BlockObject.h"
 
+class CoinReleaseAnimation;
+
 class QuestionMarkBlock final : public BlockObject
 {
 public:
@@ -45,7 +47,8 @@ private:
 	static float                mTimeRemainingTillNextFrame;
 	const float				    mTimePerFrame;
 
-	CollectableObject*          mObjectReleased;
+	//CollectableObject*          mObjectReleased;
+	CoinReleaseAnimation*        mObjectReleasedAnimation;
 
 	float                       mStartBounceYPos;
 	bool                        mDoingBounceAnimation;
