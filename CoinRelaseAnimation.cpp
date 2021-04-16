@@ -10,24 +10,9 @@ unsigned int CoinReleaseAnimation::mThisObjectCounter = 0;
 
 // ----------------------------------------------------------------------------------- //
 
-CoinReleaseAnimation::CoinReleaseAnimation(Vector2D startPos, SDL_Renderer* renderer)
-	: kSpritesOnWidth(8),
-	kSpritesOnHeight(1),
-
-	mPosition(startPos),
-
-	mCurrentFrameID(0),
-	mStartFrameID(0),
-	mEndFrameID(4),
-
-	mSingleSpriteWidth(0),
-	mSingleSpriteHeight(0),
-
-	mCompletedAnimation(false),
-
-	mTimePerFrame(0.05f),
-	mTimeRemainingForFrame(mTimePerFrame),
-	mVelocity(0.0f, 8.0f)
+CoinReleaseAnimation::CoinReleaseAnimation(Vector2D startPos, SDL_Renderer* renderer) 
+	: BaseAnimation(startPos, 0, 4, 0.05f, Vector2D(0.0f, 8.0f), 8, 1)
+	, mReleased(false)
 {
 	mThisObjectCounter++;
 
@@ -61,31 +46,9 @@ CoinReleaseAnimation::~CoinReleaseAnimation()
 
 // ----------------------------------------------------------------------------------- //
 
-void CoinReleaseAnimation::Render(const Vector2D offset)
-{
-	if (mThisSpriteSheet)
-	{
-		Vector2D renderPos = Vector2D(mPosition.x - offset.x, mPosition.y - offset.y);
-
-		SDL_Rect portionOfSpriteSheet{ (int)(mCurrentFrameID % kSpritesOnWidth) * (int)mSingleSpriteWidth,
-									   (int)(mCurrentFrameID / kSpritesOnWidth) * (int)mSingleSpriteHeight,
-									   (int)mSingleSpriteWidth,
-									   (int)mSingleSpriteHeight };
-
-		SDL_Rect destRect{            int(renderPos.x * RESOLUTION_OF_SPRITES),
-									  int(renderPos.y * RESOLUTION_OF_SPRITES) - (int)mSingleSpriteHeight + 2,
-									 (int)mSingleSpriteWidth,
-									 (int)mSingleSpriteHeight };
-
-		mThisSpriteSheet->Render(portionOfSpriteSheet, destRect, SDL_FLIP_NONE);
-	}
-}
-
-// ----------------------------------------------------------------------------------- //
-
 bool CoinReleaseAnimation::Update(const float deltaTime)
 {
-	if (!mCompletedAnimation)
+	if (mReleased && !mCompletedAnimation)
 	{
 		mVelocity.y -= GRAVITY * deltaTime;
 		mPosition   -= mVelocity * deltaTime;
@@ -102,18 +65,16 @@ bool CoinReleaseAnimation::Update(const float deltaTime)
 		}
 	}
 
-	mTimeRemainingForFrame -= deltaTime;
-	if (mTimeRemainingForFrame < 0.0f)
-	{
-		mTimeRemainingForFrame = mTimePerFrame;
-
-		mCurrentFrameID++;
-
-		if (mCurrentFrameID > mEndFrameID && !mCompletedAnimation)
-			mCurrentFrameID = mStartFrameID;
-	}
+	UpdateAnimations(deltaTime);
 
 	return (mCompletedAnimation && mCurrentFrameID > mEndFrameID);
+}
+
+// ----------------------------------------------------------------------------------- //
+
+void CoinReleaseAnimation::SetReleased()
+{
+	mReleased = true;
 }
 
 // ----------------------------------------------------------------------------------- //

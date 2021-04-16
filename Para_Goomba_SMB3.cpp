@@ -46,6 +46,8 @@ ParaGoomba::ParaGoomba(const Vector2D      spawnPosition,
 {
 	mHitsRemaining              = 2;
 	mTimeRemainingTillNextFrame = mTimePerFrame;
+
+	mWings                      = new Wings(spawnPosition, mRenderer);
 }
 
 // ------------------------------------------------------------------------------------------------ //
@@ -109,6 +111,16 @@ bool ParaGoomba::Update(const float deltaTime, const Vector2D playerPosition, In
 		mJumpTimer <= 0.0f)
 	{
 		Jump();
+	}
+
+	if (mWings)
+	{
+		if (!mWings->GetHasLostWings())
+		{
+			mWings->SetPosition(mCurrentPosition);
+		}
+
+		mWings->Update(deltaTime);
 	}
 
 	return false;
@@ -184,6 +196,9 @@ void ParaGoomba::UpdateStaticVariables(const float deltaTime)
 void ParaGoomba::Render(const Vector2D renderReferencePoint)
 {
 	RenderSprite(renderReferencePoint, mCurrentSpriteID);
+
+	if (mWings)
+		mWings->Render(renderReferencePoint);
 }
 
 // ------------------------------------------------------------- //
@@ -201,12 +216,17 @@ ObjectCollisionHandleData ParaGoomba::SetIsCollidedWith(TwoDimensionalCollision 
 		if (mHitsRemaining > 0)
 		{
 			mCanJump        = false;
+			mVelocity.y     = 0.0f;
+
+			if (mWings)
+				mWings->LoseWings();
 
 			return ObjectCollisionHandleData(false, false, true, false, true, false);
 		}
 		else
 		{
 			mCanMove         = false;
+			mVelocity.y      = 0.0f;
 
 			mCurrentSpriteID = 5;
 			mEndSpriteID     = 5;

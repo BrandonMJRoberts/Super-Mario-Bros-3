@@ -3,6 +3,8 @@
 
 #include "Goomba_SMB3.h"
 
+#include "Wings.h"
+
 class ParaGoomba final : public Goomba
 {
 public:
@@ -55,6 +57,8 @@ private:
 
 	const float                 kTimePerJump;
 	const float                 kTimePerJumpLoop;
+
+	Wings*                      mWings;
 
 	float                       mHitDelay;
 };

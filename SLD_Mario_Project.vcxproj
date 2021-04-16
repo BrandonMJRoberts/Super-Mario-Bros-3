@@ -166,6 +166,7 @@
     <ClCompile Include="AudioPlayer.cpp" />
     <ClCompile Include="BackgroundLayer.cpp" />
     <ClCompile Include="BackgroundLayer_WorldMap.cpp" />
+    <ClCompile Include="BaseAnimation.cpp" />
     <ClCompile Include="BlockObject.cpp" />
     <ClCompile Include="Brick_Block_SMB3.cpp" />
     <ClCompile Include="Coin.cpp" />
@@ -224,6 +225,7 @@
     <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="Transition.cpp" />
     <ClCompile Include="VisualTransitionHandler.cpp" />
+    <ClCompile Include="Wings.cpp" />
     <ClCompile Include="WorldMapMario.cpp" />
     <ClCompile Include="WorldMapSpawnMarioTransition.cpp" />
   </ItemGroup>
@@ -240,6 +242,7 @@
     <ClInclude Include="AudioPlayer.h" />
     <ClInclude Include="BackgroundLayer.h" />
     <ClInclude Include="BackgroundLayer_WorldMap.h" />
+    <ClInclude Include="BaseAnimation.h" />
     <ClInclude Include="BaseObject.h" />
     <ClInclude Include="BaseWorldMapCharacter.h" />
     <ClInclude Include="BlockObject.h" />
@@ -303,6 +306,7 @@
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="Transition.h" />
     <ClInclude Include="VisualTransitionHandler.h" />
+    <ClInclude Include="Wings.h" />
     <ClInclude Include="WorldMapMario.h" />
     <ClInclude Include="WorldMapSpawnMarioTransition.h" />
   </ItemGroup>

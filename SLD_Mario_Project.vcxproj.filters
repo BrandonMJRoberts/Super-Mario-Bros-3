@@ -363,6 +363,12 @@
     <ClCompile Include="CoinRelaseAnimation.cpp">
       <Filter>Source Files\Mario Bros 3\Objects\Animations</Filter>
     </ClCompile>
+    <ClCompile Include="Wings.cpp">
+      <Filter>Source Files\Mario Bros 3\Objects\Animations</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseAnimation.cpp">
+      <Filter>Source Files\Mario Bros 3\Objects\Animations</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="SDL2\SDL2.lib" />
@@ -582,6 +588,12 @@
       <Filter>Header Files\Mario Bros 1\Level Objects\Spawnable</Filter>
     </ClInclude>
     <ClInclude Include="CoinRelaseAnimation.h">
+      <Filter>Header Files\Mario Bros 3\Objects\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="Wings.h">
+      <Filter>Header Files\Mario Bros 3\Objects\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseAnimation.h">
       <Filter>Header Files\Mario Bros 3\Objects\Animations</Filter>
     </ClInclude>
   </ItemGroup>
