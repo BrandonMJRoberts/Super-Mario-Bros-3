@@ -70,6 +70,8 @@ PlayableCharacter::PlayableCharacter(SDL_Renderer* renderer, const char* filePat
 
 , mExitingPipe(false)
 , kPMeterFillSpeed(0.25f)
+
+, mForcedMovementDistanceBoundary(0.0f)
 {
 	// Load in the sprite sheet for this character
 	LoadInCorrectSpriteSheet();
@@ -170,11 +172,13 @@ void PlayableCharacter::Update(const float deltaTime, SDL_Event e, const Vector2
 		CollisionPositionalData collisionOnX = HandleXCollisions(deltaTime, interactionLayer, objectLayer);
 		CollisionPositionalData collisionOnY = HandleYCollisions(deltaTime, interactionLayer, objectLayer);
 
-		if (collisionOnX.shouldDamagePlayer || collisionOnY.shouldDamagePlayer)
+		if ( collisionOnX.shouldDamagePlayer || 
+			 collisionOnY.shouldDamagePlayer)
 		{
 			if (mPowerUpState == POWER_UP_TYPE::NONE)
 			{
 				KillPlayer();
+				return;
 			}
 			else
 			{
@@ -246,31 +250,17 @@ void PlayableCharacter::ForcedMovementUpdate(const float deltaTime)
 
 	// -----------------------------------------------------------------------------------------------
 
-	float capDistance = 0.0f;
-
-	if (mForcedMovementDirection == MOVEMENT_DIRECTION::UP || mForcedMovementDirection == MOVEMENT_DIRECTION::DOWN)
-	{
-		// Have the check based on the Y axis
-		capDistance = float(mCollisionBox.y * 1.2);
-	}
-	else
-	{
-		// Have the check based on the X axis
-		capDistance = float(mCollisionBox.x * 1.2);
-	}
-
-	// -----------------------------------------------------------------------------------------------
-
 	// Now check to see if we have moved far enough to determine this is far enough
-	if (mForcedMovementDistanceTravelled > capDistance)
+	if (mForcedMovementDistanceTravelled > mForcedMovementDistanceBoundary)
 	{
 		mForceMovementInDirectionSet     = false;
 		mForcedMovementDistanceTravelled = 0.0f;
+		mForcedMovementDistanceBoundary = 0.0f;
 
 		// Pipe check
 		if (mExitingPipe)
 		{
-			mHasControl = true;
+			mHasControl  = true;
 			mExitingPipe = false;
 		}
 	}
@@ -334,13 +324,14 @@ CollisionPositionalData PlayableCharacter::HandleYCollisions(const float deltaTi
 				}
 
 				mGrounded = true;
+				mVelocity.y = 0.0f;
 			}
 			else 
 			{
 				mGrounded = false;
 			}
 
-			mVelocity.y = 0.0f;
+			//mVelocity.y = 0.0f;
 			return CollisionPositionalData(returnData.collisionOccured, leftPos, rightPos, returnData.collisionWithInteractionLayer, returnData.collisionWithObjectLayer, returnData.shouldDamagePlayer);
 		}
 		else
@@ -360,7 +351,7 @@ CollisionPositionalData PlayableCharacter::HandleYCollisions(const float deltaTi
 
 		if (returnData.collisionOccured && mVelocity.y < 0.0f)
 		{
-			mVelocity.y = 4.0f;
+			mVelocity.y = 3.0f;
 		}
 
 		return (CollisionPositionalData(returnData.collisionOccured, leftPos, rightPos, returnData.collisionWithInteractionLayer, returnData.collisionWithObjectLayer, returnData.shouldDamagePlayer));
@@ -407,18 +398,19 @@ CollisionPositionalData PlayableCharacter::CheckYCollision(const Vector2D positi
 	MovementPrevention returnData1 = HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck1);
 	MovementPrevention returnData2 = HandleCollisionsWithInteractionObjectLayer(objectLayer, positionToCheck2);
 
-	if (returnData1.StopYMovement || returnData2.StopYMovement)
+	if (returnData1.StopYMovement || 
+		returnData2.StopYMovement || 
+		returnData1.shouldDamagePlayer || 
+		returnData2.shouldDamagePlayer)
 	{
 		if (returnData1.givesJump || returnData2.givesJump)
 		{
 			mGrounded = false;
 
 			// Give the slight jump boost 
-			mVelocity.y = kJumpInitialBoost * 0.75;
+			mVelocity.y = kJumpInitialBoost * 0.5;
 
-			if (mCurrentMovements & PlayerMovementBitField::JUMPING)
-				mCurrentMovements |= PlayerMovementBitField::HOLDING_JUMP;
-			else
+			if(PlayerMovementBitField::HOLDING_JUMP)
 				mCurrentMovements |= PlayerMovementBitField::JUMPING;
 		}
 		else if (!(mCurrentMovements & PlayerMovementBitField::HOLDING_JUMP))
@@ -1021,18 +1013,26 @@ void PlayableCharacter::SpawnIntoNewArea(const Vector2D newPos, const Vector2D n
 		default:
 		case MOVEMENT_DIRECTION::DOWN:
 			mScreenGridPosition.y -= (mCollisionBox.y * 1.2f);
+
+			mForcedMovementDistanceBoundary = mCollisionBox.y * 0.85f;
 		break;
 
 		case MOVEMENT_DIRECTION::UP:
 			mScreenGridPosition.y += (mCollisionBox.y * 1.2f);
+
+			mForcedMovementDistanceBoundary = mCollisionBox.y * 1.2f;
 		break;
 
 		case MOVEMENT_DIRECTION::LEFT:
 			mScreenGridPosition.x += (mCollisionBox.x * 1.2f);
+
+			mForcedMovementDistanceBoundary = mCollisionBox.x * 1.2f;
 		break;
 
 		case MOVEMENT_DIRECTION::RIGHT:
 			mScreenGridPosition.x -= (mCollisionBox.x * 1.2f);
+
+			mForcedMovementDistanceBoundary = mCollisionBox.x * 1.2f;
 		break;
 		}
 
@@ -1596,14 +1596,20 @@ void PlayableCharacter::SetEnteringPipe(MOVEMENT_DIRECTION direction)
 	case MOVEMENT_DIRECTION::DOWN:
 	case MOVEMENT_DIRECTION::UP:
 		HandleChangeInAnimations(PlayerMovementBitField::ENTERING_PIPE_VERTICALLY, true);
+
+		mForcedMovementDistanceBoundary = 1.2f * mCollisionBox.y;
 	break;
 
 	case MOVEMENT_DIRECTION::RIGHT:
 		HandleChangeInAnimations(PlayerMovementBitField::MOVING_RIGHT, true);
+
+		mForcedMovementDistanceBoundary = 1.2f * mCollisionBox.x;
 	break;
 
 	case MOVEMENT_DIRECTION::LEFT:
 		HandleChangeInAnimations(PlayerMovementBitField::MOVING_LEFT, true);
+
+		mForcedMovementDistanceBoundary = 1.2f * mCollisionBox.x;
 	break;
 	}
 
@@ -1619,17 +1625,20 @@ void PlayableCharacter::SetEnteringPipe(MOVEMENT_DIRECTION direction)
 
 void PlayableCharacter::KillPlayer()
 {
-	Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_DIED, "");
+	if(mIsAlive)
+	{
+		Notify(SUBJECT_NOTIFICATION_TYPES::PLAYER_DIED, "");
 
-	mHasControl         = false;
-	mIsAlive            = false;
-	mDeathAnimationTime = 4.5f;
+		mHasControl         = false;
+		mIsAlive            = false;
+		mDeathAnimationTime = 4.5f;
 
-	mCurrentFrame       = 16;
-	mEndFrame           = 16;
-	mStartFrame         = 16;
+		mCurrentFrame       = 16;
+		mEndFrame           = 16;
+		mStartFrame         = 16;
 
-	mVelocity.y         = -5.0f;
+		mVelocity.y         = -5.0f;
+	}
 }
 
 // ----------------------------------------------------- //

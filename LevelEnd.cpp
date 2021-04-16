@@ -157,13 +157,15 @@ ObjectCollisionHandleData LevelEndObject::SetIsCollidedWith(TwoDimensionalCollis
 
 	mCollected = true;
 
+	Notify(SUBJECT_NOTIFICATION_TYPES::ADD_END_CARD, std::to_string(mCurrentFrameID));
+
 	switch (mCurrentFrameID)
 	{
-	// Star
+	// Mushroom
 	case 0:
-		mCurrentFrameID = 9;
-		mEndFrameID     = 11;
-		mStartFrameID   = 9;
+		mCurrentFrameID = 3;
+		mEndFrameID     = 5;
+		mStartFrameID   = 3;
 	break;
 
 	// Fire flower
@@ -173,16 +175,15 @@ ObjectCollisionHandleData LevelEndObject::SetIsCollidedWith(TwoDimensionalCollis
 		mStartFrameID   = 6;
 	break;
 
-	// Mushroom
+	// Star
 	case 2:
-		mCurrentFrameID = 3;
-		mEndFrameID     = 5;
-		mStartFrameID   = 3;
+		mCurrentFrameID = 9;
+		mEndFrameID     = 11;
+		mStartFrameID   = 9;
 	break;
 	}
 
 	Notify(SUBJECT_NOTIFICATION_TYPES::LEVEL_CLEAR, "");
-	Notify(SUBJECT_NOTIFICATION_TYPES::ADD_END_CARD, std::to_string(mCurrentFrameID));
 
 	return ObjectCollisionHandleData(false, true, false, true, false, false);
 }

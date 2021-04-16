@@ -150,6 +150,8 @@ private:
 	float              mPMeterFillAmount;
 	const float        kPMeterFillSpeed;
 
+	float              mForcedMovementDistanceBoundary;
+
 	// forced transition movement
 	const float        kForcedMovementSpeed;
 	float              mForcedMovementDistanceTravelled;

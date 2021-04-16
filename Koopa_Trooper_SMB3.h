@@ -51,6 +51,9 @@ private:
 	const float          kTimeOnFloor;
 
 	unsigned int         mColourStartID;
+
+	float                mDelayTillNextHit;
+	const float          kMaxTimePerFrame;
 };
 
 #endif

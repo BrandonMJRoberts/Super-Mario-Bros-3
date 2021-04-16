@@ -120,7 +120,7 @@ void HUD_Display::Render()
 	{
 		Vector2D offset((int)mEndCardsSingleSpriteWidth, 0);
 
-		mDestRectPlaceHolder   = SDL_Rect{ (int)mFirstEndCardOffset.x, (int)mFirstEndCardOffset.y, (int)mEndCardsSingleSpriteWidth, (int)mEndCardsSingleSpriteHeight };
+		mDestRectPlaceHolder   = SDL_Rect{      (int)mFirstEndCardOffset.x,      (int)mFirstEndCardOffset.y,         (int)mEndCardsSingleSpriteWidth, (int)mEndCardsSingleSpriteHeight };
 		mSourceRectPlaceHolder = SDL_Rect{0, 0, (int)mEndCardsSingleSpriteWidth, (int)mEndCardsSingleSpriteHeight };
 
 		for (unsigned int i = 0; i < 3; i++)
@@ -287,13 +287,17 @@ void HUD_Display::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string 
 	case SUBJECT_NOTIFICATION_TYPES::TAKE_SCORE:
 		unsigned int minusScore;
 		dataLine >> minusScore;
-		mCurrentScore -= minusScore;
+
+		if (mCurrentScore > minusScore)
+			mCurrentScore -= minusScore;
+		else
+			mCurrentScore = 0;
 	return;
 
 	case SUBJECT_NOTIFICATION_TYPES::ADD_END_CARD:
 		unsigned int cardID;
 		dataLine >> cardID;
-		mEndCards[mCurrentEndCardCount] = (END_CARD_TYPES)cardID;
+		mEndCards[mCurrentEndCardCount] = (END_CARD_TYPES)(cardID + 1);
 	return;
 
 	case SUBJECT_NOTIFICATION_TYPES::UPDATE_P_METER:
@@ -310,14 +314,20 @@ void HUD_Display::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string 
 
 	case SUBJECT_NOTIFICATION_TYPES::SETUP_MAIN_LEVEL:
 		mTimeRemaming = 300.9f;
+		mPaused       = false;
 	break;
 
 	case SUBJECT_NOTIFICATION_TYPES::SETUP_WORLD_MAP:
 		mTimeRemaming = 0.0f;
+
+		// Reset the fill amount
+		mPMeterFillAmount = 0;
 	break;
 
 	case SUBJECT_NOTIFICATION_TYPES::LEVEL_CLEAR:
-		mTimerCounting = false;
+		mTimerCounting    = false;
+
+		mCurrentScore    += (mTimeRemaming * 100);
 	break;
 
 	case SUBJECT_NOTIFICATION_TYPES::ENTERING_PIPE:
@@ -331,7 +341,8 @@ void HUD_Display::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string 
 	case SUBJECT_NOTIFICATION_TYPES::PLAYER_DIED:
 		mPaused = true;
 
-		mLivesRemaining--;
+		if(mLivesRemaining > 0)
+			mLivesRemaining--;
 	break;
 	}
 }
