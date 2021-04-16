@@ -193,7 +193,8 @@ ObjectCollisionHandleData ParaGoomba::SetIsCollidedWith(TwoDimensionalCollision 
 	if (!isPlayer)
 		return ObjectCollisionHandleData();
 
-	if (collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::DOWN)
+	if (collisionData.playerPriorPosition.y <= mCurrentPosition.y - mCollisionBox.y &&
+		collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::DOWN)
 	{
 		mHitsRemaining--;
 
@@ -211,14 +212,14 @@ ObjectCollisionHandleData ParaGoomba::SetIsCollidedWith(TwoDimensionalCollision 
 			mEndSpriteID     = 5;
 			mStartSpriteID   = 5;
 
-			return ObjectCollisionHandleData(false, false, true, false, true, false);
+			return ObjectCollisionHandleData(false, false, false, false, true, false);
 		}
 	}
 
 	if(mCanMove)
 		return ObjectCollisionHandleData(false, false, true, false, true, true);
 	else
-		return ObjectCollisionHandleData(false, false, true, false, false, false);
+		return ObjectCollisionHandleData(false, false, false, false, false, false);
 }
 
 // ------------------------------------------------------------- //
