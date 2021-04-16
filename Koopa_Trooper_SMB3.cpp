@@ -205,8 +205,7 @@ ObjectCollisionHandleData KoopaTrooper::SetIsCollidedWith(TwoDimensionalCollisio
 			mTimeTillConversion = kTimeOnFloor;
 
 			Notify(SUBJECT_NOTIFICATION_TYPES::JUMPED_OFF_ENEMY, "");
-
-			mDelayTillNextHit = 0.1f;
+			mDelayTillNextHit = 0.05f;
 
 			return ObjectCollisionHandleData(false, false, true, false, true, false);
 		}
@@ -231,7 +230,7 @@ ObjectCollisionHandleData KoopaTrooper::SetIsCollidedWith(TwoDimensionalCollisio
 
 			Notify(SUBJECT_NOTIFICATION_TYPES::JUMPED_OFF_ENEMY, "");
 
-			mDelayTillNextHit = 0.1f;
+			mDelayTillNextHit = 0.05f;
 
 			return ObjectCollisionHandleData(false, false, true, false, true, false);
 		}
@@ -244,7 +243,7 @@ ObjectCollisionHandleData KoopaTrooper::SetIsCollidedWith(TwoDimensionalCollisio
 				{
 					mVelocity.x = -6.0f;
 				}
-				else// if(collisionData.playerPriorPosition.x + (mCollisionBox.x / 2.0f) <= mCurrentPosition.x)
+				else
 				{
 					mVelocity.x = 6.0f;
 				}
@@ -255,7 +254,7 @@ ObjectCollisionHandleData KoopaTrooper::SetIsCollidedWith(TwoDimensionalCollisio
 				mEndSpriteID      = mColourStartID + 5;
 				mStartSpriteID    = mColourStartID + 2;
 
-				mDelayTillNextHit   = 0.1f;
+				mDelayTillNextHit   = 0.05f;
 				mTimeTillConversion = 10000.0f; // Make the koopa essentially never get up
 
 				return ObjectCollisionHandleData(false, true, false, false, false, false);

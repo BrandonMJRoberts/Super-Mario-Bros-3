@@ -137,11 +137,11 @@ bool BrickBlock::Update(const float deltaTime, const Vector2D playerPosition, In
 	if(!mUpdatedStaticVariables)
 		UpdateStaticVariables(deltaTime);
 
-	if (mBlockBreakingAnimationPlaying)
-	{
-		mCurrentPosition.x -= 0.5f * deltaTime;
-		mCurrentPosition.y -= 0.5f * deltaTime;
-	}
+	//if (mBlockBreakingAnimationPlaying)
+	//{
+	//	mCurrentPosition.x -= 0.5f * deltaTime;
+	//	mCurrentPosition.y -= 0.5f * deltaTime;
+	//}
 
 	if (mHitsBlockCanTake == 0 && !mBlockBreakingAnimationPlaying)
 		return false;
