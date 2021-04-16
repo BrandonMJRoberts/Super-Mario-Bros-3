@@ -55,6 +55,8 @@ private:
 
 	const float                 kTimePerJump;
 	const float                 kTimePerJumpLoop;
+
+	float                       mHitDelay;
 };
 
 #endif

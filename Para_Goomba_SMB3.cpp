@@ -42,8 +42,9 @@ ParaGoomba::ParaGoomba(const Vector2D      spawnPosition,
 , mTimeRemainingTillNextFrame(mTimePerFrame)
 , kTimePerJump(0.25f)
 , kTimePerJumpLoop(2.5f)
+, mHitDelay(0.0f)
 {
-	mHitsRemaining = 2;
+	mHitsRemaining              = 2;
 	mTimeRemainingTillNextFrame = mTimePerFrame;
 }
 
@@ -84,7 +85,7 @@ bool ParaGoomba::Update(const float deltaTime, const Vector2D playerPosition, In
 		UpdateStaticVariables(deltaTime);
 
 	// Handleing despawning and animations
-	if (mHitsRemaining == 0)
+	if (mHitsRemaining < 0)
 	{
 		mTimerTillDespawn -= deltaTime;
 
@@ -103,7 +104,9 @@ bool ParaGoomba::Update(const float deltaTime, const Vector2D playerPosition, In
 	mJumpTimer -= deltaTime;
 
 	// Check for jumping
-	if (mCanJump && mGrounded && mJumpTimer <= 0.0f)
+	if (mCanJump  && 
+		mGrounded && 
+		mJumpTimer <= 0.0f)
 	{
 		Jump();
 	}
@@ -192,25 +195,30 @@ ObjectCollisionHandleData ParaGoomba::SetIsCollidedWith(TwoDimensionalCollision 
 
 	if (collisionData.collisionDataPrimary == MOVEMENT_DIRECTION::DOWN)
 	{
+		mHitsRemaining--;
+
 		if (mHitsRemaining > 0)
 		{
-			mHitsRemaining -= 1;
+			mCanJump        = false;
 
-			mCanJump = false;
+			return ObjectCollisionHandleData(false, false, true, false, true, false);
 		}
 		else
 		{
-			mCanMove = false;
+			mCanMove         = false;
 
 			mCurrentSpriteID = 5;
-			mEndSpriteID = 5;
-			mStartSpriteID = 5;
+			mEndSpriteID     = 5;
+			mStartSpriteID   = 5;
 
 			return ObjectCollisionHandleData(false, false, true, false, true, false);
 		}
 	}
 
-	return ObjectCollisionHandleData(false, false, true, false, true, true);
+	if(mCanMove)
+		return ObjectCollisionHandleData(false, false, true, false, true, true);
+	else
+		return ObjectCollisionHandleData(false, false, true, false, false, false);
 }
 
 // ------------------------------------------------------------- //

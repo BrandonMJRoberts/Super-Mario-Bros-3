@@ -48,7 +48,7 @@ protected:
 	float                       mTimeRemainingTillNextFrame;
 	const float					mTimePerFrame;
 
-	unsigned int                mHitsRemaining;
+	int                         mHitsRemaining;
 
 	float                       mTimerTillDespawn;
 
