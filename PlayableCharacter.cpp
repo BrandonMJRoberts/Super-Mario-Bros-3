@@ -1014,25 +1014,25 @@ void PlayableCharacter::SpawnIntoNewArea(const Vector2D newPos, const Vector2D n
 		case MOVEMENT_DIRECTION::DOWN:
 			mScreenGridPosition.y -= (mCollisionBox.y * 1.2f);
 
-			mForcedMovementDistanceBoundary = mCollisionBox.y * 0.85f;
+			mForcedMovementDistanceBoundary = float(mCollisionBox.y * 0.85);
 		break;
 
 		case MOVEMENT_DIRECTION::UP:
 			mScreenGridPosition.y += (mCollisionBox.y * 1.2f);
 
-			mForcedMovementDistanceBoundary = mCollisionBox.y * 1.2f;
+			mForcedMovementDistanceBoundary = float(mCollisionBox.y * 1.2);
 		break;
 
 		case MOVEMENT_DIRECTION::LEFT:
 			mScreenGridPosition.x += (mCollisionBox.x * 1.2f);
 
-			mForcedMovementDistanceBoundary = mCollisionBox.x * 1.2f;
+			mForcedMovementDistanceBoundary = float(mCollisionBox.x * 1.2);
 		break;
 
 		case MOVEMENT_DIRECTION::RIGHT:
 			mScreenGridPosition.x -= (mCollisionBox.x * 1.2f);
 
-			mForcedMovementDistanceBoundary = mCollisionBox.x * 1.2f;
+			mForcedMovementDistanceBoundary = float(mCollisionBox.x * 1.2);
 		break;
 		}
 
@@ -1597,19 +1597,19 @@ void PlayableCharacter::SetEnteringPipe(MOVEMENT_DIRECTION direction)
 	case MOVEMENT_DIRECTION::UP:
 		HandleChangeInAnimations(PlayerMovementBitField::ENTERING_PIPE_VERTICALLY, true);
 
-		mForcedMovementDistanceBoundary = 1.2f * mCollisionBox.y;
+		mForcedMovementDistanceBoundary = float(1.2 * mCollisionBox.y);
 	break;
 
 	case MOVEMENT_DIRECTION::RIGHT:
 		HandleChangeInAnimations(PlayerMovementBitField::MOVING_RIGHT, true);
 
-		mForcedMovementDistanceBoundary = 1.2f * mCollisionBox.x;
+		mForcedMovementDistanceBoundary = float(1.2 * mCollisionBox.x);
 	break;
 
 	case MOVEMENT_DIRECTION::LEFT:
 		HandleChangeInAnimations(PlayerMovementBitField::MOVING_LEFT, true);
 
-		mForcedMovementDistanceBoundary = 1.2f * mCollisionBox.x;
+		mForcedMovementDistanceBoundary = float(1.2 * mCollisionBox.x);
 	break;
 	}
 

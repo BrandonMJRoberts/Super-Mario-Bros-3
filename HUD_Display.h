@@ -24,6 +24,8 @@ public:
 
 	void OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string data) override;
 
+	float GetTimeRemaiining() const { return mTimeRemaming; }
+
 private:
 	void LoadInSprites(SDL_Renderer* renderer);
 	void DeleteAllSprites();

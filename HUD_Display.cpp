@@ -238,7 +238,14 @@ void HUD_Display::Update(const float deltaTime)
 		if (mTimeRemaming > 0.0f)
 			mTimeRemaming -= deltaTime;
 		else
+		{
+			mTimerCounting = false;
+
+			if (mLivesRemaining > 0)
+				mLivesRemaining--;
+
 			mTimeRemaming = 0.0f;
+		}
 	}
 
 }
@@ -342,7 +349,7 @@ void HUD_Display::OnNotify(SUBJECT_NOTIFICATION_TYPES notification, std::string 
 	case SUBJECT_NOTIFICATION_TYPES::LEVEL_CLEAR:
 		mTimerCounting    = false;
 
-		mCurrentScore    += (mTimeRemaming * 100);
+		mCurrentScore    += unsigned int(mTimeRemaming * 100.0f);
 	break;
 
 	case SUBJECT_NOTIFICATION_TYPES::ENTERING_PIPE:
